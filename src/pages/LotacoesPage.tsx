@@ -20,6 +20,7 @@ export default function LotacoesPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nome: '', codigo: '', endereco: '' });
+  const [editandoId, setEditandoId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['lotacoes', empresaAtual?.id],
@@ -41,10 +42,46 @@ export default function LotacoesPage() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['lotacoes'] }); setOpen(false); toast.success('Lotação criada'); },
   });
 
+  const atualizar = useMutation({
+    mutationFn: async ({ id, ...d }: typeof form & { id: string }) => {
+      const { data, error } = await supabase
+        .from('lotacoes')
+        .update(
+          validateTablePayload(
+            'lotacoes',
+            { nome: d.nome, codigo: d.codigo || null, endereco: d.endereco || null },
+            'LotacoesPage:lotacoes'
+          )
+        )
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Lotação não encontrada ou sem permissão para editar.');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['lotacoes'] });
+      setOpen(false);
+      setEditandoId(null);
+      setForm({ nome: '', codigo: '', endereco: '' });
+      toast.success('Lotação atualizada');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar lotação.')),
+  });
+
   const excluir = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from('lotacoes').delete().eq('id', id).eq('empresa_id', empresaAtual!.id); if (error) throw error; },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['lotacoes'] }); toast.success('Excluída'); },
   });
+
+  const handleOpenChange = (o: boolean) => {
+    setOpen(o);
+    if (!o && editandoId) {
+      setEditandoId(null);
+      setForm({ nome: '', codigo: '', endereco: '' });
+    }
+  };
 
   return (
     <>

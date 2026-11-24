@@ -1,0 +1,328 @@
+"""Regressões offline do gerador de regras; não acessam banco nem APIs de LLM."""
+from __future__ import annotations
+
+import importlib.util
+import json
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+
+SCRIPT = Path(__file__).with_name("generate.py")
+SPEC = importlib.util.spec_from_file_location("context_rules_generate", SCRIPT)
+generator = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(generator)
+
+
+class CurrentSqlSourcesTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory(prefix="context-rules-")
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        self.files = []
+
+    def write(self, name, content):
+        file = self.root / name
+        file.parent.mkdir(parents=True, exist_ok=True)
+        file.write_text(content, encoding="utf-8")
+        self.files.append(file)
+        return file
+
+    def schema(self):
+        return generator.parse_sql_schema(self.root, self.files)
+
+    def test_foreign_migration_cannot_replace_current_table(self):
+        current = "supabase/migrations/20260101000000_orders.sql"
+        self.write(current, "CREATE TABLE public.orders (id uuid, created_at timestamptz);")
+        self.write("supabase/migrations/_foreign/another-project/20250101000000_orders.sql",
+                   "CREATE TABLE public.orders (id uuid, changed_at timestamptz);")
+        schema = self.schema()
+        self.assertEqual([c["name"] for c in schema["tables"]["orders"]["columns"]], ["id", "created_at"])
+        self.assertEqual(schema["tables"]["orders"]["src"], current)
+        self.assertEqual(schema["sources"], [current])
+
+    def test_superseded_migration_cannot_undo_current_changes(self):
+        self.write("supabase/migrations/20260101000000_orders.sql", "CREATE TABLE public.orders (id uuid);")
+        self.write("supabase/migrations/20260102000000_status.sql", "ALTER TABLE public.orders ADD COLUMN status text;")
+        self.write("supabase/migrations/_superseded/20250101000000_orders.sql", "DROP TABLE public.orders;")
+        schema = self.schema()
+        self.assertIn("orders", schema["tables"])
+        self.assertEqual([c["name"] for c in schema["tables"]["orders"]["columns"]], ["id", "status"])
+        self.assertEqual(len(schema["sources"]), 2)
+
+    def test_archived_objects_do_not_contribute_to_schema_or_rules(self):
+        sql = """
+CREATE TYPE order_state AS ENUM ('open', 'done');
+CREATE TABLE public.orders (id uuid PRIMARY KEY, status order_state DEFAULT 'open', amount numeric CHECK (amount >= 0));
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+CREATE POLICY orders_select ON public.orders FOR SELECT TO authenticated USING (true);
+CREATE FUNCTION public.ensure_order() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  RAISE EXCEPTION 'amount cannot be negative';
+  RETURN NEW;
+END;
+$$;
+CREATE TRIGGER ensure_order_before BEFORE INSERT ON public.orders FOR EACH ROW EXECUTE FUNCTION public.ensure_order();
+CREATE INDEX orders_status ON public.orders (status);
+CREATE VIEW public.open_orders AS SELECT * FROM public.orders;
+GRANT SELECT ON public.orders TO authenticated;
+COMMENT ON TABLE public.orders IS 'Current orders';
+SELECT cron.schedule('daily_orders', '0 0 * * *', $$SELECT 1$$);
+"""
+        self.write("supabase/migrations/20260101000000_orders.sql", sql)
+        self.write("supabase/seed.sql", "INSERT INTO public.orders (id) VALUES ('current');")
+        expected = self.schema()
+        for key in ("tables", "policies", "triggers", "functions", "enums", "indexes", "cron_jobs",
+                    "views", "rls", "grants", "raises", "seed", "comments"):
+            self.assertTrue(expected[key], key)
+        self.write("supabase/migrations/_foreign/old-project/20240101000000_schema.sql",
+                   sql.replace("orders", "foreign_orders").replace("order_state", "foreign_state").replace("ensure_order", "ensure_foreign"))
+        self.write("supabase/migrations/_superseded/20240102000000_seed.sql", "INSERT INTO public.orders (id) VALUES ('historical');")
+        self.assertEqual(self.schema(), expected)
+
+    def test_archive_only_repository_has_no_current_sql_schema(self):
+        self.write("db/migrations/_foreign/old.sql", "CREATE TABLE old_foreign (id uuid);")
+        self.write("db/migrations/_superseded/old.sql", "CREATE TABLE old_superseded (id uuid);")
+        schema = self.schema()
+        self.assertEqual(schema["sources"], [])
+        self.assertEqual(schema["tables"], {})
+
+    def test_exact_directory_names_leave_other_sql_sources_visible(self):
+        # O nome de um diretório acima da raiz do repo não muda seu significado.
+        self.root = self.root / "_foreign" / "project"
+        paths = [
+            "supabase/migrations/_foreign.sql",
+            "supabase/migrations/_superseded.sql",
+            "supabase/migrations/customer_foreign/active.sql",
+            "supabase/migrations/_superseded_backup/active.sql",
+            "packages/store/prisma/migrations/20260101/active.sql",
+            "db/current.sql",
+            "sql/current.sql",
+            "database/current.sql",
+            "prisma/current.sql",
+            "custom/schema.sql",
+        ]
+        for index, name in enumerate(paths):
+            self.write(name, f"CREATE TABLE current_{index} (id uuid);")
+        schema = self.schema()
+        self.assertEqual(schema["sources"], sorted(paths))
+        self.assertEqual(set(schema["tables"]), {f"current_{i}" for i in range(len(paths))})
+
+    def test_current_prisma_and_types_fallback_remain_available(self):
+        self.write("prisma/schema.prisma", "model Store {\n id String @id\n}\n")
+        self.write("src/database.types.ts", """
+export type Database = {
+  public: {
+    Tables: {
+      customers: {
+        Row: {
+          id: string
+        }
+      }
+    }
+  }
+}
+""")
+        schema = self.schema()
+        self.assertEqual(set(schema["tables"]), {"Store", "customers"})
+        self.assertEqual(schema["tables"]["Store"]["origin"], "prisma")
+        self.assertEqual(schema["tables"]["customers"]["origin"], "types.ts")
+
+    def test_large_generated_types_file_is_read_without_views_or_fake_functions(self):
+        self.write("supabase/migrations/20260101000000_orders.sql", "CREATE TABLE public.orders (id uuid);")
+        self.write("src/integrations/supabase/types.ts", """
+export type Database = {
+  public: {
+    Tables: {
+      orders: {
+        Row: {
+          id: string
+          added_in_dashboard: string | null
+        }
+      }
+    }
+    Views: {
+      v_orders: {
+        Row: {
+          id: string | null
+        }
+      }
+    }
+    Functions: {
+      short_fn: { Args: never; Returns: boolean }
+      long_fn: {
+        Args: { _id: string }
+        Returns: {
+          id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+        }
+      }
+      overloaded_fn:
+        | { Args: never; Returns: number }
+        | { Args: { _id: string }; Returns: number }
+    }
+  }
+}
+""" + "// " + "x" * (generator.MAX_FILE_BYTES + 1) + "\n")
+        schema = self.schema()
+        self.assertEqual(schema["types_file"], "src/integrations/supabase/types.ts")
+        self.assertEqual(list(schema["tables"]), ["orders"])
+        self.assertEqual([c["name"] for c in schema["tables"]["orders"]["columns"]], ["id", "added_in_dashboard"])
+        self.assertEqual(sorted(schema["functions"]), ["long_fn", "overloaded_fn", "short_fn"])
+
+    def test_archived_sql_is_not_current_code_but_remains_in_file_inventory(self):
+        current = self.write("supabase/migrations/20260101000000_retention.sql", "SELECT now() - interval '7 days';")
+        archived = self.write("supabase/migrations/_superseded/20250101000000_retention.sql", "SELECT now() - interval '365 days';")
+        self.assertTrue(generator.analyze_code_file(current, self.root)["temporal"])
+        self.assertIsNone(generator.analyze_code_file(archived, self.root))
+        files = generator.walk_repo(self.root, self.root / "output")
+        self.assertEqual(set(files), {current, archived})
+
+    def test_cli_rules_profile_uses_current_schema_and_temporal_rules(self):
+        current = "supabase/migrations/20260101000000_orders.sql"
+        archived = "supabase/migrations/_superseded/20250101000000_orders.sql"
+        self.write(current, "CREATE TABLE public.orders (id uuid, created_at timestamptz);\nSELECT now() - interval '7 days';")
+        self.write(archived, "CREATE TABLE public.orders (id uuid, historical_status text);\nSELECT now() - interval '365 days';")
+        subprocess.run([sys.executable, str(SCRIPT), "--repo", str(self.root), "--out", "output",
+                        "--profile", "regras", "--no-pointer"], check=True, capture_output=True, text=True, timeout=30)
+        context = json.loads((self.root / "output/context.json").read_text(encoding="utf-8"))
+        self.assertEqual(context["schema"]["sources"], [current])
+        self.assertEqual([c["name"] for c in context["schema"]["tables"]["orders"]["columns"]], ["id", "created_at"])
+        self.assertEqual(context["rules"]["temporal"], [{"file": current, "line": "SELECT now() - interval '7 days';"}])
+        self.assertIn(current, context["code_files"])
+        self.assertNotIn(archived, context["code_files"])
+        self.assertEqual(context["meta"]["files_total"], 2)
+        rendered = (self.root / "output/07-REGRAS-DE-NEGOCIO.md").read_text(encoding="utf-8")
+        self.assertIn("7 days", rendered)
+        self.assertNotIn("365 days", rendered)
+        self.assertNotIn("historical_status", rendered)
+        self.assertFalse((self.root / "AGENTS.md").exists())
+
+    def audit_issues(self):
+        subprocess.run([sys.executable, str(SCRIPT), "--repo", str(self.root), "--out", "output",
+                        "--profile", "regras", "--no-pointer"], check=True, capture_output=True, text=True, timeout=30)
+        context = json.loads((self.root / "output/context.json").read_text(encoding="utf-8"))
+        return sorted((issue["kind"], issue["msg"].split("`")[1], tuple(issue["where"])) for issue in context["audit"]["issues"])
+
+    def test_consistency_audit_ignores_fixtures_from_tests_and_tooling(self):
+        self.write("supabase/migrations/20260101000000_orders.sql",
+                   "CREATE TABLE public.orders (id uuid, total numeric);\nALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;\n"
+                   "CREATE POLICY read_all ON public.orders FOR SELECT USING (true);\n")
+        self.write("src/orders.ts", "supabase.from('orders').select('id, missing_col');\nsupabase.from('missing_table').select('*');\n"
+                                    "supabase.rpc('missing_rpc');\nsupabase.functions.invoke('missing-edge');\nsupabase.from(dynamicName);\n")
+        self.write("src/orders.test.ts", "supabase.from('orders').select('fixture_col');\nsupabase.from('fixture_table').select('*');\n"
+                                         "supabase.rpc('fixture_rpc');\nsupabase.functions.invoke('fixture-edge');\nsupabase.from(fixtureName);\n")
+        self.write("scripts/tool.mjs", "db.from('tool_table').select('*');\ndb.rpc('tool_rpc');\ndb.functions.invoke('tool-edge');\ndb.from(toolName);\n")
+        self.assertEqual(self.audit_issues(), [
+            ("coluna", "missing_col", ()), ("dinâmico", ".from(variável)", ("src/orders.ts",)), ("edge", "missing-edge", ("src/orders.ts",)),
+            ("rpc", "missing_rpc", ("src/orders.ts",)), ("tabela", "missing_table", ("src/orders.ts",))])
+
+    def test_supabase_secret_keys_and_bearer_tokens_are_redacted(self):
+        # Valores falsos, montados em pedaços para o próprio arquivo de teste não parecer um segredo.
+        secret_key = "sb_" + "secret_" + "AbCdEfGhIjKlMnOpQrStUvWxYz012345"
+        access_token = "sbp_" + "0123456789abcdef0123456789abcdef01234567"
+        bearer = "9f8e7d6c5b4a39281706f5e4d3c2b1a0"
+        source = self.write("src/keys.ts", f"throw new Error('chave obrigatória {secret_key}');\n"
+                                            f"throw new Error('token obrigatório {access_token}');\n"
+                                            f"throw new Error('header inválido: Bearer {bearer}');\n"
+                                            "throw new Error('Bearer ausente no header Authorization');\n")
+        errors = generator.analyze_code_file(source, self.root)["errors"]
+        self.assertEqual(errors, ["Bearer ausente no header Authorization", "chave obrigatória [REDACTED]",
+                                  "header inválido: [REDACTED]", "token obrigatório [REDACTED]"])
+        subprocess.run(["git", "init", "-q", "-b", "main"], cwd=self.root, check=True)
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "commit.gpgsign=false", "commit", "-q", "--allow-empty",
+                        "-m", f"chore: rotaciona {secret_key}"], cwd=self.root, check=True)
+        self.assertEqual([c["subject"] for c in generator.git_info(self.root)["commits"]], ["chore: rotaciona [REDACTED]"])
+
+    def test_storage_bucket_on_a_wrapped_chain_is_not_a_table(self):
+        source = self.write("supabase/functions/backup/index.ts",
+                            "const { error } = await admin.storage\n        .from('backups')\n        .upload(path, body);\n"
+                            "await admin.storage.from('inline-bucket').download(path);\n"
+                            "await admin\n  .from('orders')\n  .select('id');\n")
+        info = generator.analyze_code_file(source, self.root)
+        self.assertEqual(info["tables"], [{"table": "orders", "op": "select"}])
+        self.assertEqual(info["storage"], ["backups", "inline-bucket"])
+
+    def test_policy_with_quoted_roles_is_parsed_like_the_unquoted_form(self):
+        # Formato do pg_dump/supabase db dump: todo identificador vem entre aspas.
+        self.write("supabase/migrations/20260101000000_dump.sql",
+                   'CREATE TABLE "public"."t" ("id" integer);\n'
+                   'CREATE POLICY "p1" ON "public"."t" FOR SELECT TO "authenticated", "service_role" USING (("id" = 1));\n'
+                   "CREATE POLICY p2 ON public.t FOR DELETE TO authenticated USING (id = 2);\n")
+        self.assertEqual([(p["name"], p["cmd"], p["roles"], p["using"]) for p in self.schema()["policies"]],
+                         [("p1", "SELECT", "authenticated, service_role", '("id" = 1)'), ("p2", "DELETE", "authenticated", "id = 2")])
+
+    def test_trigger_restricted_to_columns_is_not_dropped(self):
+        self.write("supabase/migrations/20260101000000_triggers.sql",
+                   "CREATE TABLE public.t (a integer, b integer, status text);\n"
+                   "CREATE TRIGGER by_list BEFORE UPDATE OF a, b ON public.t FOR EACH ROW EXECUTE FUNCTION f();\n"
+                   'CREATE OR REPLACE TRIGGER "by_quoted" AFTER INSERT OR UPDATE OF "status" ON "public"."t" '
+                   'FOR EACH ROW EXECUTE FUNCTION "public"."g"();\n')
+        self.assertEqual([(t["name"], t["when"], t["table"], t["function"]) for t in self.schema()["triggers"]],
+                         [("by_list", "BEFORE UPDATE OF A, B", "t", "f"),
+                          ("by_quoted", 'AFTER INSERT OR UPDATE OF "STATUS"', "t", "g")])
+
+    def test_alter_table_applies_every_action_and_keeps_types_with_commas(self):
+        self.write("supabase/migrations/20260101000000_alter.sql",
+                   "CREATE TABLE public.t (id integer, v text DEFAULT 'a');\n"
+                   "ALTER TABLE public.t ADD COLUMN a text, ADD COLUMN IF NOT EXISTS valor DECIMAL(15,2) NOT NULL DEFAULT 0,\n"
+                   "  ADD COLUMN st text CHECK (st IN ('x','y'));\n"
+                   "ALTER TABLE public.t ALTER COLUMN id TYPE numeric(10,2) USING id::numeric(10,2), ALTER COLUMN v SET DEFAULT 'b';\n"
+                   "ALTER TABLE public.t ADD PRIMARY KEY (id);\n"
+                   "ALTER TABLE public.t ADD CONSTRAINT c1 CHECK (a <> ''), ADD CONSTRAINT c2 UNIQUE (a, st);\n")
+        table = self.schema()["tables"]["t"]
+        self.assertEqual([(c["name"], c["type"]) for c in table["columns"]],
+                         [("id", "numeric(10,2)"), ("v", "text DEFAULT 'b'"), ("a", "text"),
+                          ("valor", "DECIMAL(15,2) NOT NULL DEFAULT 0"), ("st", "text CHECK (st IN ('x','y'))")])
+        self.assertEqual(table["constraints"], ["PRIMARY KEY (id)", "constraint c1 CHECK (a <> '')", "constraint c2 UNIQUE (a, st)"])
+
+    def test_materialized_view_created_if_not_exists_is_listed(self):
+        self.write("supabase/migrations/20260101000000_views.sql",
+                   "CREATE MATERIALIZED VIEW IF NOT EXISTS public.mv_total WITH (fillfactor = 80) AS SELECT 1 AS total;\n"
+                   "CREATE OR REPLACE VIEW v AS SELECT 2;\n")
+        self.assertEqual(self.schema()["views"], {
+            "mv_total": {"body": "SELECT 1 AS total", "src": "supabase/migrations/20260101000000_views.sql"},
+            "v": {"body": "SELECT 2", "src": "supabase/migrations/20260101000000_views.sql"}})
+
+    def test_alter_policy_replaces_only_the_clauses_it_declares(self):
+        self.write("supabase/migrations/20260101000000_policy.sql",
+                   "CREATE TABLE public.t (id integer);\n"
+                   "CREATE POLICY own ON public.t FOR UPDATE TO authenticated USING (id = 1) WITH CHECK (id = 1);\n"
+                   "CREATE POLICY other ON public.t FOR SELECT USING (true);\n")
+        changed = self.write("supabase/migrations/20260102000000_tighten.sql",
+                             "ALTER POLICY own ON public.t\n  USING (id = 1 AND EXISTS (SELECT 1 FROM public.u WHERE u.open));\n"
+                             'ALTER POLICY "other" ON "public"."t" TO "service_role";\n')
+        policies = {p["name"]: p for p in self.schema()["policies"]}
+        self.assertEqual((policies["own"]["using"], policies["own"]["check"], policies["own"]["roles"], policies["own"]["cmd"]),
+                         ("id = 1 AND EXISTS (SELECT 1 FROM public.u WHERE u.open)", "id = 1", "authenticated", "UPDATE"))
+        self.assertEqual((policies["other"]["using"], policies["other"]["roles"]), ("true", "service_role"))
+        self.assertEqual(policies["own"]["src"], generator.rel(changed, self.root))
+
+    def test_comment_markers_inside_string_literals_do_not_swallow_statements(self):
+        self.write("supabase/migrations/20260101000000_strings.sql",
+                   "CREATE TABLE public.a (id integer); -- comentário real com 'aspas\n"
+                   "INSERT INTO public.a VALUES ('x -- não é comentário');\n"
+                   "CREATE TABLE public.b (id integer);\n"
+                   "COMMENT ON TABLE public.b IS 'usa /* e */ e it''s -- no texto';\n"
+                   "/* bloco\n   CREATE TABLE public.fantasma (id integer); */\n"
+                   "CREATE TABLE public.c (id integer);\n")
+        schema = self.schema()
+        self.assertEqual(sorted(schema["tables"]), ["a", "b", "c"])
+        self.assertEqual(schema["tables"]["b"]["comment"], "usa /* e */ e it's -- no texto")
+
+    def test_dollar_quote_tag_with_digits_keeps_the_function_body_whole(self):
+        self.write("supabase/migrations/20260101000000_fn.sql",
+                   "CREATE FUNCTION public.f1() RETURNS integer LANGUAGE plpgsql AS $fn1$\n"
+                   "BEGIN RAISE EXCEPTION 'saldo insuficiente; operação negada'; RETURN 1; END $fn1$;\n"
+                   "CREATE TABLE public.depois (id integer);\n")
+        schema = self.schema()
+        self.assertEqual(schema["functions"]["f1"]["raises"], ["saldo insuficiente; operação negada"])
+        self.assertEqual(list(schema["tables"]), ["depois"])
+
+
+if __name__ == "__main__":
+    unittest.main()

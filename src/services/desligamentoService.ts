@@ -1,4 +1,5 @@
-import { BaseService, ListOptions, ListResponse } from './baseService';
+import type { ListOptions, ListResponse } from './baseService';
+import { BaseService } from './baseService';
 import { auditLogger } from '@/utils/auditLogger';
 
 class DesligamentoService extends BaseService<any> {

@@ -130,6 +130,72 @@ export default function PlanosSaudePage() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['planos-saude'] }); setOpenPlano(false); toast.success('Plano cadastrado!'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar plano de saúde.'))});
 
+  const atualizarPlano = useMutation({
+    mutationFn: async ({ id, d }: { id: string; d: typeof formPlano }) => {
+      const { error } = await supabase
+        .from('planos_saude')
+        .update(
+          validateTablePayload(
+            'planos_saude',
+            {
+              operadora: d.operadora || null,
+              tipo_plano: d.tipo || null,
+              ans_registro: d.ans_registro || null,
+              numero_carteirinha: d.numero_carteirinha || null,
+              valor_mensal: d.valor_mensal ? Number(d.valor_mensal) : null,
+              percentual_colaborador: d.coparticipacao ? Number(d.coparticipacao) : null,
+            },
+            'PlanosSaudePage:planos_saude:update'
+          )
+        )
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['planos-saude'] });
+      setOpenPlano(false);
+      setEditingPlanoId(null);
+      setFormPlano(novoPlanoForm());
+      toast.success('Plano atualizado!');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar plano de saúde.')),
+  });
+
+  const excluirPlano = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('planos_saude').delete().eq('id', id).eq('empresa_id', empresaAtual!.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['planos-saude'] });
+      toast.success('Plano excluído');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao excluir plano de saúde.')),
+  });
+
+  const novoPlanoForm = () => ({
+    operadora: '',
+    tipo: 'saude',
+    valor_mensal: '',
+    coparticipacao: '',
+    ans_registro: '',
+    numero_carteirinha: '',
+  });
+
+  const abrirEdicaoPlano = (p: (typeof planos)[number]) => {
+    setEditingPlanoId(p.id);
+    setFormPlano({
+      operadora: p.operadora ?? '',
+      tipo: p.tipo_plano ?? 'saude',
+      valor_mensal: p.valor_mensal != null ? String(p.valor_mensal) : '',
+      coparticipacao: p.percentual_colaborador != null ? String(p.percentual_colaborador) : '',
+      ans_registro: p.ans_registro ?? '',
+      numero_carteirinha: p.numero_carteirinha ?? '',
+    });
+    setOpenPlano(true);
+  };
+
   const criarSeguro = useMutation({
     mutationFn: async (d: any) => {
       const { data, error } = await supabase.from('seguros_vida').insert({ ...d, empresa_id: empresaAtual?.id, valor_mensal: d.valor_mensal ? Number(d.valor_mensal) : null, capital_segurado: d.capital_segurado ? Number(d.capital_segurado) : null }).select().maybeSingle();
@@ -197,6 +263,34 @@ export default function PlanosSaudePage() {
                       <TableRow key={`${p.id}-ben`}>
                         <TableCell colSpan={5} className="p-4">
                           <BeneficiariosPlanoSection planoId={p.id} />
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Editar plano"
+                            title="Editar"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              abrirEdicaoPlano(p);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Excluir plano"
+                            title="Excluir"
+                            disabled={excluirPlano.isPending}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (confirm('Excluir este plano? Os beneficiários vinculados também serão removidos.'))
+                                excluirPlano.mutate(p.id);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
                         </TableCell>
                       </TableRow>
                     )}

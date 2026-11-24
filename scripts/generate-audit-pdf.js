@@ -11,7 +11,17 @@ const generatePDF = () => {
     
     doc.setFontSize(10);
     const lines = doc.splitTextToSize(mdContent, 180);
-    doc.text(lines, 10, 30);
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const lineHeight = 5;
+    let y = 30;
+    for (const line of lines) {
+      if (y + lineHeight > pageHeight - 10) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(line, 10, y);
+      y += lineHeight;
+    }
     
     const pdfOutput = doc.output('arraybuffer');
     fs.writeFileSync('AUDIT_REPORT.pdf', Buffer.from(pdfOutput));

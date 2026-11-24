@@ -555,7 +555,9 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
     [a, workflow]
   );
 
-  if (!admissao) return null;
+  const handleValidar = (docType: string, status: 'validado' | 'rejeitado') => {
+    validarDocumento.mutate({ admissaoId: a.id, docType, status });
+  };
 
   const responsavel = (a?.metadata?.responsavel ?? '').trim() || 'Não atribuído';
   const proximaAcao = proximaAcaoDaEtapa(a?.etapa);

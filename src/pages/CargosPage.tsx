@@ -1,18 +1,54 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useCargos } from '@/hooks/useCargos';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { Briefcase, Info } from 'lucide-react';
+import { Briefcase, Pencil, Power } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
-import { Cargo } from '@/types/entities';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'sonner';
+import type { Cargo } from '@/types/entities';
+import { parseMoedaBR } from '@/utils/format';
+
+interface CargoForm {
+  nome: string;
+  cbo: string;
+  descricao: string;
+  nivel_hierarquico: string;
+  salario_base: string;
+  ativo: boolean;
+}
+
+const EMPTY_FORM: CargoForm = {
+  nome: '',
+  cbo: '',
+  descricao: '',
+  nivel_hierarquico: '',
+  salario_base: '',
+  ativo: true,
+};
+
+function toForm(cargo: Cargo): CargoForm {
+  return {
+    nome: cargo.nome ?? '',
+    cbo: cargo.cbo ?? '',
+    descricao: cargo.descricao ?? '',
+    nivel_hierarquico: cargo.nivel_hierarquico != null ? String(cargo.nivel_hierarquico) : '',
+    salario_base: cargo.salario_base != null ? String(cargo.salario_base) : '',
+    ativo: cargo.ativo !== false,
+  };
+}
 
 export default function CargosPage() {
-  const { 
-    cargos, 
-    total, 
-    isLoading, 
+  const {
+    cargos,
+    total,
+    isLoading,
     isFetching,
     error,
     page,
@@ -22,17 +58,94 @@ export default function CargosPage() {
     search,
     setSearch,
     refetch,
-    isRefreshing
+    isRefreshing,
+    criar,
+    atualizar,
+    isCreating,
+    isUpdating,
   } = useCargos();
 
-  const handleSearchChange = useCallback((val: string) => {
-    setSearch(val);
-    setPage(1);
-  }, [setSearch, setPage]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editing, setEditing] = useState<Cargo | null>(null);
+  const [form, setForm] = useState<CargoForm>(EMPTY_FORM);
 
-  const handlePageChange = useCallback((p: number) => {
-    setPage(p);
-  }, [setPage]);
+  const openNovo = useCallback(() => {
+    setEditing(null);
+    setForm(EMPTY_FORM);
+    setDialogOpen(true);
+  }, []);
+
+  const openEditar = useCallback((cargo: Cargo) => {
+    setEditing(cargo);
+    setForm(toForm(cargo));
+    setDialogOpen(true);
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const nome = form.nome.trim();
+    if (nome.length < 2) {
+      toast.error('Informe o nome do cargo (mínimo 2 caracteres).');
+      return;
+    }
+    const salarioTxt = form.salario_base.trim();
+    const salario = salarioTxt ? parseMoedaBR(salarioTxt) : undefined;
+    if (salario !== undefined && (!Number.isFinite(salario) || salario < 0)) {
+      toast.error('Salário base inválido.');
+      return;
+    }
+    const nivelTxt = form.nivel_hierarquico.trim();
+    const nivel = nivelTxt ? Number(nivelTxt) : null;
+    if (nivel !== null && (!Number.isInteger(nivel) || nivel < 1)) {
+      toast.error('Nível hierárquico deve ser um número inteiro maior que zero.');
+      return;
+    }
+    const cbo = form.cbo.trim();
+    const payload: Record<string, unknown> = {
+      nome,
+      descricao: form.descricao.trim() || null,
+      nivel_hierarquico: nivel,
+      ativo: form.ativo,
+    };
+    // cbo/salario_base: o cargoSchema não aceita null; vazio no cadastro é omitido.
+    if (cbo || editing?.cbo) payload.cbo = cbo;
+    if (salario !== undefined) payload.salario_base = salario;
+    try {
+      if (editing) {
+        await atualizar({ id: editing.id, data: payload });
+      } else {
+        await criar(payload);
+      }
+      setDialogOpen(false);
+    } catch {
+      // erro já notificado via toast pelo useGenericCrud; mantém o diálogo aberto
+    }
+  };
+
+  const handleToggleAtivo = async (cargo: Cargo) => {
+    try {
+      await atualizar({ id: cargo.id, data: { ativo: cargo.ativo === false } });
+    } catch {
+      // erro já notificado via toast pelo useGenericCrud
+    }
+  };
+
+  const isSaving = isCreating || isUpdating;
+
+  const handleSearchChange = useCallback(
+    (val: string) => {
+      setSearch(val);
+      setPage(1);
+    },
+    [setSearch, setPage]
+  );
+
+  const handlePageChange = useCallback(
+    (p: number) => {
+      setPage(p);
+    },
+    [setPage]
+  );
 
   const formatCurrency = (v: number | null) => (v ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 

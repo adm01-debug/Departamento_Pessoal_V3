@@ -20,9 +20,22 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 
 export default function PerfilPage() {
-  const { user } = useAuth();
+  const { user, session, isAdmin } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Estado real do MFA (mesma consulta de MFASetup): fator TOTP verificado = habilitado.
+  const { data: mfaFactors, isLoading: mfaLoading } = useQuery({
+    queryKey: ['mfa-factors', user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase.auth.mfa.listFactors();
+      if (error) throw error;
+      return data;
+    },
+  });
+  const mfaHabilitado = !!mfaFactors?.totp?.some((f) => f.status === 'verified');
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['meu-perfil', user?.id],
@@ -42,6 +55,11 @@ export default function PerfilPage() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [pushStatus, setPushStatus] = useState<'supported' | 'unsupported' | 'loading'>('loading');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [senhaDialogOpen, setSenhaDialogOpen] = useState(false);
+  const [novaSenha, setNovaSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [alterandoSenha, setAlterandoSenha] = useState(false);
+  const ultimoAcesso = session?.user?.last_sign_in_at;
 
   useEffect(() => {
     async function checkPush() {
@@ -51,8 +69,7 @@ export default function PerfilPage() {
         return;
       }
       setPushStatus('supported');
-      const sub = await pushNotificationService.getSubscription();
-      setIsSubscribed(!!sub);
+      setIsSubscribed(await pushNotificationService.hasDeliverableSubscription());
     }
     checkPush();
   }, []);
@@ -112,6 +129,26 @@ export default function PerfilPage() {
       toast.error(safeErrorMessage(e, 'Erro ao atualizar perfil.'));
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAlterarSenha = async () => {
+    if (novaSenha !== confirmarSenha) {
+      toast.error('As senhas não coincidem.');
+      return;
+    }
+    setAlterandoSenha(true);
+    try {
+      const { warnings } = await authService.resetPassword(novaSenha);
+      toast.success('Senha alterada com sucesso!');
+      warnings?.forEach((w) => toast.warning(w));
+      setSenhaDialogOpen(false);
+      setNovaSenha('');
+      setConfirmarSenha('');
+    } catch (e: unknown) {
+      toast.error(safeErrorMessage(e, 'Erro ao alterar senha.'));
+    } finally {
+      setAlterandoSenha(false);
     }
   };
 

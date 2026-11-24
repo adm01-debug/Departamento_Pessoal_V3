@@ -18,9 +18,7 @@ const S1210_DADOS_VAZIO = {
 
 const S2240_DADOS = {
   cpfTrab: '555.444.333-22',
-  infoExpRisco: [
-    { codAgNoc: '02.01.001', dscAgNoc: 'Ruído', epcs: 'Enclausuramento acústico', limite: '85 dB' },
-  ],
+  infoExpRisco: [{ codAgNoc: '02.01.001', dscAgNoc: 'Ruído', epcs: 'Enclausuramento acústico', limite: '85 dB' }],
 };
 
 describe('S1210Pagamentos', () => {

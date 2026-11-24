@@ -31,8 +31,8 @@ export function calcularINSS(salarioBruto: number): number {
 
 export function calcularIRRF(
   salarioBruto: number,
-  dependentes: number = 0,
-  outrasDeducoes: number = 0,
+  dependentes = 0,
+  outrasDeducoes = 0,
   // Pensão alimentícia recebida é isenta de IRRF (Art. 6°, XXXIII, Lei 7.713/88)
   isPensaoAlimenticia: boolean = false,
 ): number {

@@ -18,6 +18,42 @@ import type { LooseRow } from '@/types/db';
 const BUCKET = 'documentos';
 const TIPOS_DOCUMENTO = ['Atestado', 'Certificado', 'Comprovante', 'Contrato', 'RG', 'CPF', 'Outro'];
 
+/**
+ * Em qual etapa a exclusao parou. A exclusao tem duas, nessa ordem: apagar o
+ * arquivo do Storage e depois apagar a linha do banco. O aviso ao usuario tem
+ * de dizer a verdade sobre o arquivo em cada caso, e `safeErrorMessage` cai no
+ * texto de fallback sempre que a mensagem do erro e interna (constraint, RLS,
+ * relation inexistente — ver INTERNAL_PATTERNS em utils/safeError.ts), que e
+ * justamente o caso comum de falha do banco.
+ */
+type EtapaExclusao = 'storage' | 'banco' | 'banco-sem-arquivo';
+
+function marcarEtapa(erro: unknown, etapa: EtapaExclusao): unknown {
+  if (erro && typeof erro === 'object') {
+    (erro as { etapaExclusao?: EtapaExclusao }).etapaExclusao = etapa;
+  }
+  return erro;
+}
+
+function etapaDoErro(erro: unknown): EtapaExclusao | undefined {
+  return erro && typeof erro === 'object' ? (erro as { etapaExclusao?: EtapaExclusao }).etapaExclusao : undefined;
+}
+
+function fallbackExclusao(etapa: EtapaExclusao | undefined): string {
+  // Falha no banco = o arquivo JA saiu do Storage e sobrou a linha apontando
+  // para ele. Repetir a exclusao resolve (remover um caminho que nao existe
+  // mais nao e erro no Storage), por isso a mensagem pede exatamente isso.
+  if (etapa === 'banco') {
+    return 'O arquivo foi removido, mas o registro não. Tente excluir novamente para concluir.';
+  }
+  // Registro sem arquivo no Storage: nao havia o que remover, entao a mensagem
+  // nao pode afirmar nem que o arquivo foi removido nem que esta guardado.
+  if (etapa === 'banco-sem-arquivo') {
+    return 'Nao foi possivel excluir o registro do documento.';
+  }
+  return 'Nao foi possivel remover o documento. O arquivo continua guardado.';
+}
+
 interface PortalDocumentosTabProps {
   navigate: (path: string) => void;
   colaboradorId?: string;

@@ -146,12 +146,22 @@ export default function TreinamentosPage() {
       getMockTreinamentosLista() ?? (await treinamentosService.listar(empresaAtual?.id)),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
-  const { data: cursos = [], isLoading: loadCursos } = useQuery({
+  const {
+    data: cursos = [],
+    isLoading: loadCursos,
+    isError: erroCursos,
+    refetch: recarregarCursos,
+  } = useQuery({
     queryKey: ['catalogo_cursos', empresaAtual?.id],
     queryFn: async (): Promise<any[]> => getMockCursos() ?? (await catalogoCursoService.listarCursos(empresaAtual!.id)),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
-  const { data: trilhas = [], isLoading: loadTrilhas } = useQuery({
+  const {
+    data: trilhas = [],
+    isLoading: loadTrilhas,
+    isError: erroTrilhas,
+    refetch: recarregarTrilhas,
+  } = useQuery({
     queryKey: ['trilhas', empresaAtual?.id],
     queryFn: async (): Promise<any[]> =>
       getMockTrilhas() ?? (await catalogoCursoService.listarTrilhas(empresaAtual!.id)),
@@ -168,7 +178,12 @@ export default function TreinamentosPage() {
       getMockInscricoes() ?? (await catalogoCursoService.listarInscricoes(empresaAtual!.id)),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
-  const { data: instancias = [], isLoading: loadInst } = useQuery({
+  const {
+    data: instancias = [],
+    isLoading: loadInst,
+    isError: erroInst,
+    refetch: recarregarInst,
+  } = useQuery({
     queryKey: ['treinamento_instancias', empresaAtual?.id],
     queryFn: async (): Promise<any[]> =>
       getMockInstancias() ?? (await catalogoCursoService.listarInstancias(empresaAtual!.id)),
@@ -360,8 +375,7 @@ export default function TreinamentosPage() {
   };
 
   // === Cursos ===
-  const [openCurso, setOpenCurso] = useState(false);
-  const [cursoForm, setCursoForm] = useState({
+  const cursoFormVazio = {
     nome: '',
     descricao: '',
     categoria: '',
@@ -369,30 +383,43 @@ export default function TreinamentosPage() {
     carga_horaria: '',
     obrigatorio: false,
     nr_relacionada: '',
-  });
+  };
+  const [openCurso, setOpenCurso] = useState(false);
+  const [cursoEditId, setCursoEditId] = useState<string | null>(null);
+  const [cursoForm, setCursoForm] = useState(cursoFormVazio);
   const criarCurso = useMutation({
-    mutationFn: () =>
-      catalogoCursoService.criarCurso({
+    mutationFn: () => {
+      const payload = {
         ...cursoForm,
         carga_horaria: cursoForm.carga_horaria ? Number(cursoForm.carga_horaria) : null,
-        empresa_id: empresaAtual?.id,
-      }),
+      };
+      return cursoEditId
+        ? catalogoCursoService.atualizarCurso(cursoEditId, payload, empresaAtual!.id)
+        : catalogoCursoService.criarCurso({ ...payload, empresa_id: empresaAtual?.id });
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['catalogo_cursos'] });
+      qc.invalidateQueries({ queryKey: ['inscricoes_cursos'] });
       setOpenCurso(false);
-      setCursoForm({
-        nome: '',
-        descricao: '',
-        categoria: '',
-        modalidade: 'presencial',
-        carga_horaria: '',
-        obrigatorio: false,
-        nr_relacionada: '',
-      });
-      toast.success('Curso criado!');
+      setCursoForm(cursoFormVazio);
+      toast.success(cursoEditId ? 'Curso atualizado!' : 'Curso criado!');
+      setCursoEditId(null);
     },
-    onError: () => toast.error('Erro ao criar curso'),
+    onError: () => toast.error(cursoEditId ? 'Erro ao atualizar curso' : 'Erro ao criar curso'),
   });
+  const editarCurso = (c: Tables<'catalogo_cursos'>) => {
+    setCursoEditId(c.id);
+    setCursoForm({
+      nome: c.nome,
+      descricao: c.descricao ?? '',
+      categoria: c.categoria ?? '',
+      modalidade: c.modalidade ?? 'presencial',
+      carga_horaria: c.carga_horaria != null ? String(c.carga_horaria) : '',
+      obrigatorio: !!c.obrigatorio,
+      nr_relacionada: c.nr_relacionada ?? '',
+    });
+    setOpenCurso(true);
+  };
   const excluirCurso = useMutation({
     mutationFn: (id: string) => catalogoCursoService.excluirCurso(id, empresaAtual!.id),
     onSuccess: () => {
@@ -507,6 +534,38 @@ export default function TreinamentosPage() {
       toast.success('Inscrição realizada!');
     },
     onError: () => toast.error('Erro ao inscrever'),
+  });
+  const atualizarInsc = useMutation({
+    mutationFn: ({ insc, status }: { insc: InscricaoComJoins; status: string }) =>
+      catalogoCursoService.atualizarInscricao(
+        insc.id,
+        {
+          colaborador_id: insc.colaborador_id,
+          curso_id: insc.curso_id,
+          status,
+          ...(status === 'concluido' ? { data_conclusao: format(new Date(), 'yyyy-MM-dd') } : {}),
+        },
+        empresaAtual!.id
+      ),
+    onSuccess: (_d, { status }) => {
+      qc.invalidateQueries({ queryKey: ['inscricoes_cursos'] });
+      if (status === 'concluido') qc.invalidateQueries({ queryKey: ['treinamento_certificados'] });
+      toast.success('Status da inscrição atualizado!');
+    },
+    onError: () => toast.error('Erro ao atualizar inscrição'),
+  });
+
+  // === Turmas / Instâncias ===
+  // A criação usa a operação JÁ existente `criarInstancia`; não há API nova.
+  const [openTurma, setOpenTurma] = useState(false);
+  const criarTurma = useMutation({
+    mutationFn: (dados: NovaTurmaPayload) => catalogoCursoService.criarInstancia(dados),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['treinamento_instancias'] });
+      setOpenTurma(false);
+      toast.success('Turma criada!');
+    },
+    onError: () => toast.error('Erro ao criar turma'),
   });
 
   // === Turmas / Instâncias ===
@@ -724,7 +783,7 @@ export default function TreinamentosPage() {
               <TreinamentosCascadeDialog open={openCurso} onOpenChange={setOpenCurso} blocks={2}>
                 <TreinamentosCascadeItem>
                   <DialogHeader>
-                    <DialogTitle>Novo Curso</DialogTitle>
+                    <DialogTitle>{cursoEditId ? 'Editar Curso' : 'Novo Curso'}</DialogTitle>
                   </DialogHeader>
                 </TreinamentosCascadeItem>
                 <TreinamentosCascadeItem>

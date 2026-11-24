@@ -14,17 +14,31 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const envRaw = fs.readFileSync('.env', 'utf8');
-const env = Object.fromEntries(
-  envRaw
-    .split('\n')
-    .map((l) => l.match(/^\s*([A-Z0-9_]+)\s*=\s*"?([^"\r\n]*)"?\s*$/))
-    .filter(Boolean)
-    .map((m) => [m[1], m[2]]),
-);
-const URL_ = env.VITE_SUPABASE_URL;
+function loadEnv() {
+  const envPath = path.resolve(import.meta.dirname, '../..', '.env');
+  if (!fs.existsSync(envPath)) return {};
+  const out = {};
+  for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
+    const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*"?([^"\r\n]*)"?\s*$/);
+    if (m) out[m[1]] = m[2];
+  }
+  return out;
+}
+
+const env = loadEnv();
+const URL_ = process.env.VITE_SUPABASE_URL || env.VITE_SUPABASE_URL;
 // Usa PUBLISHABLE_KEY (que casa com o projeto atual) preferencialmente
-const ANON = env.VITE_SUPABASE_PUBLISHABLE_KEY || env.VITE_SUPABASE_ANON_KEY;
+const ANON =
+  process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.VITE_SUPABASE_ANON_KEY ||
+  env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  env.VITE_SUPABASE_ANON_KEY;
+
+if (!URL_ || !ANON) {
+  console.error('[run-exhaustive] VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY ausentes — simulação ignorada neste ambiente.');
+  process.exit(0);
+}
+
 const BRIDGE = `${URL_}/functions/v1/external-db-bridge`;
 const ORIGIN_OK = 'https://unified-harmony-hub.lovable.app';
 
@@ -164,15 +178,15 @@ async function runRateBurst() {
 
   const t0 = Date.now();
   const contract = await runContract();
-  console.log(`✅ Contract: ${contract.pass}/${contract.total} (p95=${contract.p95}ms)`);
+  console.log(`${contract.fail === 0 ? '✅' : '❌'} Contract: ${contract.pass}/${contract.total} (p95=${contract.p95}ms)`);
 
   const latency = await runLatency();
   for (const [k, v] of Object.entries(latency)) {
-    console.log(`✅ Latency ${k}: p50=${v.p50} p95=${v.p95} p99=${v.p99} err=${v.errors}`);
+    console.log(`${v.errors === 0 ? '✅' : '❌'} Latency ${k}: p50=${v.p50} p95=${v.p95} p99=${v.p99} err=${v.errors}`);
   }
 
   const csrf = await runCsrf();
-  console.log(`✅ CSRF: ${csrf.pass}/${csrf.total}`);
+  console.log(`${csrf.pass === csrf.total ? '✅' : '❌'} CSRF: ${csrf.pass}/${csrf.total}`);
 
   const rate = await runRateBurst();
   console.log(`✅ Rate burst: codes=${JSON.stringify(rate.codes)} saw429=${rate.saw429}`);
@@ -190,4 +204,12 @@ async function runRateBurst() {
   fs.mkdirSync('/mnt/documents', { recursive: true });
   fs.writeFileSync('/mnt/documents/simulacao_exaustiva_v2.json', JSON.stringify(report, null, 2));
   console.log(`\n📝 /mnt/documents/simulacao_exaustiva_v2.json (${report.duration_s}s)`);
+
+  // Antes o script imprimia ✅ e saía 0 mesmo com cenários falhando.
+  const failed =
+    contract.fail > 0 || csrf.pass !== csrf.total || Object.values(latency).some((v) => v.errors > 0);
+  if (failed) {
+    console.error('❌ Simulação com divergências (contract/latency/CSRF) — veja o relatório.');
+    process.exit(1);
+  }
 })();

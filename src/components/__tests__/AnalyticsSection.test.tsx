@@ -79,6 +79,13 @@ vi.mock('@/components/dashboard/analytics/widgets', () => ({
   ESocialMonitorWidget: () => <div data-testid="esocial-monitor">Monitor eSocial</div>,
 }));
 
+// Mesmo padrão dos widgets acima: o filho é mockado para o teste focar no
+// AnalyticsSection. O real importa `useAuth` -> AuthContext -> queryClient, que
+// este arquivo mocka só parcialmente.
+vi.mock('@/components/dashboard/analytics/AlertasPreditivosWidget', () => ({
+  AlertasPreditivosWidget: () => <div data-testid="alertas-preditivos" />,
+}));
+
 vi.mock('@/components/dashboard/MiniSparkline', () => ({
   MiniSparkline: () => <div data-testid="mini-sparkline" />,
 }));
@@ -190,5 +197,31 @@ describe('AnalyticsSection', () => {
   it('renders Tudo em dia when pendencias empty', () => {
     render(<AnalyticsSection {...DEFAULT_PROPS} pendencias={[]} />);
     expect(screen.getByText('Tudo em dia!')).toBeInTheDocument();
+  });
+
+  // Os dois widgets já eram mockados neste arquivo (linhas 92-93) e nunca
+  // tinham sido afirmados: estavam definidos em `analytics/widgets.tsx`,
+  // re-exportados aqui, e NENHUM arquivo do `src` os renderizava — as views
+  // `vw_alertas_rh` (47 linhas em produção, todas de Art. 145) e
+  // `vw_cadastro_incompleto` (15) eram consultadas por componentes que nunca
+  // montavam. Estes dois casos impedem que isso volte a acontecer.
+  it('renderiza o card de Alertas de RH com o widget dentro', () => {
+    render(<AnalyticsSection {...DEFAULT_PROPS} />);
+    expect(screen.getByText('Alertas de RH')).toBeInTheDocument();
+    expect(screen.getByTestId('alertas-rh')).toBeInTheDocument();
+  });
+
+  it('renderiza o card de Cadastros incompletos com o widget dentro', () => {
+    render(<AnalyticsSection {...DEFAULT_PROPS} />);
+    expect(screen.getByText('Cadastros incompletos')).toBeInTheDocument();
+    expect(screen.getByTestId('cadastro-incompleto')).toBeInTheDocument();
+  });
+
+  // A edge `alertas-preditivos` estava publicada em produção sem nenhuma porta
+  // de entrada: nenhum arquivo do `src` a invocava. Este caso trava a ligação.
+  it('renderiza o card de Riscos previstos com o widget dentro', () => {
+    render(<AnalyticsSection {...DEFAULT_PROPS} />);
+    expect(screen.getByText('Riscos previstos')).toBeInTheDocument();
+    expect(screen.getByTestId('alertas-preditivos')).toBeInTheDocument();
   });
 });

@@ -11,6 +11,7 @@ import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';
+import { requireAal2 } from '../_shared/aal2.ts';
 import { captureException } from '../_shared/sentry.ts';
 import {
   beginIdempotency,
@@ -71,6 +72,7 @@ Deno.serve(async (req) => {
     );
 
     const { data: claims, error: claimsErr } = await supabase.auth.getUser();
+    const aal = requireAal2(req); if (!aal.ok) return aal.response!;
     if (claimsErr || !claims?.user?.id) {
       return createErrorResponse('Não autenticado', 401, 'UNAUTHORIZED');
     }

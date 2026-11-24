@@ -32,8 +32,12 @@ vi.mock('@/components/ui/select', () => ({
   SelectValue: ({ placeholder }: any) => <span>{placeholder}</span>,
 }));
 
+const useQueryMock = vi.fn((): { data: { salario_base: number } | null; isSuccess: boolean; isError?: boolean } => ({
+  data: { salario_base: 5000 },
+  isSuccess: true,
+}));
 vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn(() => ({ data: null })),
+  useQuery: () => useQueryMock(),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -52,7 +56,7 @@ vi.mock('@/utils/dateLocal', () => ({
   todayLocalISO: vi.fn(() => '2026-07-24'),
 }));
 
-import { NewLoanDialog } from '../descontos/NewLoanDialog';
+import { MARGEM_CONSIGNAVEL_BANCO, MARGEM_CONSIGNAVEL_TELA, NewLoanDialog } from '../descontos/NewLoanDialog';
 
 const COLABORADORES = [
   { id: 'c1', nome_completo: 'Ana Lima' },

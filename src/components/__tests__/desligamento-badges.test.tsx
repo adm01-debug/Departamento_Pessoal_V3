@@ -35,8 +35,8 @@ describe('TipoBadge', () => {
     expect(screen.getByText('Sem Justa Causa')).toBeInTheDocument();
   });
 
-  it('renders "Justa Causa" for tipo com_justa_causa', () => {
-    render(<TipoBadge tipo="com_justa_causa" />);
+  it('renders "Justa Causa" for tipo justa_causa', () => {
+    render(<TipoBadge tipo="justa_causa" />);
     expect(screen.getByText('Justa Causa')).toBeInTheDocument();
   });
 
@@ -45,14 +45,14 @@ describe('TipoBadge', () => {
     expect(screen.getByText('Pedido Demissão')).toBeInTheDocument();
   });
 
-  it('renders "Acordo Mútuo" for tipo acordo_mutuo', () => {
-    render(<TipoBadge tipo="acordo_mutuo" />);
-    expect(screen.getByText('Acordo Mútuo')).toBeInTheDocument();
+  it('renders "Acordo" for tipo acordo', () => {
+    render(<TipoBadge tipo="acordo" />);
+    expect(screen.getByText('Acordo')).toBeInTheDocument();
   });
 
-  it('renders "Término Contrato" for tipo termino_contrato', () => {
-    render(<TipoBadge tipo="termino_contrato" />);
-    expect(screen.getByText('Término Contrato')).toBeInTheDocument();
+  it('renders "Fim de Contrato" for tipo fim_contrato', () => {
+    render(<TipoBadge tipo="fim_contrato" />);
+    expect(screen.getByText('Fim de Contrato')).toBeInTheDocument();
   });
 
   it('renders raw tipo for unknown tipo', () => {

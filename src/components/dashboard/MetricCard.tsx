@@ -51,6 +51,25 @@ const toneStyles: Record<MetricTone, string> = {
   success: 'bg-success/10 text-success',
 };
 
+/**
+ * Tom do ícone. Neutro por padrão (primary): vermelho fica reservado a risco e
+ * âmbar a atenção — não há cor por card, como pede o design system.
+ */
+export type MetricTone = 'primary' | 'warning' | 'destructive' | 'muted' | 'info' | 'accent' | 'success';
+
+const toneStyles: Record<MetricTone, string> = {
+  primary: 'bg-primary/10 text-primary',
+  warning: 'bg-warning/10 text-warning',
+  destructive: 'bg-destructive/10 text-destructive',
+  muted: 'bg-muted text-muted-foreground',
+  info: 'bg-info/10 text-info',
+  accent: 'bg-xp/10 text-xp',
+  // `success` adicionado junto do redesign de Admissões (KPI "Finalizadas" usa o
+  // verde semântico do sistema). É só mais um valor do union: nenhum call site
+  // existente muda de aparência.
+  success: 'bg-success/10 text-success',
+};
+
 interface MetricCardProps {
   title: string;
   value: string | number;

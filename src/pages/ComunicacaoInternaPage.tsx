@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Spinner } from '@/components/ui/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -19,6 +20,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
@@ -36,7 +38,8 @@ const statusEticaColors: Record<string, string> = { aberto: 'default', em_analis
 
 export default function ComunicacaoInternaPage() {
   const { empresaAtual } = useEmpresas();
-  const { user } = useAuth();
+  const { user, isAdmin, hasRole } = useAuth();
+  const podeGerirComunicados = isAdmin || hasRole('rh');
   const qc = useQueryClient();
   const [openCom, setOpenCom] = useState(false);
   const [openEtica, setOpenEtica] = useState(false);
@@ -44,6 +47,8 @@ export default function ComunicacaoInternaPage() {
   const [filtroTipo, setFiltroTipo] = useState('todos');
   const [formCom, setFormCom] = useState({ titulo: '', conteudo: '', tipo: 'aviso', prioridade: 1, fixado: false });
   const [formEtica, setFormEtica] = useState({ categoria: 'outro', descricao: '', anonimo: true });
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [cienteEdicao, setCienteEdicao] = useState(false);
 
   // Realtime for comunicados
   useEffect(() => {
@@ -89,6 +94,40 @@ export default function ComunicacaoInternaPage() {
     mutationFn: () => comunicacaoService.criarComunicado({ ...formCom, empresa_id: empresaAtual?.id, ativo: true }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['comunicados'] }); setOpenCom(false); toast.success('Comunicado publicado!'); setFormCom({ titulo: '', conteudo: '', tipo: 'aviso', prioridade: 1, fixado: false }); },
     onError: () => toast.error('Erro ao publicar')});
+
+  const editarCom = useMutation({
+    mutationFn: (id: string) => comunicacaoService.atualizarComunicado(id, formCom, empresaAtual!.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['comunicados'] });
+      setOpenCom(false);
+      setEditandoId(null);
+      setCienteEdicao(false);
+      toast.success('Comunicado atualizado!');
+      setFormCom({ titulo: '', conteudo: '', tipo: 'aviso', prioridade: 1 });
+    },
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao atualizar comunicado')),
+  });
+
+  const abrirEdicao = (c: Tables<'comunicados'>) => {
+    setEditandoId(c.id);
+    setCienteEdicao(false);
+    setFormCom({
+      titulo: c.titulo,
+      conteudo: c.conteudo ?? '',
+      tipo: c.tipo ?? 'aviso',
+      prioridade: c.prioridade ?? 1,
+    });
+    setOpenCom(true);
+  };
+
+  const onOpenComChange = (open: boolean) => {
+    setOpenCom(open);
+    if (!open && editandoId) {
+      setEditandoId(null);
+      setCienteEdicao(false);
+      setFormCom({ titulo: '', conteudo: '', tipo: 'aviso', prioridade: 1 });
+    }
+  };
 
   const criarEtica = useMutation({
     mutationFn: () => comunicacaoService.criarDenuncia({ ...formEtica, empresa_id: empresaAtual?.id }),

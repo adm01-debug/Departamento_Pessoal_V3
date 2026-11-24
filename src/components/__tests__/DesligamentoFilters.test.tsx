@@ -41,4 +41,39 @@ describe('DesligamentoFilters', () => {
     render(<DesligamentoFilters {...defaultProps} />);
     expect(screen.getByText('Todos os Tipos')).toBeInTheDocument();
   });
+
+  // Controle que aceita clique e nao faz nada e pior que controle ausente: a
+  // pagina de hoje passa busca, status e tipo, e os outros dois caiam num
+  // handler vazio (o usuario escolhia "Ultimos 3 meses" e a lista nao mudava).
+  it('esconde Departamento e Mais filtros quando a pagina nao oferece os callbacks', () => {
+    render(
+      <DesligamentoFilters
+        search=""
+        onSearchChange={vi.fn()}
+        statusFilter="todos"
+        onStatusChange={vi.fn()}
+        tipoFilter="todos"
+        onTipoChange={vi.fn()}
+      />
+    );
+    expect(screen.queryByText('Departamento')).not.toBeInTheDocument();
+    expect(screen.queryByText('Mais filtros')).not.toBeInTheDocument();
+  });
+
+  it('mostra os dois assim que os callbacks existem', () => {
+    render(
+      <DesligamentoFilters
+        search=""
+        onSearchChange={vi.fn()}
+        statusFilter="todos"
+        onStatusChange={vi.fn()}
+        tipoFilter="todos"
+        onTipoChange={vi.fn()}
+        onDepartamentoChange={vi.fn()}
+        onPeriodoChange={vi.fn()}
+      />
+    );
+    expect(screen.getByText('Departamento')).toBeInTheDocument();
+    expect(screen.getByText('Mais filtros')).toBeInTheDocument();
+  });
 });

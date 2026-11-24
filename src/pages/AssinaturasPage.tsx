@@ -1,5 +1,7 @@
 import { PageTitle } from '@/components/PageTitle';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { PageLayout } from '@/components/layout/PageLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,6 +14,9 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAssinaturas } from '@/hooks/useAssinaturas';
+import { useAdmissoes } from '@/hooks/useAdmissoes';
+import type { Tables } from '@/integrations/supabase/types';
+import { DetalhesAdmissaoDialog } from '@/components/admissoes/DetalhesAdmissaoDialog';
 
 const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
   pendente: { label: 'Pendente', color: 'bg-warning/10 text-warning border-warning/30', icon: Clock },
@@ -24,6 +29,21 @@ export default function AssinaturasPage(): React.ReactElement {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<string>('todos');
   const { documentos, stats, isLoading, refetch } = useAssinaturas();
+  const navigate = useNavigate();
+  // Admissões da empresa atual (tenant-scoped): o token de assinatura pertence a
+  // uma admissão, e o detalhe dela (dados, contrato, link de assinatura) já
+  // existe em DetalhesAdmissaoDialog.
+  const { admissoes, isLoading: loadingAdmissoes } = useAdmissoes();
+  const [selectedAdmissao, setSelectedAdmissao] = useState<Tables<'admissoes'> | null>(null);
+
+  const visualizar = (admissaoId: string) => {
+    const admissao = admissoes.find((a) => a.id === admissaoId);
+    if (!admissao) {
+      toast.error('Admissão deste documento não encontrada na empresa atual.');
+      return;
+    }
+    setSelectedAdmissao(admissao);
+  };
 
   const filtered = documentos
     .filter(d => filter === 'todos' || d.status === filter)
@@ -155,6 +175,12 @@ export default function AssinaturasPage(): React.ReactElement {
           </div>
         )}
       </PageLayout>
+
+      <DetalhesAdmissaoDialog
+        admissao={selectedAdmissao}
+        open={!!selectedAdmissao}
+        onOpenChange={(open) => !open && setSelectedAdmissao(null)}
+      />
     </>
   );
 }

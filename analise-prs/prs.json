@@ -1,0 +1,113 @@
+{
+  "gerado_em": "2026-10-31T15:52:00-03:00",
+  "main_sha": "49bcf8f29ee5be1a7c8c63bd7ccf1ebd80d81c25",
+  "total_inicial": 6,
+  "prs_analisadas": 6,
+  "prs_mergeadas_nesta_sessao": [
+    {
+      "numero": 309,
+      "titulo": "fix(admissoes): S-2200 + email pré-admissão",
+      "autor": "devin",
+      "veredito": "MERGEAR",
+      "merge_sha": "3d2f0d5e",
+      "metodo": "squash",
+      "ci": "success"
+    },
+    {
+      "numero": 313,
+      "titulo": "fix(rescisao): modalidades + RPC pagamento",
+      "autor": "devin",
+      "veredito": "MERGEAR",
+      "merge_sha": "219c2f93",
+      "metodo": "squash",
+      "ci": "success"
+    },
+    {
+      "numero": 317,
+      "titulo": "fix(govbr+esocial): login anônimo + XML S-2299",
+      "autor": "devin",
+      "veredito": "MERGEAR",
+      "merge_sha": "271d5b5e",
+      "metodo": "squash",
+      "ci": "success"
+    },
+    {
+      "numero": 319,
+      "titulo": "docs: pendências externas fora de escopo",
+      "autor": "devin",
+      "veredito": "MERGEAR",
+      "merge_sha": "e1a18efd",
+      "metodo": "squash",
+      "ci": "success"
+    },
+    {
+      "numero": 322,
+      "titulo": "chore: código órfão §8.3, liga LanguageSelector/PDF-PDI",
+      "autor": "devin",
+      "veredito": "MERGEAR",
+      "merge_sha": "7db8ba84",
+      "metodo": "squash",
+      "ci": "success"
+    },
+    {
+      "numero": 330,
+      "titulo": "docs: reconciliação de auditorias anteriores — analise-prs/auditorias-anteriores.md",
+      "autor": "adm01-debug",
+      "veredito": "MERGEAR",
+      "merge_sha": "199c855e",
+      "metodo": "squash",
+      "ci": "success"
+    },
+    {
+      "numero": 331,
+      "titulo": "chore: suplemento reconciliação auditorias — D-27/D-37/D-38/D-39/D-40",
+      "autor": "adm01-debug",
+      "veredito": "MERGEAR",
+      "merge_sha": "49bcf8f2",
+      "metodo": "squash",
+      "ci": "success"
+    }
+  ],
+  "prs_abertas": [
+    {
+      "numero": 315,
+      "titulo": "fix(security): gaps V4 — bridge hardening, aal2 nas edges, cert via edge, creds fora do repo",
+      "autor": "devin/1793220119-security-gaps",
+      "head_sha": "36414849e6508c4ef7ba7523da095892a9c10ec4",
+      "base": "main",
+      "arquivos_criticos": [".github/workflows/gitleaks.yml", ".github/workflows/security.yml"],
+      "veredito": "DECISÃO HUMANA",
+      "motivo": "Toca .github/workflows/ — Regra 8 do Fluxo Git. Requer revisão humana.",
+      "ci": "unknown"
+    }
+  ],
+  "prs_fechadas_sem_merge": [
+    {
+      "numero": 209,
+      "titulo": "fix(db): quatro rotinas agendadas que falhavam todo dia voltam a rodar",
+      "branch": "claude/fix-rotinas-agendadas-261012-0737",
+      "fechada_em": "2026-10-29T20:18:24Z",
+      "motivo_fechamento": "Toca .github/workflows/canonical-migrations.yml e ci.yml — Regra 8. Fechada sem merge.",
+      "pendencia": "Migration 20261012130000_rotinas_agendadas_falhando.sql NÃO aplicada ao main — rotinas agendadas podem ainda falhar.",
+      "acao_recomendada": "Separar migration da mudança de workflow; aplicar migration em PR sem workflows."
+    },
+    {
+      "numero": 328,
+      "titulo": "Create main.yml",
+      "branch": "adm01-debug-patch-1",
+      "fechada_em": "desconhecida",
+      "motivo_fechamento": "Toca .github/workflows/main.yml — Regra 8. Fechada sem merge."
+    }
+  ],
+  "branches_sem_pr": [
+    {
+      "nome": "muri",
+      "commits_ahead": 54,
+      "commits_behind": 355,
+      "primeiro_commit": "Layout Recrutamento e Seleção - Pipeline e Candidatos",
+      "conteudo": "Feature stream de Recrutamento & Seleção / Nine-box / Desempenho com +240 scripts _tmp-*.mjs e frames de animação. Desenvolvida por agente separado antes de Jul/2026.",
+      "veredito": "DECISÃO HUMANA",
+      "motivo": "355 commits atrás do main, sem PR, conteúdo de feature stream diferente. Merge exigiria rebase e análise completa de conflitos."
+    }
+  ]
+}

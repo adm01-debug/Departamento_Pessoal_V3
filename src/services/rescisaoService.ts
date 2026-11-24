@@ -1,5 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { calcularRescisao } from '@/utils/rescisaoCalc';
+import { itemizarVerbasRescisorias } from '@/utils/rescisaoVerbas';
+import type { VerbaRescisoria } from '@/utils/rescisaoVerbas';
 import { auditLogger } from '@/utils/auditLogger';
 import { loggerService } from './loggerService';
 import { vinculoService } from './vinculoService';
@@ -104,6 +106,8 @@ export const rescisaoService = {
         .single();
 
       if (updateError) throw updateError;
+
+      await persistirVerbasRescisorias(id, itemizarVerbasRescisorias(resultado));
 
       await auditLogger.log({
         tabela: 'desligamentos',
@@ -258,6 +262,9 @@ export const rescisaoService = {
         .single();
 
       if (error) throw error;
+      const data = (resp as { desligamento?: unknown } | null)?.desligamento;
+      if (!data) throw new Error('Pagamento não confirmado pelo servidor');
+      const pago = (Array.isArray(data) ? data[0] : data) as Tables<'desligamentos'>;
 
       const { error: colabError } = await supabase
         .from('colaboradores')
@@ -282,7 +289,7 @@ export const rescisaoService = {
         dados_novos: { status: 'pago', etapa: 'concluido', colaborador_desativado: true },
       });
 
-      return data;
+      return pago;
     } catch (e: unknown) {
       if (e instanceof Error) throw e;
       throw new Error(String(e), { cause: e });

@@ -57,6 +57,19 @@ export interface RescisaoResult {
   timestamp: string;
 }
 
+/** Uma linha da memória de cálculo: sobre quanto incidiu e quanto foi retido. */
+export interface LinhaBaseCalculo {
+  descricao: string;
+  base: number;
+  encargo: number;
+}
+
+/** Alíquota EFETIVA em % (encargo ÷ base), nunca uma alíquota nominal fixa. */
+export function aliquotaEfetiva(linha: LinhaBaseCalculo): number {
+  if (!linha.base) return 0;
+  return Math.round((linha.encargo / linha.base) * 10000) / 100;
+}
+
 export interface RescisaoParams {
   salario: number;
   dataAdmissao: string;

@@ -1,0 +1,4 @@
+config.json
+*.dpapi
+coletor.log*
+coletor.lock

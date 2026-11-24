@@ -1,0 +1,258 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import { LIMITE_COMENTARIOS, contarComentarios, encontrarIssue, abrirOuRotacionar, fecharSeAberta } from "./issue-rotativa.mjs";
+
+// --- utilidades de mock ---
+
+function mkGh(handlers) {
+  return async (method, path, body) => {
+    const key = `${method} ${path.replace(/\?.*$/u, "")}`;
+    // exact match first
+    const exactFn = handlers[key];
+    if (exactFn) return exactFn(body, path);
+    // then regex
+    for (const [pattern, fn] of Object.entries(handlers)) {
+      if (key === pattern || new RegExp(pattern, "u").test(key)) {
+        return fn(body, path);
+      }
+    }
+    throw new Error(`gh mock não coberto: ${method} ${path}`);
+  };
+}
+
+test("LIMITE_COMENTARIOS é 20", () => {
+  assert.equal(LIMITE_COMENTARIOS, 20);
+});
+
+// --- contarComentarios ---
+
+test("contarComentarios: retorna 0 para lista vazia", async () => {
+  const gh = mkGh({ "GET /repos/o/r/issues/1/comments": () => [] });
+  assert.equal(await contarComentarios(gh, "o", "r", 1), 0);
+});
+
+test("contarComentarios: retorna total de página única", async () => {
+  const gh = mkGh({ "GET /repos/o/r/issues/1/comments": () => Array(5).fill({}) });
+  assert.equal(await contarComentarios(gh, "o", "r", 1), 5);
+});
+
+test("contarComentarios: pagina quando retorna 100 itens", async () => {
+  let page = 0;
+  const gh = mkGh({
+    "GET /repos/o/r/issues/1/comments": (_, path) => {
+      page++;
+      if (page === 1) return Array(100).fill({});
+      if (page === 2) return Array(7).fill({});
+      return [];
+    },
+  });
+  assert.equal(await contarComentarios(gh, "o", "r", 1), 107);
+});
+
+test("contarComentarios: resposta que não é array (erro de API) avisa em vez de ficar indistinguível de lista vazia", async () => {
+  const gh = mkGh({ "GET /repos/o/r/issues/1/comments": () => ({ message: "rate limited" }) });
+  const original = console.error;
+  const avisos = [];
+  console.error = (msg) => avisos.push(msg);
+  try {
+    assert.equal(await contarComentarios(gh, "o", "r", 1), 0);
+  } finally {
+    console.error = original;
+  }
+  assert.ok(avisos.some((m) => m.includes("::warning::")), "tem que avisar que a resposta não era a esperada");
+});
+
+// --- encontrarIssue ---
+
+test("encontrarIssue: retorna null quando lista não é array", async () => {
+  const gh = mkGh({ "GET /repos/o/r/issues": () => null });
+  assert.equal(await encontrarIssue(gh, "o", "r", "bot-alert", "Alerta"), null);
+});
+
+test("encontrarIssue: retorna null quando nenhum título bate", async () => {
+  const gh = mkGh({ "GET /repos/o/r/issues": () => [{ title: "Outro" }] });
+  assert.equal(await encontrarIssue(gh, "o", "r", "bot-alert", "Alerta"), null);
+});
+
+test("encontrarIssue: retorna a issue com título correto", async () => {
+  const issue = { number: 42, title: "Alerta" };
+  const gh = mkGh({ "GET /repos/o/r/issues": () => [{ title: "Outro" }, issue] });
+  assert.deepEqual(await encontrarIssue(gh, "o", "r", "bot-alert", "Alerta"), issue);
+});
+
+test("encontrarIssue: pagina quando a issue alvo não está na 1ª página (regressão: antes só pedia per_page=10 sem paginar)", async () => {
+  const alvo = { number: 999, title: "Alerta" };
+  let page = 0;
+  const gh = mkGh({
+    "GET /repos/o/r/issues": () => {
+      page++;
+      if (page === 1) return Array(100).fill({ title: "Outro" });
+      if (page === 2) return [{ title: "Outro" }, alvo];
+      return [];
+    },
+  });
+  assert.deepEqual(await encontrarIssue(gh, "o", "r", "bot-alert", "Alerta"), alvo);
+  assert.equal(page, 2, "tem que ter pedido a 2ª página");
+});
+
+// Sem timer/Promise.race: um mock que resolve na hora nunca cede a vez pro
+// event loop processar a fase de timers (microtasks em cadeia esgotam o loop
+// antes de qualquer setTimeout dar a chance de rodar) — um teste baseado em
+// timeout ficaria pendurado para sempre junto com o bug, em vez de falhar
+// rápido. O teto de segurança aqui é síncrono: o próprio mock lança erro
+// bem acima do teto esperado (100), nunca dependendo do relógio.
+test("encontrarIssue: tem teto anti-loop-infinito — API que sempre devolve página cheia não trava para sempre", async () => {
+  let chamadas = 0;
+  const gh = mkGh({
+    "GET /repos/o/r/issues": () => {
+      chamadas++;
+      if (chamadas > 150) throw new Error("loop sem teto: mock abortou após 150 chamadas");
+      return Array(100).fill({ title: "nunca bate" });
+    },
+  });
+  const original = console.error;
+  console.error = () => {};
+  let resultado;
+  try {
+    resultado = await encontrarIssue(gh, "o", "r", "bot-alert", "Alvo");
+  } finally {
+    console.error = original;
+  }
+  assert.equal(resultado, null);
+  assert.ok(chamadas <= 100, `teto deveria limitar a 100 páginas, fez ${chamadas} chamadas`);
+});
+
+test("contarComentarios: tem teto anti-loop-infinito — API que sempre devolve página cheia não trava para sempre", async () => {
+  let chamadas = 0;
+  const gh = mkGh({
+    "GET /repos/o/r/issues/1/comments": () => {
+      chamadas++;
+      if (chamadas > 150) throw new Error("loop sem teto: mock abortou após 150 chamadas");
+      return Array(100).fill({});
+    },
+  });
+  const original = console.error;
+  console.error = () => {};
+  let total;
+  try {
+    total = await contarComentarios(gh, "o", "r", 1);
+  } finally {
+    console.error = original;
+  }
+  assert.equal(total, 10000);
+  assert.ok(chamadas <= 100, `teto deveria limitar a 100 páginas, fez ${chamadas} chamadas`);
+});
+
+test("encontrarIssue: para de paginar e retorna null quando a página vem incompleta sem achar o título", async () => {
+  let chamadas = 0;
+  const gh = mkGh({
+    "GET /repos/o/r/issues": () => {
+      chamadas++;
+      return [{ title: "Outro" }]; // menos que 100 = última página
+    },
+  });
+  assert.equal(await encontrarIssue(gh, "o", "r", "bot-alert", "Alerta"), null);
+  assert.equal(chamadas, 1, "página incompleta não deveria gerar nova chamada");
+});
+
+// --- abrirOuRotacionar ---
+
+test("abrirOuRotacionar: cria issue quando não existe", async () => {
+  const calls = [];
+  const gh = mkGh({
+    "GET /repos/o/r/issues": () => [],
+    "POST /repos/o/r/labels": () => ({}),
+    "POST /repos/o/r/issues": (body) => { calls.push({ op: "criar", body }); return { number: 10 }; },
+  });
+  const num = await abrirOuRotacionar({ gh, owner: "o", repo: "r", label: "L", title: "T", body: "B" });
+  assert.equal(num, 10);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].body.title, "T");
+});
+
+test("abrirOuRotacionar: adiciona comentário quando issue existe com ≤ 20 comentários", async () => {
+  const issue = { number: 5, title: "T" };
+  const calls = [];
+  const gh = mkGh({
+    "GET /repos/o/r/issues": () => [issue],
+    "GET /repos/o/r/issues/5/comments": () => Array(15).fill({}),
+    "POST /repos/o/r/issues/5/comments": (body) => { calls.push(body); return {}; },
+  });
+  const num = await abrirOuRotacionar({ gh, owner: "o", repo: "r", label: "L", title: "T", body: "B" });
+  assert.equal(num, 5);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].body, "B");
+});
+
+test("abrirOuRotacionar: rotaciona quando issue tem 21 comentários (> LIMITE)", async () => {
+  const issue = { number: 7, title: "T" };
+  const calls = [];
+  const gh = mkGh({
+    "GET /repos/o/r/issues": () => [issue],
+    "GET /repos/o/r/issues/7/comments": () => Array(21).fill({}),
+    "POST /repos/o/r/issues/7/comments": (body) => { calls.push({ op: "resumo", issue: 7, body }); return {}; },
+    "PATCH /repos/o/r/issues/7": (body) => { calls.push({ op: "fechar", body }); return {}; },
+    "POST /repos/o/r/labels": () => ({}),
+    "POST /repos/o/r/issues": (body) => { calls.push({ op: "nova", body }); return { number: 99 }; },
+  });
+  const num = await abrirOuRotacionar({ gh, owner: "o", repo: "r", label: "L", title: "T", body: "ALERTA" });
+  assert.equal(num, 99);
+  const ops = calls.map((c) => c.op);
+  assert.deepEqual(ops, ["resumo", "fechar", "nova"]);
+  assert.ok(calls[0].body.body.includes("rotacionada"), "comentário de resumo deve mencionar rotacionada");
+  assert.equal(calls[1].body.state, "closed");
+  assert.ok(calls[2].body.body.includes("#7"), "nova issue deve linkar para a anterior");
+});
+
+test("abrirOuRotacionar: não rotaciona com exatamente 20 comentários (= LIMITE)", async () => {
+  const issue = { number: 8, title: "T" };
+  const calls = [];
+  const gh = mkGh({
+    "GET /repos/o/r/issues": () => [issue],
+    "GET /repos/o/r/issues/8/comments": () => Array(20).fill({}),
+    "POST /repos/o/r/issues/8/comments": (body) => { calls.push({ op: "comentario", body }); return {}; },
+  });
+  const num = await abrirOuRotacionar({ gh, owner: "o", repo: "r", label: "L", title: "T", body: "B" });
+  assert.equal(num, 8);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].op, "comentario");
+});
+
+// --- fecharSeAberta ---
+
+test("fecharSeAberta: não faz nada se issue não existe", async () => {
+  let fechou = false;
+  const gh = mkGh({
+    "GET /repos/o/r/issues": () => [],
+    "PATCH /repos/o/r/issues/1": () => { fechou = true; return {}; },
+  });
+  await fecharSeAberta(gh, "o", "r", "L", "T");
+  assert.equal(fechou, false);
+});
+
+test("fecharSeAberta: fecha com mensagem padrão se issue existe", async () => {
+  const issue = { number: 3, title: "T" };
+  const calls = [];
+  const gh = mkGh({
+    "GET /repos/o/r/issues": () => [issue],
+    "POST /repos/o/r/issues/3/comments": (body) => { calls.push({ op: "comentario", body }); return {}; },
+    "PATCH /repos/o/r/issues/3": (body) => { calls.push({ op: "fechar", body }); return {}; },
+  });
+  await fecharSeAberta(gh, "o", "r", "L", "T");
+  assert.equal(calls.length, 2);
+  assert.equal(calls[1].op, "fechar");
+  assert.equal(calls[1].body.state, "closed");
+});
+
+test("fecharSeAberta: fecha com mensagem personalizada", async () => {
+  const issue = { number: 4, title: "T" };
+  const calls = [];
+  const gh = mkGh({
+    "GET /repos/o/r/issues": () => [issue],
+    "POST /repos/o/r/issues/4/comments": (body) => { calls.push(body.body); return {}; },
+    "PATCH /repos/o/r/issues/4": () => ({}),
+  });
+  await fecharSeAberta(gh, "o", "r", "L", "T", "Tudo OK.");
+  assert.equal(calls[0], "Tudo OK.");
+});

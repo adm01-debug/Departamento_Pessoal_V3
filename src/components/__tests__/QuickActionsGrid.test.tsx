@@ -1,0 +1,102 @@
+import type { ReactNode } from 'react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+
+vi.mock('framer-motion', () => ({
+  motion: {
+    button: ({
+      children,
+      onClick,
+      className,
+      ...props
+    }: {
+      children?: ReactNode;
+      onClick?: () => void;
+      className?: string;
+      [key: string]: unknown;
+    }) => (
+      <button onClick={onClick} className={className} {...props}>
+        {children}
+      </button>
+    ),
+    create:
+      (Component: React.ElementType) =>
+      ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+        <Component {...props}>{children}</Component>
+      ),
+  },
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
+}));
+
+vi.mock('react-router-dom', () => ({
+  useNavigate: vi.fn(() => vi.fn()),
+}));
+
+vi.mock('@/components/ui/card', () => ({
+  Card: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
+}));
+
+import { QuickActionsGrid } from '../dashboard/QuickActionsGrid';
+
+describe('QuickActionsGrid', () => {
+  it('renders Ações Rápidas heading', () => {
+    render(<QuickActionsGrid />);
+    expect(screen.getByText('Ações Rápidas')).toBeInTheDocument();
+  });
+
+  it('renders Novo Colaborador action', () => {
+    render(<QuickActionsGrid />);
+    expect(screen.getByText('Novo Colaborador')).toBeInTheDocument();
+  });
+
+  it('renders Lançar Ponto action', () => {
+    render(<QuickActionsGrid />);
+    expect(screen.getByText('Lançar Ponto')).toBeInTheDocument();
+  });
+
+  it('renders Calcular Folha action', () => {
+    render(<QuickActionsGrid />);
+    expect(screen.getByText('Calcular Folha')).toBeInTheDocument();
+  });
+
+  it('renders Férias / Ausências action', () => {
+    render(<QuickActionsGrid />);
+    expect(screen.getByText('Férias / Ausências')).toBeInTheDocument();
+  });
+
+  it('renders Passivo Trabalhista action', () => {
+    render(<QuickActionsGrid />);
+    expect(screen.getByText('Passivo Trabalhista')).toBeInTheDocument();
+  });
+
+  it('renders Relatórios DP action', () => {
+    render(<QuickActionsGrid />);
+    expect(screen.getByText('Relatórios DP')).toBeInTheDocument();
+  });
+
+  it('renders 6 action buttons', () => {
+    render(<QuickActionsGrid />);
+    const buttons = screen.getAllByRole('button');
+    expect(buttons.length).toBeGreaterThanOrEqual(6);
+  });
+
+  // Resgatados do `QuickActionsMenu` da branch `muri`.
+  it.each([['Workflows'], ['Assistente IA']])('renders the %s action, recovered from the muri branch', (label) => {
+    render(<QuickActionsGrid />);
+    expect(screen.getByText(label)).toBeInTheDocument();
+  });
+
+  // As outras 2 ações daquele menu NÃO devem estar aqui: "BI e Metas" aponta
+  // para /relatorios, destino que "Relatórios DP" já cobre, e "Auditoria"
+  // aponta para /auditoria, que não existe em App.tsx — seria atalho para 404.
+  it.each([['BI e Metas'], ['Auditoria']])(
+    'does NOT render %s (duplicate destination / nonexistent route)',
+    (label) => {
+      render(<QuickActionsGrid />);
+      expect(screen.queryByText(label)).not.toBeInTheDocument();
+    }
+  );
+});

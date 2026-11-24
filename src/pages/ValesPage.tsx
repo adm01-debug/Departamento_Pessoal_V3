@@ -34,13 +34,15 @@ export default function ValesPage() {
     enabled: !!empresaAtual?.id,
   });
 
+  // vales_transporte não tem empresa_id: o escopo de tenant vem do colaborador (join !inner).
   const { data: vt, isLoading: loadVT } = useQuery({
-    queryKey: ['vales-transporte'],
+    queryKey: ['vales-transporte', empresaAtual?.id],
     queryFn: async () => {
       const { data, error } = await supabase.from('vales_transporte').select('*, colaborador:colaboradores(nome_completo)');
       if (error) throw error;
       return data || [];
     },
+    enabled: !!empresaAtual?.id,
   });
 
   // === Recargas ===
@@ -50,7 +52,11 @@ export default function ValesPage() {
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores-vale', empresaAtual?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.from('colaboradores').select('id, nome_completo').eq('status', 'ativo');
+      const { data, error } = await supabase
+        .from('colaboradores')
+        .select('id, nome_completo')
+        .eq('empresa_id', empresaAtual!.id)
+        .eq('status', 'ativo');
       if (error) throw error;
       return data || [];
     },

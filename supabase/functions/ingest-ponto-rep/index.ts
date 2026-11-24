@@ -1,0 +1,286 @@
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
+import { createErrorResponse, createValidationErrorResponse, parseJsonBody, securityHeaders } from '../_shared/contract.ts';
+import { captureException } from '../_shared/sentry.ts';
+import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
+import { getClientIp } from '../_shared/clientIp.ts';
+import { type ColaboradorChave, classificaErroVinculo, codigosRemovidos, diasAlterados, paresRemovidos, podeReconciliar, envioSchema, sha256Hex, tokenPlausivel, trazCatalogo, vincular } from './logica.ts';
+
+/** Lê o catálogo gravado inteiro, página por página: `.limit()` sozinho
+ * deixaria de ver linhas num catálogo grande e a reconciliação apagaria o que
+ * só não coube na consulta. */
+async function lerCatalogo<T>(
+  consultar: (inicio: number, fim: number) => PromiseLike<{ data: T[] | null; error: { code?: string } | null }>,
+  rotulo: string,
+): Promise<T[]> {
+  const PAGINA = 1000;
+  const linhas: T[] = [];
+  for (let inicio = 0; ; inicio += PAGINA) {
+    const { data, error } = await consultar(inicio, inicio + PAGINA - 1);
+    if (error) throw new Error(`${rotulo} gravados: ${error.code ?? 'erro'}`);
+    linhas.push(...(data ?? []));
+    if (!data || data.length < PAGINA) break;
+  }
+  return linhas;
+}
+
+/**
+ * ingest-ponto-rep — recebe o envio do coletor do Ponto AtecSoft (um por
+ * unidade) e grava no staging ponto_rep_*.
+ *
+ * Chamada máquina-a-máquina: não há navegador, sessão nem JWT de usuário, por
+ * isso verify_jwt = false (config.toml) e sem CSRF/CORS. A autenticação é o
+ * token do coletor no cabeçalho x-coletor-token, comparado por SHA-256 com
+ * ponto_rep_dispositivos.token_hash. A empresa vem SEMPRE do dispositivo
+ * autenticado; o corpo não tem (e o contrato recusa) empresa_id.
+ *
+  * Guarda e vincula o dia; ao final chama `ponto_rep_processar_dias` (etapa 41
+  * do plano), que transforma o staging em batidas_ponto de origem 'relogio'.
+ */
+const MAX_BYTES = 4 * 1024 * 1024;
+const json = (corpo: unknown, status = 200) =>
+  new Response(JSON.stringify(corpo), { status, headers: { ...securityHeaders, 'Content-Type': 'application/json' } });
+const negar = () => createErrorResponse('Não autorizado', 401, 'UNAUTHORIZED');
+
+serve(async (req: Request): Promise<Response> => {
+  if (req.method !== 'POST') return createErrorResponse('Method not allowed', 405, 'METHOD_NOT_ALLOWED');
+
+  const admin = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
+
+  try {
+    // Freio por IP antes de tocar no token: torna adivinhação de token inviável.
+    const porIp = await checkRateLimit(admin, { key: `ingest-ponto-rep:ip:${getClientIp(req)}`, limit: 120, windowSec: 60 });
+    if (!porIp.allowed) return rateLimitResponse(porIp, req);
+
+    const token = req.headers.get('x-coletor-token');
+    if (!tokenPlausivel(token)) return negar();
+    const { data: dispositivo, error: erroDisp } = await admin
+      .from('ponto_rep_dispositivos')
+      .select('id, empresa_id, ativo, revogado_em')
+      .eq('token_hash', await sha256Hex(token))
+      .maybeSingle();
+    if (erroDisp) throw new Error(`dispositivo: ${erroDisp.code ?? 'erro'}`);
+    if (!dispositivo || !dispositivo.ativo || dispositivo.revogado_em) return negar();
+
+    const porDispositivo = await checkRateLimit(admin, { key: `ingest-ponto-rep:disp:${dispositivo.id}`, limit: 60, windowSec: 60 });
+    if (!porDispositivo.allowed) return rateLimitResponse(porDispositivo, req);
+
+    const { body, errorResponse } = await parseJsonBody(req, MAX_BYTES);
+    if (errorResponse) return errorResponse;
+    const validado = envioSchema.safeParse(body);
+    if (!validado.success) return createValidationErrorResponse(validado.error);
+    const envio = validado.data;
+
+    const agora = new Date().toISOString();
+    const dispositivoId = dispositivo.id as string;
+    const empresaId = dispositivo.empresa_id as string;
+
+    // total_feriados/total_horarios so entram quando ha o que contar: coletor
+    // 1.0.0 nao envia estas chaves, e o lote dele nao pode depender das colunas
+    // novas existirem.
+    const { data: lote, error: erroLote } = await admin.from('ponto_rep_lotes').insert({
+      dispositivo_id: dispositivoId,
+      empresa_id: empresaId,
+      periodo_inicio: envio.periodo.inicio,
+      periodo_fim: envio.periodo.fim,
+      total_funcionarios: envio.funcionarios.length,
+      total_dias: envio.dias.length,
+      ...(envio.feriados.length || envio.horarios.length
+        ? { total_feriados: envio.feriados.length, total_horarios: envio.horarios.length }
+        : {}),
+    }).select('id').single();
+    if (erroLote || !lote) throw new Error(`lote: ${erroLote?.code ?? 'sem id'}`);
+
+    // Erros de banco viram "<etapa>: <código Postgres>": a mensagem completa do
+    // Postgres pode citar a linha que falhou, e a linha tem CPF e PIS.
+    try {
+      // Cadastro: só as colunas vindas do AtecSoft. colaborador_id e o método de
+      // vínculo não entram no upsert, então um vínculo existente é preservado.
+      if (envio.funcionarios.length) {
+        const { error } = await admin.from('ponto_rep_funcionarios').upsert(
+          envio.funcionarios.map((f) => ({ ...f, dispositivo_id: dispositivoId, empresa_id: empresaId, updated_at: agora })),
+          { onConflict: 'dispositivo_id,codigo' },
+        );
+        if (error) throw new Error(`funcionarios: ${error.code ?? 'erro'}`);
+      }
+
+      // tipo_dia (o de-para para o DP) não entra no upsert: é decisão humana.
+      if (envio.justificativas.length) {
+        const { error } = await admin.from('ponto_rep_justificativas').upsert(
+          envio.justificativas.map((j) => ({ ...j, dispositivo_id: dispositivoId, empresa_id: empresaId, updated_at: agora })),
+          { onConflict: 'dispositivo_id,codigo' },
+        );
+        if (error) throw new Error(`justificativas: ${error.code ?? 'erro'}`);
+      }
+
+      // Feriados e jornadas: mesmo padrao do cadastro, copia fiel do AtecSoft.
+      // O catalogo completo viaja so na parte 1, entao e la que se grava. O
+      // catalogo que sumiu do AtecSoft precisa sair do staging: upsert sozinho
+      // so acrescenta. A remocao exige podeReconciliar -- coletor 1.0.1+ E chave
+      // presente no corpo: o coletor 1.0.0 nao envia estas chaves e o default do
+      // schema viraria [], e o diagnostico de conexao manda 1.0.1 sem consultar
+      // o catalogo. Sem essa guarda, qualquer um dos dois apagaria o catalogo.
+      if (envio.parte === 1 && trazCatalogo(body, 'feriados')) {
+        if (envio.feriados.length) {
+          const { error } = await admin.from('ponto_rep_feriados').upsert(
+            envio.feriados.map((f) => ({ ...f, dispositivo_id: dispositivoId, empresa_id: empresaId, updated_at: agora })),
+            { onConflict: 'dispositivo_id,codigo' },
+          );
+          if (error) throw new Error(`feriados: ${error.code ?? 'erro'}`);
+        }
+        if (podeReconciliar(envio.versao_coletor, body, 'feriados')) {
+          const gravados = await lerCatalogo<{ codigo: number }>(
+            (inicio, fim) => admin.from('ponto_rep_feriados').select('codigo')
+              .eq('dispositivo_id', dispositivoId).order('id').range(inicio, fim),
+            'feriados',
+          );
+          const removidos = codigosRemovidos(envio.feriados, gravados);
+          if (removidos.length) {
+            const { error } = await admin.from('ponto_rep_feriados')
+              .delete().eq('dispositivo_id', dispositivoId).in('codigo', removidos);
+            if (error) throw new Error(`feriados removidos: ${error.code ?? 'erro'}`);
+          }
+        }
+      }
+      if (envio.parte === 1 && trazCatalogo(body, 'horarios')) {
+        if (envio.horarios.length) {
+          const { error } = await admin.from('ponto_rep_horarios').upsert(
+            envio.horarios.map((h) => ({ ...h, dispositivo_id: dispositivoId, empresa_id: empresaId, updated_at: agora })),
+            { onConflict: 'dispositivo_id,codigo,dia_semana' },
+          );
+          if (error) throw new Error(`horarios: ${error.code ?? 'erro'}`);
+        }
+        if (podeReconciliar(envio.versao_coletor, body, 'horarios')) {
+          const gravados = await lerCatalogo<{ codigo: number; dia_semana: number }>(
+            (inicio, fim) => admin.from('ponto_rep_horarios').select('codigo, dia_semana')
+              .eq('dispositivo_id', dispositivoId).order('id').range(inicio, fim),
+            'horarios',
+          );
+          for (const { codigo, dias } of paresRemovidos(envio.horarios, gravados)) {
+            const { error } = await admin.from('ponto_rep_horarios')
+              .delete().eq('dispositivo_id', dispositivoId).eq('codigo', codigo).in('dia_semana', dias);
+            if (error) throw new Error(`horarios removidos: ${error.code ?? 'erro'}`);
+          }
+        }
+      }
+
+      // Vínculo automático só de quem ainda não tem.
+      const { data: semVinculo, error: erroSem } = await admin.from('ponto_rep_funcionarios')
+        .select('id, codigo, nome, matricula, cpf, pis, situacao, empresa_codigo, horario_codigo, data_admissao, data_desligamento')
+        .eq('dispositivo_id', dispositivoId).is('colaborador_id', null);
+      if (erroSem) throw new Error(`pendentes: ${erroSem.code ?? 'erro'}`);
+      let pendentesVinculo = semVinculo?.length ?? 0;
+      if (pendentesVinculo > 0) {
+        const { data: colaboradores, error: erroColab } = await admin.from('colaboradores')
+          .select('id, cpf, pis_pasep, matricula').eq('empresa_id', empresaId);
+        if (erroColab) throw new Error(`colaboradores: ${erroColab.code ?? 'erro'}`);
+        for (const { id, ...func } of semVinculo ?? []) {
+          const achado = vincular(func, (colaboradores ?? []) as ColaboradorChave[]);
+          if (!achado) continue;
+          const { error } = await admin.from('ponto_rep_funcionarios')
+            .update({ colaborador_id: achado.colaborador_id, vinculo_metodo: achado.metodo, vinculado_em: agora })
+            .eq('id', id).is('colaborador_id', null);
+          // 23505 = colaborador já vinculado a outro funcionario_codigo
+          // (ux_ponto_rep_funcionarios_colaborador_por_empresa, dentro do
+          // próprio lote ou de um anterior): fica pendente, não aborta o
+          // lote -- é ambiguidade real (código reaproveitado), não erro.
+          if (classificaErroVinculo(error) === 'ambiguidade') continue;
+          if (error) throw new Error(`vinculo: ${error.code ?? 'erro'}`);
+          pendentesVinculo -= 1;
+        }
+      }
+
+      // Dias: só grava o que mudou. Dia alterado volta a ficar pendente de processamento.
+      let alterados = envio.dias;
+      if (envio.dias.length) {
+        const datas = envio.dias.map((d) => d.data).sort();
+        const { data: gravados, error: erroGrav } = await admin.from('ponto_rep_dias')
+          .select('funcionario_codigo, data, hash_conteudo')
+          .eq('dispositivo_id', dispositivoId)
+          .gte('data', datas[0]).lte('data', datas[datas.length - 1])
+          .limit(20000);
+        if (erroGrav) throw new Error(`dias gravados: ${erroGrav.code ?? 'erro'}`);
+        alterados = diasAlterados(envio.dias, gravados ?? []);
+      }
+      if (alterados.length) {
+        const { error } = await admin.from('ponto_rep_dias').upsert(
+          alterados.map(({ hash, ...d }) => ({
+            ...d,
+            hash_conteudo: hash,
+            dispositivo_id: dispositivoId,
+            empresa_id: empresaId,
+            lote_id: lote.id,
+            processado_em: null,
+            erro_processamento: null,
+            updated_at: agora,
+          })),
+          { onConflict: 'dispositivo_id,funcionario_codigo,data' },
+        );
+        if (error) throw new Error(`dias: ${error.code ?? 'erro'}`);
+      }
+
+      // Etapa 41 do plano: o dia guardado vira batida. Falha aqui não derruba o
+      // lote — o dia continua pendente (processado_em NULL) e é reprocessado.
+      let convertidos: { processados: number; batidas: number; com_erro: number } | null = null;
+      const { data: conversao, error: erroConversao } = await admin
+        .rpc('ponto_rep_processar_dias', { _limite: 500 });
+      if (erroConversao) {
+        console.error('conversao de batidas falhou', erroConversao.code);
+      } else {
+        convertidos = (conversao as { processados: number; batidas: number; com_erro: number }[] | null)?.[0] ?? null;
+      }
+
+      const { error: erroFim } = await admin.from('ponto_rep_lotes')
+        .update({ status: 'processado', dias_alterados: alterados.length }).eq('id', lote.id);
+      if (erroFim) throw new Error(`fechar lote: ${erroFim.code ?? 'erro'}`);
+
+      // Sinal de vida: só depois de tudo gravado.
+      const { error: erroVivo } = await admin.from('ponto_rep_dispositivos')
+        .update({ ultimo_contato_em: agora, versao_coletor: envio.versao_coletor, updated_at: agora })
+        .eq('id', dispositivoId);
+      if (erroVivo) throw new Error(`sinal de vida: ${erroVivo.code ?? 'erro'}`);
+
+      // Auditoria do lote: contagens só, sem CPF/PIS.
+      await admin.from('audit_log').insert({
+        tabela: 'ponto_rep_lotes',
+        registro_id: lote.id,
+        acao: 'INSERT',
+        empresa_id: empresaId,
+        dados_novos: {
+          dispositivo_id: dispositivoId,
+          dias_recebidos: envio.dias.length,
+          dias_alterados: alterados.length,
+          feriados_recebidos: envio.feriados.length,
+          horarios_recebidos: envio.horarios.length,
+          pendentes_vinculo: pendentesVinculo,
+          dias_convertidos: convertidos?.processados ?? 0,
+          batidas_geradas: convertidos?.batidas ?? 0,
+          dias_com_erro_conversao: convertidos?.com_erro ?? 0,
+        },
+      });
+
+      return json({
+        ok: true,
+        lote_id: lote.id,
+        dias_recebidos: envio.dias.length,
+        dias_alterados: alterados.length,
+        feriados_recebidos: envio.feriados.length,
+        horarios_recebidos: envio.horarios.length,
+        pendentes_vinculo: pendentesVinculo,
+        dias_convertidos: convertidos?.processados ?? 0,
+        batidas_geradas: convertidos?.batidas ?? 0,
+      });
+    } catch (falha) {
+      const mensagem = falha instanceof Error ? falha.message : String(falha);
+      await admin.from('ponto_rep_lotes').update({ status: 'erro', mensagem_erro: mensagem.slice(0, 500) }).eq('id', lote.id);
+      throw falha;
+    }
+  } catch (erro) {
+    await captureException(erro, { function: 'ingest-ponto-rep' });
+    return createErrorResponse('Falha ao gravar o envio', 500, 'INTERNAL_ERROR');
+  }
+});

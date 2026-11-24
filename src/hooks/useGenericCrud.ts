@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { ListOptions, ListResponse } from '@/services/baseService';
+import type { ListOptions, ListResponse } from '@/services/baseService';
 import { loggerService } from '@/services/loggerService';
 import { auditLogger } from '@/utils/auditLogger';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -53,6 +53,13 @@ export function useGenericCrud<T>({
   useEffect(() => {
     setPage(1);
   }, [search, JSON.stringify(filters)]);
+
+  // Trocar "linhas por pagina" reinicia a paginacao, como busca/filtros ja fazem:
+  // sair de 10 por pagina na pagina 4 para 50 cairia numa pagina inexistente.
+  const alterarPageSize = useCallback((tamanho: number) => {
+    setPageSize(tamanho);
+    setPage(1);
+  }, []);
 
   const query = useQuery({
     queryKey: [queryKey, { search, page, pageSize, filters }],

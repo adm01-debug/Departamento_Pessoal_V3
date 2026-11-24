@@ -34,6 +34,7 @@ import { isDashboardMockEnabled, mockDashboardStats, mockEvolucao, mockPendencia
 interface DashboardStats {
   colaboradoresAtivos: number;
   folhaMensal: number;
+  folhaVariacao: number | null;
   feriasPendentes: number;
   bancoHoras: number;
   turnover: number;
@@ -62,6 +63,7 @@ function useDashboardStats(enabled: boolean) {
 
       const now = new Date();
       const mesAtual = formatCompetenciaLocal(now);
+      const mesAnterior = formatCompetenciaLocal(new Date(now.getFullYear(), now.getMonth() - 1, 1));
       const em30Dias = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
       const inicioMes = `${mesAtual}-01`;
 
@@ -78,6 +80,7 @@ function useDashboardStats(enabled: boolean) {
         { data: absenteismoData },
         { data: colabsAll },
         { data: feriasAll },
+        { data: folhaAnteriorData },
       ] = await Promise.all([
         supabaseBase.from("colaboradores").select("id", { count: "exact", head: true }).eq("empresa_id", empresaAtualId).eq("status", "ativo"),
         supabaseBase.from("folhas_pagamento").select("total_liquido").eq("competencia", mesAtual).eq("empresa_id", empresaAtualId),
@@ -146,6 +149,7 @@ function useDashboardStats(enabled: boolean) {
       return {
         colaboradoresAtivos: colaboradoresAtivos || 0,
         folhaMensal,
+        folhaVariacao,
         feriasPendentes: feriasPendentes || 0,
         bancoHoras: Math.round(bancoHoras / 60),
         turnover: Number(turnoverVal),

@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { tomDoAvatar } from '@/lib/avatarTons';
 import { cn } from '@/lib/utils';
+import { tomDoAvatar } from '@/lib/avatarTons';
 
 interface UserAvatarProps {
   name: string;
@@ -19,7 +20,7 @@ function getInitials(name: string): string {
   return name
     .split(' ')
     .filter(Boolean)
-    .map(n => n[0])
+    .map((n) => n[0])
     .join('')
     .slice(0, 2)
     .toUpperCase();

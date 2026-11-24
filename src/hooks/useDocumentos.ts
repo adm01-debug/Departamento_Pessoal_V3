@@ -9,7 +9,11 @@ export function useDocumentos(colaboradorId?: string) {
   const queryClient = useQueryClient();
   const { empresaAtualId } = useEmpresas();
 
-  const { data: documentos = [], isLoading } = useQuery({
+  const {
+    data: documentos = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['documentos', empresaAtualId, colaboradorId],
     enabled: !!empresaAtualId,
     queryFn: async () => {
@@ -80,5 +84,5 @@ export function useDocumentos(colaboradorId?: string) {
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar documento.')),
   });
 
-  return { documentos, isLoading, criarDocumento, excluirDocumento, atualizarDocumento };
+  return { documentos, isLoading, isError, criarDocumento, excluirDocumento, atualizarDocumento };
 }

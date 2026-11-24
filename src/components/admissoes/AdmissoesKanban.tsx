@@ -93,9 +93,9 @@ export function AdmissoesKanban({ admissoes, isActive = true, ...acoes }: Admiss
       map[etapa].push(a);
     }
     return map;
-  }, [admissoes, optimistic]);
+  }, [lista, optimistic]);
 
-  const activeItem = useMemo(() => admissoes.find((a) => a.id === activeId) || null, [activeId, admissoes]);
+  const activeItem = useMemo(() => lista.find((a) => a.id === activeId) || null, [activeId, lista]);
 
   const handleDragStart = (e: DragStartEvent) => setActiveId(String(e.active.id));
 
@@ -104,7 +104,7 @@ export function AdmissoesKanban({ admissoes, isActive = true, ...acoes }: Admiss
     const id = String(e.active.id);
     const target = e.over?.id ? String(e.over.id) : null;
     if (!target) return;
-    const current = admissoes.find((a) => a.id === id);
+    const current = lista.find((a) => a.id === id);
     if (!current || current.etapa === target) return;
 
     setOptimistic((s) => ({ ...s, [id]: target }));

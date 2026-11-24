@@ -76,6 +76,15 @@ export function useAtualizarContatoEmergencia(colaboradorId: string) {
   });
 }
 
+export function useAtualizarContatoEmergencia(colaboradorId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, dados }: { id: string; dados: Updatable<'contatos_emergencia'> }) =>
+      service.atualizarContatoEmergencia(id, dados, colaboradorId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['contatos-emergencia', colaboradorId] }),
+  });
+}
+
 export function useExcluirContatoEmergencia(colaboradorId: string) {
   const qc = useQueryClient();
   return useMutation({
@@ -134,6 +143,15 @@ export function useCriarFormacao() {
   return useMutation({
     mutationFn: service.criarFormacao,
     onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['formacoes', vars.colaborador_id] }),
+  });
+}
+
+export function useAtualizarFormacao(colaboradorId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, dados }: { id: string; dados: Updatable<'formacoes_academicas'> }) =>
+      service.atualizarFormacao(colaboradorId, id, dados),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['formacoes', colaboradorId] }),
   });
 }
 
@@ -242,6 +260,27 @@ export function useExcluirAnotacao(colaboradorId: string) {
 }
 
 // Períodos Aquisitivos
+// `empresaId` vem por parâmetro (e não de `useEmpresas` como os hooks acima)
+// porque os consumidores — useProximosEventos e useHistoricoColaborador — já
+// resolveram a empresa e precisam passá-la adiante.
+export function useFeriasResumoColaborador(colaboradorId: string, empresaId?: string) {
+  return useQuery({
+    queryKey: ['ferias-resumo-colaborador', colaboradorId, empresaId],
+    queryFn: async () =>
+      mockOr(getMockFerias(colaboradorId)) ?? service.listarFeriasColaborador(colaboradorId, empresaId!),
+    enabled: !!colaboradorId && !!empresaId,
+  });
+}
+
+// Holerites — dossiê do colaborador
+export function useHoleritesColaborador(colaboradorId: string) {
+  return useQuery({
+    queryKey: ['holerites-colaborador', colaboradorId],
+    queryFn: () => service.listarHoleritesColaborador(colaboradorId),
+    enabled: !!colaboradorId,
+  });
+}
+
 export function usePeriodosAquisitivos(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({

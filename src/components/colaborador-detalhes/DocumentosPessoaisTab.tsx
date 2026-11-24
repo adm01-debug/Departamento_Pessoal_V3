@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Spinner } from '@/components/ui/spinner';
-import { Plus, Trash2 } from 'lucide-react';
+import { ExternalLink, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDocumentosPessoais, useCriarDocumentoPessoal, useExcluirDocumentoPessoal } from '@/hooks/useTabelasReferencia';
 import { useEmpresas } from '@/hooks/useEmpresas';
@@ -33,6 +33,18 @@ export function DocumentosPessoaisTab({ colaboradorId }: { colaboradorId: string
   const resetForm = () => {
     setForm({ tipo_documento: '', numero: '', orgao_emissor: '', data_emissao: '', data_validade: '' });
     setFile(null);
+  };
+
+  const limparForm = () => {
+    setFile(null);
+    setForm({
+      tipo_documento: '',
+      numero: '',
+      orgao_emissor: '',
+      data_emissao: '',
+      data_validade: '',
+      arquivo_url: '',
+    });
   };
 
   const handleSubmit = async () => {

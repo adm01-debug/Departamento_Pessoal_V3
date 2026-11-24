@@ -57,6 +57,18 @@ function setupDeleteChain(error: any = null) {
   return { deleteFn, eqFn };
 }
 
+// select → eq → eq → order → limit → maybeSingle
+function setupSingleChain(data: unknown, error: { message: string; code?: string } | null = null) {
+  const maybeSingle = vi.fn().mockResolvedValue({ data, error });
+  const chain: Record<string, unknown> = {};
+  chain.eq = vi.fn().mockReturnValue(chain);
+  chain.order = vi.fn().mockReturnValue(chain);
+  chain.limit = vi.fn().mockReturnValue({ maybeSingle });
+  const selectFn = vi.fn().mockReturnValue(chain);
+  mockFrom.mockReturnValue({ select: selectFn });
+  return { selectFn, chain, maybeSingle };
+}
+
 // ─── listarTurnos ─────────────────────────────────────────────────────────────
 
 describe('turnoService.listarTurnos', () => {

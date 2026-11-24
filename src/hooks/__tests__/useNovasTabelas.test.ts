@@ -59,6 +59,14 @@ vi.mock('@/services/turnoService', () => ({
   turnoService: { buscarEscalaAtual: mockBuscarEscalaAtual },
 }));
 
+vi.mock('@/services/bancoHorasService', () => ({
+  bancoHorasService: { getSaldo: mockGetSaldoBancoHoras },
+}));
+
+vi.mock('@/services/pontoService', () => ({
+  pontoService: { buscarRegistrosSemana: mockBuscarRegistrosSemana },
+}));
+
 vi.mock('@/hooks/useEmpresas', () => ({
   useEmpresas: () => ({ empresaAtual: { id: 'emp-1' } }),
 }));
@@ -212,5 +220,42 @@ describe('useEscalaAtual', () => {
   it('is disabled when no colaboradorId', () => {
     renderHook(() => useEscalaAtual(''), { wrapper });
     expect(mockBuscarEscalaAtual).not.toHaveBeenCalled();
+  });
+});
+
+describe('useSaldoBancoHoras', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetSaldoBancoHoras.mockResolvedValue(4.5);
+  });
+
+  it('calls bancoHorasService.getSaldo with colaboradorId and empresaId', async () => {
+    const { result } = renderHook(() => useSaldoBancoHoras('col-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockGetSaldoBancoHoras).toHaveBeenCalledWith('col-1', 'emp-1');
+    expect(result.current.data).toBe(4.5);
+  });
+
+  it('is disabled when no colaboradorId', () => {
+    renderHook(() => useSaldoBancoHoras(''), { wrapper });
+    expect(mockGetSaldoBancoHoras).not.toHaveBeenCalled();
+  });
+});
+
+describe('useRegistrosPontoSemana', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockBuscarRegistrosSemana.mockResolvedValue([]);
+  });
+
+  it('calls pontoService.buscarRegistrosSemana with colaboradorId', async () => {
+    const { result } = renderHook(() => useRegistrosPontoSemana('col-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockBuscarRegistrosSemana).toHaveBeenCalledWith('col-1');
+  });
+
+  it('is disabled when no colaboradorId', () => {
+    renderHook(() => useRegistrosPontoSemana(''), { wrapper });
+    expect(mockBuscarRegistrosSemana).not.toHaveBeenCalled();
   });
 });

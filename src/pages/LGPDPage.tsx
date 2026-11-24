@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { supabase } from '@/integrations/supabase/client';
 import { lgpdService } from '@/services/lgpdService';
 import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
@@ -480,15 +481,19 @@ export default function LGPDPage() {
                 </CardHeader>
                 <CardContent>
                   {(() => {
+                    const docTem = (re: RegExp) => docsLgpd.some((d) => re.test(`${d.tipo} ${d.nome}`));
                     const checks = [
                       { item: 'Consentimentos coletados', ok: consentimentos.length > 0 },
-                      { item: 'Processo de solicitação ativo', ok: true },
-                      { item: 'Mapeamento de dados documentado', ok: true },
-                      { item: 'Base legal definida para cada tratamento', ok: true },
+                      { item: 'Solicitações de titulares registradas', ok: solicitacoes.length > 0 },
+                      { item: 'Mapeamento de dados (RoPA)', ok: politicasRetencao.length > 0 },
+                      {
+                        item: 'Base legal definida para cada tratamento',
+                        ok: politicasRetencao.length > 0 && politicasRetencao.every((p) => !!p.base_legal),
+                      },
                       { item: 'Prazo de resposta ≤15 dias', ok: pendentes === 0 || vencendo === 0 },
-                      { item: 'Encarregado (DPO) designado', ok: false },
-                      { item: 'Relatório de Impacto (RIPD)', ok: false },
-                      { item: 'Política de Privacidade publicada', ok: false },
+                      { item: 'Encarregado (DPO) designado', ok: docTem(/dpo|encarregado/i) },
+                      { item: 'Relatório de Impacto (RIPD)', ok: docTem(/ripd|impacto/i) },
+                      { item: 'Política de Privacidade publicada', ok: docTem(/privacidade|politica/i) },
                     ];
                     const score = Math.round((checks.filter((c) => c.ok).length / checks.length) * 100);
                     return (

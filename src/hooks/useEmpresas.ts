@@ -49,6 +49,19 @@ export interface Empresa {
 /** Modo de visualização dos dados de empresa. */
 export type EmpresaModo = "consolidado" | "empresa_unica";
 
+/**
+ * Ordem de exibição do grupo: `ordem_exibicao` crescente, nulos no fim, empate
+ * resolvido pelo nome. Mesmo critério do `.order()` em `useGrupo.ts`, aplicado
+ * aqui em memória porque a escolha da empresa de abertura cruza duas consultas
+ * (empresas × vínculos do usuário).
+ */
+export function compararOrdemExibicao(a: Empresa, b: Empresa): number {
+  const ordemA = a.ordem_exibicao ?? Number.MAX_SAFE_INTEGER;
+  const ordemB = b.ordem_exibicao ?? Number.MAX_SAFE_INTEGER;
+  if (ordemA !== ordemB) return ordemA - ordemB;
+  return a.razao_social.localeCompare(b.razao_social, 'pt-BR');
+}
+
 export interface UserEmpresa {
   id: string;
   user_id: string;
@@ -209,7 +222,11 @@ export function useEmpresas(): UseEmpresasReturn {
     empresaPrimeiraGlobal;
 
 
-  const primeiraEmpresaId = userEmpresas?.[0]?.empresa_id ?? null;
+  // Mesmo motivo de `empresaPrimeiraVinculada`: este id é GRAVADO no store
+  // abaixo, então pegar `userEmpresas[0]` persistia a empresa sorteada pelo
+  // RPC. O `??` final mantém o gatilho de pé no caso em que há vínculo mas as
+  // empresas não vieram (RLS devolveu lista vazia) — aí não há o que escolher.
+  const primeiraEmpresaId = empresaPrimeiraVinculada?.id ?? userEmpresas?.[0]?.empresa_id ?? null;
   useEffect(() => {
     // Sincroniza o ID no store apenas se houver uma empresa disponível e NENHUMA seleção ativa
     if (primeiraEmpresaId && !empresaAtualId) {

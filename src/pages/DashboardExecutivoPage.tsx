@@ -1773,6 +1773,10 @@ export default function DashboardExecutivoPage() {
                         ))}
 
                       </div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="h-2 w-2 rounded-full bg-warning" />
+                        <span className="text-[10px] text-muted-foreground">Sem orçamento</span>
+                      </div>
                     </div>
 
                     {/* Custo pessoal / receita */}

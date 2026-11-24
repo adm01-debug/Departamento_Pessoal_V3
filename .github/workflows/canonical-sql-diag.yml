@@ -40,7 +40,7 @@ permissions:
 jobs:
   sql-diag:
     name: diagnóstico SQL read-only no canônico
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # ubuntu-latest=26.04 não tem postgresql-client-16 (W41)
     timeout-minutes: 5
     environment: production
     permissions:

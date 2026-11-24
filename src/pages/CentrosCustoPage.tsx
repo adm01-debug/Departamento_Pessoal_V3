@@ -22,6 +22,7 @@ export default function CentrosCustoPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nome: '', codigo: '', descricao: '' });
+  const [editandoId, setEditandoId] = useState<string | null>(null);
 
   const { data: centros = [], isLoading } = useQuery({
     queryKey: ['centros-custo', empresaAtual?.id],
@@ -42,6 +43,19 @@ export default function CentrosCustoPage() {
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['centros-custo'] }); setOpen(false); toast.success('Centro de custo criado!'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar centro de custo.'))});
+
+  const atualizar = useMutation({
+    mutationFn: (d: { id: string; nome: string; codigo: string; descricao: string }) =>
+      atualizarCentroCusto(d.id, { nome: d.nome, codigo: d.codigo, descricao: d.descricao }, empresaAtual!.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['centros-custo'] });
+      setOpen(false);
+      setEditandoId(null);
+      setForm({ nome: '', codigo: '', descricao: '' });
+      toast.success('Centro de custo atualizado!');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar centro de custo.')),
+  });
 
   const excluir = useMutation({
     mutationFn: async (id: string) => {

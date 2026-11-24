@@ -72,8 +72,13 @@ const TENANT_CORRELATORS = [
 const FORGEABLE_CLAIM_RE =
   /auth\.jwt\s*\(\s*\)\s*(->>?|#>>?)|current_setting\s*\(\s*'request\.jwt/i;
 
-/** Claims do JWT que o banco valida e que, portanto, não são forjáveis. */
-const TRUSTED_CLAIM_RE = /->>\s*'(sub|aud|exp|iat|iss)'/i;
+/**
+ * Acesso a uma claim que o banco valida e que, portanto, não é forjável.
+ * Casa o ACESSO inteiro (e tolera o espaço que o Postgres põe após `->>`),
+ * para ser descontado ocorrência a ocorrência — ver usesForgeableClaim.
+ */
+const TRUSTED_CLAIM_RE =
+  /(?:auth\.jwt\s*\(\s*\)(?:\s+as\s+\w+\s*\))?|current_setting\s*\(\s*'request\.jwt\.claims'[^)]*\)\s*\)?(?:::\w+)?)\s*->>\s*'(?:sub|aud|exp|iat|iss)'/gi;
 
 
 /**
@@ -177,10 +182,11 @@ function isCorrelated(expression) {
 }
 
 function usesForgeableClaim(expression) {
-  if (!FORGEABLE_CLAIM_RE.test(expression)) return false;
   // `auth.jwt() ->> 'sub'` é equivalente a auth.uid() e é verificado pelo
   // banco; só as claims livres (empresa_id, role, tenant, ...) são o problema.
-  return !TRUSTED_CLAIM_RE.test(expression);
+  // Desconta cada acesso confiável e julga o que sobra: uma claim confiável
+  // num ramo não pode absolver uma claim livre em outro.
+  return FORGEABLE_CLAIM_RE.test(expression.replace(TRUSTED_CLAIM_RE, ''));
 }
 
 function main() {
@@ -209,7 +215,15 @@ function main() {
     return 0;
   }
 
-  const bodies = parseRows(functionOutput, 2).map(([name, src]) => [name, src]);
+  // O corpo pode conter TAB (indentação), que é também o separador de campos:
+  // reagrupa tudo após o nome, senão o helper era truncado no primeiro TAB.
+  const bodies = parseRows(functionOutput, 2).map(([name, ...src]) => [name, src.join(' ')]);
+
+  // Guard: banco respondeu mas sem nenhuma função pública → schema vazio ou
+  // sem SELECT em pg_proc; o inlining fica cego e pode deixar passar violações.
+  if (bodies.length === 0) {
+    console.warn('[rls-pii] Aviso: 0 funções públicas — inlining de predicados desativado. Verifique permissão em pg_proc.');
+  }
 
   /** Reprovam o build: a PII fica de fato acessível a quem não deveria. */
   const violations = [];
@@ -258,6 +272,18 @@ function main() {
         reason: `atribuída à role "${roleList.join(', ')}" (inclui anon); restrinja para "authenticated"`,
       });
     }
+  }
+
+  // Guard de false-green: com alvo conectado, 0 políticas auditadas nunca é
+  // "tudo correlacionado" — é schema vazio/alvo errado, heurística de PII
+  // desatualizada ou tabelas com PII silenciosamente movidas para o ALLOWLIST.
+  // Reprova, como os gates irmãos (least-privilege, tenant-open, secdef).
+  if (inspected === 0) {
+    console.error(
+      '[rls-pii] ERRO: 0 políticas sobre tabelas com PII auditadas — schema vazio ou alvo errado; ' +
+        'revise também a heurística PII_COLUMN_RE e o ALLOWLIST. Falso verde bloqueado.',
+    );
+    return 1;
   }
 
   for (const w of warnings) {

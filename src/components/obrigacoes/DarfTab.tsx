@@ -5,16 +5,36 @@ function formatCurrency(v: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 }
 
+/** Por que não há valor de IRRF: sem folha, folha não calculada ou itens inacessíveis/vazios. */
+export type DarfIrrfSituacao = 'sem_folha' | 'nao_calculada' | 'sem_itens';
+
+const MENSAGEM_SEM_VALOR: Record<DarfIrrfSituacao, (competencia: string) => string> = {
+  sem_folha: (c) => `Nenhuma folha mensal calculada para ${c}.`,
+  nao_calculada: (c) => `A folha mensal de ${c} ainda não foi calculada.`,
+  sem_itens: (c) =>
+    `Itens da folha mensal de ${c} indisponíveis (sem permissão de acesso à folha ou folha sem colaboradores).`,
+};
+
 interface DarfTabProps {
-  totalFgts: number;
-  totalInss: number;
+  /** Soma de folha_itens.irrf_mes da folha mensal calculada da competência; null quando não há valor real. */
+  totalIrrf: number | null;
+  /** Motivo da ausência de valor quando totalIrrf é null (padrão: sem_folha). */
+  situacao?: DarfIrrfSituacao;
+  competencia: string;
+  isLoading?: boolean;
+  isError?: boolean;
 }
 
-export function DarfTab({ totalFgts, totalInss }: DarfTabProps) {
+export function DarfTab({ totalIrrf, situacao = 'sem_folha', competencia, isLoading, isError }: DarfTabProps) {
+  const irrfValor = isLoading
+    ? 'Carregando...'
+    : isError
+      ? 'Erro ao carregar'
+      : totalIrrf === null
+        ? '—'
+        : formatCurrency(totalIrrf);
   const darfs = [
-    { label: 'IRRF (Código 0561)', value: formatCurrency(totalInss * 0.15), color: 'text-warning', venc: 'Venc. dia 20 do mês seguinte' },
-    { label: 'PIS/COFINS (Código 8109)', value: formatCurrency(totalFgts * 0.065 + totalInss * 0.03), color: 'text-info', venc: 'Venc. dia 25 do mês seguinte' },
-    { label: 'CSLL (Código 2372)', value: formatCurrency(totalInss * 0.09), color: 'text-primary', venc: 'Venc. último dia útil do mês' },
+    { label: 'IRRF (Código 0561)', value: irrfValor, color: 'text-warning', venc: 'Venc. dia 20 do mês seguinte' },
   ];
 
   return (
@@ -22,7 +42,8 @@ export function DarfTab({ totalFgts, totalInss }: DarfTabProps) {
       <Card className="rounded-2xl border-border/30">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-display flex items-center gap-2">
-            <Shield className="h-4 w-4 text-warning" />DARF — Documento de Arrecadação de Receitas Federais
+            <Shield className="h-4 w-4 text-warning" />
+            DARF — Documento de Arrecadação de Receitas Federais
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -40,7 +61,10 @@ export function DarfTab({ totalFgts, totalInss }: DarfTabProps) {
           <div className="mt-4 p-3 bg-muted/30 rounded-xl">
             <p className="text-xs text-muted-foreground font-body flex items-center gap-2">
               <AlertTriangle className="h-3 w-3 text-warning" />
-              Os valores de DARF são estimativas baseadas nos encargos da folha. Consulte seu contador para valores exatos.
+              {!isLoading && !isError && totalIrrf === null
+                ? MENSAGEM_SEM_VALOR[situacao](competencia)
+                : `IRRF retido na folha mensal de ${competencia}.`}{' '}
+              Consulte seu contador para valores exatos.
             </p>
           </div>
         </CardContent>

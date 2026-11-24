@@ -38,6 +38,33 @@ export function EmergenciaTab({ colaboradorId, index = 0 }: { colaboradorId: str
     setOpen(true);
   };
 
+  const fecharEResetar = () => {
+    setOpen(false);
+    setEditandoId(null);
+    setForm(initialForm);
+  };
+
+  // O formulário abre com o valor REAL do banco, não com o que a tabela exibe:
+  // a máscara de `usePiiMask` é só de exibição, salvar o texto mascarado por
+  // cima destruiria o telefone de emergência do colaborador. Consequência: quem
+  // não pode ver PII também não edita — abrir o formulário com o valor real
+  // furaria a máscara da tabela. Mesmo critério de RelatorioContabilDialog.tsx.
+  const abrirEdicao = (c: Tables<'contatos_emergencia'>) => {
+    if (!pii.canViewPii) {
+      toast.error('Apenas administradores e RH podem editar contatos de emergência (contêm telefone e e-mail).');
+      return;
+    }
+    setEditandoId(c.id);
+    setForm({
+      nome: c.nome,
+      parentesco: c.parentesco || '',
+      telefone: c.telefone || '',
+      celular: c.celular || '',
+      email: c.email || '',
+    });
+    setOpen(true);
+  };
+
   const handleSubmit = async () => {
     if (!form.nome.trim()) { toast.error('Nome é obrigatório'); return; }
     if (!form.telefone.trim() && !form.celular.trim()) { toast.error('Informe pelo menos um telefone'); return; }

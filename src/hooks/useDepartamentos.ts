@@ -28,8 +28,8 @@ export function useDepartamentos(options: UseDepartamentosOptions = {}) {
     successMessages: {
       create: 'Departamento criado com sucesso',
       update: 'Departamento atualizado',
-      delete: 'Departamento excluído'
-    }
+      delete: 'Departamento excluído',
+    },
   });
 
   // Empresa fictícia (VITE_COLABORADORES_MOCK): `departamentos` reais não

@@ -24,7 +24,7 @@ vi.mock('@/services/pontoMonitorService', () => ({
   },
 }));
 
-import { pontoOfflineService } from '../pontoOfflineService';
+import { avisoRecusaRelogio, pontoOfflineService } from '../pontoOfflineService';
 
 describe('pontoOfflineService.generateIntegrityHash', () => {
   it('returns a non-empty string', () => {

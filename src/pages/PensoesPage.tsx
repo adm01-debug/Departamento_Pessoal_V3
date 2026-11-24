@@ -28,13 +28,12 @@ export default function PensoesPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['pensoes', empresaId],
     queryFn: async () => {
-      // `pensoes.empresa_id` é denormalizada e mantida por trigger a partir
-      // do colaborador. Filtro direto (indexado) + defesa em profundidade
-      // sobre a RLS, que libera todas as empresas do usuário.
+      // O banco ao vivo não tem `pensoes.empresa_id` (drift da migration
+      // 20260728172359): filtra pela empresa do colaborador via inner join.
       const { data, error } = await supabase
         .from('pensoes')
-        .select('*, colaboradores!pensoes_colaborador_id_fkey(id, nome_completo)')
-        .eq('empresa_id', empresaId!)
+        .select('*, colaboradores!pensoes_colaborador_id_fkey!inner(id, nome_completo, empresa_id)')
+        .eq('colaboradores.empresa_id', empresaId!)
         .order('created_at', { ascending: false })
         .limit(500);
       if (error) throw error;
@@ -61,6 +60,43 @@ export default function PensoesPage() {
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['pensoes', empresaId] }); setOpen(false); toast.success('Pensão cadastrada'); },
   });
+
+  const atualizar = useMutation({
+    mutationFn: async ({ id, d }: { id: string; d: typeof form }) => {
+      // Escopo de empresa garantido pela RLS tenant_pensoes (via colaborador).
+      const { data, error } = await supabase.from('pensoes').update(toPayload(d)).eq('id', id).select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Pensão não encontrada ou sem permissão para alterar.');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['pensoes', empresaId] });
+      setOpen(false);
+      setEditId(null);
+      toast.success('Pensão atualizada');
+    },
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao atualizar pensão.')),
+  });
+
+  type PensaoRow = NonNullable<typeof data>[number];
+  const abrirNova = () => {
+    setEditId(null);
+    setForm(FORM_VAZIO);
+  };
+  const abrirEdicao = (r: PensaoRow) => {
+    setEditId(r.id);
+    setForm({
+      colaborador_id: r.colaborador_id ?? '',
+      beneficiario: r.beneficiario ?? '',
+      cpf_beneficiario: r.cpf_beneficiario ?? '',
+      tipo: r.tipo ?? 'alimenticia',
+      percentual: r.percentual != null ? String(r.percentual) : '',
+      valor_fixo: r.valor_fixo != null ? String(r.valor_fixo) : '',
+      banco: r.banco ?? '',
+      agencia: r.agencia ?? '',
+      conta: r.conta ?? '',
+    });
+    setOpen(true);
+  };
 
   const excluir = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from('pensoes').delete().eq('id', id).eq('empresa_id', empresaId!); if (error) throw error; },

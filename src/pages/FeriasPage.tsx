@@ -13,6 +13,7 @@ import { useFerias } from '@/hooks/useFerias';
 import { feriasService } from '@/services';
 import { useFeriasAprovacao } from '@/hooks/useFeriasAprovacao';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useAuth } from '@/contexts';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { Calendar, Calculator, Loader2, List, CalendarDays, History, LayoutDashboard, FileDown, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
@@ -39,6 +40,9 @@ const statusOptions = [
 
 export default function FeriasPage() {
   const { empresaAtual } = useEmpresas();
+  const { isAdmin, hasRole } = useAuth();
+  // RLS de `ferias` só permite INSERT com pode_gerir_rh (admin ou RH da empresa).
+  const podeSolicitar = isAdmin || hasRole('rh');
   const [statusFilter, setStatusFilter] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);

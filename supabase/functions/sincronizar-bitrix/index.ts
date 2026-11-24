@@ -1,6 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { z } from 'https://esm.sh/zod@3.23.8';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
+import { z } from 'npm:zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
@@ -154,7 +154,48 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     if ((action === 'sync_cargos' || action === 'sync_all') && config.sync_cargos) {
-      results.cargos = { note: 'Cargos sync requires custom Bitrix24 field mapping' };
+      try {
+        // O Bitrix24 não tem entidade "cargo": o dado vive em WORK_POSITION
+        // (POSITION) de cada usuário. Coletamos os valores distintos dos
+        // usuários ativos — o mesmo payload de user.get já usado acima.
+        const resp = await safeFetch(`${config.webhook_url}/user.get?ACTIVE=true`, {
+          timeoutMs: 8_000,
+          tag: 'webhook',
+        });
+        if (!resp.ok) throw new Error(`Bitrix API error: ${resp.status}`);
+        const bitrixData = await resp.json();
+        const users = bitrixData.result || [];
+        const nomes = new Set<string>();
+        for (const user of users) {
+          const nome = String(user.WORK_POSITION ?? user.POSITION ?? '').trim();
+          if (nome) nomes.add(nome);
+        }
+
+        // `cargos` não tem unique em (empresa_id, nome) — o upsert do PostgREST
+        // falharia com "no unique constraint". Resolvemos por lookup: atualiza
+        // o existente (reativando) ou insere um novo.
+        const { data: existentes } = await admin
+          .from('cargos')
+          .select('id,nome')
+          .eq('empresa_id', config.empresa_id);
+        const porNome = new Map<string, string>(
+          (existentes ?? []).map((c: { id: string; nome: string }) => [c.nome, c.id]),
+        );
+
+        for (const nome of nomes) {
+          const idExistente = porNome.get(nome);
+          const { error } = idExistente
+            ? await admin.from('cargos').update({ ativo: true }).eq('id', idExistente)
+            : await admin.from('cargos').insert({ nome, ativo: true, empresa_id: config.empresa_id });
+          if (error) totalErrors++; else totalSuccess++;
+          totalProcessed++;
+        }
+        results.cargos = { processed: nomes.size };
+      } catch (e: unknown) {
+        results.cargos = { error: e instanceof Error ? e.message : 'unknown' };
+        totalErrors++;
+        totalProcessed++;
+      }
     }
 
     // Log + audit

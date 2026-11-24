@@ -47,6 +47,8 @@ export default function DocumentosPage() {
   // P2-050: tipo concreto para OCR result (era any, escondia bugs)
   interface OcrResult {
     text: string;
+    /** Texto livre retornado pela edge function OCR (supabase/functions/OCR). */
+    extractedText?: string;
     confidence?: number;
     data?: Record<string, string>;
     fields?: Record<string, string>;

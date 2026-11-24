@@ -14,6 +14,15 @@ import { useQueryClient } from '@tanstack/react-query';
 // MOCK VISUAL — ver src/mocks/premiacoesMock.ts.
 import { bloquearEscritaPremiacoes } from '@/mocks/premiacoesMock';
 
+const REGRAS_INICIAIS = [
+  {
+    titulo: 'Bônus de Batimento',
+    tipo_calculo: 'valor_fixo',
+    valor_base: 500,
+    configuracao: { condicao_metrica: 'atingimento_meta' },
+  },
+];
+
 interface CampaignWizardProps {
   isOpen: boolean;
   onClose: () => void;
@@ -23,15 +32,16 @@ interface CampaignWizardProps {
 export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardProps) {
   const queryClient = useQueryClient();
   const [step, setStep] = React.useState(1);
-  const [formData, setFormData] = React.useState({
+  const formInicial = {
     nome: '',
     descricao: '',
     data_inicio: '',
     data_fim: '',
     orcamento_estimado: 0,
     empresa_id: empresaId,
-    status: 'ativo'
-  });
+    status: 'ativo',
+  };
+  const [formData, setFormData] = React.useState(formInicial);
 
   const [rules, setRules] = React.useState([
     { nome: 'Bônus de Batimento', tipo_calculo: 'valor_fixo', valor_base: 500, condicao_metrica: 'atingimento_meta' }
@@ -43,21 +53,33 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
     try {
       const campanha = await premiacoesService.criarCampanha({
         ...formData,
-        empresa_id: empresaId
+        status,
+        empresa_id: empresaId,
       });
-      
+      campanhaCriada = true;
+
       for (const rule of rules) {
         await premiacoesService.criarRegra({
           ...rule,
-          campanha_id: campanha.id
+          campanha_id: campanha.id,
         });
       }
 
       queryClient.invalidateQueries({ queryKey: ['premiacoes_campanhas'] });
-      toast.success("Campanha estratégica criada com sucesso!");
+      toast.success(status === 'rascunho' ? 'Rascunho da campanha salvo.' : 'Campanha estratégica criada com sucesso!');
+      setStep(1);
+      setFormData(formInicial);
+      setRules(REGRAS_INICIAIS);
       onClose();
     } catch (e) {
-      toast.error("Erro ao criar campanha.");
+      if (campanhaCriada) {
+        queryClient.invalidateQueries({ queryKey: ['premiacoes_campanhas'] });
+        toast.error('A campanha foi criada, mas nem todas as regras foram salvas.');
+      } else {
+        toast.error('Erro ao criar campanha.');
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -78,9 +100,7 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
             <Trophy className="h-5 w-5 text-primary" />
             Configurar Nova Campanha de Incentivo
           </DialogTitle>
-          <DialogDescription>
-            Defina o período, orçamento e as regras de cálculo para este ciclo.
-          </DialogDescription>
+          <DialogDescription>Defina o período, orçamento e as regras de cálculo para este ciclo.</DialogDescription>
         </DialogHeader>
       </motion.div>
 
@@ -90,21 +110,38 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-2">
                 <Label>Nome da Campanha</Label>
-                <Input placeholder="Ex: Campanha de Vendas Q2" value={formData.nome} onChange={e => setFormData({...formData, nome: e.target.value})} />
+                <Input
+                  placeholder="Ex: Campanha de Vendas Q2"
+                  value={formData.nome}
+                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label>Início</Label>
-                  <Input type="date" value={formData.data_inicio} onChange={e => setFormData({...formData, data_inicio: e.target.value})} />
+                  <Input
+                    type="date"
+                    value={formData.data_inicio}
+                    onChange={(e) => setFormData({ ...formData, data_inicio: e.target.value })}
+                  />
                 </div>
                 <div className="grid gap-2">
                   <Label>Fim</Label>
-                  <Input type="date" value={formData.data_fim} onChange={e => setFormData({...formData, data_fim: e.target.value})} />
+                  <Input
+                    type="date"
+                    value={formData.data_fim}
+                    onChange={(e) => setFormData({ ...formData, data_fim: e.target.value })}
+                  />
                 </div>
               </div>
               <div className="grid gap-2">
                 <Label>Orçamento Máximo Estimado</Label>
-                <Input type="number" placeholder="R$ 0,00" value={formData.orcamento_estimado} onChange={e => setFormData({...formData, orcamento_estimado: Number(e.target.value)})} />
+                <Input
+                  type="number"
+                  placeholder="R$ 0,00"
+                  value={formData.orcamento_estimado}
+                  onChange={(e) => setFormData({ ...formData, orcamento_estimado: Number(e.target.value) })}
+                />
               </div>
             </div>
           ) : (
@@ -165,18 +202,20 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
       <motion.div variants={cascadeItemVariants}>
         <DialogFooter>
           {step === 1 ? (
-            <Button className="w-full" onClick={() => setStep(2)}>Próximo: Regras de Pagamento</Button>
+            <Button className="w-full" onClick={() => setStep(2)}>
+              Próximo: Regras de Pagamento
+            </Button>
           ) : (
             <div className="flex gap-2 w-full">
-              <Button variant="outline" onClick={() => setStep(1)}>Voltar</Button>
-              <Button variant="secondary" className="flex-1" onClick={() => {
-                setFormData({...formData, status: 'rascunho'});
-                handleSave();
-              }}>Salvar Rascunho</Button>
-              <Button className="flex-2" onClick={() => {
-                setFormData({...formData, status: 'ativo'});
-                handleSave();
-              }}>Lançar Campanha</Button>
+              <Button variant="outline" disabled={saving} onClick={() => setStep(1)}>
+                Voltar
+              </Button>
+              <Button variant="secondary" className="flex-1" disabled={saving} onClick={() => handleSave('rascunho')}>
+                Salvar Rascunho
+              </Button>
+              <Button className="flex-2" disabled={saving} onClick={() => handleSave('ativo')}>
+                Lançar Campanha
+              </Button>
             </div>
           )}
         </DialogFooter>

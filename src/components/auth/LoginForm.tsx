@@ -48,7 +48,9 @@ export const LoginForm = memo(function LoginForm({ onSubmit, onForgotPassword, c
               required
             />
           </div>
-          <Button type="submit" className="w-full">Entrar</Button>
+          <Button type="submit" className="w-full">
+            Entrar
+          </Button>
           {onForgotPassword && (
             <Button type="button" variant="link" onClick={onForgotPassword} className="w-full">
               Esqueci minha senha

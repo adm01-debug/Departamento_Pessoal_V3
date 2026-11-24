@@ -6,6 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
@@ -81,8 +91,11 @@ function BeneficiariosSeguroSection({ seguroId }: { seguroId: string }) {
 
 export default function SegurosVidaPage() {
   const { empresaAtual } = useEmpresas();
+  const { isAdmin, hasRole } = useAuth();
+  const podeGerir = isAdmin || hasRole('rh');
   const qc = useQueryClient();
   const [tab, setTab] = useState('seguros');
+  const [excluirAlvo, setExcluirAlvo] = useState<{ id: string; seguradora: string | null } | null>(null);
   const [expandedSeguro, setExpandedSeguro] = useState<string | null>(null);
 
   // === Seguros ===
@@ -111,6 +124,60 @@ export default function SegurosVidaPage() {
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['seguros-vida'] }); setOpen(false); toast.success('Seguro cadastrado'); }});
+
+  const atualizar = useMutation({
+    mutationFn: async ({ id, d }: { id: string; d: typeof form }) => {
+      const { data: rows, error } = await supabase
+        .from('seguros_vida')
+        .update(
+          validateTablePayload(
+            'seguros_vida',
+            {
+              seguradora: d.seguradora,
+              numero_apolice: d.numero_apolice || null,
+              capital_segurado: d.capital_segurado ? Number(d.capital_segurado) : null,
+              premio_mensal: d.premio_mensal ? Number(d.premio_mensal) : null,
+              data_inicio: d.data_inicio || null,
+              data_fim: d.data_fim || null,
+            },
+            'SegurosVidaPage:seguros_vida:update'
+          )
+        )
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id');
+      if (error) throw error;
+      if (!rows?.length) throw new Error('Apólice não encontrada ou sem permissão para editar');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['seguros-vida'] });
+      qc.invalidateQueries({ queryKey: ['sinistros-seguro'] });
+      onOpenChangeSeguro(false);
+      toast.success('Seguro atualizado');
+    },
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao atualizar seguro')),
+  });
+
+  const abrirEdicao = (r: {
+    id: string;
+    seguradora: string | null;
+    numero_apolice: string | null;
+    capital_segurado: number | null;
+    premio_mensal: number | null;
+    data_inicio: string | null;
+    data_fim: string | null;
+  }) => {
+    setEditId(r.id);
+    setForm({
+      seguradora: r.seguradora ?? '',
+      numero_apolice: r.numero_apolice ?? '',
+      capital_segurado: r.capital_segurado != null ? String(r.capital_segurado) : '',
+      premio_mensal: r.premio_mensal != null ? String(r.premio_mensal) : '',
+      data_inicio: r.data_inicio ?? '',
+      data_fim: r.data_fim ?? '',
+    });
+    setOpen(true);
+  };
 
   const excluir = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from('seguros_vida').delete().eq('id', id).eq('empresa_id', empresaAtual!.id); if (error) throw error; },
@@ -342,6 +409,32 @@ export default function SegurosVidaPage() {
           </CardContent></Card>
         </TabsContent>
       </Tabs>
+
+      <AlertDialog open={!!excluirAlvo} onOpenChange={(v) => !v && !excluir.isPending && setExcluirAlvo(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir seguro de vida?</AlertDialogTitle>
+            <AlertDialogDescription>
+              A apólice {excluirAlvo?.seguradora ? `"${excluirAlvo.seguradora}"` : ''} será excluída permanentemente,
+              junto com todos os sinistros, beneficiários e colaboradores vinculados a ela. Esta ação não pode ser
+              desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={excluir.isPending}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={excluir.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={(e) => {
+                e.preventDefault();
+                if (excluirAlvo) excluir.mutate(excluirAlvo.id);
+              }}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </PageLayout>
   );
 }

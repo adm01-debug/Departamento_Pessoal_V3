@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 
 interface QuickAction {
   label: string;
@@ -14,6 +15,8 @@ interface QuickAction {
   path: string;
   desc: string;
   gradient: string;
+  /** Só admin/RH: RLS de `ferias` só permite INSERT com pode_gerir_rh. */
+  somenteRh?: boolean;
 }
 
 const actions: QuickAction[] = [
@@ -31,6 +34,9 @@ const actions: QuickAction[] = [
 
 export function MobileQuickActions({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const navigate = useNavigate();
+  const { isAdmin, hasRole } = useAuth();
+  const podeSolicitarFerias = isAdmin || hasRole('rh');
+  const visibleActions = actions.filter((action) => !action.somenteRh || podeSolicitarFerias);
 
   const handleAction = (path: string) => {
     onOpenChange(false);
@@ -77,7 +83,7 @@ export function MobileQuickActions({ open, onOpenChange }: { open: boolean; onOp
             </div>
 
             <div className="grid grid-cols-2 gap-3 mb-4">
-              {actions.map((action, i) => (
+              {visibleActions.map((action, i) => (
                 <motion.button
                   key={action.path}
                   initial={{ opacity: 0, scale: 0.9 }}

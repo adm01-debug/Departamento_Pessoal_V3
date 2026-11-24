@@ -23,7 +23,7 @@ export const BarChartWidget = memo(function BarChartWidget({
   showValues = true,
   className,
 }: BarChartWidgetProps) {
-  const max = customMax || Math.max(...data.map(d => d.value), 1);
+  const max = customMax || Math.max(...data.map((d) => d.value), 1);
 
   return (
     <div className={cn('flex items-end gap-2', className)} style={{ height }}>
@@ -51,9 +51,7 @@ export const BarChartWidget = memo(function BarChartWidget({
                 'opacity-80 group-hover:shadow-glow-sm'
               )}
             />
-            <span className="text-[9px] text-muted-foreground font-body truncate w-full text-center">
-              {item.label}
-            </span>
+            <span className="text-[9px] text-muted-foreground font-body truncate w-full text-center">{item.label}</span>
           </div>
         );
       })}

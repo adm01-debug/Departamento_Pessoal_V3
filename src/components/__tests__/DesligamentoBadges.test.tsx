@@ -35,8 +35,10 @@ describe('TipoBadge', () => {
     expect(screen.getByText('Sem Justa Causa')).toBeInTheDocument();
   });
 
-  it('renders Justa Causa for com_justa_causa', () => {
-    render(<TipoBadge tipo="com_justa_causa" />);
+  // `justa_causa` e o valor REAL do enum; `com_justa_causa` nunca existiu no
+  // banco e o selo exibia o texto cru.
+  it('renders Justa Causa for justa_causa', () => {
+    render(<TipoBadge tipo="justa_causa" />);
     expect(screen.getByText('Justa Causa')).toBeInTheDocument();
   });
 
@@ -45,13 +47,18 @@ describe('TipoBadge', () => {
     expect(screen.getByText('Pedido Demissão')).toBeInTheDocument();
   });
 
-  it('renders Acordo Mútuo for acordo_mutuo', () => {
-    render(<TipoBadge tipo="acordo_mutuo" />);
-    expect(screen.getByText('Acordo Mútuo')).toBeInTheDocument();
+  it('renders Acordo for acordo', () => {
+    render(<TipoBadge tipo="acordo" />);
+    expect(screen.getByText('Acordo')).toBeInTheDocument();
   });
 
-  it('renders Término Contrato for termino_contrato', () => {
-    render(<TipoBadge tipo="termino_contrato" />);
-    expect(screen.getByText('Término Contrato')).toBeInTheDocument();
+  it('renders Fim de Contrato for fim_contrato', () => {
+    render(<TipoBadge tipo="fim_contrato" />);
+    expect(screen.getByText('Fim de Contrato')).toBeInTheDocument();
+  });
+
+  it('renders Falecimento for falecimento', () => {
+    render(<TipoBadge tipo="falecimento" />);
+    expect(screen.getByText('Falecimento')).toBeInTheDocument();
   });
 });

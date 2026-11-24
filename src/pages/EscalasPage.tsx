@@ -47,10 +47,56 @@ export default function EscalasPage() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['escalas'] }); setOpen(false); toast.success('Escala criada'); },
   });
 
+  const atualizar = useMutation({
+    mutationFn: async ({ id, ...d }: typeof form & { id: string }) => {
+      const { data, error } = await supabase
+        .from('escalas')
+        .update(validateTablePayload('escalas', toPayload(d), 'EscalasPage:escalas'))
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Escala não encontrada ou sem permissão para editar.');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['escalas'] });
+      setOpen(false);
+      setEditandoId(null);
+      setForm({
+        nome: '',
+        tipo: '',
+        dias_trabalho: '',
+        dias_folga: '',
+        horario_entrada: '',
+        horario_saida: '',
+        intervalo_minutos: '',
+      });
+      toast.success('Escala atualizada');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar escala.')),
+  });
+
   const excluir = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from('escalas').delete().eq('id', id).eq('empresa_id', empresaAtual!.id); if (error) throw error; },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['escalas'] }); toast.success('Excluída'); },
   });
+
+  const handleOpenChange = (o: boolean) => {
+    setOpen(o);
+    if (!o && editandoId) {
+      setEditandoId(null);
+      setForm({
+        nome: '',
+        tipo: '',
+        dias_trabalho: '',
+        dias_folga: '',
+        horario_entrada: '',
+        horario_saida: '',
+        intervalo_minutos: '',
+      });
+    }
+  };
 
   return (
     <>

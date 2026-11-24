@@ -5,12 +5,13 @@
 //   repassada como image_url para o gateway de IA)
 // • Erros genéricos ao cliente (antes: error.message podia vazar detalhes)
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { z } from 'https://esm.sh/zod@3.23.8';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
+import { z } from 'npm:zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { safeFetchWithRetry } from '../_shared/safe-fetch.ts';
+import { AI_CHAT_URL, AI_NO_THINKING, aiApiKey, aiModel } from '../_shared/aiProvider.ts';
 
 const ALLOWED_BUCKETS = ['documentos', 'colaboradores', 'documents', 'arquivos', 'uploads'];
 
@@ -117,8 +118,8 @@ serve(async (req: Request): Promise<Response> => {
       return json({ success: false, error: 'URL do arquivo não obtida' }, 400);
     }
 
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
-    if (!lovableApiKey) {
+    const aiKey = aiApiKey();
+    if (!aiKey) {
       return json({ success: false, error: 'Serviço OCR não configurado', code: 'OCR_NOT_CONFIGURED' }, 503);
     }
 
@@ -138,9 +139,10 @@ serve(async (req: Request): Promise<Response> => {
       'https://ai.gateway.lovable.dev/v1/chat/completions',
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${lovableApiKey}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${aiKey}` },
         body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
+          model: aiModel(),
+          ...AI_NO_THINKING,
           messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: imageUrl } }] }],
           max_tokens: 1000,
         }),

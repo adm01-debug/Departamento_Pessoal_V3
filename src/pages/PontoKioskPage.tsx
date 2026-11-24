@@ -7,7 +7,7 @@ import { Clock, User, Fingerprint, WifiOff, RefreshCw, Smartphone } from 'lucide
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { pontoService } from '@/services/pontoService';
-import { pontoOfflineService } from '@/services/pontoOfflineService';
+import { avisoRecusaRelogioQuiosque, pontoOfflineService } from '@/services/pontoOfflineService';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,6 +30,9 @@ export default function PontoKioskPage() {
       const result = await pontoOfflineService.syncOfflineQueue();
       if (result.synced > 0) {
         toast.success(`${result.synced} registros sincronizados automaticamente.`);
+      }
+      if (result.recusadasRelogio) {
+        toast.error(avisoRecusaRelogioQuiosque(result.recusadasRelogio));
       }
     } catch (e) {
       loggerService.error('Erro na sincronização do quiosque', {}, e instanceof Error ? e : new Error(String(e)));
@@ -304,6 +307,32 @@ export default function PontoKioskPage() {
                 </Button>
               </div>
               <Button variant="ghost" className="w-full mt-4" onClick={() => setStep('pin')}>Cancelar</Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {step === 'relogio' && selectedColab && (
+          <Card className="shadow-2xl border-primary/20">
+            <CardHeader className="text-center">
+              <CardTitle className="font-display">
+                Olá, {(selectedColab.nome_completo ?? 'Colaborador').split(' ')[0]}!
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p role="status" className="text-center text-lg font-medium">
+                Seu ponto é registrado no relógio da unidade.
+              </p>
+              <Button
+                variant="ghost"
+                className="w-full mt-4"
+                onClick={() => {
+                  setStep('pin');
+                  setPin('');
+                  setSelectedColab(null);
+                }}
+              >
+                Voltar
+              </Button>
             </CardContent>
           </Card>
         )}

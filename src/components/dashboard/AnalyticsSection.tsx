@@ -12,7 +12,6 @@ import {
   Download, ListChecks, CheckCircle, AlertOctagon, Bell, ExternalLink, FileJson,
   Layers, Database, Target, Zap, Scale
 } from 'lucide-react';
-import { MiniSparkline } from './MiniSparkline';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedNumber } from './AnimatedNumber';
 import { AppPagination } from '@/components/ui/app-pagination';

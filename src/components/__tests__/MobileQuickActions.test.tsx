@@ -44,6 +44,7 @@ vi.mock('lucide-react', () => ({
 }));
 
 import { MobileQuickActions } from '../layout/MobileQuickActions';
+import { useAuth } from '@/hooks/useAuth';
 
 describe('MobileQuickActions', () => {
   it('renders nothing when open=false', () => {
@@ -68,6 +69,25 @@ describe('MobileQuickActions', () => {
     expect(screen.getByText('Rescisão')).toBeTruthy();
     expect(screen.getByText('Configurações')).toBeTruthy();
     expect(screen.getByText('Organograma')).toBeTruthy();
+  });
+
+  it('shows Solicitar Férias to RH without admin', () => {
+    vi.mocked(useAuth).mockReturnValueOnce({
+      isAdmin: false,
+      hasRole: (r: string) => r === 'rh',
+    } as unknown as ReturnType<typeof useAuth>);
+    render(<MobileQuickActions open onOpenChange={vi.fn()} />);
+    expect(screen.getByText('Solicitar Férias')).toBeTruthy();
+  });
+
+  it('hides Solicitar Férias for roles that cannot insert ferias', () => {
+    vi.mocked(useAuth).mockReturnValueOnce({
+      isAdmin: false,
+      hasRole: () => false,
+    } as unknown as ReturnType<typeof useAuth>);
+    render(<MobileQuickActions open onOpenChange={vi.fn()} />);
+    expect(screen.queryByText('Solicitar Férias')).toBeNull();
+    expect(screen.getByText('Registrar Ponto')).toBeTruthy();
   });
 
   it('renders Fechar Painel button', () => {

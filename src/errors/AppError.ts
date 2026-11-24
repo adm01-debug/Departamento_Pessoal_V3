@@ -28,28 +28,28 @@ export class ValidationError extends AppError {
 }
 
 export class AuthError extends AppError {
-  constructor(message: string = 'Não autorizado') {
+  constructor(message = 'Não autorizado') {
     super(message, 'AUTH_ERROR', 'error');
     this.name = 'AuthError';
   }
 }
 
 export class NetworkError extends AppError {
-  constructor(message: string = 'Erro de conexão') {
+  constructor(message = 'Erro de conexão') {
     super(message, 'NETWORK_ERROR', 'error');
     this.name = 'NetworkError';
   }
 }
 
 export class NotFoundError extends AppError {
-  constructor(message: string = 'Recurso não encontrado') {
+  constructor(message = 'Recurso não encontrado') {
     super(message, 'NOT_FOUND', 'warning');
     this.name = 'NotFoundError';
   }
 }
 
 export class PermissionError extends AppError {
-  constructor(message: string = 'Permissão negada') {
+  constructor(message = 'Permissão negada') {
     super(message, 'PERMISSION_DENIED', 'error');
     this.name = 'PermissionError';
   }

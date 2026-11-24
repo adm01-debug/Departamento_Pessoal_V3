@@ -39,9 +39,9 @@ describe('DashboardHeader', () => {
     expect(screen.getByText('Sincronizar')).toBeInTheDocument();
   });
 
-  it('renders Exportar button', () => {
+  it('does not render inert Exportar menu', () => {
     render(<DashboardHeader greeting="Olá" isLoading={false} onRefresh={vi.fn()} />);
-    expect(screen.getByText('Exportar')).toBeInTheDocument();
+    expect(screen.queryByText('Exportar')).not.toBeInTheDocument();
   });
 
   it('renders Configurações button', () => {

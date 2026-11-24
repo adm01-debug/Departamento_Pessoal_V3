@@ -1,9 +1,10 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { requireAal2 } from '../_shared/aal2.ts';
 
 // Onda 23: hardening critico.
 // Bug original: fallback usava SUPABASE_SERVICE_ROLE_KEY como password de
@@ -85,6 +86,7 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data: userData, error: userErr } = await userClient.auth.getUser();
+    const aal = requireAal2(req); if (!aal.ok) return aal.response!;
     if (userErr || !userData?.user) {
       return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     }

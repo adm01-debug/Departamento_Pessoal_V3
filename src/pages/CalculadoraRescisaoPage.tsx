@@ -32,7 +32,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { FormularioRescisao } from '@/components/calculadoraRescisao/FormularioRescisao';
 import { ResultadoRescisao } from '@/components/calculadoraRescisao/ResultadoRescisao';
@@ -67,6 +67,36 @@ const FORM_INICIAL: RescisaoFormState = {
   motivoDesligamento: '',
   observacoes: '',
 };
+
+/**
+ * Contorno de foco do campo de busca do combobox, resgatado da PR #546
+ * (muri), FormularioRescisao.tsx:183-209.
+ *
+ * O CommandInput do cmdk renderiza um wrapper [cmdk-input-wrapper] com a LUPA
+ * e o input como IRMAOS. O anel de foco global do design system
+ * (:focus-visible -> ring-2 ring-ring, em src/index.css) incide so no input,
+ * entao a borda de foco COMECAVA DEPOIS da lupa: quem navega por teclado via o
+ * realce cortado no meio do campo. Aqui o anel passa a envolver o conjunto.
+ *
+ * O ajuste fica NO CALL SITE, nao em ui/command.tsx, porque aquele componente e
+ * compartilhado com outros comboboxes (Afastamentos) e mudar o global
+ * arrastaria telas fora desta tarefa.
+ *
+ * Tres utilitarios, nao sete: a primeira versao desta constante adicionava
+ * m-2, rounded-lg, border, border-border/50, px-3 e transition-colors, e
+ * estourou o orcamento de CSS do repo em 1 KB (gate check-bundle-budget:
+ * css_total_kb 351 > 350). Encolhida em vez de levantar o limite — levantar o
+ * orcamento para caber acabamento visual e exatamente o que ele existe para
+ * impedir. O que saiu era redundante ou cosmetico: o wrapper do cmdk JA tem
+ * "flex items-center border-b px-3" (ui/command.tsx:45), e ring-inset dispensa
+ * a margem porque desenha o anel POR DENTRO, sem ser cortado pelo Command
+ * (que e overflow-hidden). ring-1/ring-inset/ring-primary ja sao usados pelo
+ * Input do design system, entao nao criam CSS novo.
+ */
+const CAMPO_BUSCA_COLABORADOR =
+  '[&_[cmdk-input-wrapper]:focus-within]:ring-1 ' +
+  '[&_[cmdk-input-wrapper]:focus-within]:ring-inset ' +
+  '[&_[cmdk-input-wrapper]:focus-within]:ring-primary';
 
 export default function CalculadoraRescisaoPage() {
   const { user } = useAuth();
@@ -109,7 +139,6 @@ export default function CalculadoraRescisaoPage() {
   const handleSelectColaborador = async (id: string) => {
     if (!id) return;
     setLoadingColab(true);
-    setSelectedColabId(id);
     try {
       // MOCK VISUAL — ver src/mocks/calculadoraRescisaoMock.ts. Sem isto, escolher
       // um colaborador fictício falharia no Supabase (o id não existe no banco).
@@ -171,7 +200,12 @@ export default function CalculadoraRescisaoPage() {
       if (!empresaAtual?.id) return [];
       const { data, error } = await supabase
         .from('colaboradores')
-        .select('id, nome_completo')
+        // `cpf_last4` e não `cpf`: a busca precisa desambiguar homônimos, não
+        // expor o CPF inteiro de toda a empresa no navegador. O log de acesso a
+        // PII desta tela é por colaborador selecionado (useDataAccessLog acima),
+        // então carregar a lista completa de CPFs seria leitura em massa sem
+        // registro — a coluna `cpf_last4` existe no banco exatamente para isso.
+        .select('id, nome_completo, matricula, cpf_last4')
         .eq('empresa_id', empresaAtual.id)
         .eq('status', 'ativo')
         .order('nome_completo');
@@ -302,6 +336,9 @@ export default function CalculadoraRescisaoPage() {
         }
       }
 
+      // Sem isto o cálculo recém-salvo não aparece na lista abaixo até a tela
+      // ser recarregada.
+      void queryClient.invalidateQueries({ queryKey: ['historico-rescisoes', empresaAtual.id] });
       toast.success('Cálculo salvo no histórico!');
       // `historicoSalvo` é o registro criado — mantido só para o `select().single()`
       // devolver a linha (mesmo comportamento de antes do redesign).

@@ -20,7 +20,11 @@ export function NewLoanDialog({ colaboradores, onSave }: any) {
   });
 
   // Compliance Engine: Calculate Margin
-  const { data: colaboradorData } = useQuery({
+  const {
+    data: colaboradorData,
+    isSuccess: colaboradorCarregado,
+    isError: erroColaborador,
+  } = useQuery({
     queryKey: ['colaborador-margin', form.colaborador_id],
     queryFn: async () => {
       if (!form.colaborador_id) return null;
@@ -35,18 +39,30 @@ export function NewLoanDialog({ colaboradores, onSave }: any) {
     enabled: !!form.colaborador_id
   });
 
+  const parcelasAtivas = useMemo(
+    () =>
+      emprestimos
+        .filter((e) => e.colaborador_id === form.colaborador_id && e.status === 'ativo')
+        .reduce((acc, e) => acc + Number(e.valor_parcela || 0), 0),
+    [emprestimos, form.colaborador_id]
+  );
+
+  const semSalario = colaboradorCarregado && !colaboradorData?.salario_base;
+
   const marginData = useMemo(() => {
-    if (!colaboradorData?.salario_base) return { margin: 0, percent: 0, isValid: true };
+    // Sem salário base não há como calcular a margem: bloqueia em vez de liberar.
+    if (!colaboradorData?.salario_base) return { margin: 0, percent: 0, isValid: false };
     const valor_parcela = Number(form.valor_total) / (Number(form.numero_parcelas) || 1);
-    const margin = colaboradorData.salario_base * 0.3; // 30% Law
-    const currentPercent = (valor_parcela / colaboradorData.salario_base) * 100;
+    const margin = colaboradorData.salario_base * MARGEM_CONSIGNAVEL_TELA;
+    const comprometido = parcelasAtivas + valor_parcela;
+    const currentPercent = (comprometido / colaboradorData.salario_base) * 100;
 
     return {
       margin,
       percent: currentPercent,
       isValid: valor_parcela <= margin
     };
-  }, [colaboradorData, form.valor_total, form.numero_parcelas]);
+  }, [colaboradorData, form.valor_total, form.numero_parcelas, parcelasAtivas]);
 
   const handleSubmit = () => {
     if (!marginData.isValid) return;
@@ -103,7 +119,7 @@ export function NewLoanDialog({ colaboradores, onSave }: any) {
             <div className={`p-3 rounded-lg border flex flex-col gap-2 ${marginData.isValid ? 'bg-success/5 border-success/20' : 'bg-destructive/5 border-destructive/20'}`}>
               <div className="flex items-center justify-between text-xs font-semibold">
                 <span className="flex items-center gap-1">
-                  <Info className="h-3 w-3" /> Margem Consignável (30%)
+                  <Info className="h-3 w-3" /> Margem Consignável ({MARGEM_CONSIGNAVEL_TELA * 100}%)
                 </span>
                 <span>Max: R$ {marginData.margin.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
               </div>
@@ -117,6 +133,24 @@ export function NewLoanDialog({ colaboradores, onSave }: any) {
                 <p className="text-[10px] text-destructive flex items-center gap-1 font-medium">
                   <AlertCircle className="h-3 w-3" /> Alerta: Parcela excede a margem permitida por lei.
                 </p>
+              )}
+              {erroColaborador ? (
+                <p className="text-[10px] text-destructive flex items-center gap-1 font-bold">
+                  <AlertCircle className="h-3 w-3" /> Não foi possível carregar o salário do colaborador para calcular a
+                  margem. Tente novamente.
+                </p>
+              ) : semSalario ? (
+                <p className="text-[10px] text-destructive flex items-center gap-1 font-bold">
+                  <AlertCircle className="h-3 w-3" /> Colaborador sem salário base cadastrado: não é possível calcular a
+                  margem.
+                </p>
+              ) : (
+                colaboradorCarregado &&
+                !marginData.isValid && (
+                  <p className="text-[10px] text-destructive flex items-center gap-1 font-bold">
+                    <AlertCircle className="h-3 w-3" /> Alerta: Parcela excede a margem permitida por lei.
+                  </p>
+                )
               )}
             </div>
           )}

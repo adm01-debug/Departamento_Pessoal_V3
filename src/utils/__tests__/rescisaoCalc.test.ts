@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calcularRescisao, fmt } from '../rescisaoCalc';
+import { aliquotaEfetiva, calcularRescisao, fmt } from '../rescisaoCalc';
 import { calcularINSS as calcINSS, calcularIRRF as calcIRRF } from '@/calculators/impostos';
 
 // ═══════════════════════════════════════════════════════

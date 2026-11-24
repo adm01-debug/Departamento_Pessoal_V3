@@ -35,11 +35,20 @@ END $$;
 -- após varredura dinâmica (defesa em profundidade)
 
 -- backup_logs (pode ter ficado órfão após alguma migration)
-DROP POLICY IF EXISTS "backup_logs_tenant_all" ON public.backup_logs;
-CREATE POLICY "backup_logs_tenant_all" ON public.backup_logs
-  FOR ALL TO authenticated
-  USING (empresa_id = public.get_auth_empresa_id())
-  WITH CHECK (empresa_id = public.get_auth_empresa_id());
+-- backup_logs nao existe no canonico: sem o guard, DROP/CREATE POLICY e o
+-- COMMENT abaixo abortam o apply com "relation does not exist".
+DO $$
+BEGIN
+  IF to_regclass('public.backup_logs') IS NULL THEN
+    RAISE NOTICE '[P1-024] public.backup_logs ausente - policy nao criada';
+    RETURN;
+  END IF;
+  EXECUTE 'DROP POLICY IF EXISTS "backup_logs_tenant_all" ON public.backup_logs';
+  EXECUTE 'CREATE POLICY "backup_logs_tenant_all" ON public.backup_logs
+    FOR ALL TO authenticated
+    USING (empresa_id = public.get_auth_empresa_id())
+    WITH CHECK (empresa_id = public.get_auth_empresa_id())';
+END $$;
 
 -- contratos (caso exista sem policy)
 DO $$
@@ -81,5 +90,10 @@ BEGIN
   END IF;
 END $$;
 
-COMMENT ON TABLE public.backup_logs IS
-  '[P1-024] Policy default adicionada (tenant-scoped).';
+DO $$
+BEGIN
+  IF to_regclass('public.backup_logs') IS NOT NULL THEN
+    EXECUTE 'COMMENT ON TABLE public.backup_logs IS '
+      || quote_literal('[P1-024] Policy default adicionada (tenant-scoped).');
+  END IF;
+END $$;

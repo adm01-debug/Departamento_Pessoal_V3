@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { episService, episEntregasService } from '@/services';
 import { colaboradorService } from '@/services';
-import { useEmpresas } from '@/hooks';
+import { useEmpresas, useAtualizarEpi } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, HardHat, Package } from 'lucide-react';
@@ -92,6 +92,53 @@ export default function EPIsPage() {
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar EPI.')),
   });
+
+  const atualizarEpi = useAtualizarEpi();
+
+  const fecharDialogEpi = (open: boolean) => {
+    if (!open && atualizarEpi.isPending) return;
+    setOpenEpi(open);
+    if (!open && editingEpiId) {
+      setEditingEpiId(null);
+      setFormEpi(FORM_EPI_VAZIO);
+    }
+  };
+
+  const abrirEdicaoEpi = (epi: Tables<'epis'>) => {
+    setEditingEpiId(epi.id);
+    setFormEpi({
+      nome: epi.nome,
+      ca: epi.ca ?? '',
+      categoria: epi.categoria ?? '',
+      validade_ca: epi.validade_ca ?? '',
+      fabricante: epi.fabricante ?? '',
+      unidade_medida: epi.unidade_medida ?? 'un',
+      estoque_atual: String(epi.estoque_atual ?? 0),
+      estoque_minimo: String(epi.estoque_minimo ?? 0),
+    });
+    setOpenEpi(true);
+  };
+
+  const salvarEpi = () => {
+    if (!editingEpiId) {
+      criarEpi.mutate(formEpi);
+      return;
+    }
+    atualizarEpi.mutate(
+      {
+        id: editingEpiId,
+        nome: formEpi.nome,
+        ca: formEpi.ca || null,
+        categoria: formEpi.categoria || null,
+        validade_ca: formEpi.validade_ca || null,
+        fabricante: formEpi.fabricante || null,
+        unidade_medida: formEpi.unidade_medida || null,
+        estoque_atual: Number(formEpi.estoque_atual) || 0,
+        estoque_minimo: Number(formEpi.estoque_minimo) || 0,
+      },
+      { onSuccess: () => fecharDialogEpi(false) }
+    );
+  };
 
   const criarEntrega = useMutation({
     mutationFn: (d: Record<string, unknown>) => episEntregasService.criar({ ...d, empresa_id: empresaAtual?.id, quantidade: Number(d.quantidade) }),

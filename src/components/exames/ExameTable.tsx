@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Trash2, Stethoscope } from 'lucide-react';
+import { Trash2, Stethoscope, Pencil } from 'lucide-react';
 import { format, parseISO, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -22,12 +22,15 @@ const resultadoBadge = (resultado: string | null) => {
   return <Badge variant="secondary" className="text-[10px]">Apto c/ Restrição</Badge>;
 };
 
+type ExameRow = Tables<'exames'> & { colaborador?: { nome_completo?: string | null } | null };
+
 interface ExameTableProps {
   data: any[];
   onExcluir: (id: string) => void;
+  onEditar: (row: ExameRow) => void;
 }
 
-export function ExameTable({ data, onExcluir }: ExameTableProps) {
+export function ExameTable({ data, onExcluir, onEditar }: ExameTableProps) {
   const now = new Date();
 
   const formatDate = (d: string | null) => {

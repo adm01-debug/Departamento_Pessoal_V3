@@ -1,4 +1,5 @@
-import { BaseService, ListOptions, ListResponse } from './baseService';
+import type { ListOptions, ListResponse } from './baseService';
+import { BaseService } from './baseService';
 import { auditLogger } from '@/utils/auditLogger';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -29,7 +30,7 @@ class BeneficioService extends BaseService<any> {
   async listComAdesao(empresaId: string): Promise<any[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await this.getQuery()
-      .select('*, beneficios_colaborador(count)')
+      .select('*, beneficios_colaboradores(count)')
       .eq('empresa_id', empresaId);
     if (error) throw error;
     return (data as any[]) || [];

@@ -273,6 +273,9 @@
     --sidebar-accent-foreground: 60 10% 92%;
     --sidebar-border: 216 37% 14%;
     --sidebar-ring: 68 100% 48%;
+
+    /* Tinta do valor numerico em destaque (.text-data). */
+    --data-foreground: 0 0% 95%;
   }
 }
 
@@ -672,6 +675,40 @@
      (250–350ms). Antes eram 200/300/300ms sem token; agora leem a régua. */
   .hover-scale {
     @apply transition-transform duration-base hover:scale-105;
+  }
+
+  /* ─── Global Scrollbar Styles ─── */
+  /* Applied to html element for universal coverage */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) hsl(var(--border) / 0.15);
+  }
+
+  /* Webkit browsers (Chrome, Edge, Safari) */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--border) / 0.15);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 3px;
+    border: 0px solid transparent;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* Firefox specific */
+  * {
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) hsl(var(--border) / 0.15);
+    scrollbar-width: thin;
   }
 
   /* ─── Global Scrollbar Styles ─── */

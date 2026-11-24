@@ -25,6 +25,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
     },
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
+      qc.invalidateQueries({ queryKey: ['ferias-resumo-colaborador'] });
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos'] });
       auditLogger.log({
         tabela: 'ferias',
@@ -43,6 +44,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
     },
     onSuccess: (_, variables) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
+      qc.invalidateQueries({ queryKey: ['ferias-resumo-colaborador'] });
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos'] });
       auditLogger.log({
         tabela: 'ferias',
@@ -61,6 +63,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
     },
     onSuccess: (_, id) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
+      qc.invalidateQueries({ queryKey: ['ferias-resumo-colaborador'] });
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos'] });
       auditLogger.log({
         tabela: 'ferias',
@@ -78,6 +81,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
+      qc.invalidateQueries({ queryKey: ['ferias-resumo-colaborador'] });
       toast.success('Férias aprovadas pelo gestor');
     },
     onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
@@ -89,6 +93,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
+      qc.invalidateQueries({ queryKey: ['ferias-resumo-colaborador'] });
       toast.success('Férias aprovadas pelo RH e finalizadas');
     },
     onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),

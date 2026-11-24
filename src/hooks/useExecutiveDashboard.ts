@@ -13,7 +13,6 @@ export function useExecutiveKPIs(empresaId?: string, periodo: string = '6') {
       const hoje = new Date();
       const mesAtual = format(hoje, 'yyyy-MM');
       const mesAnterior = format(subMonths(hoje, 1), 'yyyy-MM');
-      const inicioMes = format(startOfMonth(hoje), 'yyyy-MM-dd');
 
       const monthRanges = Array.from({ length: meses }, (_, i) => {
         const mesRef = subMonths(hoje, meses - 1 - i);
@@ -27,12 +26,12 @@ export function useExecutiveKPIs(empresaId?: string, periodo: string = '6') {
 
       const [
         { count: totalAtivos },
-        { data: colabs },
+        colabs,
         { data: folhaAtual },
         { data: folhaAnterior },
         { count: feriasPendentes },
         { count: afastamentosAtivos },
-        { count: diasFalta },
+        { data: absenteismoRow },
         { count: pontoPendentes },
         ...monthResults
       ] = await Promise.all([
@@ -67,6 +66,19 @@ export function useExecutiveKPIs(empresaId?: string, periodo: string = '6') {
         };
       });
 
+      // Custo real por departamento: itens da folha da competência atual (escopo da empresa via folha_id)
+      const folhaIds = (folhaAtual ?? []).map((f) => f.id);
+      const itensFolha = folhaIds.length
+        ? await fetchAllPages((from, to) =>
+            supabase
+              .from('folha_itens')
+              .select('id, colaborador_id, total_liquido')
+              .in('folha_id', folhaIds)
+              .order('id')
+              .range(from, to)
+          )
+        : [];
+
       const deptMap: Record<string, number> = {};
       colabs?.forEach((c: any) => { deptMap[c.departamento] = (deptMap[c.departamento] || 0) + 1; });
       const departamentos = Object.entries(deptMap).map(([nome, value]) => ({ nome, value })).sort((a, b) => b.value - a.value).slice(0, 8);
@@ -75,6 +87,9 @@ export function useExecutiveKPIs(empresaId?: string, periodo: string = '6') {
       const totalFolhaAnterior = folhaAnterior?.reduce((s, f) => s + (f.total_liquido || 0), 0) || 0;
       const variacaoFolha = totalFolhaAnterior > 0 ? ((totalFolhaAtual - totalFolhaAnterior) / totalFolhaAnterior * 100) : 0;
       const custoMedio = totalAtivos && totalAtivos > 0 ? totalFolhaAtual / totalAtivos : 0;
+      const headcountPorMes = reconstruirHeadcountPorMes(evolucao, totalAtivos || 0);
+      const variacaoHeadcount = variacaoUltimoMes(headcountPorMes);
+
       const demissoesPeriodo = evolucao.reduce((s, e) => s + e.demissoes, 0);
       const turnover = totalAtivos && totalAtivos > 0 ? (demissoesPeriodo / totalAtivos * 100) : 0;
       const absenteismo = totalAtivos && totalAtivos > 0 ? ((diasFalta || 0) / (totalAtivos * 22) * 100) : 0;

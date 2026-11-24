@@ -5,6 +5,7 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { safeFetch, safeGet } from '../_shared/safe-fetch.ts';
+import { cpfDoSub, type GovbrLookups, resolverLogin, validarVinculo } from './govbrIdentity.ts';
 
 const GOVBR_BASE_URL = Deno.env.get('GOVBR_BASE_URL') ?? 'https://sso.acesso.gov.br';
 const GOVBR_AUTH_URL = `${GOVBR_BASE_URL}/authorize`;
@@ -104,6 +105,35 @@ serve(async (req: Request): Promise<Response> => {
     }
     const body = parsed.data;
 
+    // JWT é OPCIONAL: o botão "Entrar com gov.br" na tela de login chama
+    // get_auth_url sem sessão, e o callback completa o login (modo anônimo,
+    // state.user_id NULL). Com sessão ativa, o fluxo vincula a conta gov.br
+    // ao perfil logado (state.user_id = userId).
+    const authHeader = req.headers.get('Authorization') ?? '';
+    let userId: string | null = null;
+    if (authHeader.startsWith('Bearer ')) {
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+      const { data: userData } = await userClient.auth.getUser();
+      userId = userData?.user?.id ?? null;
+    }
+
+    const supabase = createClient(supabaseUrl, serviceKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+
+    // Rate limit: 5 tentativas/min por usuário ou por IP (fluxo anônimo).
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const rl = await checkRateLimit(supabase, {
+      key: userId ? `govbr:${userId}` : `govbr:anon:${ip}`,
+      limit: 5,
+      windowSec: 60,
+    });
+    if (!rl.allowed) return rateLimitResponse(rl, req);
+
     if (body.action === 'get_auth_url') {
       if (!isAllowedRedirectUri(body.redirectUri)) {
         return json({ success: false, error: 'URI de redirecionamento não permitida' }, 400);
@@ -117,13 +147,14 @@ serve(async (req: Request): Promise<Response> => {
       const newState = crypto.randomUUID();
       const nonce = crypto.randomUUID();
 
-      await supabase.from('govbr_auth_state').insert({
+      const { error: stateErr } = await supabase.from('govbr_auth_state').insert({
         state: newState,
         nonce,
         redirect_uri: body.redirectUri,
-        user_id: userId,
+        user_id: userId, // null = fluxo de login (anônimo); uuid = vinculação
         expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10min TTL
       });
+      if (stateErr) throw stateErr;
 
       const params = new URLSearchParams({
         response_type: 'code',
@@ -138,15 +169,19 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     if (body.action === 'callback') {
+      // O state é consultado só pelo valor (não por user_id): o request do
+      // callback pode chegar com ou sem sessão conforme o modo do fluxo.
       const { data: authState } = await supabase
         .from('govbr_auth_state')
         .select('*')
         .eq('state', body.state)
-        .eq('user_id', userId)
         .maybeSingle();
 
       if (!authState) {
         return json({ success: false, error: 'Estado de autenticação inválido ou expirado' }, 400);
+      }
+      if (authState.user_id && authState.user_id !== userId) {
+        return json(req, { success: false, error: 'Estado pertence a outra sessão' }, 403);
       }
 
       // Check expiry
@@ -188,12 +223,14 @@ serve(async (req: Request): Promise<Response> => {
       }
       const userInfo = await userResponse.json();
 
-      await supabase.from('profiles').update({
-        govbr_uid: userInfo.sub,
-        govbr_nivel_autenticacao: userInfo.nivel || 'Bronze',
-        cpf_validado_govbr: true,
-        nome_completo: userInfo.name,
-      }).eq('user_id', userId);
+      // gov.br: o claim `sub` É o CPF do titular. Sem sub válido não há
+      // identidade — recusa antes de tocar em qualquer conta.
+      const govbrSub = typeof userInfo?.sub === 'string' ? userInfo.sub.trim() : '';
+      const govbrCpf = cpfDoSub(govbrSub);
+      if (!govbrSub || !govbrCpf) {
+        return json(req, { success: false, error: 'Gov.br não retornou um CPF válido' }, 502);
+      }
+      const nivel = typeof userInfo.nivel === 'string' && userInfo.nivel ? userInfo.nivel : 'Bronze';
 
       await supabase.from('govbr_auth_state').delete().eq('id', authState.id);
 

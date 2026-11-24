@@ -26,9 +26,7 @@ export function SidebarFooter({ collapsed, user, userInitials, onSignOut }: Side
               <p className="text-sm font-body font-medium text-foreground truncate">
                 {user?.name || user?.email || 'Usuário'}
               </p>
-              <p className="text-[10px] text-muted-foreground font-body truncate">
-                {user?.email || ''}
-              </p>
+              <p className="text-[10px] text-muted-foreground font-body truncate">{user?.email || ''}</p>
             </div>
           </div>
           <button
@@ -58,7 +56,9 @@ export function SidebarFooter({ collapsed, user, userInitials, onSignOut }: Side
               <LogOut className="h-4 w-4" />
             </button>
           </TooltipTrigger>
-          <TooltipContent side="right"><p>Sair</p></TooltipContent>
+          <TooltipContent side="right">
+            <p>Sair</p>
+          </TooltipContent>
         </Tooltip>
       )}
     </div>

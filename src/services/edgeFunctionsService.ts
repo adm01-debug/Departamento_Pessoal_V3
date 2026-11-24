@@ -24,11 +24,21 @@ const handleInvoke = async <T>(name: string, options: InvokeOptions, breaker = g
       }
       return data as T;
     });
+    if (clientError) throw clientError;
+    return result;
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : `Falha crítica na comunicação com ${name}`;
     throw new Error(msg, { cause: e });
   }
 };
+
+const GERAR_GUIAS_TIPO = {
+  darf: 'DARF',
+  gps: 'GPS',
+  fgts: 'FGTS',
+  fgts_digital: 'FGTS_DIGITAL',
+  todos: 'TODAS',
+} as const;
 
 export const edgeFunctionsService = {
   /** Dispara alertas automáticos de DP via email */
@@ -50,9 +60,47 @@ export const edgeFunctionsService = {
   }) => {
     const idemKey = `gerar-guias:${params.empresaId}:${params.competencia}:${params.tipo}`;
     return retryWithIdempotency({
-      fn: () => handleInvoke('gerar-guias', { body: params }),
+      // Contrato da edge (BodySchema strict em supabase/functions/gerar-guias/index.ts):
+      // snake_case + tipo em maiúsculas ('todos' → 'TODAS').
+      fn: () =>
+        handleInvoke('gerar-guias', {
+          body: {
+            empresa_id: params.empresaId,
+            competencia: params.competencia,
+            tipo: GERAR_GUIAS_TIPO[params.tipo],
+          },
+        }),
       idempotencyKey: idemKey,
       onRetry: (a, d, e) => loggerService.warn('gerarGuias retry', { attempt: a, delayMs: d, error: e }),
+    });
+  },
+
+  /** Gera guia FGTS Digital (GFD) via edge dedicada — retry com idempotência. */
+  gerarGuiaFgtsDigital: async (params: {
+    empresaId: string;
+    competencia: string; // AAAA-MM
+    tipo: 'mensal' | 'rescisorio' | 'complementar';
+    valorTotalCentavos: number;
+    vencimento: string; // AAAA-MM-DD
+  }) => {
+    const idemKey = `fgts-digital:${params.empresaId}:${params.competencia}:${params.tipo}`;
+    return retryWithIdempotency<{ id: string; protocolo?: string } | undefined>({
+      // Contrato snake_case da edge (BodySchema em supabase/functions/fgts-digital/index.ts).
+      fn: () =>
+        handleInvoke<{ success: boolean; id: string; protocolo: string; payload_sha256: string }>('fgts-digital', {
+          // A chave viaja no header: a edge reapresenta a resposta anterior em
+          // vez de reinserir a guia quando o retry chega depois do commit.
+          headers: { 'Idempotency-Key': idemKey },
+          body: {
+            empresa_id: params.empresaId,
+            competencia: params.competencia,
+            tipo: params.tipo,
+            valor_total_centavos: params.valorTotalCentavos,
+            vencimento: params.vencimento,
+          },
+        }),
+      idempotencyKey: idemKey,
+      onRetry: (a, d, e) => loggerService.warn('gerarGuiaFgtsDigital retry', { attempt: a, delayMs: d, error: e }),
     });
   },
 
@@ -185,8 +233,17 @@ export const edgeFunctionsService = {
   }) => handleInvoke('sincronizar-bitrix', { body: params }, bitrixBreaker),
 
   /** Verifica rate limit */
-  checkRateLimit: async (key: string, limit: number = 100, windowSeconds: number = 60) =>
+  checkRateLimit: async (key: string, limit = 100, windowSeconds = 60) =>
     handleInvoke('rateLimit', { body: { key, limit, window_seconds: windowSeconds } }),
+
+  /** Solicita adiantamento salarial: o backend aplica o teto % do salário e 1 por competência. */
+  solicitarAdiantamentoSalarial: async (params: {
+    empresa_id: string;
+    colaborador_id: string;
+    valor_centavos: number;
+    competencia: string;
+    motivo?: string;
+  }) => handleInvoke<{ success: boolean; id: string }>('adiantamento-salarial', { body: params }),
 
   /** Verifica conexão com banco externo */
   checkExternalDb: async () =>

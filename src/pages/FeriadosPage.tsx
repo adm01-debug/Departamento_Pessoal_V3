@@ -8,7 +8,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import { CalendarDays, Plus } from 'lucide-react';
+import { CalendarDays, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useEmpresa } from '@/contexts';
 import { motion } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -26,6 +26,7 @@ export default function FeriadosPage() {
   const [nome, setNome] = useState('');
   const [data, setData] = useState('');
   const [tipo, setTipo] = useState('nacional');
+  const [editandoId, setEditandoId] = useState<string | null>(null);
 
   const { data: feriados, isLoading } = useQuery({
     queryKey: ['feriados', empresaAtual?.id],
@@ -49,18 +50,52 @@ export default function FeriadosPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feriados'] });
-      toast.success('Feriado cadastrado!');
+      toast.success(editandoId ? 'Feriado atualizado!' : 'Feriado cadastrado!');
       setOpen(false);
       setNome(''); setData(''); setTipo('nacional');
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar feriado.')),
   });
 
+  const excluirFeriado = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('feriados')
+        .delete()
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual?.id ?? '');
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['feriados'] });
+      toast.success('Feriado excluído');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao excluir feriado.')),
+  });
+
+  const abrirEdicao = (f: { id: string; descricao: string; data: string; tipo: string | null }) => {
+    setEditandoId(f.id);
+    setNome(f.descricao);
+    setData(f.data);
+    setTipo(f.tipo ?? 'nacional');
+    setOpen(true);
+  };
+
+  const onOpenChange = (v: boolean) => {
+    setOpen(v);
+    if (!v && editandoId) {
+      setEditandoId(null);
+      setNome('');
+      setData('');
+      setTipo('nacional');
+    }
+  };
+
   const tipoColor: Record<string, string> = {
     nacional: 'bg-primary/10 text-primary',
     estadual: 'bg-info/10 text-info',
     municipal: 'bg-warning/10 text-warning',
-    empresa: 'bg-success/10 text-success',
+    facultativo: 'bg-success/10 text-success',
   };
 
   return (

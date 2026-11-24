@@ -51,11 +51,90 @@ export default function MovimentacoesPage() {
     },
     enabled: !!empresaAtual?.id});
 
+  // Aplica a movimentação no cadastro do colaborador (cargo/salário/departamento).
+  // Sem linha afetada = RLS bloqueou (perfil sem gestão de RH): falha explícita, nunca sucesso falso.
+  const aplicarNoColaborador = async (colaboradorId: string, patch: Updatable<'colaboradores'>) => {
+    const { data, error } = await supabase
+      .from('colaboradores')
+      .update(patch)
+      .eq('id', colaboradorId)
+      .eq('empresa_id', empresaAtual!.id)
+      .select('id');
+    if (error) throw error;
+    if (!data || data.length === 0) throw new Error('Sem permissão para atualizar o cadastro do colaborador.');
+  };
+
+  // A movimentação só vale para o cadastro se for a vigente mais recente do colaborador naquela tabela;
+  // senão uma edição/lançamento retroativo sobrescreveria cargo/salário/departamento atuais.
+  const ehMaisRecente = async (tabela: 'transferencias' | 'promocoes', colaboradorId: string, id: string) => {
+    const hoje = todayLocalISO();
+    const { data, error } =
+      tabela === 'promocoes'
+        ? await supabase
+            .from('promocoes')
+            .select('id')
+            .eq('colaborador_id', colaboradorId)
+            .lte('data_vigencia', hoje)
+            .order('data_vigencia', { ascending: false })
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+        : await supabase
+            .from('transferencias')
+            .select('id')
+            .eq('colaborador_id', colaboradorId)
+            .lte('data_vigencia', hoje)
+            .order('data_vigencia', { ascending: false })
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+    if (error) throw error;
+    return data?.id === id;
+  };
+
+  const ERRO_DESFAZER =
+    'O cadastro do colaborador não foi atualizado e não foi possível desfazer a alteração no histórico. Revise o registro.';
+
   const criarTransf = useMutation({
     mutationFn: async (d: any) => {
       const { data, error } = await supabase.from('transferencias').insert({ ...d, empresa_id: empresaAtual?.id }).select().maybeSingle();
       if (error) throw error;
-      return data;
+      if (!data) throw new Error('Transferência não encontrada ou sem permissão para salvar.');
+      const deptoNovo = departamentos.find((x) => x.id === d.departamento_novo_id);
+      const vigente = d.data_vigencia <= todayLocalISO();
+      const mudou =
+        !original ||
+        original.colaborador_id !== data.colaborador_id ||
+        original.departamento_novo_id !== data.departamento_novo_id ||
+        original.data_vigencia !== data.data_vigencia;
+      const maisRecente =
+        vigente && !!deptoNovo && mudou && (await ehMaisRecente('transferencias', d.colaborador_id, data.id));
+      if (maisRecente && deptoNovo) {
+        try {
+          await aplicarNoColaborador(d.colaborador_id, { departamento: deptoNovo.nome });
+        } catch (e) {
+          const desfeito = original
+            ? await supabase
+                .from('transferencias')
+                .update({
+                  colaborador_id: original.colaborador_id,
+                  departamento_anterior_id: original.departamento_anterior_id,
+                  departamento_novo_id: original.departamento_novo_id,
+                  data_vigencia: original.data_vigencia,
+                  motivo: original.motivo,
+                })
+                .eq('id', data.id)
+                .select('id')
+            : await supabase.from('transferencias').delete().eq('id', data.id).select('id');
+          if (desfeito.error || !desfeito.data?.length) throw new Error(ERRO_DESFAZER, { cause: e });
+          throw e;
+        }
+      }
+      return {
+        aplicado: maisRecente,
+        futura: !vigente,
+        temMaisRecente: vigente && !!deptoNovo && mudou && !maisRecente,
+      };
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['transferencias'] }); setOpenTransf(false); toast.success('Transferência registrada!'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.'))});
@@ -64,10 +143,122 @@ export default function MovimentacoesPage() {
     mutationFn: async (d: any) => {
       const { data, error } = await supabase.from('promocoes').insert({ ...d, empresa_id: empresaAtual?.id, novo_salario: d.novo_salario ? Number(d.novo_salario) : null }).select().maybeSingle();
       if (error) throw error;
-      return data;
+      if (!data) throw new Error('Promoção não encontrada ou sem permissão para salvar.');
+      const patch: Updatable<'colaboradores'> = {};
+      const cargoNovo = cargos.find((c) => c.id === d.cargo_novo_id);
+      if (cargoNovo) {
+        patch.cargo_id = cargoNovo.id;
+        patch.cargo = cargoNovo.nome;
+      }
+      if (d.salario_novo) patch.salario_base = Number(d.salario_novo);
+      const temAlteracao = Object.keys(patch).length > 0;
+      const vigente = d.data_vigencia <= todayLocalISO();
+      const mudou =
+        !original ||
+        original.colaborador_id !== data.colaborador_id ||
+        original.cargo_novo_id !== data.cargo_novo_id ||
+        original.salario_novo !== data.salario_novo ||
+        original.data_vigencia !== data.data_vigencia;
+      const maisRecente =
+        vigente && temAlteracao && mudou && (await ehMaisRecente('promocoes', d.colaborador_id, data.id));
+      if (maisRecente) {
+        // Mudança salarial aplicada entra no histórico salarial do colaborador (não há trigger que faça isso).
+        const registrarSalario =
+          !!d.salario_novo &&
+          (!original || original.salario_novo !== data.salario_novo || original.colaborador_id !== data.colaborador_id);
+        let historicoId: string | null = null;
+        try {
+          if (registrarSalario) {
+            const hist = await criarRegistroSalarial({
+              colaborador_id: d.colaborador_id,
+              empresa_id: empresaAtual!.id,
+              data_vigencia: d.data_vigencia,
+              motivo: (d.motivo || 'Promoção').slice(0, 300),
+              salario_anterior: d.salario_anterior ? Number(d.salario_anterior) : null,
+              salario_novo: Number(d.salario_novo),
+              cargo_anterior: cargos.find((c) => c.id === d.cargo_anterior_id)?.nome ?? null,
+              cargo_novo: cargoNovo?.nome ?? null,
+            });
+            historicoId = hist?.id ?? null;
+          }
+          await aplicarNoColaborador(d.colaborador_id, patch);
+        } catch (e) {
+          if (historicoId) await supabase.from('historico_salarial').delete().eq('id', historicoId);
+          const desfeito = original
+            ? await supabase
+                .from('promocoes')
+                .update({
+                  colaborador_id: original.colaborador_id,
+                  cargo_anterior_id: original.cargo_anterior_id,
+                  cargo_novo_id: original.cargo_novo_id,
+                  salario_anterior: original.salario_anterior,
+                  salario_novo: original.salario_novo,
+                  data_vigencia: original.data_vigencia,
+                  motivo: original.motivo,
+                })
+                .eq('id', data.id)
+                .select('id')
+            : await supabase.from('promocoes').delete().eq('id', data.id).select('id');
+          if (desfeito.error || !desfeito.data?.length) throw new Error(ERRO_DESFAZER, { cause: e });
+          throw e;
+        }
+      }
+      return {
+        aplicado: maisRecente,
+        futura: !vigente,
+        temMaisRecente: vigente && temAlteracao && mudou && !maisRecente,
+      };
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['promocoes'] }); setOpenPromo(false); toast.success('Promoção registrada!'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.'))});
+
+  const excluir = useMutation({
+    mutationFn: async (alvo: { tabela: 'transferencias' | 'promocoes'; id: string }) => {
+      // Tabelas sem empresa_id: confirma pela empresa do colaborador antes de excluir.
+      const daEmpresa = alvo.tabela === 'promocoes' ? promocoes : transferencias;
+      if (!daEmpresa.some((m) => m.id === alvo.id && m.colaborador?.empresa_id === empresaAtual?.id))
+        throw new Error('Registro não encontrado nesta empresa.');
+      const { data, error } =
+        alvo.tabela === 'promocoes'
+          ? await supabase.from('promocoes').delete().eq('id', alvo.id).select('id')
+          : await supabase.from('transferencias').delete().eq('id', alvo.id).select('id');
+      if (error) throw error;
+      if (!data || data.length === 0) throw new Error('Registro não encontrado ou sem permissão para excluir.');
+      return alvo.tabela;
+    },
+    onSuccess: (tabela) => {
+      qc.invalidateQueries({ queryKey: [tabela] });
+      setExcluirAlvo(null);
+      toast.success('Registro excluído do histórico.');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao excluir movimentação.')),
+  });
+
+  const editarTransf = (t: TransferenciaComJoins) => {
+    setFormTransf({
+      colaborador_id: t.colaborador_id ?? '',
+      departamento_anterior_id: t.departamento_anterior_id ?? '',
+      departamento_novo_id: t.departamento_novo_id ?? '',
+      data_vigencia: t.data_vigencia ?? '',
+      motivo: t.motivo ?? '',
+    });
+    setEditTransfId(t.id);
+    setOpenTransf(true);
+  };
+
+  const editarPromo = (p: PromocaoComJoins) => {
+    setFormPromo({
+      colaborador_id: p.colaborador_id ?? '',
+      cargo_anterior_id: p.cargo_anterior_id ?? '',
+      cargo_novo_id: p.cargo_novo_id ?? '',
+      salario_anterior: p.salario_anterior != null ? String(p.salario_anterior) : '',
+      salario_novo: p.salario_novo != null ? String(p.salario_novo) : '',
+      data_vigencia: p.data_vigencia ?? '',
+      motivo: p.motivo ?? '',
+    });
+    setEditPromoId(p.id);
+    setOpenPromo(true);
+  };
 
   const isLoading = loadTransf || loadPromo;
   if (isLoading) return <PageLayout title="Movimentações"><Spinner /></PageLayout>;

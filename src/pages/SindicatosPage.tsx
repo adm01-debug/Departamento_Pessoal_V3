@@ -20,6 +20,7 @@ export default function SindicatosPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nome: '', cnpj: '', telefone: '', email: '', data_base: '' });
+  const [editandoId, setEditandoId] = useState<string | null>(null);
 
   const { data: sindicatos = [], isLoading } = useQuery({
     queryKey: ['sindicatos', empresaAtual?.id],
@@ -40,6 +41,29 @@ export default function SindicatosPage() {
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['sindicatos'] }); setOpen(false); toast.success('Sindicato cadastrado!'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar sindicato.'))});
+
+  // sindicatos é tabela global (sem empresa_id); a RLS só permite UPDATE para admin.
+  // Sem linha retornada = RLS bloqueou → erro explícito em vez de sucesso falso.
+  const atualizar = useMutation({
+    mutationFn: async ({ id, ...d }: typeof form & { id: string }) => {
+      const { data, error } = await supabase
+        .from('sindicatos')
+        .update(validateTablePayload('sindicatos', d, 'SindicatosPage:sindicatos'))
+        .eq('id', id)
+        .select('id')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Apenas administradores podem editar sindicatos.');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['sindicatos'] });
+      setOpen(false);
+      setEditandoId(null);
+      setForm({ nome: '', cnpj: '', telefone: '', email: '', data_base: '' });
+      toast.success('Sindicato atualizado!');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar sindicato.')),
+  });
 
   const excluir = useMutation({
     mutationFn: async (id: string) => { const { error } = await (supabase as any).from('sindicatos').delete().eq('id', id).eq('empresa_id', empresaAtual!.id); if (error) throw error; },

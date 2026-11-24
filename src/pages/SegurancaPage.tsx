@@ -241,8 +241,10 @@ export default function SegurancaPage() {
                   <h3 className="text-sm font-semibold">Lista de IPs Bloqueados</h3>
                   <p className="text-xs text-muted-foreground">Bloqueios automáticos por detecção de brute-force</p>
                 </div>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Lock className="h-4 w-4" /> Bloquear IP Manualmente
+                <Button variant="outline" size="sm" className="gap-2" asChild>
+                  <Link to="/configuracoes?tab=ips">
+                    <Lock className="h-4 w-4" /> Bloquear IP Manualmente
+                  </Link>
                 </Button>
               </div>
               <Table>

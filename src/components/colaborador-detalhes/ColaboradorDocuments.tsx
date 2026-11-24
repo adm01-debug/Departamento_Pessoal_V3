@@ -89,6 +89,8 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
   const { documentos, isLoading, criarDocumento, excluirDocumento } = useDocumentos(colaboradorId);
   const { empresaAtualId } = useEmpresas();
   const [open, setOpen] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({
     nome: '',
     tipo: 'Outros',
@@ -139,8 +141,20 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
     }
 
     try {
+      if (file && empresaAtualId) {
+        setUploading(true);
+        enviado = await uploadDocumentFile(file, {
+          bucket: BUCKET,
+          empresaId: empresaAtualId,
+          colaboradorId,
+          categoria: 'documentos-digitais',
+        });
+        setUploading(false);
+      }
+
       await criarDocumento.mutateAsync({
         ...form,
+        data_validade: form.data_validade.trim() === '' ? null : form.data_validade,
         colaborador_id: colaboradorId,
         ...(uploaded ? { storage_path: uploaded.storage_path, nome_arquivo: uploaded.nome_arquivo, tamanho: uploaded.tamanho, mime_type: uploaded.mime_type } : {}),
       });

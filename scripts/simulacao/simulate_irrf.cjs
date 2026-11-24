@@ -1,4 +1,7 @@
 // Simulação: IRRF correto (frontend impostos.ts) vs IRRF do calcular-folha (edge, PRE-fix).
+// Cenários: salário 1518..20000 passo 50 × 0-4 dependentes = ~1.850 combinações.
+// Auto-validação: assertions sobre o motor CORRETO (isento, não-negativo, edge >= correto
+// quando dep=0 pois edge não aplica dedução simplificada).
 function round2(v) { return Math.round((v + Number.EPSILON) * 100) / 100; }
 
 const FAIXAS_INSS = [
@@ -68,6 +71,8 @@ let scenarios = 0;
 let diverge = 0;
 let overWithheldTotal = 0;
 const exemplos = [];
+let errosAssertion = 0;
+const assertErrors = [];
 
 for (const bruto of salarios) {
   const inss = calcularINSS(bruto);
@@ -85,6 +90,30 @@ for (const bruto of salarios) {
         exemplos.push({ bruto, dependentes, correto, edge, diff });
       }
     }
+
+    // — Auto-validação do motor CORRETO —
+    // 1. Nunca negativo
+    if (correto < 0) {
+      errosAssertion++;
+      assertErrors.push(`ASSERT-1: correto negativo | bruto=${bruto} dep=${dependentes} correto=${correto}`);
+    }
+    // 2. Isento quando base tributável ≤ 2259.20 (primeira faixa é zero)
+    if (baseTributavel <= FAIXAS_IRRF[0].limite && correto !== 0) {
+      errosAssertion++;
+      assertErrors.push(`ASSERT-2: deve ser isento (base=${baseTributavel}) mas correto=${correto}`);
+    }
+    // 3. Quando dep=0, edge (que não usa simplificada) deve ser ≥ correto
+    //    (simplificada só pode reduzir o imposto — edge sem ela retém a mais)
+    if (dependentes === 0 && edge < correto - 0.01) {
+      errosAssertion++;
+      assertErrors.push(`ASSERT-3: edge sem simplificada deve ser ≥ correto | bruto=${bruto} correto=${correto} edge=${edge}`);
+    }
+    // 4. IRRF nunca excede 27,5% da base tributável
+    const teto = round2(baseTributavel * 0.275);
+    if (correto > teto + 0.01) {
+      errosAssertion++;
+      assertErrors.push(`ASSERT-4: correto=${correto} excede teto 27,5%=${teto} | bruto=${bruto}`);
+    }
   }
 }
 
@@ -96,3 +125,10 @@ console.log('\n--- Exemplos ---');
 for (const e of exemplos) {
   console.log(`bruto=${e.bruto} dependentes=${e.dependentes} | correto=R$${e.correto} edge=R$${e.edge} diff=R$${e.diff}`);
 }
+console.log(`\nAuto-validação motor correto: ${errosAssertion === 0 ? '✅ 0 erros de assertion' : `❌ ${errosAssertion} ERROS`}`);
+if (errosAssertion > 0) {
+  assertErrors.slice(0, 10).forEach(e => console.error(' ', e));
+  process.exit(1);
+}
+// Nota: divergência acima é ESPERADA (este é um script PRE-fix diagnóstico).
+// Use verify_irrf_fix.cjs para confirmar 0 divergência pós-correção.

@@ -1,11 +1,16 @@
 import { PageTitle } from '@/components/PageTitle';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { FormField, FormSelect } from '@/components/forms';
 import { FormSection, FormActions } from '@/components/forms/FormSection';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { useBeneficios } from '@/hooks/useBeneficios';
+import { useEmpresas } from '@/hooks/useEmpresas';
+import { beneficioService } from '@/services/beneficioService';
 import { ArrowLeft, Save } from 'lucide-react';
 
 interface BeneficioFormData {

@@ -19,9 +19,26 @@ vi.mock('@/components/ui/slider', () => ({
 }));
 
 vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn(() => ({ data: [], isLoading: false })),
-  useMutation: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
+  useQuery: vi.fn(() => ({ data: [], isLoading: false, isError: false, refetch: vi.fn() })),
+  // `mutate` executa a mutationFn: é o que prova que Duplicar/Excluir chamam o serviço.
+  useMutation: vi.fn((opcoes: { mutationFn: (entrada: never) => unknown }) => ({
+    mutate: (entrada: never) => opcoes.mutationFn(entrada),
+    isPending: false,
+  })),
   useQueryClient: vi.fn(() => ({ invalidateQueries: vi.fn() })),
+}));
+
+vi.mock('@/components/ui/dropdown-menu', () => ({
+  DropdownMenu: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DropdownMenuTrigger: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  DropdownMenuContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DropdownMenuLabel: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DropdownMenuSeparator: () => <hr />,
+  DropdownMenuItem: ({ children, onClick }: { children?: ReactNode; onClick?: () => void }) => (
+    <button type="button" onClick={onClick}>
+      {children}
+    </button>
+  ),
 }));
 
 vi.mock('@/hooks/useEmpresas', () => ({
@@ -32,11 +49,12 @@ vi.mock('@/services/premiacoesService', () => ({
   premiacoesService: {
     listarCenariosROI: vi.fn().mockResolvedValue([]),
     salvarCenarioROI: vi.fn().mockResolvedValue({}),
+    excluirCenariosROI: vi.fn().mockResolvedValue(undefined),
   },
 }));
 
 vi.mock('sonner', () => ({
-  toast: { success: vi.fn(), error: vi.fn() },
+  toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() },
 }));
 
 vi.mock('@/utils/format', () => ({
@@ -44,7 +62,35 @@ vi.mock('@/utils/format', () => ({
   formatDateTime: vi.fn((d: string) => d),
 }));
 
+import { useQuery } from '@tanstack/react-query';
+import { premiacoesService } from '@/services/premiacoesService';
 import { RewardsSimulator } from '../premiacoes/RewardsSimulator';
+
+/** Cenário salvo tipado (baseline de `any` em teste é zero). */
+interface CenarioSalvoDeTeste {
+  id: string;
+  nome: string;
+  created_at: string;
+  configuracoes: {
+    employees: number;
+    avgSalary: number;
+    bonusPercent: number;
+    performanceLevel: number;
+    retentionImpact: number;
+  };
+  resultados: { totalBudget: number; savings: number; roi: number };
+}
+
+const CENARIO: CenarioSalvoDeTeste = {
+  id: 'cen-001',
+  nome: 'Cenário Agressivo',
+  created_at: '2026-03-12T12:00:00.000Z',
+  configuracoes: { employees: 80, avgSalary: 5000, bonusPercent: 12, performanceLevel: 90, retentionImpact: 6 },
+  resultados: { totalBudget: 43200, savings: 10800, roi: 0.25 },
+};
+
+const comCenarios = (cenarios: CenarioSalvoDeTeste[]) =>
+  vi.mocked(useQuery).mockReturnValue({ data: cenarios, isError: false, refetch: vi.fn() } as never);
 
 describe('RewardsSimulator', () => {
   it('renderiza as quatro regiões do redesenho', () => {

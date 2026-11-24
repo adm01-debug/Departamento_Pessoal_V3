@@ -49,6 +49,7 @@ export default function WorkflowsPage() {
   const [open, setOpen] = useState(false);
   const [selectedExec, setSelectedExec] = useState<LooseRow<'workflows_execucoes'> | null>(null);
   const [showLog, setShowLog] = useState(false);
+  const logEventos = lerLogExecucao(selectedExec?.log_execucao);
   const [form, setForm] = useState({ nome: '', descricao: '', tipo: 'ferias', etapas: ETAPAS_PADRAO.slice(0, 2) });
   const [numEtapas, setNumEtapas] = useState(2);
 

@@ -169,6 +169,20 @@ export async function salvarDadosEstagiario(colaboradorId: string, dados: DataRe
       if (error) throw error;
       return (data);
     }
+    const { data, error } = await supabase
+      .from('dados_estagiario')
+      .insert(
+        validateTablePayload(
+          'dados_estagiario',
+          [{ ...dados, colaborador_id: colaboradorId }],
+          'tabelasReferenciaService:dados_estagiario'
+        )
+      )
+      .select()
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) throw new Error('Nenhum registro de dados de estagiário foi retornado.');
+    return data;
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Erro desconhecido';
     throw new Error(`Falha ao salvar dados de estagiário: ${msg}`, { cause: e });

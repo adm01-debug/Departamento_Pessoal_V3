@@ -28,6 +28,29 @@ test.describe('Post-cutover smoke', () => {
       if (m.type() === 'error') consoleErrors.push(m.text());
     });
 
+    // Respostas HTTP >= 400 são verificadas aqui (com URL+método+body) em vez
+    // de depender do texto genérico "Failed to load resource: status NNN" do
+    // console — assim permitimos exatamente as sondas conhecidas e continuamos
+    // quebrando em qualquer outra resposta falha.
+    const badResponses: string[] = [];
+    page.on('response', (r) => {
+      const status = r.status();
+      if (status < 400) return;
+      const req = r.request();
+      const url = req.url();
+      const body = req.postData() ?? '';
+      // Sondas intencionais da página /admin/diagnostico-migracao:
+      //  - functions.invoke(fn, {body:{}}) prova que a edge está viva
+      //    validando payload → bridge responde 400 e metricas 422;
+      //  - a checagem de tabelas sonda user_roles, que a denylist da bridge
+      //    bloqueia de propósito → 403 TABLE_DENIED.
+      const isExpectedProbe =
+        (status === 400 && url.endsWith('/functions/v1/external-db-bridge') && body === '{}') ||
+        (status === 422 && url.endsWith('/functions/v1/metricas') && body === '{}') ||
+        (status === 403 && url.endsWith('/functions/v1/external-db-bridge') && body.includes('"table":"user_roles"'));
+      if (!isExpectedProbe) badResponses.push(`${status} ${req.method()} ${url}`);
+    });
+
     await page.goto('/admin/colaboradores');
     await page.waitForLoadState('networkidle', { timeout: 15_000 });
     await expect(page.locator('h1, [role="heading"]').first()).toBeVisible();
@@ -46,6 +69,7 @@ test.describe('Post-cutover smoke', () => {
     const critical = consoleErrors.filter(
       (m) => !/favicon|ResizeObserver|non-passive|preload/i.test(m),
     );
-    expect(critical, `Erros críticos no console:\n${critical.join('\n')}`).toEqual([]);
+    const problems = [...critical, ...badResponses];
+    expect(problems, `Falhas detectadas:\n${problems.join('\n')}`).toEqual([]);
   });
 });

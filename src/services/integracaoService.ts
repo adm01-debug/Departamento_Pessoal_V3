@@ -21,6 +21,9 @@ export interface WebhookConfig {
   created_at: string;
 }
 
+const REMESSA_LISTA_COLUNAS =
+  'id, empresa_id, folha_id, banco_codigo, sequencial_arquivo, status, data_geracao, total_pagamentos, valor_total, arquivo_url, hash_integridade, created_at, updated_at';
+
 export const cnabService = {
   async getConfig(empresaId: string): Promise<CnabConfig | null> {
     if (!empresaId) throw new Error('empresa_id obrigatório');

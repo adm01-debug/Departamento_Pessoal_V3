@@ -31,6 +31,7 @@ import {
   BarChart3,
   MoreHorizontal,
   Map as MapIcon,
+  FileSignature,
 } from 'lucide-react';
 import { pontoService, batidasPontoService } from '@/services';
 import { useAuth } from '@/contexts';
@@ -173,6 +174,32 @@ export default function PontoPage() {
     },
     enabled: !!user?.id,
   });
+
+  // KPIs da aba Gestão calculados dos mesmos registros que alimentam GestaoPontoAnalytics.
+  const kpisGestao = useMemo(() => {
+    const total = registrosSemana.length;
+    if (!total) return null;
+    const toMin = (v: string | null) => {
+      if (!v) return 0;
+      const [h, m] = String(v).split(':').map(Number);
+      return (h || 0) * 60 + (m || 0);
+    };
+    const faltas = registrosSemana.filter((r) => !r.entrada_1 && !r.saida_1).length;
+    const inconsistencias = registrosSemana.filter((r) => r.entrada_1 && !r.saida_1).length;
+    const heMin = registrosSemana.reduce((acc, r) => acc + toMin(r.horas_extras), 0);
+    const comViolacao = registrosSemana.filter((r) => {
+      const jornadaExcedida = toMin(r.horas_trabalhadas) >= 10 * 60;
+      const intervalo =
+        r.saida_intervalo && r.retorno_intervalo ? toMin(r.retorno_intervalo) - toMin(r.saida_intervalo) : 0;
+      return jornadaExcedida || (intervalo > 0 && intervalo < 60);
+    }).length;
+    return {
+      assiduidade: ((total - faltas) / total) * 100,
+      inconsistencias,
+      horasExtras: `${Math.floor(heMin / 60)}h${String(heMin % 60).padStart(2, '0')}`,
+      compliance: ((total - comViolacao) / total) * 100,
+    };
+  }, [registrosSemana]);
 
   const { data: bancoResumo } = useQuery({
     queryKey: ['banco-horas-resumo', user?.id],
@@ -717,6 +744,9 @@ export default function PontoPage() {
                   <ShieldCheck className="h-4 w-4 shrink-0" />
                   <span className="truncate">Auditoria</span>
                 </TabsTrigger>
+                <TabsTrigger value="espelhos-papel" className="gap-2">
+                  <FileSignature className="h-4 w-4" /> Espelhos em papel
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview" className="space-y-4">
@@ -775,6 +805,14 @@ export default function PontoPage() {
 
               <TabsContent value="auditoria">
                 <AuditoriaPonto />
+              </TabsContent>
+
+              <TabsContent value="espelhos-papel">
+                {empresaAtual ? (
+                  <EspelhosPapelPanel empresaId={empresaAtual.id} />
+                ) : (
+                  <p className="text-sm text-muted-foreground">Selecione uma empresa.</p>
+                )}
               </TabsContent>
             </Tabs>
           </TabsContent>

@@ -3,7 +3,7 @@
 # Rationale: enforcing Prettier on the entire legacy codebase would create a
 # massive diff. Instead we gate NEW edits — anything a PR/commit touches must
 # be formatted. Existing untouched files are opted-in gradually via
-# `bun run format:write` on a per-directory basis.
+# `npm run format:write` on a per-directory basis.
 set -euo pipefail
 
 BASE_REF="${GITHUB_BASE_REF:-origin/main}"
@@ -20,6 +20,14 @@ if ! git rev-parse --verify "$BASE_REF" >/dev/null 2>&1; then
     echo "[format:check:changed] no base ref to diff against — skipping."
     exit 0
   fi
+fi
+
+# Base existe mas não há merge-base (clone raso, histórico órfão): o
+# `git diff BASE...HEAD` abaixo falha e o `|| true` engolia o erro — o gate
+# passava com "0 arquivos alterados".
+if ! git merge-base "$BASE_REF" HEAD >/dev/null 2>&1; then
+  echo "::error::[format:check:changed] no merge base between $BASE_REF and HEAD (shallow clone?); refusing a false-green format gate." >&2
+  exit 2
 fi
 
 mapfile -t CHANGED < <(

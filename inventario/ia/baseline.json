@@ -1,0 +1,1033 @@
+{
+  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+  "format_version": 2,
+  "git": {
+    "commit": "8ba691d9537ca5837dccd9d5bb61587209fa4cc3",
+    "branch": "claude/fix-scripts-perfeicao-261108-0240",
+    "data_commit": "2026-11-08T02:53:11+00:00",
+    "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
+    "ultimos_commits": [
+      {
+        "sha": "8ba691d",
+        "data": "2026-11-08",
+        "assunto": "chore: atualiza package-lock.json"
+      },
+      {
+        "sha": "fd16e50",
+        "data": "2026-11-08",
+        "assunto": "fix: typecheck:edge faz soft-skip sem deno; corrige comentário bun→npm"
+      },
+      {
+        "sha": "1ebd08f",
+        "data": "2026-11-07",
+        "assunto": "fix: garante fixtures E2E do /ponto autenticado (#374)"
+      },
+      {
+        "sha": "dddcff4",
+        "data": "2026-11-07",
+        "assunto": "fix: estabiliza validações locais dos scripts (#367)"
+      },
+      {
+        "sha": "618e38b",
+        "data": "2026-11-07",
+        "assunto": "fix: permite testar chrome-extension no harness (#369)"
+      },
+      {
+        "sha": "f231df4",
+        "data": "2026-11-07",
+        "assunto": "fix: reverte maybeSingle do bridge (edge nao deployada) (#368)"
+      },
+      {
+        "sha": "a8a8516",
+        "data": "2026-11-07",
+        "assunto": "chore: instruções enxutas para agentes (#364)"
+      },
+      {
+        "sha": "a29e6c0",
+        "data": "2026-11-07",
+        "assunto": "fix: preserva semantica maybeSingle no proxy e no bridge (#366)"
+      },
+      {
+        "sha": "25465ae",
+        "data": "2026-11-06",
+        "assunto": "fix: estabilizar E2E cleanup — tolerar P0001 e logout via aria-label (#363)"
+      },
+      {
+        "sha": "2e9968a",
+        "data": "2026-11-06",
+        "assunto": "fix: usar nav.first() no audit-checklist para evitar strict mode violation (#360)"
+      },
+      {
+        "sha": "dc7d1eb",
+        "data": "2026-11-06",
+        "assunto": "fix: bypass MFA no ProtectedRoute para E2E (VITE_E2E_BYPASS_MFA) (#359)"
+      },
+      {
+        "sha": "205c583",
+        "data": "2026-11-06",
+        "assunto": "fix: restaura registro do Service Worker (regex NEVER_CACHE_PATH) (#357)"
+      },
+      {
+        "sha": "a18f04a",
+        "data": "2026-11-06",
+        "assunto": "fix: safeFetch do SW devolve resposta original (evita \"Failed to fetch dynamically imported module\") (#356)"
+      },
+      {
+        "sha": "f517257",
+        "data": "2026-11-05",
+        "assunto": "fix: sincronizar deno.lock com package.json (14 dependências Dependabot)"
+      },
+      {
+        "sha": "6ed87f2",
+        "data": "2026-11-05",
+        "assunto": "fix: bypass MFA em testes E2E autenticados (AdminRoute + e2e.yml)"
+      },
+      {
+        "sha": "68a06b1",
+        "data": "2026-11-05",
+        "assunto": "chore: atualizar SHAs de actions + action-pins.json (Dependabot PR #349) (#353)"
+      },
+      {
+        "sha": "75eaf9a",
+        "data": "2026-11-05",
+        "assunto": "infra: exige branch atualizada antes do merge no ruleset da main (#337)"
+      },
+      {
+        "sha": "0d79b5c",
+        "data": "2026-11-05",
+        "assunto": "build(deps): bump minor-patch group (10 pacotes npm) (#348)"
+      },
+      {
+        "sha": "e4dc94f",
+        "data": "2026-11-05",
+        "assunto": "build(deps): bump react-ecosystem group (react-hook-form + react-router-dom) (#347)"
+      },
+      {
+        "sha": "77a6b83",
+        "data": "2026-11-05",
+        "assunto": "docs: atualizar WORKFLOWS_STATUS.md (#344)"
+      },
+      {
+        "sha": "50c052c",
+        "data": "2026-11-05",
+        "assunto": "build(deps): bump @hookform/resolvers 5.9.1 → 6.0.2 (#341)"
+      },
+      {
+        "sha": "70b26d7",
+        "data": "2026-11-05",
+        "assunto": "build(deps): bump @sentry/vite-plugin 5.4.1 → 11.9.0 (#340)"
+      },
+      {
+        "sha": "d43244e",
+        "data": "2026-11-04",
+        "assunto": "feat: adicionar scripts/ci (check-claude-md-integrity) (#350)"
+      },
+      {
+        "sha": "9f008b6",
+        "data": "2026-11-04",
+        "assunto": "feat: adicionar scripts/graphify/setup.sh (#351)"
+      },
+      {
+        "sha": "a82cc07",
+        "data": "2026-11-04",
+        "assunto": "chore: inventario do estado real [auto] (#346)"
+      }
+    ],
+    "arquivos_mudados_7d": 81,
+    "pastas_mais_mudadas_30d": [
+      {
+        "pasta": "src/components/__tests__",
+        "mudancas": 223
+      },
+      {
+        "pasta": "src/hooks/__tests__",
+        "mudancas": 91
+      },
+      {
+        "pasta": "src/services/__tests__",
+        "mudancas": 83
+      },
+      {
+        "pasta": "src/components/ui",
+        "mudancas": 59
+      },
+      {
+        "pasta": "supabase/functions/_shared",
+        "mudancas": 36
+      },
+      {
+        "pasta": "src/utils/__tests__",
+        "mudancas": 32
+      },
+      {
+        "pasta": "src/components/layout",
+        "mudancas": 29
+      },
+      {
+        "pasta": "src/components/esocial",
+        "mudancas": 23
+      },
+      {
+        "pasta": "docs/_archive/infra-experimental",
+        "mudancas": 22
+      },
+      {
+        "pasta": "src/components/ferias",
+        "mudancas": 21
+      },
+      {
+        "pasta": "src/components/folha",
+        "mudancas": 21
+      },
+      {
+        "pasta": "src/components/colaborador-detalhes",
+        "mudancas": 17
+      },
+      {
+        "pasta": "src/components/dashboard",
+        "mudancas": 17
+      },
+      {
+        "pasta": "src/components/ponto",
+        "mudancas": 17
+      },
+      {
+        "pasta": "supabase/functions/external-db-bridge",
+        "mudancas": 17
+      }
+    ],
+    "arquivos_mais_mudados_90d": [
+      {
+        "arquivo": "PENDENCIAS.md",
+        "mudancas": 6
+      },
+      {
+        "arquivo": "package-lock.json",
+        "mudancas": 6
+      },
+      {
+        "arquivo": "package.json",
+        "mudancas": 6
+      },
+      {
+        "arquivo": "AGENTS.md",
+        "mudancas": 5
+      },
+      {
+        "arquivo": "CLAUDE.md",
+        "mudancas": 5
+      },
+      {
+        "arquivo": "e2e/auth.setup.ts",
+        "mudancas": 4
+      },
+      {
+        "arquivo": "infra/github/action-pins.json",
+        "mudancas": 4
+      },
+      {
+        "arquivo": "supabase/functions/enviar-esocial/index.ts",
+        "mudancas": 4
+      },
+      {
+        "arquivo": "supabase/functions/external-db-bridge/index.ts",
+        "mudancas": 4
+      },
+      {
+        "arquivo": ".github/workflows/security.yml",
+        "mudancas": 3
+      },
+      {
+        "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+        "mudancas": 3
+      },
+      {
+        "arquivo": "public/sw-custom.js",
+        "mudancas": 3
+      },
+      {
+        "arquivo": "src/integrations/supabase/__tests__/clientBridge.test.ts",
+        "mudancas": 3
+      },
+      {
+        "arquivo": "src/integrations/supabase/client.ts",
+        "mudancas": 3
+      },
+      {
+        "arquivo": "supabase/functions/external-db-bridge/request-schema.ts",
+        "mudancas": 3
+      },
+      {
+        "arquivo": "supabase/functions/external-db-bridge/validation.test.ts",
+        "mudancas": 3
+      },
+      {
+        "arquivo": ".claude/settings.json",
+        "mudancas": 2
+      },
+      {
+        "arquivo": ".claude/skills/departamento-pessoal-v2/SKILL.md",
+        "mudancas": 2
+      },
+      {
+        "arquivo": ".github/workflows/canonical-edge-functions.yml",
+        "mudancas": 2
+      },
+      {
+        "arquivo": ".github/workflows/canonical-migrations.yml",
+        "mudancas": 2
+      },
+      {
+        "arquivo": ".github/workflows/ci.yml",
+        "mudancas": 2
+      },
+      {
+        "arquivo": ".github/workflows/contexto.yml",
+        "mudancas": 2
+      },
+      {
+        "arquivo": ".github/workflows/e2e.yml",
+        "mudancas": 2
+      },
+      {
+        "arquivo": ".github/workflows/gitleaks.yml",
+        "mudancas": 2
+      },
+      {
+        "arquivo": ".github/workflows/ossf-scorecard.yml",
+        "mudancas": 2
+      }
+    ],
+    "autores_30d": [
+      {
+        "autor": "adm01-debug",
+        "commits": 26
+      },
+      {
+        "autor": "devin-ai-integration[bot]",
+        "commits": 16
+      },
+      {
+        "autor": "dependabot[bot]",
+        "commits": 5
+      },
+      {
+        "autor": "github-actions[bot]",
+        "commits": 3
+      },
+      {
+        "autor": "Claude",
+        "commits": 2
+      }
+    ]
+  },
+  "contagens": {
+    "arquivos_total": 2803,
+    "arquivos_codigo": 1508,
+    "linhas_codigo": 260550,
+    "rotas": 113,
+    "rotas_http_backend": 19,
+    "vistas_por_id": 0,
+    "itens_menu": 93,
+    "modulos": 77,
+    "componentes": 429,
+    "hooks": 102,
+    "edge_functions": 65,
+    "tabelas": 436,
+    "migrations": 781,
+    "cron_jobs": 41,
+    "testes": 572,
+    "workflows": 17,
+    "scripts": 83,
+    "docs_md": 285
+  },
+  "por_pasta": {
+    "capacitor.config.ts": {
+      "arquivos": 1,
+      "linhas": 66
+    },
+    "commitlint.config.js": {
+      "arquivos": 1,
+      "linhas": 9
+    },
+    "e2e/auth-non-admin.setup.ts": {
+      "arquivos": 1,
+      "linhas": 89
+    },
+    "e2e/auth.setup.ts": {
+      "arquivos": 1,
+      "linhas": 257
+    },
+    "e2e/authenticated": {
+      "arquivos": 15,
+      "linhas": 816
+    },
+    "e2e/authenticated-non-admin": {
+      "arquivos": 1,
+      "linhas": 38
+    },
+    "e2e/cleanup": {
+      "arquivos": 2,
+      "linhas": 130
+    },
+    "e2e/mobile": {
+      "arquivos": 1,
+      "linhas": 23
+    },
+    "e2e/public": {
+      "arquivos": 6,
+      "linhas": 342
+    },
+    "eslint.config.js": {
+      "arquivos": 1,
+      "linhas": 111
+    },
+    "lighthouserc.cjs": {
+      "arquivos": 1,
+      "linhas": 38
+    },
+    "playwright.config.ts": {
+      "arquivos": 1,
+      "linhas": 130
+    },
+    "postcss.config.js": {
+      "arquivos": 1,
+      "linhas": 7
+    },
+    "public/sw-custom.js": {
+      "arquivos": 1,
+      "linhas": 291
+    },
+    "release.config.js": {
+      "arquivos": 1,
+      "linhas": 40
+    },
+    "scripts/ai-context": {
+      "arquivos": 3,
+      "linhas": 1475
+    },
+    "scripts/audit-bridge-frontend-contract.mjs": {
+      "arquivos": 1,
+      "linhas": 203
+    },
+    "scripts/audit-canonical-project.mjs": {
+      "arquivos": 1,
+      "linhas": 113
+    },
+    "scripts/audit-db-search-path.mjs": {
+      "arquivos": 1,
+      "linhas": 120
+    },
+    "scripts/audit-edge-audit-log-contract.mjs": {
+      "arquivos": 1,
+      "linhas": 205
+    },
+    "scripts/audit-edge-authz.mjs": {
+      "arquivos": 1,
+      "linhas": 171
+    },
+    "scripts/audit-edge-syntax.mjs": {
+      "arquivos": 1,
+      "linhas": 71
+    },
+    "scripts/audit-embed-hints.mjs": {
+      "arquivos": 1,
+      "linhas": 180
+    },
+    "scripts/audit-migration-style.mjs": {
+      "arquivos": 1,
+      "linhas": 131
+    },
+    "scripts/audit-required-checks.mjs": {
+      "arquivos": 1,
+      "linhas": 171
+    },
+    "scripts/audit-rls-least-privilege.mjs": {
+      "arquivos": 1,
+      "linhas": 301
+    },
+    "scripts/audit-rls-pii.mjs": {
+      "arquivos": 1,
+      "linhas": 287
+    },
+    "scripts/audit-rls-tenant-open.mjs": {
+      "arquivos": 1,
+      "linhas": 275
+    },
+    "scripts/audit-schema-drift.mjs": {
+      "arquivos": 1,
+      "linhas": 130
+    },
+    "scripts/audit-secdef-authz.mjs": {
+      "arquivos": 1,
+      "linhas": 269
+    },
+    "scripts/audit-security-config.mjs": {
+      "arquivos": 1,
+      "linhas": 164
+    },
+    "scripts/audit-types-drift.mjs": {
+      "arquivos": 1,
+      "linhas": 124
+    },
+    "scripts/build-rebaseline.mjs": {
+      "arquivos": 1,
+      "linhas": 124
+    },
+    "scripts/check-bundle-budget.mjs": {
+      "arquivos": 1,
+      "linhas": 87
+    },
+    "scripts/check-dependencies.js": {
+      "arquivos": 1,
+      "linhas": 43
+    },
+    "scripts/ci": {
+      "arquivos": 1,
+      "linhas": 54
+    },
+    "scripts/db": {
+      "arquivos": 2,
+      "linhas": 343
+    },
+    "scripts/diag": {
+      "arquivos": 1,
+      "linhas": 274
+    },
+    "scripts/e2e": {
+      "arquivos": 3,
+      "linhas": 641
+    },
+    "scripts/eslint-tests-any.config.mjs": {
+      "arquivos": 1,
+      "linhas": 35
+    },
+    "scripts/gen-table-columns.mjs": {
+      "arquivos": 1,
+      "linhas": 79
+    },
+    "scripts/generate-audit-pdf.js": {
+      "arquivos": 1,
+      "linhas": 26
+    },
+    "scripts/generate-component.js": {
+      "arquivos": 1,
+      "linhas": 16
+    },
+    "scripts/generate-hook.js": {
+      "arquivos": 1,
+      "linhas": 13
+    },
+    "scripts/generate-page.js": {
+      "arquivos": 1,
+      "linhas": 15
+    },
+    "scripts/generate-service.js": {
+      "arquivos": 1,
+      "linhas": 29
+    },
+    "scripts/index.js": {
+      "arquivos": 1,
+      "linhas": 2
+    },
+    "scripts/inventario": {
+      "arquivos": 4,
+      "linhas": 920
+    },
+    "scripts/load": {
+      "arquivos": 1,
+      "linhas": 69
+    },
+    "scripts/probes": {
+      "arquivos": 2,
+      "linhas": 201
+    },
+    "scripts/provision-e2e-users.mjs": {
+      "arquivos": 1,
+      "linhas": 97
+    },
+    "scripts/ratchet-any-tests.mjs": {
+      "arquivos": 1,
+      "linhas": 98
+    },
+    "scripts/ratchet-any.mjs": {
+      "arquivos": 1,
+      "linhas": 94
+    },
+    "scripts/ratchet-lint-warnings.mjs": {
+      "arquivos": 1,
+      "linhas": 93
+    },
+    "scripts/regras_negocio": {
+      "arquivos": 3,
+      "linhas": 2539
+    },
+    "scripts/report-workflows.mjs": {
+      "arquivos": 1,
+      "linhas": 68
+    },
+    "scripts/simulacao": {
+      "arquivos": 12,
+      "linhas": 1581
+    },
+    "scripts/smoke-hash-triggers.mjs": {
+      "arquivos": 1,
+      "linhas": 140
+    },
+    "scripts/supabase_snapshot": {
+      "arquivos": 2,
+      "linhas": 2690
+    },
+    "scripts/tests": {
+      "arquivos": 13,
+      "linhas": 1532
+    },
+    "scripts/update-workflows-status.mjs": {
+      "arquivos": 1,
+      "linhas": 61
+    },
+    "scripts/validate-canonical-db-url.mjs": {
+      "arquivos": 1,
+      "linhas": 51
+    },
+    "scripts/validate-plan-50.mjs": {
+      "arquivos": 1,
+      "linhas": 99
+    },
+    "src/App.tsx": {
+      "arquivos": 1,
+      "linhas": 499
+    },
+    "src/assets": {
+      "arquivos": 1,
+      "linhas": 3
+    },
+    "src/calculators": {
+      "arquivos": 16,
+      "linhas": 2114
+    },
+    "src/components": {
+      "arquivos": 567,
+      "linhas": 72885
+    },
+    "src/constants": {
+      "arquivos": 6,
+      "linhas": 607
+    },
+    "src/contexts": {
+      "arquivos": 7,
+      "linhas": 954
+    },
+    "src/errors": {
+      "arquivos": 4,
+      "linhas": 174
+    },
+    "src/hooks": {
+      "arquivos": 182,
+      "linhas": 20006
+    },
+    "src/i18n": {
+      "arquivos": 2,
+      "linhas": 567
+    },
+    "src/integrations": {
+      "arquivos": 11,
+      "linhas": 25705
+    },
+    "src/lib": {
+      "arquivos": 14,
+      "linhas": 1725
+    },
+    "src/main.tsx": {
+      "arquivos": 1,
+      "linhas": 186
+    },
+    "src/pages": {
+      "arquivos": 114,
+      "linhas": 39375
+    },
+    "src/providers": {
+      "arquivos": 4,
+      "linhas": 68
+    },
+    "src/schemas": {
+      "arquivos": 32,
+      "linhas": 8518
+    },
+    "src/services": {
+      "arquivos": 160,
+      "linhas": 33289
+    },
+    "src/setupTests.ts": {
+      "arquivos": 1,
+      "linhas": 47
+    },
+    "src/test": {
+      "arquivos": 6,
+      "linhas": 470
+    },
+    "src/tests": {
+      "arquivos": 4,
+      "linhas": 276
+    },
+    "src/types": {
+      "arquivos": 12,
+      "linhas": 801
+    },
+    "src/utils": {
+      "arquivos": 66,
+      "linhas": 8317
+    },
+    "stylelint.config.js": {
+      "arquivos": 1,
+      "linhas": 9
+    },
+    "supabase/functions": {
+      "arquivos": 171,
+      "linhas": 24366
+    },
+    "supabase/tests": {
+      "arquivos": 2,
+      "linhas": 282
+    },
+    "tailwind.config.js": {
+      "arquivos": 1,
+      "linhas": 107
+    },
+    "vite.analyze.config.ts": {
+      "arquivos": 1,
+      "linhas": 38
+    },
+    "vite.config.pwa.ts": {
+      "arquivos": 1,
+      "linhas": 91
+    },
+    "vite.config.ts": {
+      "arquivos": 1,
+      "linhas": 143
+    },
+    "vitest.config.ts": {
+      "arquivos": 1,
+      "linhas": 37
+    }
+  },
+  "maiores_arquivos": [
+    {
+      "arquivo": "src/integrations/supabase/types.ts",
+      "linhas": 24625
+    },
+    {
+      "arquivo": "src/schemas/tableColumns.ts",
+      "linhas": 4112
+    },
+    {
+      "arquivo": "scripts/regras_negocio/generate.py",
+      "linhas": 2138
+    },
+    {
+      "arquivo": "scripts/supabase_snapshot/snapshot.py",
+      "linhas": 1772
+    },
+    {
+      "arquivo": "src/services/cnabService.ts",
+      "linhas": 1199
+    },
+    {
+      "arquivo": "scripts/ai-context/gerar.mjs",
+      "linhas": 926
+    },
+    {
+      "arquivo": "src/pages/TreinamentosPage.tsx",
+      "linhas": 863
+    },
+    {
+      "arquivo": "src/components/workflows/WorkflowDesigner.tsx",
+      "linhas": 824
+    },
+    {
+      "arquivo": "src/components/settings/InlineTabs.tsx",
+      "linhas": 821
+    },
+    {
+      "arquivo": "supabase/functions/external-db-bridge/index.ts",
+      "linhas": 810
+    },
+    {
+      "arquivo": "src/components/dashboard/AnalyticsSection.tsx",
+      "linhas": 797
+    },
+    {
+      "arquivo": "src/schemas/esocial/periodicosValidators.ts",
+      "linhas": 792
+    },
+    {
+      "arquivo": "src/pages/ESocialPage.tsx",
+      "linhas": 790
+    },
+    {
+      "arquivo": "src/pages/WorkflowsPage.tsx",
+      "linhas": 747
+    },
+    {
+      "arquivo": "src/components/layout/AppSidebar.tsx",
+      "linhas": 743
+    },
+    {
+      "arquivo": "src/pages/ContratacaoPage.tsx",
+      "linhas": 734
+    },
+    {
+      "arquivo": "src/pages/SegurosVidaPage.tsx",
+      "linhas": 716
+    },
+    {
+      "arquivo": "supabase/functions/calcular-folha/index.ts",
+      "linhas": 715
+    },
+    {
+      "arquivo": "supabase/functions/processar-ponto/index.ts",
+      "linhas": 698
+    },
+    {
+      "arquivo": "src/components/ui/command-palette.tsx",
+      "linhas": 686
+    },
+    {
+      "arquivo": "src/pages/PontoPage.tsx",
+      "linhas": 671
+    },
+    {
+      "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
+      "linhas": 646
+    },
+    {
+      "arquivo": "src/components/ui/sidebar.tsx",
+      "linhas": 642
+    },
+    {
+      "arquivo": "src/pages/RecrutamentoPage.tsx",
+      "linhas": 634
+    },
+    {
+      "arquivo": "src/pages/PassivoTrabalhistaPage.tsx",
+      "linhas": 624
+    }
+  ],
+  "qualidade": {
+    "any": 75,
+    "console_log": 225,
+    "ts_ignore": 0,
+    "eslint_disable": 1,
+    "todos": 12,
+    "arquivos_acima_500_linhas": 49
+  },
+  "todos": [
+    {
+      "arquivo": "public/sw-custom.js",
+      "linha": 9,
+      "tipo": "TODO",
+      "texto": "O RESTO: NetworkOnly — nunca cacheado"
+    },
+    {
+      "arquivo": "scripts/ai-context/gerar.mjs",
+      "linha": 190,
+      "tipo": "TODO",
+      "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(line); if (m) todos.push({ linha: ln, tipo: m[1], text"
+    },
+    {
+      "arquivo": "scripts/ai-context/gerar.mjs",
+      "linha": 224,
+      "tipo": "TODO",
+      "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(l); return m ? { linha: i + 1, tipo: m[1], texto: m[2]"
+    },
+    {
+      "arquivo": "scripts/e2e/ensure-fixtures.mjs",
+      "linha": 4,
+      "tipo": "TODO",
+      "texto": "E2E autenticado"
+    },
+    {
+      "arquivo": "scripts/tests/workflows-contract.test.mjs",
+      "linha": 57,
+      "tipo": "TODO",
+      "texto": "job tem timeout-minutes — antes era 1 ocorrência por arquivo,"
+    },
+    {
+      "arquivo": "src/components/ui/data-table.tsx",
+      "linha": 2,
+      "tipo": "FIXME",
+      "texto": "(dep-fantasma) que exigia @ts-nocheck."
+    },
+    {
+      "arquivo": "src/schemas/esocial/__tests__/crossFieldValidators.test.ts",
+      "linha": 145,
+      "tipo": "XXX",
+      "texto": "', () => {"
+    },
+    {
+      "arquivo": "src/schemas/esocial/sstValidators.ts",
+      "linha": 252,
+      "tipo": "XXX",
+      "texto": "da Tabela 24."
+    },
+    {
+      "arquivo": "src/schemas/esocial/sstValidators.ts",
+      "linha": 256,
+      "tipo": "XXX",
+      "texto": "(Tabela 24)',"
+    },
+    {
+      "arquivo": "src/services/__tests__/contratacaoService.xss.test.ts",
+      "linha": 7,
+      "tipo": "TODO",
+      "texto": "campo textual (nome, cpf, cargo, departamento, metadata) é"
+    },
+    {
+      "arquivo": "supabase/functions/OCR/index.ts",
+      "linha": 120,
+      "tipo": "XXX",
+      "texto": ".XXX.XXX-XX.',"
+    },
+    {
+      "arquivo": "scripts/regras_negocio/generate.py",
+      "linha": 570,
+      "tipo": "TODO",
+      "texto": "\", \"http\", \"import\")) and \"://\" not in c:"
+    }
+  ],
+  "alertas": {
+    "rotas_sem_arquivo": [],
+    "componentes_ambiguos": [],
+    "menu_sem_destino": ["Ações -> /quick-actions"],
+    "edges_orfas": [
+      "OCR",
+      "adiantamento-salarial",
+      "alertas-dp",
+      "alertas-preditivos",
+      "assinaturaDigital",
+      "assistente-ia",
+      "auditoria",
+      "backup",
+      "backup-automatico",
+      "cache",
+      "calcular-ferias",
+      "calcular-folha",
+      "calcular-provisoes",
+      "calcular-rescisao",
+      "cnab-remessa",
+      "criptografia",
+      "dctfweb",
+      "emprestimo-consignado",
+      "exportacao",
+      "external-db-bridge",
+      "fgts-digital",
+      "gerar-guias",
+      "gerar-holerite",
+      "gerar-medida-disciplinar-pdf",
+      "importacao",
+      "integracao",
+      "limpeza",
+      "notificacao",
+      "pix-lote",
+      "processar-agendamentos",
+      "processar-ponto",
+      "rateLimit",
+      "relatorio",
+      "tabelas-dominio",
+      "validar-biometria",
+      "warmup"
+    ],
+    "edges_chamadas_sem_pasta": [],
+    "tabelas_sem_rls": [
+      "cbo",
+      "cnae",
+      "config_retencao",
+      "curriculos_arquivos",
+      "faixas_inss",
+      "faixas_irrf",
+      "lgpd_purge_log",
+      "medidas_ciencia_tokens",
+      "migration_naming_audit",
+      "mv_refresh_log",
+      "onboarding_documentos_obrigatorios",
+      "onboarding_kits",
+      "triagem_notas",
+      "vaga_entrevistas",
+      "vaga_etapas"
+    ],
+    "tabelas_usadas_sem_definicao": [],
+    "tabelas_com_drift_migration_vs_types": [],
+    "rpcs_sem_definicao": [
+      "aplicar_medida_folha_ponto",
+      "complete_admission_esocial_event",
+      "drenar_fila_limpeza_lgpd",
+      "fail_admission_esocial_event"
+    ],
+    "componentes_orfaos": [
+      "src/components/dashboard/SectionHeader.tsx",
+      "src/components/layout/Breadcrumb.tsx",
+      "src/components/layout/Column.tsx",
+      "src/components/layout/Container.tsx",
+      "src/components/layout/Flex.tsx",
+      "src/components/layout/Footer.tsx",
+      "src/components/layout/Grid.tsx",
+      "src/components/layout/NavItem.tsx",
+      "src/components/layout/PageContainer.tsx",
+      "src/components/layout/Row.tsx",
+      "src/components/layout/Section.tsx",
+      "src/components/layout/SectionHeader.tsx",
+      "src/components/layout/SidebarFooter.tsx",
+      "src/components/layout/Stack.tsx",
+      "src/components/notifications/NotificationCenter.tsx",
+      "src/components/ui/data-table.tsx",
+      "src/components/ui/form.tsx",
+      "src/components/ui/masked-input.tsx",
+      "src/components/ui/page-header.tsx",
+      "src/components/ui/search-input.tsx",
+      "src/components/ui/sidebar.tsx"
+    ],
+    "componentes_com_nome_duplicado": [
+      "AlertasRHWidget",
+      "CadastroIncompletoWidget",
+      "ESocialMonitorWidget",
+      "EmpresaSelector",
+      "FormField",
+      "IndicatorRow",
+      "MotionCard",
+      "NotificationCenter",
+      "PageHeader",
+      "PendenciaItem",
+      "QuickStat",
+      "SectionHeader",
+      "SidebarFooter",
+      "SignaturePad",
+      "StatusBadge",
+      "ToastProvider",
+      "Toaster"
+    ],
+    "scripts_orfaos": [
+      "scripts/simulacao/simulate_adiant_13.cjs",
+      "scripts/simulacao/simulate_art145.cjs",
+      "scripts/simulacao/simulate_notif_d3.cjs",
+      "scripts/simulacao/verify_bridge_write_guard.cjs"
+    ],
+    "env_usadas_nao_declaradas": [
+      "CI",
+      "DEV",
+      "GITHUB_ACTIONS",
+      "GITHUB_ACTOR",
+      "GITHUB_HEAD_REF",
+      "MODE",
+      "PROD",
+      "REQUIRE_LIVE_RLS",
+      "RUN_LIVE_RLS_TESTS",
+      "SUPABASE_ANON_KEY",
+      "SUPABASE_PUBLISHABLE_KEY",
+      "SUPABASE_URL",
+      "VITE_E2E_BYPASS_MFA"
+    ],
+    "ciclos_de_import": 3,
+    "possiveis_segredos_no_codigo": ["e2e/public/api-auth-errors.spec.ts:44", "scripts/ai-context/cenarios.mjs:102"]
+  },
+  "erros_do_gerador": []
+}

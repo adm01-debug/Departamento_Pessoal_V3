@@ -1,6 +1,6 @@
 import { useGenericCrud } from './useGenericCrud';
 import { empresaService } from '@/services/empresaService';
-import { Empresa } from '@/types/entities';
+import type { Empresa } from '@/types/entities';
 
 export function useTodasEmpresas() {
   const crud = useGenericCrud<Empresa>({

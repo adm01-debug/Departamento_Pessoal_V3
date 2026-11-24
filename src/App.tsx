@@ -58,6 +58,7 @@ const BackupPage = lazy(() => import('@/pages/BackupPage'));
 const OrganogramaPage = lazy(() => import('@/pages/OrganogramaPage'));
 const PortalPage = lazy(() => import('@/pages/PortalPage'));
 const AvaliacaoPage = lazy(() => import('@/pages/AvaliacaoPage'));
+const NineBoxPreviewPage = lazy(() => import('@/pages/NineBoxPreviewPage'));
 const TreinamentosPage = lazy(() => import('@/pages/TreinamentosPage'));
 const RecrutamentoPage = lazy(() => import('@/pages/RecrutamentoPage'));
 const ContratacaoPage = lazy(() => import('@/pages/ContratacaoPage'));
@@ -102,6 +103,7 @@ const LotacoesPage = lazy(() => import('@/pages/LotacoesPage'));
 const AssistenteIAPage = lazy(() => import('@/pages/AssistenteIAPage'));
 const GeradorDocumentosPage = lazy(() => import('@/pages/GeradorDocumentosPage'));
 const SSTPage = lazy(() => import('@/pages/SSTPage'));
+const EPIsPage = lazy(() => import('@/pages/EPIsPage'));
 const CalculadoraRescisaoPage = lazy(() => import('@/pages/CalculadoraRescisaoPage'));
 const ImportacaoPage = lazy(() => import('@/pages/ImportacaoPage'));
 const DashboardExecutivoPage = lazy(() => import('@/pages/DashboardExecutivoPage'));
@@ -252,6 +254,7 @@ export default function App() {
         <Route path="ponto" element={<LazyPage Component={PontoPage} />} />
         <Route path="beneficios" element={<LazyPage Component={BeneficiosPage} />} />
         <Route path="beneficios/novo" element={<LazyPage Component={BeneficioFormPage} />} />
+        <Route path="beneficios/:id/editar" element={<LazyPage Component={BeneficioFormPage} />} />
 
         {/* Folha e Financeiro */}
         <Route path="folha" element={<LazyPage Component={FolhaPage} />} />
@@ -282,6 +285,9 @@ export default function App() {
 
         {/* Gestão e Performance */}
         <Route path="avaliacao" element={<LazyPage Component={AvaliacaoPage} />} />
+        {import.meta.env.DEV && NineBoxPreviewPage && (
+          <Route path="avaliacao/ninebox-preview" element={<LazyPage Component={NineBoxPreviewPage} />} />
+        )}
         <Route path="treinamentos" element={<LazyPage Component={TreinamentosPage} />} />
         <Route path="recrutamento" element={<LazyPage Component={RecrutamentoPage} />} />
         <Route path="onboarding" element={<LazyPage Component={OnboardingPage} />} />

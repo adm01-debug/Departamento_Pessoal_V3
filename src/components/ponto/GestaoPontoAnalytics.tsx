@@ -178,6 +178,14 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
     return Object.entries(counts).map(([name, value]) => ({ name, value }));
   }, [registros]);
 
+  // Taxa de assiduidade real: registros com batida / total de registros do período.
+  const taxaAssiduidade = useMemo(() => {
+    const total = registros.length;
+    if (!total) return null;
+    const faltas = registros.filter((r) => !r.entrada_1 && !r.saida_1).length;
+    return ((total - faltas) / total) * 100;
+  }, [registros]);
+
   // 2. Predictive: Monthly Forecast
   const monthlyForecast = useMemo(() => {
     // Group by day to see trends

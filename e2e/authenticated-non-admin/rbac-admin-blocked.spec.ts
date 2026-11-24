@@ -16,6 +16,13 @@ test.describe('RBAC — bloqueio de rotas admin para usuário comum', () => {
       await expect(page.getByRole('heading', { name: /acesso restrito/i })).toBeVisible({ timeout: 15_000 });
       await expect(page.getByText(/não possui permissão/i)).toBeVisible();
 
+      // As roles chegam de forma assíncrona (AuthContext marca pronto com ['user'] e
+      // enriquece depois): reconfirma o bloqueio depois que a rede assentar, senão o
+      // teste passa por corrida mesmo quando a conta vê a página admin.
+      await page.waitForLoadState('networkidle');
+      await expect(page.getByRole('heading', { name: /acesso restrito/i })).toBeVisible();
+      await expect(page.getByRole('heading', { name: /telemetria de queries/i })).toHaveCount(0);
+
       // Não deve haver conteúdo administrativo carregado
       expect(page.url()).toContain(rota);
     });

@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "maintenance:doctor": "sh scripts/maintenance/run.sh doctor --root .",
+    "maintenance:check": "sh scripts/maintenance/run.sh check --root . --ref origin/main",
+    "maintenance:heal": "sh scripts/maintenance/run.sh heal --root . --ref origin/main",
+    "test:maintenance": "node --test scripts/maintenance/maintenance.unit.mjs",
     "dev": "vite",
     "dev:clean": "node scripts/limpar-cache-vite.mjs && vite",
     "cache:limpar": "node scripts/limpar-cache-vite.mjs",

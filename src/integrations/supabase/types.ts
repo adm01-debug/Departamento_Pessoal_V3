@@ -962,6 +962,10 @@ export type Database = {
           created_at: string
           dados_anteriores: Json | null
           dados_novos: Json | null
+          empresa_id: string | null
+          justificativa: string | null
+          status_anterior: string | null
+          status_posterior: string | null
           id: string
           ip_address: string | null
           registro_id: string
@@ -976,6 +980,10 @@ export type Database = {
           created_at?: string
           dados_anteriores?: Json | null
           dados_novos?: Json | null
+          empresa_id?: string | null
+          justificativa?: string | null
+          status_anterior?: string | null
+          status_posterior?: string | null
           id?: string
           ip_address?: string | null
           registro_id: string
@@ -990,6 +998,10 @@ export type Database = {
           created_at?: string
           dados_anteriores?: Json | null
           dados_novos?: Json | null
+          empresa_id?: string | null
+          justificativa?: string | null
+          status_anterior?: string | null
+          status_posterior?: string | null
           id?: string
           ip_address?: string | null
           registro_id?: string
@@ -3568,6 +3580,79 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "vw_passivo_trabalhista_consolidado"
             referencedColumns: ["colaborador_id"]
+          },
+        ]
+      }
+      colaborador_lotacoes: {
+        Row: {
+          colaborador_id: string
+          created_at: string
+          empresa_id: string
+          id: string
+          lotacao_id: string
+          principal: boolean
+          updated_at: string
+        }
+        Insert: {
+          colaborador_id: string
+          created_at?: string
+          empresa_id: string
+          id?: string
+          lotacao_id: string
+          principal?: boolean
+          updated_at?: string
+        }
+        Update: {
+          colaborador_id?: string
+          created_at?: string
+          empresa_id?: string
+          id?: string
+          lotacao_id?: string
+          principal?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "colaborador_lotacoes_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "colaborador_lotacoes_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_cadastro_incompleto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "colaborador_lotacoes_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_colaboradores_completo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "colaborador_lotacoes_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_passivo_trabalhista_consolidado"
+            referencedColumns: ["colaborador_id"]
+          },
+          {
+            foreignKeyName: "colaborador_lotacoes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "colaborador_lotacoes_lotacao_id_fkey"
+            columns: ["lotacao_id"]
+            isOneToOne: false
+            referencedRelation: "lotacoes"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -6723,8 +6808,12 @@ export type Database = {
           created_at: string
           data_validade: string | null
           id: string
+          mime_type: string | null
           nome: string
+          nome_arquivo: string | null
           observacoes: string | null
+          storage_path: string | null
+          tamanho: number | null
           tipo: string
           updated_at: string
           url: string | null
@@ -6736,8 +6825,12 @@ export type Database = {
           created_at?: string
           data_validade?: string | null
           id?: string
+          mime_type?: string | null
           nome: string
+          nome_arquivo?: string | null
           observacoes?: string | null
+          storage_path?: string | null
+          tamanho?: number | null
           tipo: string
           updated_at?: string
           url?: string | null
@@ -6749,8 +6842,12 @@ export type Database = {
           created_at?: string
           data_validade?: string | null
           id?: string
+          mime_type?: string | null
           nome?: string
+          nome_arquivo?: string | null
           observacoes?: string | null
+          storage_path?: string | null
+          tamanho?: number | null
           tipo?: string
           updated_at?: string
           url?: string | null
@@ -7107,8 +7204,10 @@ export type Database = {
           data_emissao: string | null
           data_validade: string | null
           id: string
+          mime_type: string | null
           numero: string | null
           orgao_emissor: string | null
+          storage_path: string | null
           tipo_documento: string
           updated_at: string | null
         }
@@ -7122,8 +7221,10 @@ export type Database = {
           data_emissao?: string | null
           data_validade?: string | null
           id?: string
+          mime_type?: string | null
           numero?: string | null
           orgao_emissor?: string | null
+          storage_path?: string | null
           tipo_documento: string
           updated_at?: string | null
         }
@@ -7137,8 +7238,10 @@ export type Database = {
           data_emissao?: string | null
           data_validade?: string | null
           id?: string
+          mime_type?: string | null
           numero?: string | null
           orgao_emissor?: string | null
+          storage_path?: string | null
           tipo_documento?: string
           updated_at?: string | null
         }
@@ -15147,6 +15250,60 @@ export type Database = {
           },
         ]
       }
+      ponto_espelhos_papel: {
+        Row: {
+          arquivo_path: string | null
+          colaborador_id: string
+          competencia: string
+          created_at: string
+          devolvido_em: string | null
+          empresa_id: string
+          id: string
+          observacao: string | null
+          registrado_por: string | null
+          updated_at: string
+        }
+        Insert: {
+          arquivo_path?: string | null
+          colaborador_id: string
+          competencia: string
+          created_at?: string
+          devolvido_em?: string | null
+          empresa_id: string
+          id?: string
+          observacao?: string | null
+          registrado_por?: string | null
+          updated_at?: string
+        }
+        Update: {
+          arquivo_path?: string | null
+          colaborador_id?: string
+          competencia?: string
+          created_at?: string
+          devolvido_em?: string | null
+          empresa_id?: string
+          id?: string
+          observacao?: string | null
+          registrado_por?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_espelhos_papel_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_espelhos_papel_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ponto_espelhos_revogacoes: {
         Row: {
           espelho_id: string
@@ -15220,6 +15377,496 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      ponto_rep_dias: {
+        Row: {
+          abono: string | null
+          abono_negativo: string | null
+          created_at: string
+          data: string
+          dispositivo_id: string
+          empresa_id: string
+          erro_processamento: string | null
+          folga: boolean
+          funcionario_codigo: number
+          hash_conteudo: string
+          horario_codigo: number | null
+          id: string
+          justificativa_abono: number | null
+          lote_id: string | null
+          marcacoes: Json
+          neutro: boolean
+          processado_em: string | null
+          updated_at: string
+        }
+        Insert: {
+          abono?: string | null
+          abono_negativo?: string | null
+          created_at?: string
+          data: string
+          dispositivo_id: string
+          empresa_id: string
+          erro_processamento?: string | null
+          folga?: boolean
+          funcionario_codigo: number
+          hash_conteudo: string
+          horario_codigo?: number | null
+          id?: string
+          justificativa_abono?: number | null
+          lote_id?: string | null
+          marcacoes?: Json
+          neutro?: boolean
+          processado_em?: string | null
+          updated_at?: string
+        }
+        Update: {
+          abono?: string | null
+          abono_negativo?: string | null
+          created_at?: string
+          data?: string
+          dispositivo_id?: string
+          empresa_id?: string
+          erro_processamento?: string | null
+          folga?: boolean
+          funcionario_codigo?: number
+          hash_conteudo?: string
+          horario_codigo?: number | null
+          id?: string
+          justificativa_abono?: number | null
+          lote_id?: string | null
+          marcacoes?: Json
+          neutro?: boolean
+          processado_em?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_dias_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_dias_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_dias_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_lotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ponto_rep_dispositivos: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          criado_por: string | null
+          empresa_id: string
+          id: string
+          nome: string
+          revogado_em: string | null
+          token_hash: string
+          token_prefixo: string
+          ultima_marcacao_em: string | null
+          ultimo_contato_em: string | null
+          unidade: string
+          updated_at: string
+          versao_coletor: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          criado_por?: string | null
+          empresa_id: string
+          id?: string
+          nome: string
+          revogado_em?: string | null
+          token_hash: string
+          token_prefixo: string
+          ultima_marcacao_em?: string | null
+          ultimo_contato_em?: string | null
+          unidade: string
+          updated_at?: string
+          versao_coletor?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          criado_por?: string | null
+          empresa_id?: string
+          id?: string
+          nome?: string
+          revogado_em?: string | null
+          token_hash?: string
+          token_prefixo?: string
+          ultima_marcacao_em?: string | null
+          ultimo_contato_em?: string | null
+          unidade?: string
+          updated_at?: string
+          versao_coletor?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_dispositivos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ponto_rep_funcionarios: {
+        Row: {
+          codigo: number
+          colaborador_id: string | null
+          cpf: string | null
+          cpf_last4: string | null
+          created_at: string
+          data_admissao: string | null
+          data_desligamento: string | null
+          dispositivo_id: string
+          empresa_codigo: number | null
+          empresa_id: string
+          hash_conteudo: string | null
+          horario_codigo: number | null
+          id: string
+          matricula: string | null
+          nome: string | null
+          pis: string | null
+          situacao: string | null
+          updated_at: string
+          vinculado_em: string | null
+          vinculo_metodo: string | null
+        }
+        Insert: {
+          codigo: number
+          colaborador_id?: string | null
+          cpf?: string | null
+          cpf_last4?: string | null
+          created_at?: string
+          data_admissao?: string | null
+          data_desligamento?: string | null
+          dispositivo_id: string
+          empresa_codigo?: number | null
+          empresa_id: string
+          hash_conteudo?: string | null
+          horario_codigo?: number | null
+          id?: string
+          matricula?: string | null
+          nome?: string | null
+          pis?: string | null
+          situacao?: string | null
+          updated_at?: string
+          vinculado_em?: string | null
+          vinculo_metodo?: string | null
+        }
+        Update: {
+          codigo?: number
+          colaborador_id?: string | null
+          cpf?: string | null
+          cpf_last4?: string | null
+          created_at?: string
+          data_admissao?: string | null
+          data_desligamento?: string | null
+          dispositivo_id?: string
+          empresa_codigo?: number | null
+          empresa_id?: string
+          hash_conteudo?: string | null
+          horario_codigo?: number | null
+          id?: string
+          matricula?: string | null
+          nome?: string | null
+          pis?: string | null
+          situacao?: string | null
+          updated_at?: string
+          vinculado_em?: string | null
+          vinculo_metodo?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_funcionarios_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_funcionarios_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_funcionarios_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ponto_rep_horarios: {
+        Row: {
+          ajuste: boolean
+          codigo: number
+          created_at: string
+          dia_semana: number
+          dispositivo_id: string
+          empresa_id: string
+          extra: boolean
+          fecha: boolean
+          folga: boolean
+          id: string
+          ident: number | null
+          neutro: boolean
+          pares: Json
+          tipo_calculo: number | null
+          tolerancia_extra: string | null
+          tolerancia_falta: string | null
+          updated_at: string
+        }
+        Insert: {
+          ajuste?: boolean
+          codigo: number
+          created_at?: string
+          dia_semana: number
+          dispositivo_id: string
+          empresa_id: string
+          extra?: boolean
+          fecha?: boolean
+          folga?: boolean
+          id?: string
+          ident?: number | null
+          neutro?: boolean
+          pares?: Json
+          tipo_calculo?: number | null
+          tolerancia_extra?: string | null
+          tolerancia_falta?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ajuste?: boolean
+          codigo?: number
+          created_at?: string
+          dia_semana?: number
+          dispositivo_id?: string
+          empresa_id?: string
+          extra?: boolean
+          fecha?: boolean
+          folga?: boolean
+          id?: string
+          ident?: number | null
+          neutro?: boolean
+          pares?: Json
+          tipo_calculo?: number | null
+          tolerancia_extra?: string | null
+          tolerancia_falta?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_horarios_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_horarios_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ponto_rep_feriados: {
+        Row: {
+          codigo: number
+          created_at: string
+          data: string
+          dispositivo_id: string
+          empresa_id: string
+          id: string
+          nao_computa_banco_horas: boolean
+          nome: string | null
+          updated_at: string
+          vinculo_cidade: number | null
+          vinculo_departamento: number | null
+          vinculo_empresa: number | null
+        }
+        Insert: {
+          codigo: number
+          created_at?: string
+          data: string
+          dispositivo_id: string
+          empresa_id: string
+          id?: string
+          nao_computa_banco_horas?: boolean
+          nome?: string | null
+          updated_at?: string
+          vinculo_cidade?: number | null
+          vinculo_departamento?: number | null
+          vinculo_empresa?: number | null
+        }
+        Update: {
+          codigo?: number
+          created_at?: string
+          data?: string
+          dispositivo_id?: string
+          empresa_id?: string
+          id?: string
+          nao_computa_banco_horas?: boolean
+          nome?: string | null
+          updated_at?: string
+          vinculo_cidade?: number | null
+          vinculo_departamento?: number | null
+          vinculo_empresa?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_feriados_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_feriados_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ponto_rep_justificativas: {
+        Row: {
+          codigo: number
+          considera_falta: boolean
+          considera_normal: boolean
+          created_at: string
+          dispositivo_id: string
+          empresa_id: string
+          id: string
+          nome: string
+          tipo_dia: string | null
+          updated_at: string
+        }
+        Insert: {
+          codigo: number
+          considera_falta?: boolean
+          considera_normal?: boolean
+          created_at?: string
+          dispositivo_id: string
+          empresa_id: string
+          id?: string
+          nome: string
+          tipo_dia?: string | null
+          updated_at?: string
+        }
+        Update: {
+          codigo?: number
+          considera_falta?: boolean
+          considera_normal?: boolean
+          created_at?: string
+          dispositivo_id?: string
+          empresa_id?: string
+          id?: string
+          nome?: string
+          tipo_dia?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_justificativas_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_justificativas_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ponto_rep_lotes: {
+        Row: {
+          dias_alterados: number
+          dispositivo_id: string
+          empresa_id: string
+          hash_sha256: string | null
+          id: string
+          mensagem_erro: string | null
+          periodo_fim: string | null
+          periodo_inicio: string | null
+          recebido_em: string
+          status: string
+          total_dias: number
+          total_feriados: number
+          total_funcionarios: number
+          total_horarios: number
+        }
+        Insert: {
+          dias_alterados?: number
+          dispositivo_id: string
+          empresa_id: string
+          hash_sha256?: string | null
+          id?: string
+          mensagem_erro?: string | null
+          periodo_fim?: string | null
+          periodo_inicio?: string | null
+          recebido_em?: string
+          status?: string
+          total_dias?: number
+          total_feriados?: number
+          total_funcionarios?: number
+          total_horarios?: number
+        }
+        Update: {
+          dias_alterados?: number
+          dispositivo_id?: string
+          empresa_id?: string
+          hash_sha256?: string | null
+          id?: string
+          mensagem_erro?: string | null
+          periodo_fim?: string | null
+          periodo_inicio?: string | null
+          recebido_em?: string
+          status?: string
+          total_dias?: number
+          total_feriados?: number
+          total_funcionarios?: number
+          total_horarios?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ponto_rep_lotes_dispositivo_id_fkey"
+            columns: ["dispositivo_id"]
+            isOneToOne: false
+            referencedRelation: "ponto_rep_dispositivos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ponto_rep_lotes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ponto_seguranca_blacklist: {
         Row: {
@@ -22452,6 +23099,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      alertar_coletores_ponto_parados: {
+        Args: { p_agora?: string }
+        Returns: number
+      }
       anonimizar_dados_pessoais: {
         Args: { target_id: string }
         Returns: undefined
@@ -22596,6 +23247,11 @@ export type Database = {
           uf: string
         }[]
       }
+      colaborador_usa_relogio: { Args: never; Returns: boolean }
+      colaborador_usa_relogio_por_id: {
+        Args: { _colaborador_id: string }
+        Returns: boolean
+      }
       consumir_pendencias_medida_no_holerite: {
         Args: {
           p_colaborador_id: string
@@ -22681,6 +23337,14 @@ export type Database = {
         Args: { _divergencia_id: string; _tipo?: string }
         Returns: string
       }
+      definir_tipo_dia_justificativa_relogio: {
+        Args: { _justificativa_id: string; _tipo_dia: string }
+        Returns: undefined
+      }
+      desvincular_funcionario_relogio: {
+        Args: { _funcionario_id: string }
+        Returns: undefined
+      }
       detectar_fraude_ponto: {
         Args: {
           _batida_id: string
@@ -22761,6 +23425,13 @@ export type Database = {
         Returns: Json
       }
       gerar_rubricas_ferias: { Args: { p_ferias_id: string }; Returns: number }
+      gerar_token_coletor_ponto: {
+        Args: { _empresa_id: string; _nome: string; _unidade: string }
+        Returns: {
+          dispositivo_id: string
+          token: string
+        }[]
+      }
       get_admissao_por_token: {
         Args: { _token: string }
         Returns: {
@@ -23750,6 +24421,10 @@ export type Database = {
         }
         Returns: Json
       }
+      revogar_coletor_ponto: {
+        Args: { _dispositivo_id: string }
+        Returns: undefined
+      }
       run_lgpd_purge: {
         Args: { p_dry_run?: boolean }
         Returns: {
@@ -23903,9 +24578,13 @@ export type Database = {
           empresa_id: string
         }[]
       }
+      vincular_funcionario_relogio: {
+        Args: { _colaborador_id: string; _funcionario_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
-      app_role: "admin" | "gestor" | "rh" | "user"
+      app_role: "admin" | "gestor" | "rh" | "user" | "supervisor" | "coordenador"
       escolaridade:
         | "fundamental_incompleto"
         | "fundamental_completo"
@@ -24110,7 +24789,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "gestor", "rh", "user"],
+      app_role: ["admin", "gestor", "rh", "user", "supervisor", "coordenador"],
       escolaridade: [
         "fundamental_incompleto",
         "fundamental_completo",

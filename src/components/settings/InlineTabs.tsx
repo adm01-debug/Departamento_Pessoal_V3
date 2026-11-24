@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Bell, Plug, Plus, RefreshCw, Save, Settings, Trash2, Webhook } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
+import { bitrix24Service } from '@/services/tabelasComplementaresService';
+import { useTheme } from '@/providers/ThemeProvider';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,6 +22,37 @@ import { FormField, FormSelect, FormSwitch } from '@/components/forms';
 type AuthUser = { name?: string } | null | undefined;
 
 export function PreferenciasTab({ user }: { user: AuthUser }) {
+  const { theme, setTheme } = useTheme();
+  const qc = useQueryClient();
+  // Edição do usuário sobre o nome atual (estado derivado: acompanha o user até ele digitar).
+  const [draftNome, setDraftNome] = useState<string | null>(null);
+  const nome = draftNome ?? user?.name ?? '';
+  const modoEscuro =
+    theme === 'dark' || (theme === 'system' && !!window.matchMedia?.('(prefers-color-scheme: dark)')?.matches);
+
+  const salvar = useMutation({
+    mutationFn: async () => {
+      const name = nome.trim();
+      if (!name) throw new Error('Informe o nome de exibição.');
+      const { data, error } = await supabase.auth.updateUser({ data: { name } });
+      if (error) throw error;
+      // Mantém profiles.nome em sincronia, como a tela de Perfil faz (PerfilPage.handleSave).
+      const userId = data.user?.id;
+      if (userId) {
+        const { error: perfilError } = await supabase
+          .from('profiles')
+          .update(validateTablePayload('profiles', { nome: name }, 'PreferenciasTab:profiles'))
+          .eq('user_id', userId);
+        if (perfilError) throw perfilError;
+      }
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['meu-perfil'] });
+      toast.success('Preferências salvas!');
+    },
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao salvar preferências.')),
+  });
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
       <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden bg-card">
@@ -36,12 +70,20 @@ export function PreferenciasTab({ user }: { user: AuthUser }) {
               className="max-w-md"
             />
             <div className="flex flex-col gap-4 p-4 rounded-2xl bg-muted/30 border border-border/20">
-              <FormSwitch label="Modo Escuro" description="Alternar entre tema claro e escuro automaticamente" />
-              <FormSwitch label="Animações Reduzidas" description="Desativar efeitos visuais para melhor performance" />
+              <FormSwitch
+                label="Modo Escuro"
+                description="Alternar entre tema claro e escuro (aplicado na hora, neste navegador)"
+                checked={modoEscuro}
+                onCheckedChange={(v) => setTheme(v ? 'dark' : 'light')}
+              />
             </div>
           </div>
-          <Button className="rounded-xl bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 shadow-lg font-body px-8 h-11">
-            Salvar Alterações
+          <Button
+            className="rounded-xl bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 shadow-lg font-body px-8 h-11"
+            onClick={() => salvar.mutate()}
+            disabled={salvar.isPending}
+          >
+            {salvar.isPending ? 'Salvando...' : 'Salvar Alterações'}
           </Button>
         </CardContent>
       </Card>
@@ -56,7 +98,7 @@ export function NotificacoesTab() {
         <div className="h-[2px] bg-gradient-to-r from-primary to-primary-glow" />
         <CardHeader>
           <CardTitle className="font-display">Central de Notificações</CardTitle>
-          <CardDescription>Configure alertas via E-mail, WhatsApp e Push</CardDescription>
+          <CardDescription>Alertas via E-mail, WhatsApp e Push</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 pt-2 font-body">
           <div className="grid gap-4 md:grid-cols-2">
@@ -280,6 +322,12 @@ export function AlertasKpiTab() {
 }
 
 export function IntegracoesTab() {
+  const navigate = useNavigate();
+  const { data: bitrixConfig } = useQuery({
+    queryKey: ['bitrix24_config'],
+    queryFn: () => bitrix24Service.getConfig(),
+  });
+  const bitrixConectado = !!(bitrixConfig?.habilitado && bitrixConfig.webhook_url);
   const { data: integracoes = [], isLoading } = useQuery({
     queryKey: ['integracoes'],
     queryFn: async () => {
@@ -321,7 +369,12 @@ export function IntegracoesTab() {
               >
                 <RefreshCw className="h-3.5 w-3.5" /> Sincronizar Agora
               </Button>
-              <Button variant="ghost" size="sm" className="rounded-xl gap-2 font-body text-xs justify-start h-9">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="rounded-xl gap-2 font-body text-xs justify-start h-9"
+                onClick={() => navigate('/integracoes')}
+              >
                 <Settings className="h-3.5 w-3.5" /> Webhook de Mudanças
               </Button>
             </div>
@@ -413,7 +466,7 @@ export function IntegracoesTab() {
                   ))}
                   {integracoes.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-16 font-body opacity-40">
+                      <TableCell colSpan={4} className="text-center text-muted-foreground py-16 font-body opacity-40">
                         <div className="flex flex-col items-center gap-3">
                           <Plug className="h-10 w-10" />
                           <p>Nenhuma integração personalizada ativa.</p>

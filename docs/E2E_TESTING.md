@@ -24,12 +24,12 @@ e2e/
 
 ## Arquitetura — projetos Playwright
 
-| Projeto         | Depende de | StorageState                | Quando roda                       |
-|-----------------|-----------|------------------------------|------------------------------------|
-| `setup`         | —         | grava `e2e/.auth/user.json` | sempre antes dos autenticados      |
-| `public`        | —         | nenhum                       | login e rotas anônimas             |
-| `authenticated` | `setup`   | `e2e/.auth/user.json`       | módulos protegidos                 |
-| `mobile-smoke`  | `setup`   | `e2e/.auth/user.json`       | viewport Pixel 7 (ponto, portal)   |
+| Projeto         | Depende de | StorageState                | Quando roda                      |
+| --------------- | ---------- | --------------------------- | -------------------------------- |
+| `setup`         | —          | grava `e2e/.auth/user.json` | sempre antes dos autenticados    |
+| `public`        | —          | nenhum                      | login e rotas anônimas           |
+| `authenticated` | `setup`    | `e2e/.auth/user.json`       | módulos protegidos               |
+| `mobile-smoke`  | `setup`    | `e2e/.auth/user.json`       | viewport Pixel 7 (ponto, portal) |
 
 A separação evita logar N vezes (1 login → N specs reusam a sessão).
 
@@ -56,12 +56,12 @@ npm run test:e2e:report
 
 ## Variáveis de ambiente
 
-| Variável             | Default                  | Uso                                           |
-|----------------------|--------------------------|------------------------------------------------|
-| `E2E_BASE_URL`       | `http://localhost:8080`  | URL alvo (preview, staging ou local)           |
-| `E2E_USER_EMAIL`     | `admin@teste.local`      | Conta usada pelo `auth.setup.ts`              |
-| `E2E_USER_PASSWORD`  | `Admin@2026!`            | Senha da conta de teste                        |
-| `CI`                 | (auto)                   | Liga retries (2x) e reporters `github`+`html` |
+| Variável            | Default                    | Uso                                           |
+| ------------------- | -------------------------- | --------------------------------------------- |
+| `E2E_BASE_URL`      | `http://localhost:8080`    | URL alvo (preview, staging ou local)          |
+| `E2E_USER_EMAIL`    | `admin@teste.local`        | Conta usada pelo `auth.setup.ts`              |
+| `E2E_USER_PASSWORD` | _(secret — não publicado)_ | Senha da conta de teste                       |
+| `CI`                | (auto)                     | Liga retries (2x) e reporters `github`+`html` |
 
 ## Integração CI/CD (GitHub Actions)
 

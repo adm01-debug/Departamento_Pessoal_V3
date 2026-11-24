@@ -16,6 +16,7 @@ import {
   listarFormacoes,
   criarFormacao,
   excluirFormacao,
+  atualizarFormacao,
   obterDadosEstrangeiro,
   salvarDadosEstrangeiro,
   obterDeficiencia,
@@ -586,6 +587,109 @@ describe('listarHoleritesColaborador', () => {
 });
 
 // ─── Times ────────────────────────────────────────────────────────────────────
+
+describe('atualizarContatoEmergencia', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('updates contato scoped by id and colaboradorId', async () => {
+    const { updateFn, eqFn } = setupUpdateEqChain();
+    await atualizarContatoEmergencia('ce1', { nome: 'Maria Nova' }, '00000000-0000-4000-8000-000000000002');
+    expect(updateFn).toHaveBeenCalledWith({ nome: 'Maria Nova' });
+    expect(eqFn).toHaveBeenCalledWith('id', 'ce1');
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
+  });
+});
+
+describe('atualizarFormacao', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('updates formacao scoped by id and colaboradorId', async () => {
+    const { updateFn, eqFn } = setupUpdateEqChain();
+    await atualizarFormacao('00000000-0000-4000-8000-000000000002', 'f1', { curso: 'Engenharia' });
+    expect(updateFn).toHaveBeenCalledWith({ curso: 'Engenharia' });
+    expect(eqFn).toHaveBeenCalledWith('id', 'f1');
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
+  });
+});
+
+describe('listarFeriasColaborador', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns ferias for colaborador scoped by empresa', async () => {
+    const records = [{ id: 'f1', colaborador_id: '00000000-0000-4000-8000-000000000002', data_inicio: '2026-08-01' }];
+    const { eqFn } = setupEqOrderChain(records);
+    expect(await listarFeriasColaborador('00000000-0000-4000-8000-000000000002', EMPRESA_ID)).toEqual(records);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
+    expect(eqFn).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+  });
+
+  it('returns empty array when data is null', async () => {
+    setupEqOrderChain(null as never);
+    expect(await listarFeriasColaborador('00000000-0000-4000-8000-000000000002', EMPRESA_ID)).toEqual([]);
+  });
+
+  it('throws when empresaId is missing', async () => {
+    await expect(listarFeriasColaborador('00000000-0000-4000-8000-000000000002', '')).rejects.toThrow(
+      'empresa_id obrigatório'
+    );
+  });
+});
+
+describe('listarHoleritesColaborador', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('normalizes competencia from the joined folha and total_liquido from liquido', async () => {
+    setupEqOrderLimitChain([
+      {
+        id: 'h1',
+        liquido: 5000,
+        total_proventos: 6000,
+        total_descontos: 1000,
+        assinado: true,
+        created_at: '2026-01-05',
+        folha: { competencia: '2026-01' },
+      },
+    ]);
+    const result = await listarHoleritesColaborador('00000000-0000-4000-8000-000000000002');
+    expect(result[0]).toMatchObject({
+      id: 'h1',
+      competencia: '2026-01',
+      total_liquido: 5000,
+      total_proventos: 6000,
+      total_descontos: 1000,
+      assinado: true,
+      created_at: '2026-01-05',
+    });
+  });
+
+  it('falls back competencia to — when there is no folha joined', async () => {
+    setupEqOrderLimitChain([
+      { id: 'h2', liquido: 100, total_proventos: 120, assinado: false, created_at: '2026-01-01', folha: null },
+    ]);
+    const result = await listarHoleritesColaborador('00000000-0000-4000-8000-000000000002');
+    expect(result[0].competencia).toBe('—');
+  });
+
+  it('filters by colaborador_id and limits to the given amount', async () => {
+    const { eqFn, limitFn } = setupEqOrderLimitChain([]);
+    await listarHoleritesColaborador('00000000-0000-4000-8000-000000000002', 5);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
+    expect(limitFn).toHaveBeenCalledWith(5);
+  });
+
+  it('returns empty array when data is null', async () => {
+    setupEqOrderLimitChain(null as never);
+    expect(await listarHoleritesColaborador('00000000-0000-4000-8000-000000000002')).toEqual([]);
+  });
+});
 
 describe('listarTimes', () => {
   beforeEach(() => { vi.clearAllMocks(); });

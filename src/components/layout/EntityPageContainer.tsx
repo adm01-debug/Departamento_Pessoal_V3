@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { PageTitle } from '@/components/PageTitle';
 import { PageLayout } from '@/components/layout';
 import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
@@ -44,7 +44,10 @@ interface EntityPageContainerProps<T> {
   searchPlaceholder?: string;
   entityName: string; // e.g., "cargo", "departamento"
   columns: { header: string; className?: string; width?: string; hidden?: 'sm' | 'md' | 'lg' | boolean }[];
-  renderRow: (item: T) => ReactNode;
+  /** Dispensavel quando `renderBody` substitui a tabela inteira. */
+  renderRow?: (item: T) => ReactNode;
+  /** Substitui a TABELA por um corpo proprio (grade de cartoes, etc). Resto do container intacto. */
+  renderBody?: ReactNode;
   stats?: ReactNode;
   customFilters?: ReactNode;
 }
@@ -76,6 +79,7 @@ export function EntityPageContainer<T extends { id: string | number }>({
   entityName,
   columns,
   renderRow,
+  renderBody,
   stats,
   customFilters,
   onAdd,

@@ -69,6 +69,17 @@ describe('AfastamentoTable', () => {
     expect(screen.getByText('Dias')).toBeInTheDocument();
   });
 
+  it('desabilita Prorrogar em afastamento encerrado ou aprovado', () => {
+    const data = [
+      { ...MOCK_DATA[0], id: 'af-enc', status: 'encerrado' },
+      { ...MOCK_DATA[0], id: 'af-apr', status: 'ativo', aprovado_em: '2026-07-02T00:00:00Z' },
+      { ...MOCK_DATA[0], id: 'af-ok', status: 'ativo', aprovado_em: null },
+    ] as unknown as Item[];
+    render(<AfastamentoTable {...DEFAULT_PROPS} data={data} />);
+    const itens = screen.getAllByRole('menuitem').filter((el) => el.textContent?.includes('Prorrogar'));
+    expect(itens.map((el) => el.getAttribute('aria-disabled'))).toEqual(['true', 'true', 'false']);
+  });
+
   it('renders colaborador name in table row', () => {
     render(<AfastamentoTable {...DEFAULT_PROPS} />);
     expect(screen.getByText('João Silva')).toBeInTheDocument();

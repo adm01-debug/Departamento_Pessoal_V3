@@ -95,6 +95,21 @@ export async function gerarPDFRescisao(form: any, result: RescisaoResult, audito
   doc.text('EMPREGADOR', 52, y, { align: 'center' });
   doc.text('EMPREGADO(A)', pw - 52, y, { align: 'center' });
 
+  // Procedência: o motor já produz `timestamp` e `assinaturaDigital`, e o TRCT
+  // não carimbava nenhum dos dois — uma homologação feita com um cálculo antigo
+  // ou com o outro motor não deixava rastro no documento.
+  y += 10;
+  doc.setFontSize(7);
+  doc.setTextColor(120);
+  doc.text(
+    `Cálculo: ${formatarMomentoCalculo(result.timestamp)} | Motor: ${
+      origem ? LABEL_ORIGEM_CALCULO[origem] : 'não registrado'
+    } | Assinatura: ${result.assinaturaDigital || 'ausente'}`,
+    14,
+    y
+  );
+  doc.setTextColor(0);
+
   if (auditoria) {
      y += 10;
      doc.setFontSize(7); doc.setTextColor(180);

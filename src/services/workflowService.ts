@@ -112,6 +112,36 @@ async function proximaEtapa(
 
 // ── Serviço ─────────────────────────────────────────────────────────────────
 
+// -- Notificacoes de workflow (best-effort) ------------------------------------
+
+/** Enum aceito pela edge `notificacao` (schemas/common.ts notificacaoSchema). */
+type NotificacaoTipo = 'info' | 'aviso' | 'erro' | 'sucesso';
+
+/** Resolve destinatarios de uma etapa: por aprovador_id direto ou por papel via RPC. */
+async function resolverDestinatariosEtapa(etapa: Etapa, empresaId: string): Promise<{ user_id: string }[]> {
+  if (!etapa.aprovador_tipo) return [];
+  if (etapa.aprovador_id) return [{ user_id: etapa.aprovador_id }];
+
+  // Papel ? usa get_empresa_admin_ids (RPC SECURITY DEFINER, E-077 compliant).
+  // Retorna admin+gestor+rh da empresa; para notificacoes de workflow e suficiente.
+  const { data } = await supabase.rpc('get_empresa_admin_ids', { p_empresa_id: empresaId });
+  return (data ?? []).map((r: { user_id: string }) => ({ user_id: r.user_id }));
+}
+
+/** Envia notificacao de workflow via edge (best-effort). */
+function notificarWorkflow(
+  empresaId: string,
+  destinatarios: { user_id: string }[],
+  assunto: string,
+  conteudo: string,
+  tipo: NotificacaoTipo = 'info'
+): void {
+  if (!destinatarios.length) return;
+  void edgeFunctionsService
+    .enviarNotificacao({ action: 'enviar', empresaId, tipo, destinatarios, assunto, conteudo })
+    .catch((e) => console.warn('[workflowService] falha ao notificar workflow', e));
+}
+
 export const workflowService = {
   // ── CRUD (já existente) ────────────────────────────────────────────────
 
@@ -258,7 +288,7 @@ export const workflowService = {
     entidadeTipo: string,
     entidadeId: string,
     empresaId: string,
-    solicitanteId: string,
+    solicitanteId: string | null,
     dados: Record<string, unknown> = {},
     idempotencyKey?: string,
   ): Promise<Execucao> {
@@ -293,7 +323,8 @@ export const workflowService = {
       .from('workflows_etapas')
       .select('*')
       .eq('workflow_id', workflowId)
-      .eq('ordem', 1)
+      .order('ordem', { ascending: true })
+      .limit(1)
       .maybeSingle();
     if (!primeiraEtapa) throw new Error('Workflow não tem etapas configuradas.');
 
@@ -327,7 +358,48 @@ export const workflowService = {
       observacoes: idempotencyKey ? `idempotencyKey=${idempotencyKey}` : null,
     });
 
+    // Notifica o aprovador da primeira etapa (best-effort)
+    void resolverDestinatariosEtapa(primeiraEtapa as unknown as Etapa, empresaId)
+      .then((dest) => {
+        notificarWorkflow(
+          empresaId,
+          dest,
+          `Aprovacao necessaria: ${primeiraEtapa.nome ?? 'etapa inicial'}`,
+          `Um novo workflow foi iniciado e aguarda sua aprovacao na etapa "${primeiraEtapa.nome ?? 'inicial'}".`,
+          'aviso'
+        );
+      })
+      .catch(() => {});
+
     return execucao as unknown as Execucao;
+  },
+
+  /**
+   * Gatilho por tipo de entidade: encontra a definição ATIVA mais recente
+   * cujo `tipo` corresponde à entidade e inicia a execução.
+   * Retorna null quando a empresa não configurou workflow para o tipo —
+   * nesse caso o chamador preserva o fluxo atual (feature gate natural).
+   */
+  async executarPorTipo(
+    entidadeTipo: string,
+    entidadeId: string,
+    empresaId: string,
+    solicitanteId: string | null,
+    dados: Record<string, unknown> = {}
+  ): Promise<Execucao | null> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data: definicao, error } = await supabase
+      .from('workflows_definicoes')
+      .select('id')
+      .eq('empresa_id', empresaId)
+      .eq('tipo', entidadeTipo)
+      .eq('ativo', true)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw error;
+    if (!definicao) return null;
+    return this.executarWorkflow(definicao.id, entidadeTipo, entidadeId, empresaId, solicitanteId, dados);
   },
 
   /**
@@ -426,6 +498,46 @@ export const workflowService = {
       })
       .select()
       .maybeSingle();
+
+    // Notificacoes pos-acao (best-effort)
+    if (!aprovado) {
+      // Rejeicao: notifica o solicitante
+      const solicitanteId = (execucao as unknown as { solicitante_id: string | null }).solicitante_id;
+      if (solicitanteId) {
+        notificarWorkflow(
+          empresaId,
+          [{ user_id: solicitanteId }],
+          `Workflow rejeitado na etapa "${etapa.nome ?? 'etapa'}"`,
+          `Sua solicitacao foi rejeitada na etapa "${etapa.nome ?? 'etapa'}"${observacao ? ': ' + observacao : '.'}`,
+          'erro'
+        );
+      }
+    } else if (!proxima) {
+      // Conclusao: notifica o solicitante
+      const solicitanteId = (execucao as unknown as { solicitante_id: string | null }).solicitante_id;
+      if (solicitanteId) {
+        notificarWorkflow(
+          empresaId,
+          [{ user_id: solicitanteId }],
+          'Workflow concluido com sucesso',
+          'Sua solicitacao foi aprovada em todas as etapas e esta concluida.',
+          'sucesso'
+        );
+      }
+    } else {
+      // Avanco: notifica o aprovador da proxima etapa
+      void resolverDestinatariosEtapa(proxima as unknown as Etapa, empresaId)
+        .then((dest) => {
+          notificarWorkflow(
+            empresaId,
+            dest,
+            `Aprovacao necessaria: ${proxima.nome ?? 'proxima etapa'}`,
+            `A etapa "${etapa.nome ?? 'anterior'}" foi aprovada. Aguarda sua aprovacao em "${proxima.nome ?? 'proxima etapa'}".`,
+            'aviso'
+          );
+        })
+        .catch(() => {});
+    }
 
     return { execucao: updated as unknown as Execucao, historico: historico as unknown as Historico };
   },

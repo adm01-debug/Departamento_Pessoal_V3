@@ -16,6 +16,7 @@ const ESCOLARIDADES = ['Fundamental incompleto', 'Fundamental completo', 'Médio
 export function FormacaoTab({ colaboradorId, hideHeader = false }: { colaboradorId: string; hideHeader?: boolean }) {
   const { data, isLoading } = useFormacoes(colaboradorId);
   const criar = useCriarFormacao();
+  const atualizar = useAtualizarFormacao(colaboradorId);
   const excluir = useExcluirFormacao(colaboradorId);
   const atualizar = useAtualizarFormacao(colaboradorId);
   const [open, setOpen] = useState(false);

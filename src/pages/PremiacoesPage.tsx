@@ -29,6 +29,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { premiacoesService } from '@/services/premiacoesService';
 import { useEmpresas } from '@/hooks';
+import { useAuth } from '@/hooks/useAuth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RewardsSimulator } from '@/components/premiacoes/RewardsSimulator';
 import { CampaignWizard } from '@/components/premiacoes/CampaignWizard';
@@ -118,7 +119,10 @@ const OPCOES_PERIODO: { valor: FiltroPeriodoCampanha; label: string }[] = [
 
 export default function PremiacoesPage() {
   const { empresaAtual } = useEmpresas();
+  const { hasRole } = useAuth();
+  const podeGerirCampanhas = hasRole('admin') || hasRole('rh');
   const queryClient = useQueryClient();
+  const [rascunhoExcluir, setRascunhoExcluir] = React.useState<{ id: string; nome: string } | null>(null);
   const [activeTab, setActiveTab] = React.useState('campanhas');
 
   /**
@@ -162,7 +166,12 @@ export default function PremiacoesPage() {
     enabled: !!empresaAtual?.id || mockAtivo
   });
 
-  const { data: pagamentos = [], isLoading: loadPagamentos } = useQuery({
+  const {
+    data: pagamentos = [],
+    isLoading: loadPagamentos,
+    isError: erroPagamentos,
+    refetch: recarregarPagamentos,
+  } = useQuery({
     queryKey: ['premiacoes_pagamentos', empresaAtual?.id],
     queryFn: async (): Promise<any[]> => getMockPagamentos() ?? (await premiacoesService.listarPagamentos(undefined, empresaAtual!.id)),
     enabled: !!empresaAtual?.id || mockAtivo
@@ -269,6 +278,52 @@ export default function PremiacoesPage() {
 
   const mensagemVazia =
     campanhas.length === 0
+      ? 'Nenhuma campanha cadastrada ainda. Use “Nova Campanha” para criar a primeira.'
+      : 'Nenhuma campanha corresponde aos filtros aplicados.';
+
+  // Toda a inteligência da aba Campanhas vem de `premiacoesComum` (funções
+  // puras): "hoje" é fixado uma vez por render e nada é recalculado no JSX.
+  const hoje = new Date(`${todayLocalISO()}T12:00:00`);
+  const campanhasHub: CampanhaHub[] = campanhas;
+  const pagamentosHub: PagamentoHub[] = pagamentos;
+  const metricasCampanhas = montarMetricas(campanhasHub, pagamentosHub, hoje);
+  const contagens = contarPorStatus(metricasCampanhas);
+  const campanhasFiltradas = filtrarEOrdenarCampanhas(metricasCampanhas, filtros, hoje);
+  // Paginação LOCAL: a página pedida é recortada para a faixa válida, então
+  // mudar o filtro nunca deixa a tabela numa página vazia/inexistente.
+  const { pagina: paginaAtual, linhas: linhasVisiveis } = paginarCampanhas(campanhasFiltradas, pagina, POR_PAGINA);
+  const acoesPendentes = montarAcoesPendentes(metricasCampanhas, pagamentosHub);
+  const atividadeRecente = montarAtividadeRecente(auditoriaHub, campanhasHub, pagamentosHub, 4);
+
+  /* ─── Indicadores (mesmas fontes de sempre, só reorganizadas) ───────────── */
+
+  const stats = {
+    totalAprovado: pagamentosHub.reduce((acc, p) => acc + numero(p.valor_aprovado), 0),
+    divergencias: pagamentosHub.filter((p) => p.status_conciliacao === 'divergente').length,
+    // Premiados = colaboradores distintos com pagamento JÁ PAGO.
+    colaboradoresPremiados: new Set(pagamentosHub.filter((p) => p.status === 'pago').map((p) => p.colaborador_id)).size,
+    orcamentoConsolidado: metricasCampanhas.reduce((acc, m) => acc + m.orcamentoTotal, 0),
+  };
+  const listaPendentes = pagamentosHub.filter((p) =>
+    (STATUS_PAGAMENTO_PENDENTE as readonly string[]).includes(p.status)
+  );
+  const totalPendente = listaPendentes.reduce((acc, p) => acc + numero(p.valor_calculado), 0);
+  // Variação do total aprovado: mês atual vs anterior, pelas datas reais. Sem
+  // base no mês anterior o motor devolve null e a variação não é exibida.
+  const variacao = calcularVariacaoMensal(pagamentosHub, hoje);
+  const variacaoMensal = variacao === null ? null : Math.round(variacao.percentual);
+
+  const atualizarFiltros = (patch: Partial<FiltrosHub>) => {
+    setFiltros((atual) => ({ ...atual, ...patch }));
+    setPagina(1);
+  };
+  const irParaAba = (destino: string) => {
+    setDetalhe(null);
+    selecionarAba(destino);
+  };
+
+  const mensagemVazia =
+    campanhasHub.length === 0
       ? 'Nenhuma campanha cadastrada ainda. Use “Nova Campanha” para criar a primeira.'
       : 'Nenhuma campanha corresponde aos filtros aplicados.';
 
@@ -617,7 +672,6 @@ export default function PremiacoesPage() {
                 <CampanhaLateral acoes={acoesPendentes} eventos={atividadeRecente} onNavegar={irParaAba} />
               </div>
             </div>
-          </TabsContent>
 
           <TabsContent value="simulador" className="space-y-6">
             <RewardsSimulator />

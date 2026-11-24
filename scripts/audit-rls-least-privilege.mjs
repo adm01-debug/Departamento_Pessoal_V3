@@ -110,8 +110,10 @@ const VERIFICADORES_DE_PAPEL = [
  */
 const AUTO_ACESSO = [
   /\bsou_o_colaborador\b/i,
-  /\buser_id\s*=\s*auth\.uid\s*\(\s*\)/i,
-  /\bauth\.uid\s*\(\s*\)\s*=\s*user_id\b/i,
+  // Aceita também a forma initplan `( SELECT auth.uid() AS uid)`, como o
+  // Postgres decompila `user_id = (select auth.uid())`.
+  /\buser_id\s*=\s*(?:\(\s*select\s+)?auth\.uid\s*\(\s*\)/i,
+  /\bauth\.uid\s*\(\s*\)(?:\s+as\s+\w+\s*\))?\s*=\s*user_id\b/i,
 ];
 
 /**
@@ -228,7 +230,9 @@ function main() {
     return 0;
   }
 
-  const bodies = parseRows(functionOutput, 2).map(([name, src]) => [name, src]);
+  // O corpo pode conter TAB (indentação), que é também o separador de campos:
+  // reagrupa tudo após o nome, senão o helper era truncado no primeiro TAB.
+  const bodies = parseRows(functionOutput, 2).map(([name, ...src]) => [name, src.join(' ')]);
   const violacoes = [];
   let inspecionadas = 0;
 
@@ -281,6 +285,16 @@ function main() {
       '  pode_gerir_pessoas() / has_role(), ou amarre a linha ao titular com',
     );
     console.error('  sou_o_colaborador(). Lembre: políticas se somam por OR.\n');
+    return 1;
+  }
+
+  if (inspecionadas === 0) {
+    console.error(
+      '[rls-least-privilege] ERRO: 0 políticas inspecionadas nas tabelas sensíveis. ' +
+        'Com banco conectado, o schema de produção sempre tem políticas nessas tabelas — ' +
+        'este resultado indica schema vazio, permissão negada ou pg_policies inacessível. ' +
+        'Falso verde bloqueado.'
+    );
     return 1;
   }
 

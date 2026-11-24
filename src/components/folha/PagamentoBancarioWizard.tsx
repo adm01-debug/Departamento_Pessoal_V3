@@ -26,8 +26,6 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [method, setMethod] = useState<'cnab' | 'pix' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  // Protocolo gerado uma única vez na montagem (evita Date.now() instável durante o render).
-  const [protocolo] = useState(() => `OP-${Date.now().toString().slice(-8)}`);
   const { empresaAtual } = useEmpresas();
 
   const handleProcess = async () => {
@@ -59,7 +57,7 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
       setCurrentStep(3);
       toast.success(method === 'pix' ? 'Lote PIX liquidado com sucesso!' : 'Arquivo de remessa gerado e enviado ao banco.');
     } catch (err) {
-      toast.error(safeErrorMessage(err, 'Falha no processamento bancário.'));
+      toast.error(safeErrorMessage(err, 'Falha ao gerar o arquivo de pagamento.'));
     } finally {
       setIsProcessing(false);
     }

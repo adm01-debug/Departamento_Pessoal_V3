@@ -32,13 +32,29 @@ interface WorkforceHealthScoreProps {
 }
 
 function getScoreColor(score: number) {
-  if (score >= 85) return { label: 'Excelente', color: 'text-success', bg: 'from-success/20 to-success/5', ring: 'hsl(var(--success))' };
-  if (score >= 70) return { label: 'Bom', color: 'text-primary', bg: 'from-primary/20 to-primary/5', ring: 'hsl(var(--primary))' };
-  if (score >= 50) return { label: 'Atenção', color: 'text-warning', bg: 'from-warning/20 to-warning/5', ring: 'hsl(var(--warning))' };
-  return { label: 'Crítico', color: 'text-destructive', bg: 'from-destructive/20 to-destructive/5', ring: 'hsl(var(--destructive))' };
+  if (score >= 85)
+    return {
+      label: 'Excelente',
+      color: 'text-success',
+      bg: 'from-success/20 to-success/5',
+      ring: 'hsl(var(--success))',
+    };
+  if (score >= 70)
+    return { label: 'Bom', color: 'text-primary', bg: 'from-primary/20 to-primary/5', ring: 'hsl(var(--primary))' };
+  if (score >= 50)
+    return { label: 'Atenção', color: 'text-warning', bg: 'from-warning/20 to-warning/5', ring: 'hsl(var(--warning))' };
+  return {
+    label: 'Crítico',
+    color: 'text-destructive',
+    bg: 'from-destructive/20 to-destructive/5',
+    ring: 'hsl(var(--destructive))',
+  };
 }
 
-function getMetricStatus(value: number, thresholds: [number, number, number]): 'excellent' | 'good' | 'warning' | 'critical' {
+function getMetricStatus(
+  value: number,
+  thresholds: [number, number, number]
+): 'excellent' | 'good' | 'warning' | 'critical' {
   if (value <= thresholds[0]) return 'excellent';
   if (value <= thresholds[1]) return 'good';
   if (value <= thresholds[2]) return 'warning';
@@ -49,7 +65,8 @@ const statusColors = {
   excellent: 'bg-success/15 text-success',
   good: 'bg-primary/15 text-primary',
   warning: 'bg-warning/15 text-warning',
-  critical: 'bg-destructive/15 text-destructive'};
+  critical: 'bg-destructive/15 text-destructive',
+};
 
 export function WorkforceHealthScore({ turnover, absenteismo, cadastrosCompletos, totalColaboradores, feriasPendentes, passivoTotal = 0, variant = 'default', bare = false }: WorkforceHealthScoreProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -58,25 +75,53 @@ export function WorkforceHealthScore({ turnover, absenteismo, cadastrosCompletos
   const isCompact = variant === 'compact';
 
   // Calculate composite score (0-100)
-  const turnoverScore = Math.max(0, 100 - (turnover * 5)); // 0% = 100, 20% = 0
-  const absenteismoScore = Math.max(0, 100 - (absenteismo * 10)); // 0% = 100, 10% = 0
+  const turnoverScore = Math.max(0, 100 - turnover * 5); // 0% = 100, 20% = 0
+  const absenteismoScore = Math.max(0, 100 - absenteismo * 10); // 0% = 100, 10% = 0
   const cadastroScore = totalColaboradores > 0 ? (cadastrosCompletos / totalColaboradores) * 100 : 100;
-  const feriasScore = Math.max(0, 100 - (feriasPendentes * 5)); // each pending = -5
-  
+  const feriasScore = Math.max(0, 100 - feriasPendentes * 5); // each pending = -5
+
   // Passivo score: penalty if passivo > 1.5x monthly payroll (estimativa simplificada)
-  const passivoPenalty = passivoTotal > 100000 ? 5 : 0; 
+  const passivoPenalty = passivoTotal > 100000 ? 5 : 0;
 
   const compositeScore = Math.round(
-    (turnoverScore * 0.30) + (absenteismoScore * 0.25) + (cadastroScore * 0.20) + (feriasScore * 0.15) - passivoPenalty
+    turnoverScore * 0.3 + absenteismoScore * 0.25 + cadastroScore * 0.2 + feriasScore * 0.15 - passivoPenalty
   );
 
   const scoreInfo = getScoreColor(compositeScore);
 
   const metrics: HealthMetric[] = [
-    { label: 'Turnover', value: turnover, maxValue: 20, weight: 35, status: getMetricStatus(turnover, [3, 8, 15]), route: '/desligamentos' },
-    { label: 'Absenteísmo', value: absenteismo, maxValue: 10, weight: 30, status: getMetricStatus(absenteismo, [2, 4, 7]), route: '/faltas' },
-    { label: 'Passivo', value: passivoTotal, maxValue: 1, weight: 1, status: passivoTotal > 50000 ? 'warning' : 'good', route: '/passivo-trabalhista' },
-    { label: 'Férias', value: feriasPendentes, maxValue: 20, weight: 15, status: getMetricStatus(feriasPendentes, [3, 8, 15]), route: '/ferias' },
+    {
+      label: 'Turnover',
+      value: turnover,
+      maxValue: 20,
+      weight: 35,
+      status: getMetricStatus(turnover, [3, 8, 15]),
+      route: '/desligamentos',
+    },
+    {
+      label: 'Absenteísmo',
+      value: absenteismo,
+      maxValue: 10,
+      weight: 30,
+      status: getMetricStatus(absenteismo, [2, 4, 7]),
+      route: '/faltas',
+    },
+    {
+      label: 'Passivo',
+      value: passivoTotal,
+      maxValue: 1,
+      weight: 1,
+      status: passivoTotal > 50000 ? 'warning' : 'good',
+      route: '/passivo-trabalhista',
+    },
+    {
+      label: 'Férias',
+      value: feriasPendentes,
+      maxValue: 20,
+      weight: 15,
+      status: getMetricStatus(feriasPendentes, [3, 8, 15]),
+      route: '/ferias',
+    },
   ];
 
   // Arc drawing — anel compacto num tamanho confortável de leitura, não mais

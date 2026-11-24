@@ -1,0 +1,213 @@
+// Contrato de scripts/inventario/gerar-rotas.mjs no DP V3: rotas aninhadas do App.tsx, protecao herdada,
+// menu do AppSidebar e problemas (menu sem rota, menu visivel para rota admin, import quebrado).
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { gerarRotas, lerTagsDeRota, juntarCaminho, casaRota, extrairChamadas, semComentarios, emDia, serializar, resolverImport } from '../inventario/gerar-rotas.mjs';
+
+const raizReal = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
+
+function repo(t, arquivos) {
+  const raiz = fs.mkdtempSync(path.join(os.tmpdir(), 'inv-rotas-'));
+  t.after(() => fs.rmSync(raiz, { recursive: true, force: true }));
+  for (const [rel, conteudo] of Object.entries(arquivos)) {
+    fs.mkdirSync(path.dirname(path.join(raiz, rel)), { recursive: true });
+    fs.writeFileSync(path.join(raiz, rel), conteudo);
+  }
+  return raiz;
+}
+
+const APP = `import { Routes, Route, Navigate } from 'react-router-dom';
+import { MainLayout } from '@/components/layout';
+import LoginPage from '@/pages/LoginPage';
+const FolhaPage = lazy(() => import('@/pages/FolhaPage'));
+const UsuariosPage = lazy(() => import('@/pages/UsuariosPage'));
+const PublicaPage = lazy(() => import('@/pages/PublicaPage'));
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="folha" element={<LazyPage Component={FolhaPage} />} />
+        <Route path="folha/:id" element={<LazyPage Component={FolhaPage} />} />
+        {/* comentario com 'aspas' */}
+        <Route
+          path="usuarios"
+          element={
+            <AdminRoute>
+              <LazyPage Component={UsuariosPage} />
+            </AdminRoute>
+          }
+        />
+        <Route path="*" element={<LazyPage Component={NotFoundPage} />} />
+      </Route>
+      <Route path="/publica" element={<Suspense fallback={<PageLoader />}><PublicaPage /></Suspense>} />
+    </Routes>
+  );
+}`;
+
+const MENU = `const menuGroups: MenuGroup[] = [
+  {
+    id: 'remuneracao',
+    label: 'Remuneração',
+    icon: Wallet,
+    color: 'x',
+    items: [
+      { icon: Wallet, label: 'Folha de Pagamento', path: '/folha', color: 'x' },
+      { icon: Users, label: 'Usuários', path: '/usuarios', color: 'x' },
+      {
+        icon: FileText,
+        label: 'Fantasma',
+        path: '/nao-existe',
+        color: 'x',
+      },
+    ],
+  },
+];
+
+const portalItem: MenuItem = { icon: UserCircle, label: 'Meu Portal', path: '/portal', color: 'x' };
+`;
+
+test('caminhos aninhados, index, protecao herdada e admin', (t) => {
+  const raiz = repo(t, {
+    'src/App.tsx': APP,
+    'src/components/layout/AppSidebar.tsx': MENU,
+    'src/components/layout/index.ts': "export const MainLayout = () => null;\n",
+    'src/pages/LoginPage.tsx': 'export default () => null;\n',
+    'src/pages/FolhaPage.tsx': "import { useFolha } from '@/hooks/useFolha';\nimport { x } from './naoExiste';\n// import { y } from './comentado';\nexport default () => null;\n",
+    'src/hooks/useFolha.ts': "export const useFolha = () => supabase.from('folhas_pagamento').select('*') && supabase.functions.invoke('calcular-folha') && supabase.rpc('fechar_folha');\n",
+    'src/pages/UsuariosPage.tsx': 'export default () => null;\n',
+    'src/pages/PublicaPage.tsx': 'export default () => null;\n',
+    'src/pages/NotFoundPage.tsx': 'export default () => null;\n',
+  });
+  const inv = gerarRotas(raiz);
+  const url = (c, comp) => inv.urls.find((u) => u.caminho === c && (!comp || u.componente === comp));
+  assert.equal(url('/login').protegida, false);
+  assert.equal(url('/', 'MainLayout').layout, true);
+  assert.equal(inv.urls.find((u) => u.caminho === '/' && u.redireciona).redireciona, 'dashboard');
+  assert.deepEqual([url('/folha').protegida, url('/folha').admin, url('/folha').arquivo], [true, false, 'src/pages/FolhaPage.tsx']);
+  assert.deepEqual([url('/usuarios').admin, url('/usuarios').componente], [true, 'UsuariosPage']);
+  assert.equal(url('/publica').componente, 'PublicaPage', 'fallback local (PageLoader) nao e a tela');
+  assert.ok(url('/*'));
+
+  const folha = inv.telas.find((t2) => t2.arquivo === 'src/pages/FolhaPage.tsx');
+  assert.deepEqual(folha.urls, ['/folha', '/folha/:id']);
+  assert.deepEqual(folha.menu, [{ grupo: 'Remuneração', rotulo: 'Folha de Pagamento' }]);
+  assert.deepEqual([folha.tabelas, folha.edges, folha.rpcs], [['folhas_pagamento'], ['calcular-folha'], ['fechar_folha']]);
+  assert.deepEqual(folha.hooks, [{ nome: 'useFolha', arquivo: 'src/hooks/useFolha.ts' }]);
+
+  const tipos = inv.problemas.map((p) => `${p.tipo} ${p.id}`).sort();
+  assert.deepEqual(tipos, [
+    'import_quebrado src/pages/FolhaPage.tsx',
+    'menu_aponta_rota_admin /usuarios',
+    'menu_sem_rota /nao-existe',
+    'menu_sem_rota /portal',
+  ]);
+  assert.ok(!inv.problemas.some((p) => p.detalhe.includes('comentado')), 'import comentado nao conta');
+});
+
+test('helpers: tags com > dentro de element, juntar caminho e casar padrao', () => {
+  const tags = lerTagsDeRota('<Routes><Route path="/" element={<A>{x > 1}</A>}><Route path="b" element={<B />} /></Route></Routes>');
+  assert.equal(tags.length, 2);
+  assert.equal(tags[1].pai, tags[0]);
+  assert.equal(juntarCaminho('/', 'b'), '/b');
+  assert.equal(juntarCaminho('/admin', 'sst/cat'), '/admin/sst/cat');
+  assert.equal(juntarCaminho('/x', '/abs'), '/abs');
+  assert.equal(casaRota('/colaboradores/123', ['/colaboradores/:id']), true);
+  assert.equal(casaRota('/qualquer', ['/*']), false, 'o * do NotFound nao conta como rota');
+  assert.equal(casaRota('/configuracoes?aba=esocial', ['/configuracoes']), true, 'query string nao faz parte do caminho');
+  assert.equal(casaRota('/ajuda#faq', ['/ajuda']), true, 'hash nao faz parte do caminho');
+  assert.equal(casaRota('/outra?aba=1', ['/configuracoes']), false);
+  assert.deepEqual(extrairChamadas("supabase.storage.from('docs'); supabase.from('ferias')").buckets, ['docs']);
+  assert.equal(semComentarios("const u = 'https://x';\n// import a from 'b';\n/* c */").includes('https://x'), true);
+});
+
+test('edges: wrapper do DP (handleInvoke) e functions.invoke com generico aninhado', () => {
+  const texto = "const a = () => handleInvoke('gerar-guias', { body });\nconst b = () => handleInvoke<{ ok: boolean }>('calcular-ferias', {});\n"
+    + "const c = supabase.functions.invoke<\n  Partial<Resultado> & { success?: boolean }\n>('gerar-pdf', { body });\nipcRenderer.send('nao-e-edge');";
+  assert.deepEqual(extrairChamadas(texto).edges, ['gerar-guias', 'calcular-ferias', 'gerar-pdf']);
+});
+
+test('rota, item de menu e chamada comentados nao contam', (t) => {
+  const raiz = repo(t, {
+    'src/App.tsx': APP.replace("{/* comentario com 'aspas' */}",
+      '{/* <Route path="velha" element={<LazyPage Component={FolhaPage} />}> */}\n        // <Route path="velha2" element={<LazyPage Component={FolhaPage} />} />'),
+    'src/components/layout/AppSidebar.tsx': MENU.replace('      { icon: Users,', "      // { icon: Old, label: 'Velho', path: '/velho', color: 'x' },\n      { icon: Users,"),
+    'src/components/layout/index.ts': "export const MainLayout = () => null;\n",
+    'src/pages/LoginPage.tsx': 'export default () => null;\n',
+    'src/pages/FolhaPage.tsx': "import { retry } from '@/lib/retry';\nexport default () => retry;\n",
+    'src/lib/retry.ts': "/**\n * Exemplo:\n *   retry(() => supabase.functions.invoke('calcular-folha', { body }))\n */\nexport const retry = (fn) => fn();\n// supabase.from('tabela_comentada')\n",
+    'src/pages/UsuariosPage.tsx': 'export default () => null;\n',
+    'src/pages/PublicaPage.tsx': 'export default () => null;\n',
+    'src/pages/NotFoundPage.tsx': 'export default () => null;\n',
+  });
+  const inv = gerarRotas(raiz);
+  assert.deepEqual(inv.urls.filter((u) => u.caminho.includes('velha')), [], 'rota comentada nao e URL');
+  assert.ok(inv.urls.some((u) => u.caminho === '/usuarios' && u.admin), 'rota pai comentada nao desalinha as seguintes');
+  assert.deepEqual(inv.menu.map((m) => m.caminho), ['/folha', '/usuarios', '/nao-existe', '/portal'], 'item de menu comentado nao e item');
+  const folha = inv.telas.find((t2) => t2.arquivo === 'src/pages/FolhaPage.tsx');
+  assert.deepEqual([folha.edges, folha.tabelas], [[], []], 'exemplo em JSDoc e linha comentada nao sao chamadas da tela');
+});
+
+test('`/*` dentro de string (accept="image/*") nao engole os imports ate o proximo fim de comentario', (t) => {
+  const limpo = semComentarios('<input accept="image/*,.pdf" />\nconst Dlg = lazy(() => import("@/components/dlg/Dlg"));\n/** doc */\n<p>caixa d\'agua {/* import("./comentado") */}</p>');
+  assert.ok(limpo.includes('import("@/components/dlg/Dlg")'), 'import() depois do accept="image/*" foi preservado');
+  assert.ok(!limpo.includes('doc') && !limpo.includes('comentado'), 'comentario de verdade continua removido');
+  const raiz = repo(t, {
+    'src/App.tsx': "import A from '@/pages/A';\nexport default () => <Routes><Route path=\"/a\" element={<A />} /></Routes>;\n",
+    'src/pages/A.tsx': "export default () => <input accept=\"image/*\" />;\nconst Dlg = lazy(() => import('@/components/dlg/Dlg'));\n/** doc */\nexport const x = 1;\n",
+    'src/components/dlg/Dlg.tsx': "export default () => supabase.from('anexos');\n",
+  });
+  assert.deepEqual(gerarRotas(raiz).telas[0].tabelas, ['anexos']);
+});
+
+// Mesmo gate do Zapp: so a parte estrutural (URLs, telas, menu, problemas). Hooks/tabelas de cada tela
+// mudam a todo PR de front e ficam para o inventario semanal.
+test('rotas.json commitado esta em dia na parte estrutural (rode node scripts/inventario/gerar-rotas.mjs)', () => {
+  const estrutura = (inv) => ({
+    urls: inv.urls,
+    menu: inv.menu,
+    telas: inv.telas.map(({ arquivo, componente, urls, menu }) => ({ arquivo, componente, urls, menu })),
+    problemas: inv.problemas,
+  });
+  const commitado = JSON.parse(fs.readFileSync(path.join(raizReal, 'inventario/estado/rotas.json'), 'utf8'));
+  assert.deepEqual(estrutura(commitado), estrutura(gerarRotas(raizReal)),
+    'inventario/estado/rotas.json desatualizado: rode node scripts/inventario/gerar-rotas.mjs e commite');
+});
+
+test('--check compara conteudo, nao bytes: rotas.json formatado pelo prettier (lint-staged) continua em dia', () => {
+  const inv = { a: [1, 2], b: { c: 'x' } };
+  assert.equal(emDia(serializar(inv), inv), true);
+  assert.equal(emDia('{"a":[1,2],"b":{"c":"x"}}', inv), true, 'arrays compactados pelo prettier nao contam como diferenca');
+  assert.equal(emDia(serializar({ ...inv, a: [1] }), inv), false, 'conteudo diferente segue desatualizado');
+  assert.equal(emDia('', inv), false, 'arquivo ausente/vazio');
+  assert.equal(emDia('{ quebrado', inv), false, 'JSON invalido');
+});
+
+test('resolverImport devolve caminho com separador nativo, senao a travessia para no barrel no Windows', (t) => {
+  const raiz = repo(t, {
+    'src/hooks/useBarrel.ts': "export const useBarrel = () => null;\n",
+    'src/hooks/index.ts': "export * from './useBarrel';\n",
+    'src/pages/Tela.tsx': "export default () => null;\n",
+  });
+  const alvo = resolverImport(raiz, path.join(raiz, 'src/pages/Tela.tsx'), '@/hooks');
+
+  assert.ok(alvo, '@/hooks resolve para o barrel src/hooks/index.ts');
+  // `fechoDaTela` compara alvo por prefixo (`startsWith(path.join(raiz, 'src/hooks') + path.sep)`).
+  // Caminho com barra solta no meio nao casa no Windows e a travessia morre ali, perdendo os hooks
+  // do barrel. Igualdade com path.join pega o separador errado em qualquer plataforma.
+  assert.equal(alvo, path.join(raiz, 'src/hooks', 'index.ts'), 'barrel resolvido com separador nativo');
+  assert.ok(alvo.startsWith(path.join(raiz, 'src/hooks') + path.sep), 'precisa casar com o prefixo de PASTAS_LIVRES');
+});

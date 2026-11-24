@@ -121,6 +121,7 @@ export const pontoOfflineService = {
 
     let synced = 0;
     let errors = 0;
+    let recusadasRelogio = 0;
     const remaining: OfflineRegistro[] = [];
     
     // Notificar monitoramento sobre início do sync
@@ -182,7 +183,7 @@ export const pontoOfflineService = {
       const encrypted = encryptQueue(remaining);
       localStorage.setItem(PONTO_OFFLINE_STORAGE_KEY, encrypted);
     }
-    return { synced, errors };
+    return { synced, errors, recusadasRelogio };
   },
 
   getQueueSize: () => {

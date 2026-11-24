@@ -1,58 +1,11 @@
-import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { RefreshCw, CheckCircle2, AlertTriangle, FileText, Download, TrendingUp } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
+import { EmptyState } from '@/components/ui/empty-state';
+import { FileX } from 'lucide-react';
 
+// Os totalizadores S-5001/S-5002 devolvidos pelo eSocial ainda não são gravados no banco,
+// então não há fonte real para comparar com a folha. Em vez de valores fictícios,
+// a aba mostra o estado indisponível até esse retorno ser persistido.
 export function ESocialConciliacao() {
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const mockConciliacao = [
-    {
-      rubrica: '1000 - Salário Base',
-      sistema: 12500.00,
-      governo: 12500.00,
-      diferenca: 0,
-      status: 'ok'
-    },
-    {
-      rubrica: '1202 - Horas Extras 50%',
-      sistema: 1250.50,
-      governo: 1250.50,
-      diferenca: 0,
-      status: 'ok'
-    },
-    {
-      rubrica: '9201 - INSS Segurado',
-      sistema: 1145.20,
-      governo: 1140.00,
-      diferenca: 5.20,
-      status: 'divergente'
-    },
-    {
-      rubrica: '9202 - FGTS',
-      sistema: 1080.00,
-      governo: 1080.00,
-      diferenca: 0,
-      status: 'ok'
-    }
-  ];
-
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => {
-      setIsRefreshing(false);
-      toast.success("Conciliação S-5001/S-5002 atualizada com sucesso!");
-    }, 1500);
-  };
-
-  const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
-  };
-
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

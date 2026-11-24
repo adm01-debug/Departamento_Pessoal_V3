@@ -1,0 +1,240 @@
+# docs:
+#   gatilho: agendado (semanal) e dispatch
+#   prova: branches podaveis, PRs paradas ha mais de 7 dias e SLA dos alertas de code scanning
+#   falha: SLA vencido deixa o job vermelho e publica o diagnostico se o relatorio foi gerado
+#   avisa: issue `[branch-hygiene]` no repositorio
+#   origem: pacote "scripts autônomos" do Zapp Web V2 (branch-hygiene-audit.yml), adaptado ao DP V3
+# ==================================================================
+# Auditoria semanal de higiene de branches (somente leitura)
+# ==================================================================
+# Nao deleta nada. Publica um relatorio no Job Summary com:
+#   - branches remotos patch-equivalentes a main (candidatos a poda)
+#   - branches sem commit ha mais de 30 dias
+#   - PRs sem atualizacao ha mais de 7 dias
+#   - comandos de poda revisaveis, sem executar exclusoes
+#   - alertas de code scanning fora do SLA
+# ==================================================================
+
+name: Branch Hygiene Audit
+
+on:
+  schedule:
+    - cron: '56 7 * * 1' # segunda-feira, 07:56 UTC (fora do minuto 0)
+  workflow_dispatch: {}
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: branch-hygiene-audit
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: Relatorio de branches
+    # E79: as permissoes de escrita ficam no JOB, nunca no nivel do workflow. O zizmor
+    # (regra excessive-permissions, severidade alta) reprova `write` no topo porque o
+    # escopo vale para todos os jobs; no job, o escopo e' exatamente o que ele usa.
+    permissions:
+      contents: read # o passo de relatorio faz git fetch/cherry
+      actions: read # listar os runs do proprio repositorio (KPI)
+      pull-requests: read # confirmar PRs abertas antes de sugerir comandos de poda
+      security-events: read # consultar alertas abertos de code scanning (W83)
+      issues: write # criar/atualizar a issue semanal [kpi-actions]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Testar os scripts do pacote (sem rede, sem credencial)
+        # O ci.yml nao e' gatilho deste workflow: os unit tests dos proprios
+        # scripts rodam aqui, antes de qualquer chamada a API, para o relatorio
+        # nunca sair de um script quebrado.
+        run: |
+          node --test \
+            scripts/ci/actions-kpi.unit.mjs \
+            scripts/ci/branch-podaveis.unit.mjs \
+            scripts/ci/sla-code-scanning.unit.mjs \
+            scripts/ci/issue-rotativa.unit.mjs \
+            scripts/ci/branch-hygiene-runtime.unit.mjs
+
+      - name: Verificar atualizacoes da toolchain
+        # Informativo (exit 0 mesmo com update disponivel). Le .github/toolchain.json;
+        # chaves ausentes sao ignoradas, por isso o arquivo lista so' o que esta pinado.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/ci/bump-toolchain.mjs
+
+      - name: KPI do GitHub Actions
+        # E79: mede o proprio uso do Actions -- runs/semana por workflow, taxa de
+        # cancelamento, taxa de falha, minutos e os 5 jobs mais lentos. Publica no Job
+        # Summary e mantem uma issue aberta `[kpi-actions]` atualizada a cada semana.
+        # A duracao sai de `run_started_at`/`updated_at`: o endpoint de faturamento
+        # devolve `billable: {}` em repositorio publico (medido em 03/10/2026).
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JANELA_DIAS: '7'
+        run: |
+          set -euo pipefail
+          node scripts/ci/actions-kpi.mjs
+
+      - name: Gerar relatorio
+        id: relatorio
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          git fetch origin main --quiet
+
+          # $RUNNER_TEMP sobrevive entre passos (cada `run:` e' um shell novo);
+          # `mktemp` sozinho nao — o caminho morreria com o shell do passo 1.
+          RELATORIO="$RUNNER_TEMP/branch-hygiene.md"
+          EQUIVALENTES="$RUNNER_TEMP/branch-equivalentes.tsv"
+          : > "$EQUIVALENTES"
+          {
+            echo "## Auditoria de branches — $(date -u +%Y-%m-%d)"
+            echo
+            echo "### Patch-equivalentes a \`main\` (candidatos a poda, 0 commits unicos)"
+            echo '```'
+            for ref in $(git branch -r --format='%(refname:short)' | grep -v '^origin/HEAD' | grep -v '^origin/main$' | grep -v '^origin$'); do
+              b="${ref#origin/}"
+              # t_ff817d9f: `git cherry ... | grep -c '^+' || true` mascarava falha REAL do
+              # git cherry. Com pipefail o retorno nao zero do git caia no mesmo `|| true`
+              # que so' deveria tolerar o retorno 1 do `grep -c` sem match — e a branch
+              # impossivel de comparar entrava na lista de podaveis. Agora o status do git
+              # cherry e' validado ANTES de contar: o status do grep nao decide nada, e zero
+              # linhas `+` continua sendo equivalencia valida.
+              if ! cherry=$(git cherry origin/main "$ref"); then
+                echo "::error::git cherry falhou ao comparar origin/main com $ref; a equivalencia de '$b' nao pode ser decidida" >&2
+                exit 1
+              fi
+              n=$(printf '%s\n' "$cherry" | awk '/^\+/ { c += 1 } END { print c + 0 }')
+              if [ "$n" = "0" ]; then
+                echo "$b"
+                ts=$(git log -1 --format=%ct "$ref")
+                printf '%s\t%s\n' "$b" "$ts" >> "$EQUIVALENTES"
+              fi
+            done
+            echo '```'
+            echo
+            echo "### Sem commit ha mais de 30 dias"
+            echo '```'
+            CUTOFF=$(date -u -d '30 days ago' +%s 2>/dev/null || date -u -v-30d +%s)
+            for ref in $(git branch -r --format='%(refname:short)' | grep -v '^origin/HEAD' | grep -v '^origin/main$' | grep -v '^origin$'); do
+              ts=$(git log -1 --format=%ct "$ref" 2>/dev/null || echo 0)
+              if [ "$ts" -lt "$CUTOFF" ] && [ "$ts" -gt 0 ]; then
+                echo "${ref#origin/} ($(date -u -d "@$ts" +%Y-%m-%d 2>/dev/null || date -u -r "$ts" +%Y-%m-%d))"
+              fi
+            done
+            echo '```'
+            echo
+            # E91: era 14 dias por *criacao*. O que interessa e PR parada — sem push —,
+            # entao o corte passou a ser 7 dias por *updatedAt* (o push atualiza esse
+            # campo; comentario tambem, e por isso o texto abaixo diz o que mede).
+            echo "### PRs abertos ha mais de 7 dias sem push (updatedAt)"
+            echo '```'
+            # --limit explicito: o default do gh e 30, e o relatorio truncaria
+            # silenciosamente se a fila de PRs abertas passar disso.
+            # .title remove crase antes de entrar na linha: o titulo e' texto de quem
+            # abriu o PR (inclusive fork) e esta dentro de um bloco ``` do Job
+            # Summary/issue publica — sem isso, um titulo com crase poderia tentar
+            # fechar a cerca de codigo mais cedo.
+            gh pr list --repo "$REPO" --state open --limit 100 --json number,title,updatedAt,url \
+              --jq '.[] | select((now - (.updatedAt | fromdateiso8601)) > (7*86400)) | "#\(.number) \(.title | gsub("`";"")) — ultimo movimento \(.updatedAt | split("T")[0]) — \(.url)"'
+            echo '```'
+          } > "$RELATORIO"
+
+          cat "$RELATORIO" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comandos de poda para revisao (W98, sem executar)
+        id: poda
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          LIMITE_PRS: '500'
+        run: |
+          set -euo pipefail
+          RELATORIO="$RUNNER_TEMP/branch-hygiene.md"
+          PRS="$RUNNER_TEMP/prs-abertas.json"
+          PROTEGIDAS="$RUNNER_TEMP/branches-protegidas.txt"
+          # Entrada indisponivel ou lista de PRs cheia faz o script recusar comandos.
+          if ! gh pr list --repo "$REPO" --state open --limit "$LIMITE_PRS" --json headRefName > "$PRS"; then
+            echo '{"erro":"falha ao listar PRs abertas"}' > "$PRS"
+          fi
+          if ! gh api --paginate "repos/$REPO/branches?protected=true&per_page=100" --jq '.[].name' > "$PROTEGIDAS"; then
+            rm -f "$PROTEGIDAS"
+          fi
+          node scripts/ci/branch-podaveis.mjs \
+            --equivalentes "$RUNNER_TEMP/branch-equivalentes.tsv" \
+            --prs "$PRS" --protegidas "$PROTEGIDAS" --limite-prs "$LIMITE_PRS" \
+            | tee -a "$RELATORIO" "$GITHUB_STEP_SUMMARY"
+
+      - name: SLA dos alertas de code scanning (W83)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          RELATORIO="$RUNNER_TEMP/branch-hygiene.md"
+          ARQUIVO="$RUNNER_TEMP/code-scanning-alerts.json"
+          # Todas as paginas, em uma unica lista JSON para o CLI ler pelo stdin.
+          if ! gh api --paginate --slurp "repos/$REPO/code-scanning/alerts?state=open&per_page=100" | jq 'add' > "$ARQUIVO"; then
+            echo '{"message":"falha ao consultar a API de code scanning"}' > "$ARQUIVO"
+          fi
+          node scripts/ci/sla-code-scanning.mjs < "$ARQUIVO" \
+            | tee -a "$RELATORIO" "$GITHUB_STEP_SUMMARY"
+
+      - name: Publicar na issue semanal [branch-hygiene]
+        # Publica tambem o SLA vencido, sem esconder o exit 1 do passo W83 (esse
+        # exit 1 e' por design, nao checado aqui). Mas uma falha REAL no passo de
+        # poda (bug no script, nao SLA) e' diferente: sem checar steps.poda, o
+        # relatorio ia pra issue publica faltando a secao de poda, sem nenhuma
+        # marca de incompleto. steps.relatorio continua sendo o gate de "a coleta
+        # de branches falhou/cancelou, nao publica relatorio incompleto".
+        if: ${{ !cancelled() && steps.relatorio.outcome == 'success' && steps.poda.outcome == 'success' }}
+        # E91: alem do Job Summary (efemero), mantem UMA issue aberta com a tabela,
+        # para o historico ficar consultavel. Mesmo mecanismo do [kpi-actions] em
+        # actions-kpi.mjs: procura a aberta por titulo e atualiza; se nao houver,
+        # cria. Idempotente — rodar duas vezes no mesmo dia nao duplica.
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          # Cada `run:` e' um shell novo: a variavel do passo anterior nao existe
+          # aqui. O ARQUIVO persiste (mesmo $RUNNER_TEMP), o nome dele nao — por
+          # isso o caminho e' recalculado em vez de herdado.
+          RELATORIO="$RUNNER_TEMP/branch-hygiene.md"
+          if [ ! -s "$RELATORIO" ]; then
+            echo "::error::relatorio nao foi gerado pelo passo anterior ($RELATORIO)"
+            exit 1
+          fi
+          TITULO='[branch-hygiene] Higiene de branches — relatorio semanal'
+          EXISTENTE=$(gh issue list --repo "$REPO" --state open \
+            --search '"[branch-hygiene]" in:title' --limit 10 \
+            --json number,title \
+            --jq '[.[] | select(.title | startswith("[branch-hygiene]"))][0].number // empty')
+
+          if [ -n "$EXISTENTE" ]; then
+            gh issue edit "$EXISTENTE" --repo "$REPO" --body-file "$RELATORIO"
+            echo "issue atualizada: #$EXISTENTE"
+          else
+            gh issue create --repo "$REPO" --title "$TITULO" --body-file "$RELATORIO"
+            echo "issue criada"
+          fi
+          rm -f "$RELATORIO"

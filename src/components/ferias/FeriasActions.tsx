@@ -21,6 +21,9 @@ export function FeriasActions(props: FeriasActionsProps) {
   const [assinarOpen, setAssinarOpen] = useState(false);
   const { baixarAvisoAssinado } = useAssinarAvisoFerias();
   const solicitarAdiant13 = useSolicitarAdiantamento13();
+  // Espelha a RLS de `recibos_ferias`: só admin ou RH da empresa grava recibo.
+  const { isAdmin, hasRole } = useAuth();
+  const podeGerirRH = isAdmin || hasRole('rh');
 
   if (solicitacao.cancelado || solicitacao.status === 'rejeitada') return null;
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useGenericCrud } from './useGenericCrud';
 import { colaboradorService } from '@/services/colaboradorService';
 import { useEmpresas } from './useEmpresas';
-import { Colaborador } from '@/types/entities';
+import type { Colaborador } from '@/types/entities';
 import { useQuery } from '@tanstack/react-query';
 
 export function useColaboradores() {

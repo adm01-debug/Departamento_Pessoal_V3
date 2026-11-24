@@ -37,6 +37,9 @@ export default function DepartamentosPage() {
     setPage(p);
   }, [setPage]);
   const navigate = useNavigate();
+  // Criar/editar/inativar departamento é atribuição do RH/admin (mesma regra do #514).
+  const { isAdmin, hasRole } = useAuth();
+  const podeGerir = isAdmin || hasRole('rh');
 
   const abrirNovo = () => { setEditando(null); setDialogOpen(true); };
   const abrirEditar = (d: any) => { setEditando(d); setDialogOpen(true); };
@@ -65,8 +68,8 @@ export default function DepartamentosPage() {
         onSearchChange={handleSearchChange}
         onRefetch={refetch}
         isRefreshing={isRefreshing}
-        onAdd={abrirNovo}
-        addLabel="Novo Departamento"
+        onAdd={podeGerir ? abrirNovo : undefined}
+        addLabel={podeGerir ? 'Novo Departamento' : undefined}
         actions={
           <div className="flex gap-2">
             <Button variant="outline" className="h-11 rounded-xl font-medium bg-card/50 shadow-xs" onClick={() => navigate('/organograma')}>

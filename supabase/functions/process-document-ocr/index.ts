@@ -1,10 +1,11 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { z } from 'https://esm.sh/zod@3.23.8';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
+import { z } from 'npm:zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { safeFetchWithRetry } from '../_shared/safe-fetch.ts';
+import { AI_CHAT_URL, AI_NO_THINKING, aiApiKey, aiModel } from '../_shared/aiProvider.ts';
 
 function isAllowedFileUrl(urlStr: string): boolean {
   try {
@@ -79,8 +80,8 @@ serve(async (req: Request): Promise<Response> => {
     }
     const { fileUrl, docType } = parsed.data;
 
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
-    if (!lovableApiKey) {
+    const aiKey = aiApiKey();
+    if (!aiKey) {
       return json({ valid: false, confidence: 0, error: 'Serviço OCR não configurado' }, 503);
     }
 
@@ -115,10 +116,11 @@ serve(async (req: Request): Promise<Response> => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${lovableApiKey}`,
+          'Authorization': `Bearer ${aiKey}`,
         },
         body: JSON.stringify({
-          model: 'google/gemini-2.0-flash',
+          model: aiModel(),
+          ...AI_NO_THINKING,
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: [{ type: 'text', text: userPrompt }, { type: 'image_url', image_url: { url: fileUrl } }] },

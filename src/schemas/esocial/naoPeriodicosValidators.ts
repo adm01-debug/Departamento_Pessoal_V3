@@ -6,22 +6,10 @@
 // só geram erro quando presentes e inconsistentes. Campos meramente recomendados
 // viram `warning`. Isso evita reprovar payloads legados válidos ao mesmo tempo em
 // que impede o envio de dados logicamente impossíveis (ex.: término antes do início).
-import {
-  ValidationResult,
-  ValidationError,
-  ValidationWarning,
-  required,
-  maxLen,
-  cpfValido,
-  dataValida,
-  enumValido,
-  ESocialData,
-} from './helpers';
+import type { ValidationResult, ValidationError, ValidationWarning, ESocialData } from './helpers';
+import { required, maxLen, cpfValido, dataValida, enumValido } from './helpers';
 
-const finish = (
-  errors: ValidationError[],
-  warnings: ValidationWarning[] = [],
-): ValidationResult => ({
+const finish = (errors: ValidationError[], warnings: ValidationWarning[] = []): ValidationResult => ({
   valid: errors.length === 0,
   errors,
   warnings,
@@ -44,7 +32,7 @@ function ordemCronologica(
   fim: unknown,
   campoFim: string,
   mensagem: string,
-  errors: ValidationError[],
+  errors: ValidationError[]
 ): void {
   const a = ts(inicio);
   const b = ts(fim);
@@ -88,7 +76,7 @@ export function validarS2190(dados: ESocialData): ValidationResult {
       dados.dtAdm,
       'dtAdm',
       'Data de admissão não pode ser anterior à data de nascimento',
-      errors,
+      errors
     );
   }
 
@@ -133,8 +121,7 @@ export function validarS2200(dados: ESocialData): ValidationResult {
         } else if (idade < 16) {
           warnings.push({
             campo: 'dtNascto',
-            mensagem:
-              'Trabalhador entre 14 e 16 anos: admissão permitida somente na condição de aprendiz',
+            mensagem: 'Trabalhador entre 14 e 16 anos: admissão permitida somente na condição de aprendiz',
           });
         }
       }
@@ -259,7 +246,7 @@ export function validarS2230(dados: ESocialData): ValidationResult {
       dados.dtTermAfast,
       'dtTermAfast',
       'Término do afastamento não pode ser anterior ao início',
-      errors,
+      errors
     );
 
     // Afastamento por acidente/doença acima de 15 dias migra para o INSS (CLT art. 476).
@@ -274,8 +261,7 @@ export function validarS2230(dados: ESocialData): ValidationResult {
     ) {
       warnings.push({
         campo: 'dtTermAfast',
-        mensagem:
-          'Afastamento superior a 15 dias: a partir do 16º dia o benefício é de responsabilidade do INSS',
+        mensagem: 'Afastamento superior a 15 dias: a partir do 16º dia o benefício é de responsabilidade do INSS',
       });
     }
   }
@@ -299,7 +285,7 @@ export function validarS2299(dados: ESocialData): ValidationResult {
       dados.dtDeslig,
       'dtDeslig',
       'Data de desligamento não pode ser anterior à data de admissão',
-      errors,
+      errors
     );
   }
 
@@ -400,7 +386,7 @@ export function validarS2399(dados: ESocialData): ValidationResult {
       dados.dtTerm,
       'dtTerm',
       'Data de término não pode ser anterior à data de início',
-      errors,
+      errors
     );
   }
 

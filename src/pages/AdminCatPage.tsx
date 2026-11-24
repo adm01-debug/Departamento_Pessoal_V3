@@ -21,7 +21,7 @@ const catSchema = z.object({
   colaborador_id: z.string().uuid('Colaborador obrigatório'),
   data_acidente: z.string().min(1, 'Data obrigatória'),
   hora_acidente: z.string().optional(),
-  tipo_acidente: z.enum(['tipico', 'trajeto', 'doenca_ocupacional']),
+  tipo_acidente: z.enum(['tipico', 'trajeto', 'doenca_ocupacional'], { error: 'Tipo de acidente obrigatório' }),
   tipo_cat: z.enum(['inicial', 'reabertura', 'comunicacao_obito']),
   cid_principal: z.string().min(3, 'CID obrigatório').max(10),
   parte_corpo_atingida: z.string().optional(),
@@ -29,9 +29,9 @@ const catSchema = z.object({
   local_acidente: z.string().optional(),
   tipo_local: z.enum(['estabelecimento_empregador', 'via_publica', 'area_rural', 'outros']).optional(),
   situacao_geradora: z.string().optional(),
-  minutos_trabalhados_antes: z.coerce.number().min(0).optional(),
+  minutos_trabalhados_antes: numeroOpcional,
   houve_afastamento: z.boolean().default(false),
-  dias_afastamento_estimado: z.coerce.number().min(0).optional(),
+  dias_afastamento_estimado: numeroOpcional,
   houve_obito: z.boolean().default(false),
   houve_internacao: z.boolean().default(false),
   ultimo_dia_trabalhado: z.string().optional(),
@@ -39,6 +39,8 @@ const catSchema = z.object({
 });
 
 type CatForm = z.infer<typeof catSchema>;
+
+const CAMPOS_DATA_HORA_OPCIONAIS = ['hora_acidente', 'ultimo_dia_trabalhado'] as const;
 
 type CatRow = {
   id: string;
@@ -59,6 +61,8 @@ type CatRow = {
 export default function AdminCatPage() {
   const { empresaAtual } = useEmpresas();
   const [open, setOpen] = useState(false);
+  // CAT em correção (antes da transmissão); null = registrando nova.
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const form = useForm<CatForm>({
     resolver: zodResolver(catSchema) as never,
@@ -69,6 +73,12 @@ export default function AdminCatPage() {
       houve_obito: false,
       houve_internacao: false,
     } as Partial<CatForm>,
+  });
+
+  // Selects controlados: exibem os valores carregados ao corrigir uma CAT.
+  const [colaboradorSel, tipoCatSel, tipoAcidenteSel, tipoLocalSel] = useWatch({
+    control: form.control,
+    name: ['colaborador_id', 'tipo_cat', 'tipo_acidente', 'tipo_local'],
   });
 
   const empresaId = empresaAtual?.id;
@@ -186,6 +196,9 @@ export default function AdminCatPage() {
                       <SelectItem value="doenca_ocupacional">Doença Ocupacional</SelectItem>
                     </SelectContent>
                   </Select>
+                  {form.formState.errors.tipo_acidente && (
+                    <p className="text-xs text-destructive">{form.formState.errors.tipo_acidente.message}</p>
+                  )}
                 </div>
                 <div>
                   <Label>CID Principal *</Label>
@@ -289,6 +302,19 @@ export default function AdminCatPage() {
                             : atrasada
                               ? <Badge variant="destructive">Em atraso</Badge>
                               : <Badge variant="secondary">Pendente</Badge>}
+                        </td>
+                        <td className="text-right">
+                          {podeEditarCat(c) && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              aria-label={`Corrigir CAT ${c.numero_cat ?? ''}`.trim()}
+                              onClick={() => void abrirEdicao(c.id)}
+                            >
+                              <Pencil className="h-4 w-4 mr-1" />
+                              Corrigir
+                            </Button>
+                          )}
                         </td>
                       </tr>
                     );

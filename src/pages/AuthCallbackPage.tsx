@@ -24,9 +24,23 @@ export default function AuthCallbackPage() {
 
           if (error) throw error;
 
-          if (data?.success) {
-            toast.success(`Autenticado com Gov.br! Nível: ${data.profile.nivel}`);
+          if (data?.success && data.mode === 'login' && data.token_hash) {
+            // Fluxo anônimo: a edge validou o CPF no gov.br e emitiu um
+            // magiclink token para a conta — verifyOtp cria a sessão real.
+            const { error: otpError } = await supabase.auth.verifyOtp({
+              token_hash: data.token_hash,
+              type: 'magiclink',
+            });
+            if (otpError) throw otpError;
+            toast.success(`Autenticado com Gov.br! Nível: ${data.nivel}`);
             navigate('/dashboard', { replace: true });
+          } else if (data?.success) {
+            // Conta gov.br vinculada ao perfil já logado.
+            toast.success(`Conta Gov.br vinculada! Nível: ${data.nivel}`);
+            navigate('/dashboard', { replace: true });
+          } else {
+            toast.error(safeErrorMessage(data?.error, 'Erro na autenticação Gov.br.'));
+            navigate('/login', { replace: true });
           }
         } catch (err) {
           toast.error(safeErrorMessage(err, 'Erro na autenticação Gov.br.'));

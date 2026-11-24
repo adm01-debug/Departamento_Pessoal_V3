@@ -49,6 +49,45 @@ export default function JornadasPage() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['jornadas'] }); setOpen(false); toast.success('Jornada criada!'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar jornada.'))});
 
+  const atualizar = useMutation({
+    mutationFn: async ({ id, ...d }: typeof form & { id: string }) => {
+      const { data, error } = await supabase
+        .from('jornadas')
+        .update(
+          validateTablePayload(
+            'jornadas',
+            {
+              ...d,
+              carga_horaria_semanal: Number(d.carga_horaria_semanal),
+              intervalo_minutos: Number(d.intervalo_minutos),
+            },
+            'JornadasPage:jornadas'
+          )
+        )
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Jornada não encontrada ou sem permissão para editar.');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['jornadas'] });
+      setOpen(false);
+      setEditandoId(null);
+      setForm({
+        nome: '',
+        tipo: 'padrao',
+        carga_horaria_semanal: '44',
+        horario_entrada: '08:00',
+        horario_saida: '17:00',
+        intervalo_minutos: '60',
+      });
+      toast.success('Jornada atualizada!');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar jornada.')),
+  });
+
   const excluir = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('jornadas').delete().eq('id', id).eq('empresa_id', empresaAtual!.id);

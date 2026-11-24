@@ -57,10 +57,7 @@ export function HealthTrendCard() {
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm">
           <Stat label="Status" value={last?.status ?? '—'} tone={statusTone(last)} />
-          <Stat
-            label="Latência"
-            value={last?.latencyMs != null ? `${last.latencyMs}ms` : '—'}
-          />
+          <Stat label="Latência" value={last?.latencyMs != null ? `${last.latencyMs}ms` : '—'} />
           <Stat label="p95" value={p95 != null ? `${p95}ms` : '—'} />
           <Stat
             label="Falhas"
@@ -69,11 +66,7 @@ export function HealthTrendCard() {
           />
         </div>
         <Sparkline samples={samples} />
-        {avg != null && (
-          <p className="text-xs text-muted-foreground mt-2">
-            Média: {avg}ms · polling a cada 60s
-          </p>
-        )}
+        {avg != null && <p className="text-xs text-muted-foreground mt-2">Média: {avg}ms · polling a cada 60s</p>}
       </CardContent>
     </Card>
   );
@@ -86,15 +79,7 @@ function statusTone(s: HealthSample | undefined): 'ok' | 'warn' | 'fail' | undef
   return 'fail';
 }
 
-function Stat({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string;
-  tone?: 'ok' | 'warn' | 'fail';
-}) {
+function Stat({ label, value, tone }: { label: string; value: string; tone?: 'ok' | 'warn' | 'fail' }) {
   const toneClass =
     tone === 'ok'
       ? 'text-emerald-600 dark:text-emerald-400'
@@ -124,11 +109,7 @@ function Sparkline({ samples }: { samples: HealthSample[] }) {
       {samples.map((s, i) => {
         const h = s.latencyMs ? Math.min(100, (s.latencyMs / 1000) * 100) : 100;
         const color =
-          s.status === 'online'
-            ? 'bg-emerald-500'
-            : s.status === 'slow'
-              ? 'bg-amber-500'
-              : 'bg-destructive';
+          s.status === 'online' ? 'bg-emerald-500' : s.status === 'slow' ? 'bg-amber-500' : 'bg-destructive';
         return (
           <div
             key={i}

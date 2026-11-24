@@ -1,0 +1,80 @@
+#!/usr/bin/env node
+/**
+ * Gate de CI — sintaxe das Edge Functions (Deno).
+ *
+ * Contexto: as edge functions ficam fora do `tsconfig` do app (runtime Deno,
+ * imports por URL), então `tsgo --noEmit` nunca as enxerga. Consequência real
+ * observada em 31/07/2026: quatro funções (`calcular-rescisao`, `OCR`,
+ * `metrics`, `reabrir-folha`) estavam com erro de sintaxe e falhavam no bundle
+ * do deploy — em produção continuavam rodando a versão antiga, silenciosamente.
+ *
+ * Este script faz o parse de todo `supabase/functions/**` com o TypeScript já
+ * presente no projeto, sem resolver imports remotos: só valida sintaxe e
+ * declarações duplicadas, que é exatamente a classe de falha que quebra o
+ * bundler do Supabase.
+ *
+ * Uso: node scripts/audit-edge-syntax.mjs   (exit 1 em caso de falha)
+ */
+import { readdirSync, statSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+import ts from 'typescript';
+
+const ROOT = 'supabase/functions';
+
+/** Lista recursivamente todos os arquivos .ts sob `dir`. */
+function listTsFiles(dir) {
+  const out = [];
+  for (const entry of readdirSync(dir)) {
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) out.push(...listTsFiles(full));
+    else if (full.endsWith('.ts')) out.push(full);
+  }
+  return out;
+}
+
+const files = listTsFiles(ROOT);
+const failures = [];
+const duplicateCodes = new Set([2300, 2393, 2440, 2451, 2528]);
+
+// Garantia estrutural: um deploy sem nenhum arquivo .ts nos indica que o
+// diretório foi esvaziado acidentalmente ou que o glob mudou. Sem este check,
+// o gate reportaria "0 arquivos OK" após uma remoção em massa — falso verde.
+if (files.length === 0) {
+  console.error(`[edge-syntax] Nenhum arquivo .ts encontrado em ${ROOT} — isso não é normal.`);
+  process.exit(1);
+}
+
+for (const file of files) {
+  const program = ts.createProgram([file], {
+    allowImportingTsExtensions: true,
+    module: ts.ModuleKind.ESNext,
+    noEmit: true,
+    noLib: true,
+    noResolve: true,
+    skipLibCheck: true,
+    target: ts.ScriptTarget.ESNext,
+  });
+  const source = program.getSourceFiles().find((item) => resolve(item.fileName) === resolve(file));
+  if (!source) throw new Error(`TypeScript não carregou ${file}`);
+
+  const diagnostics = [
+    ...program.getSyntacticDiagnostics(source),
+    ...program.getSemanticDiagnostics(source).filter((diagnostic) => duplicateCodes.has(diagnostic.code)),
+  ];
+  for (const diagnostic of diagnostics) {
+    const position = diagnostic.file?.getLineAndCharacterOfPosition(diagnostic.start ?? 0);
+    const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
+    failures.push({ file, message: `${message} (linha ${(position?.line ?? 0) + 1})` });
+  }
+}
+
+if (failures.length > 0) {
+  // `failures` tem uma entrada por diagnóstico, não por arquivo.
+  const arquivos = new Set(failures.map(({ file }) => file)).size;
+  console.error(`[edge-syntax] ${failures.length} erro(s) de sintaxe em ${arquivos} arquivo(s):\n`);
+  for (const { file, message } of failures) console.error(`  ✗ ${file}: ${message}`);
+  console.error('\nEssas funções falhariam no bundle do deploy Supabase.');
+  process.exit(1);
+}
+
+console.log(`[edge-syntax] OK — ${files.length} arquivo(s) de edge function sem erro de sintaxe.`);

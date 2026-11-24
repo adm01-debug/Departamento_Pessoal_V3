@@ -10,7 +10,7 @@ on:
         type: choice
         options: [validate, apply, verify]
       migration_files:
-        description: "Lista de arquivos de migração separados por newline (obrigatório para mode=verify)"
+        description: "mode=verify SOMENTE. NOME DO ARQUIVO, um por linha, SEM o prefixo supabase/migrations/ (o workflow prefixa). Ex.: 20261117170000_x.sql. NAO escolhe o lote de validate/apply — esse e a lista fechada no passo Preparar."
         required: false
         type: string
       confirm_project_ref:
@@ -28,7 +28,7 @@ permissions:
 jobs:
   scoped-migrations:
     name: ${{ inputs.mode }} migrations no canônico
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # ubuntu-latest=26.04 não tem postgresql-client-16 (W41)
     timeout-minutes: 15
     environment: production
     env:
@@ -134,29 +134,127 @@ jobs:
           # Versões já presentes no ledger do canônico são puladas: um
           # re-dispatch do mesmo lote não pode re-executar as migrações.
           applied="$(psql "$SUPABASE_DB_URL" -X -At -c "SELECT version FROM supabase_migrations.schema_migrations")"
+          # LOTE ATUAL: higiene do ledger. 9 migrations que estao EM VIGOR no
+          # banco canonico mas NAO tem registro em
+          # supabase_migrations.schema_migrations. Conferido objeto por objeto em
+          # 19/11/2026: as funcoes, colunas, triggers, indices, policies e
+          # revokes que elas declaram existem todos em producao. O apply e no-op
+          # em producao e serve para o ledger deixar de mentir, de modo que uma
+          # reconstrucao cronologica seja deterministica.
+          #
+          # Sao idempotentes: cada CREATE POLICY e cada CREATE TRIGGER tem o
+          # DROP ... IF EXISTS correspondente no mesmo arquivo.
+          #
+          # QUATRO das 13 sem registro ficaram DE FORA. Nenhuma e reaplicavel
+          # isolada hoje, e registra-las afirmaria no ledger que o conteudo do
+          # arquivo foi o aplicado -- o que e falso.
+          #
+          # Duas REVERTERIAM funcao corrigida depois:
+          #  - 20260912140000_replay_backfill_canonical_routines: declara
+          #    contrato_assinar_por_token, que a 20260912204000 e a 20261005160000
+          #    redefiniram depois;
+          #  - 20261012130000_rotinas_agendadas_falhando: declara purge_rate_limits,
+          #    drenar_fila_limpeza_lgpd, process_lgpd_cleanup_queue e
+          #    fn_atualizar_status_ferias_diario, todas redefinidas depois pela
+          #    20261013130000, 20261013140000 e 20261013152000.
+          #
+          # Duas dependem de HELPER TRANSITORIO que nao existe mais no banco --
+          # medido no validate run 44433409640 (19/11/2026), que abortou em
+          # "requires routine public.dp_mig_set_search_path (aplique 20260912150000
+          # antes)", e confirmado por consulta a pg_proc: a rotina nao existe:
+          #  - 20260912151000_p1_function_search_path
+          #  - 20260912152000_p0_pgcrypto_routine_search_path
+          # As duas so rodam encadeadas logo apos a 20260912150000, que cria e
+          # descarta o helper na mesma transacao. Os gemeos delas
+          # (20260912143344 e 20260912144208) ja estao no ledger.
+          #
+          # O lote anterior (20261020120000 ninebox_permissoes_homologacao,
+          # 20261118223000 whatsapp_config policy admin/rh e 20261118235000
+          # trigger da margem consignavel) saiu daqui porque foi APLICADO e esta
+          # no ledger: validate run 44430235547, apply run 44430760106 e verify
+          # run 44430891943, os tres success, com ledger_count === 3 e os 3
+          # sidecars devolvendo 'ok' no dry-run e no pos-commit.
+          #
+          # ATENCAO, custou dois erros meus: o input `migration_files` do
+          # dispatch NAO escolhe o lote de validate/apply — e ESTA lista que
+          # decide. E no mode=verify ele quer NOME DE ARQUIVO, sem o prefixo
+          # supabase/migrations/ (o workflow prefixa; caminho completo gera
+          # "supabase/migrations/supabase/migrations/..." e o sidecar nao e achado).
+          # O lote de higiene de 9 migrations (20260911190000, 20260911192000,
+          # 20260911195000, 20261028220000, 20261114000300/400/500/600 e
+          # 20261115000000) saiu daqui porque foi APLICADO e esta no ledger:
+          # validate run 44436604208, apply run 44436798363 e verify run
+          # 44437087380, os tres success, com ledger_count === 9.
+          # O teto de 30% do consignado (20261119110000) saiu daqui porque foi
+          # APLICADO e esta no ledger: validate run 44514035146, apply run
+          # 44514808116 e verify run 44515333669, os tres success, com
+          # ledger_count === 1 e o sidecar devolvendo 'ok'.
+          # A policy de UPDATE do gestor (20261119130000) saiu daqui porque foi
+          # APLICADA e esta no ledger: validate run 44517578669 e verify run
+          # 44517978789 (ambos success), e a policy foi lida viva no catalogo. A
+          # 20261119140000 e a guarda de
+          # coluna que fecha a escalada que ELA abriu (RLS e por linha): sem a
+          # guarda, gestor podia gravar aprovado_rh. Achado da review na #729.
+          # A guarda de coluna de ferias (20261119140000) saiu daqui porque foi
+          # APLICADA e esta no ledger: validate run 44520983381, apply confirmado
+          # pelo catalogo (trg_ferias_bloquear_aprovacao_rh_sem_rh, tgtype 19) e a
+          # logica inteira do sidecar rodada ao vivo devolveu ok.
+          # A trilha de onboarding (20261119150000) saiu daqui porque foi APLICADA
+          # e esta no ledger: validate run 44524332815, apply run 44524643008 e
+          # verify run 44525243641, os tres success, com os dois triggers
+          # (audit_onboarding_colaborador/_tarefas) lidos vivos no catalogo e o
+          # sidecar devolvendo CANONICAL_VERIFY_OK.
+          # LOTE ATUAL (20/11/2026): 2 migrations novas na main apos o
+          # merge das PRs #751 e #747.
+          #  - 20261019235900: versiona o DDL orfao da familia dp_* (audit log
+          #    imutavel, papeis dp_mcp, dp_retention_policy). Aditiva e
+          #    idempotente; no canonico atual e NO-OP (tudo ja existe), o ganho
+          #    e versionar + destravar replay de banco novo.
+          #  - 20261119170000: copia o historico de onboarding do legado
+          #    (onboarding_tarefas/colaborador) para o canonico
+          #    (tarefas_onboarding), com vinculo pela regra canonica
+          #    (metadata.admissao_id com recorte de empresa) e queda por CPF
+          #    unico. Idempotente, sem DROP/DELETE.
+          # A 20261119160000 saiu daqui porque ja esta no ledger (apply run
+          # 44544895486 e verify run 44545027860, ambos success).
+          #  - 20261121200000: concede ci_auditor ao papel da conexao, para o
+          #    canonical-sql-diag.yml voltar a rodar no modo sem dados pessoais.
+          # O lote anterior (20261019235900, 20261119170000 e 20261121200000) saiu
+          # daqui porque esta no ledger: no validate run 44950842956 as duas
+          # primeiras foram puladas como ja registradas e a terceira foi aplicada
+          # no apply run 44951018325 (success).
+          # O lote anterior (20261121210000, tabelas ponto_rep_*) saiu daqui
+          # porque esta no ledger: apply run 44956208120 e verify run
+          # 44956510074, ambos success.
+          # O lote do relogio de ponto parte 2 (20261121220000..224000) saiu
+          # daqui porque esta no ledger: apply run 44961604370 e verify run
+          # 44961830183, ambos success, ledger_count === 5.
+          # LOTE ATUAL (22/11/2026): fechamento do laco do relogio de ponto.
+          #  - 20261123090000: etapa 41 do plano do Ponto (PR #837, mergeada em
+          #    22/11/2026) — cria ponto_rep_converter_dia,
+          #    ponto_rep_processar_dias e ponto_rep_reprocessar_periodo. Sem ela
+          #    o staging ponto_rep_dias nunca vira batida: a Edge
+          #    ingest-ponto-rep chama ponto_rep_processar_dias (index.ts:155) e
+          #    recebe PGRST202 em producao, entao o relogio nao alimenta o
+          #    espelho nem a folha. Diagnostico no canonico (22/11/2026):
+          #    ponto_rep_dias/ponto_rep_justificativas existem, as 3 funcoes nao.
+          #  - 20261122090000: cria public.recibos_ferias, que nunca chegou ao
+          #    canonico (PGRST205 em producao; FeriasActions.tsx grava o recibo
+          #    depois de baixar o PDF e o insert falhava sempre). Aditiva.
+          # 23/11/2026: ponto_rep_feriados/ponto_rep_horarios (etapa 53 do plano
+          # do relogio de ponto). Aditiva; o coletor 1.0.1 so grava nestas
+          # tabelas depois que a Edge nova estiver publicada.
+          # 24/11/2026: 20261123180000_dreno_fila_notificacoes_cron.sql aplicada e no
+          # ledger, saiu daqui. A correcao do search_path dela vem na 20261124120000.
           for migration in \
-            20261015160000_ci_auditor_readonly_role.sql \
-            20261015170000_ci_auditor_revoke_public_secdef.sql \
-            20261018120000_onda4d_review243.sql \
-            20261018130000_onda4e_objetos_ausentes.sql \
-            20261018140000_onda5_ponto_cols.sql \
-            20261018150000_onda5_rescisao_detalhes_calculo.sql \
-            20261018160000_dedup_idempotency_anomalies_job.sql \
-            20261018170000_default_privs_revoke_execute_public.sql \
-            20261018200000_qa2_pix_lote_idempotente.sql \
-            20261019000000_qa3_db_fixes.sql \
-            20261020000000_colaboradores_metadata.sql \
-            20261021000000_ledger_reconcile_secdef_defaults.sql \
-            20261021010000_default_privs_for_role.sql \
-            20261022000000_qa5_db_fixes.sql \
-            20261023000000_qa_r3_fixes.sql \
-            20261024000000_qa_r4_fixes.sql \
-            20261027000000_revoke_orphan_secdef.sql \
-            20261027120000_qa_r5_fixes.sql \
-            20261028120000_qa_r5_review_fixes.sql \
-            20261028130000_revoke_orphan_secdef_v2.sql \
-            20261029000000_gaps_v2_verificacao.sql \
-            20261029120000_whatsapp_pending_trigger_retire.sql
+            20261123090000_ponto_rep_converter_batidas.sql \
+            20261122090000_recibos_ferias_criar_tabela_ausente.sql \
+            20261122110000_ponto_rep_funcionarios_mascara_cpf.sql \
+            20261122110500_ponto_rep_vinculo_unicidade_reversa.sql \
+            20261122130000_indices_fk_join_ponto_pix.sql \
+            20261123150000_ponto_rep_feriados_horarios.sql \
+            20261122041500_guias_fgts_digital_rls_por_empresa.sql \
+            20261124120000_dreno_search_path_extensao.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -179,19 +277,65 @@ jobs:
           # Roda em AMBOS os modos: no mode=apply serve como gate — a aplicação
           # só executa se o dry-run BEGIN/ROLLBACK do conteúdo exato passar.
           shopt -s nullglob
-          migrations=("$stage_dir"/supabase/migrations/*.sql)
+          # Achado no validate do lote NineBox (run 43859720977, 16/11/2026): o
+          # glob *.sql tambem casa os .verify.sql que o step de stage copia
+          # junto da migration, e o \i seguia a ordem do glob -- ou seja, cada
+          # sidecar rodava LOGO DEPOIS da sua propria migration, no MEIO do
+          # lote, e nao no fim. Um sidecar que afirma o estado FINAL do lote
+          # reprova num estado intermediario: o da 20261022090000 conta
+          # finalizar_feedback/finalizar_feedback_base e, naquele ponto, a
+          # 20261028090000 (que troca a logica pelo wrapper) ainda nao rodou,
+          # entao as duas funcoes casavam e a subconsulta escalar levantou
+          # "more than one row returned by a subquery used as an expression".
+          # Em mode=apply o mesmo erro abortaria a transacao do lote inteiro.
+          # Agora: migrations primeiro, sidecars no fim, na MESMA transacao.
+          migrations=()
+          sidecars=()
+          for staged in "$stage_dir"/supabase/migrations/*.sql; do
+            case "$staged" in
+              *.verify.sql) sidecars+=("$staged") ;;
+              *) migrations+=("$staged") ;;
+            esac
+          done
           if [ "${#migrations[@]}" -eq 0 ]; then
             echo 'Nada a aplicar — lote já registrado no ledger canônico.'
             echo 'CANONICAL_MIGRATION_DRY_RUN_OK'
             exit 0
           fi
+          sidecar_out="$(mktemp)"
           {
             echo 'BEGIN;'
             for migration in "${migrations[@]}"; do
               printf '\\i %s\n' "$migration"
             done
+            if [ "${#sidecars[@]}" -gt 0 ]; then
+              # \o manda SO a saida das consultas para o arquivo (os command
+              # tags das migrations continuam no log). O contrato e o mesmo do
+              # step "Verificar objetos e ledger" -- toda linha nao-vazia tem
+              # de ser literalmente 'ok' -- mas aqui ANTES do COMMIT: um lote
+              # que nao satisfaz a propria verificacao nao chega a ser aplicado.
+              printf '\\o %s\n' "$sidecar_out"
+              for sidecar in "${sidecars[@]}"; do
+                printf '\\i %s\n' "$sidecar"
+              done
+              echo '\o'
+            fi
             echo 'ROLLBACK;'
-          } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1
+          } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -t -A
+          if [ "${#sidecars[@]}" -gt 0 ]; then
+            non_empty="$(grep -vE "^[[:space:]]*$" "$sidecar_out" || true)"
+            if [ -z "$non_empty" ]; then
+              echo '::error::Os sidecars do lote nao produziram nenhuma assercao no dry-run.'
+              exit 1
+            fi
+            bad_lines="$(printf '%s\n' "$non_empty" | grep -vx 'ok' || true)"
+            if [ -n "$bad_lines" ]; then
+              echo '::error::Sidecar(s) reprovaram no dry-run -- nada foi aplicado, a transacao deu ROLLBACK:'
+              printf '%s\n' "$bad_lines" | sed 's/^/::error::   valor inesperado: /'
+              exit 1
+            fi
+            echo "Sidecars no dry-run: $(printf '%s\n' "$non_empty" | wc -l) assercao(oes), todas ok."
+          fi
           echo 'CANONICAL_MIGRATION_DRY_RUN_OK'
 
       - name: Aplicar a lista fechada e registrar no ledger
@@ -204,7 +348,18 @@ jobs:
           # `migration repair`, which are unsafe while the historical local
           # ledger differs from the canonical ledger.
           shopt -s nullglob
-          apply_migrations=("$stage_dir"/supabase/migrations/*.sql)
+          # Sidecar NAO entra na lista de apply: ele roda no dry-run acima e no
+          # step "Verificar objetos e ledger", apos o COMMIT. Antes, o glob
+          # *.sql o incluia aqui -- executava no meio do lote (podendo abortar
+          # a transacao) e ainda gerava INSERT no ledger com name terminando
+          # em ".verify".
+          apply_migrations=()
+          for staged in "$stage_dir"/supabase/migrations/*.sql; do
+            case "$staged" in
+              *.verify.sql) ;;
+              *) apply_migrations+=("$staged") ;;
+            esac
+          done
           if [ "${#apply_migrations[@]}" -eq 0 ]; then
             echo 'Nada a aplicar — lote já registrado no ledger canônico.'
             exit 0
@@ -270,7 +425,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 30 &&
+              Number(r.ledger_count) === 1 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
@@ -469,7 +624,7 @@ jobs:
               continue
             }
             # Codex (P2, PR #242-followup): rejeitar sidecar sem nenhuma asserção.
-            non_empty="$(printf '%s\n' "$sidecar_output" | grep -v '^[[:space:]]*$')"
+            non_empty="$(printf '%s\n' "$sidecar_output" | grep -v '^[[:space:]]*$' || true)"
             if [ -z "$non_empty" ]; then
               echo "::error::Sidecar não produziu nenhuma asserção (saída vazia): $sidecar"
               verify_errors=$((verify_errors + 1))

@@ -1,5 +1,6 @@
 import { PageTitle } from '@/components/PageTitle';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { PageLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +15,8 @@ import {
   WebhookConfigPanel,
   WhatsAppConfigPanel,
 } from '@/components/integracoes/ConfigPanels';
+import { RelogiosPanel } from '@/components/ponto/relogio/RelogiosPanel';
+import { useEmpresas } from '@/hooks/useEmpresas';
 
 interface Integracao {
   id: string;
@@ -22,6 +25,7 @@ interface Integracao {
   status: 'ativo' | 'inativo' | 'configurando';
   gradient: string;
   icon: string;
+  rota: string;
 }
 
 const integracoesFixas: Integracao[] = [
@@ -41,6 +45,7 @@ export default function IntegracoesPage() {
   const [cnabOpen, setCnabOpen] = useState(false);
   const [webhookOpen, setWebhookOpen] = useState(false);
   const [whatsappOpen, setWhatsappOpen] = useState(false);
+  const { empresaAtual } = useEmpresas();
 
   return (
     <>

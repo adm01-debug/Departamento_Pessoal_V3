@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
-import { useEmpresas } from '@/hooks';
+import { useAuth, useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { Plus, Shield } from 'lucide-react';
 
@@ -21,6 +21,11 @@ export default function CanalEticaPage() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ categoria: '', descricao: '', prioridade: 'media', anonimo: false });
+  const { isAdmin, hasRole } = useAuth();
+  // Espelha a policy canal_etica_rh_manage (pode_gerir_rh): só RH/admin trata denúncias.
+  const podeTratar = isAdmin || hasRole('rh');
+  const [selecionada, setSelecionada] = useState<Tables<'canal_etica'> | null>(null);
+  const [tratamento, setTratamento] = useState({ status: 'aberto', resposta: '' });
 
   const { data, isLoading } = useQuery({
     queryKey: ['canal-etica', empresaAtual?.id],

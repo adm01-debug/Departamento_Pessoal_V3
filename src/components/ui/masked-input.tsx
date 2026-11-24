@@ -1,8 +1,8 @@
-import * as React from "react";
-import { cn } from "@/lib/utils";
-import { masks, placeholders, type MaskType } from "@/lib/masks";
+import * as React from 'react';
+import { cn } from '@/lib/utils';
+import { masks, placeholders, type MaskType } from '@/lib/masks';
 
-export interface MaskedInputProps extends Omit<React.ComponentProps<"input">, 'onChange'> {
+export interface MaskedInputProps extends Omit<React.ComponentProps<'input'>, 'onChange'> {
   mask: MaskType;
   onValueChange?: (value: string, maskedValue: string) => void;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
@@ -14,15 +14,15 @@ const MaskedInput = React.forwardRef<HTMLInputElement, MaskedInputProps>(
       const rawValue = e.target.value;
       const maskFn = masks[mask];
       const maskedValue = maskFn ? maskFn(rawValue) : rawValue;
-      
+
       // Update the input value directly
       e.target.value = maskedValue;
-      
+
       if (onValueChange) {
         const unmaskedValue = rawValue.replace(/\D/g, '');
         onValueChange(unmaskedValue, maskedValue);
       }
-      
+
       if (onChange) {
         onChange(e);
       }
@@ -49,6 +49,6 @@ const MaskedInput = React.forwardRef<HTMLInputElement, MaskedInputProps>(
   }
 );
 
-MaskedInput.displayName = "MaskedInput";
+MaskedInput.displayName = 'MaskedInput';
 
 export { MaskedInput };

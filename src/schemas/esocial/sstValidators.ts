@@ -5,17 +5,8 @@
  * Regra de compatibilidade: campos historicamente obrigatórios seguem como erro;
  * campos novos só são validados quando presentes, e recomendações viram warnings.
  */
-import {
-  ValidationResult,
-  ValidationError,
-  ValidationWarning,
-  required,
-  maxLen,
-  cpfValido,
-  enumValido,
-  dataValida,
-  ESocialData,
-} from './helpers';
+import type { ValidationResult, ValidationError, ValidationWarning, ESocialData } from './helpers';
+import { required, maxLen, cpfValido, enumValido, dataValida } from './helpers';
 
 /** Hora no formato HHMM (padrão eSocial) ou HH:MM (uso interno). */
 const HORA_RE = /^([01]\d|2[0-3]):?([0-5]\d)$/;
@@ -98,8 +89,7 @@ export function validarS2210(dados: ESocialData): ValidationResult {
     if (diasDecorridos > 1) {
       warnings.push({
         campo: 'dtAcid',
-        mensagem:
-          'CAT fora do prazo legal (Lei 8.213/91, art. 22): comunicação devida até o 1º dia útil seguinte',
+        mensagem: 'CAT fora do prazo legal (Lei 8.213/91, art. 22): comunicação devida até o 1º dia útil seguinte',
       });
     }
   }
@@ -195,8 +185,33 @@ export function validarS2220(dados: ESocialData): ValidationResult {
 
   if (presente(ufCRM)) {
     const UFS = [
-      'AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB',
-      'PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO',
+      'AC',
+      'AL',
+      'AP',
+      'AM',
+      'BA',
+      'CE',
+      'DF',
+      'ES',
+      'GO',
+      'MA',
+      'MT',
+      'MS',
+      'MG',
+      'PA',
+      'PB',
+      'PR',
+      'PE',
+      'PI',
+      'RJ',
+      'RN',
+      'RS',
+      'RO',
+      'RR',
+      'SC',
+      'SP',
+      'SE',
+      'TO',
     ];
     enumValido(String(ufCRM).toUpperCase(), UFS, 'ufCRM', errors);
   }
@@ -274,12 +289,7 @@ export function validarS2240(dados: ESocialData): ValidationResult {
       // EPC/EPI eficazes (S/N) — impactam o direito à aposentadoria especial.
       for (const campo of ['utilizEPC', 'utilizEPI'] as const) {
         if (presente(item?.[campo])) {
-          enumValido(
-            String(item[campo]),
-            ['0', '1', '2', 'S', 'N'],
-            `infoExpRisco[${i}].${campo}`,
-            errors,
-          );
+          enumValido(String(item[campo]), ['0', '1', '2', 'S', 'N'], `infoExpRisco[${i}].${campo}`, errors);
         }
       }
     });

@@ -1093,6 +1093,9 @@ export function RewardsSimulator() {
     enabled: !!empresaId || isPremiacoesMockEnabled(),
   });
 
+  /** Leitura falhou e nada em cache: a tela não pode afirmar ausência de registro. */
+  const semLeitura = erroCenarios && scenarios.length === 0;
+
   const saveMutation = useMutation({
     mutationFn: (cenario: Record<string, unknown>) => {
       // MOCK VISUAL — aborta a escrita no modo demonstração.
@@ -1106,6 +1109,7 @@ export function RewardsSimulator() {
     onError: (erro) => {
       if ((erro as Error)?.message !== 'mock') toast.error('Não foi possível salvar o cenário.');
     },
+    onError: () => toast.error('Não foi possível salvar o cenário.'),
   });
 
   const metricas = calcularMetricas({

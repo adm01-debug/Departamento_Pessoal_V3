@@ -44,6 +44,9 @@ export default function ObrigacoesFiscaisPage() {
   const [openGuia, setOpenGuia] = useState(false);
   const [guiaForm, setGuiaForm] = useState({ tipo: 'fgts', valor: '', vencimento: '' });
   const [gerandoServidor, setGerandoServidor] = useState(false);
+  const [openFgtsDigital, setOpenFgtsDigital] = useState(false);
+  const [gerandoFgtsDigital, setGerandoFgtsDigital] = useState(false);
+  const [fgtsDigitalValor, setFgtsDigitalValor] = useState('');
 
   const { data: dctf = [], isLoading: l1 } = useQuery({ queryKey: ['dctfweb', empresaAtual?.id], queryFn: async () => { const { data, error } = await supabase.from('dctfweb_declaracoes').select('*').eq('empresa_id', empresaAtual!.id).order('competencia', { ascending: false }); if (error) throw error; return data || []; }, enabled: !!empresaAtual?.id });
   const { data: sefip = [], isLoading: l2 } = useQuery({ queryKey: ['sefip', empresaAtual?.id], queryFn: async () => { const { data, error } = await supabase.from('sefip_arquivos').select('*').eq('empresa_id', empresaAtual!.id).order('competencia', { ascending: false }); if (error) throw error; return data || []; }, enabled: !!empresaAtual?.id });
@@ -68,9 +71,81 @@ export default function ObrigacoesFiscaisPage() {
     mutationFn: async ({ id, tabela }: { id: string; tabela: string }) => {
       const { error } = await supabase.from(tabela as any).update({ status: 'paga', data_pagamento: new Date().toISOString() } as any).eq('id', id).eq('empresa_id', empresaAtual!.id);
       if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error(
+          'Nenhuma guia foi atualizada: sem permissão de escrita nesta guia ou ela já não pertence a esta empresa.'
+        );
+      }
+      return data[0];
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['guias-fgts'] }); qc.invalidateQueries({ queryKey: ['guias-inss'] }); toast.success('Guia marcada como paga!'); },
   });
+
+  const marcarPagaFgtsDigital = useMutation({
+    mutationFn: async (id: string) => {
+      // `.select('id')` devolve as linhas efetivamente alteradas. Sem isso a
+      // confirmação de baixa aparecia mesmo quando o RLS não deixava nenhuma
+      // linha elegível (0 linhas alteradas, `error` nulo).
+      const { data, error } = await supabase
+        .from('guias_fgts_digital')
+        .update({ status: 'paga' })
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id');
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error(
+          'Nenhuma guia foi atualizada: sem permissão de escrita nesta guia ou ela já não pertence a esta empresa.'
+        );
+      }
+      return data[0];
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['guias-fgts-digital'] });
+      toast.success('Guia FGTS Digital marcada como paga!');
+    },
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao marcar guia como paga.')),
+  });
+
+  /**
+   * Emite uma guia FGTS Digital de verdade pela edge `fgts-digital` (tabela
+   * `guias_fgts_digital` + `fgts_digital_logs`, com protocolo GFD e hash
+   * SHA-256 para auditoria). Distinto de `gerarGuiasServidor`, que calcula
+   * guias em `guias_fgts`/`guias_inss` — aquela rota não grava a guia GFD.
+   *
+   * O valor vem do total de FGTS apurado na competência selecionada; se não
+   * houver apuração, o usuário informa o valor no diálogo.
+   */
+  const gerarFgtsDigital = async (valorCentavos: number) => {
+    if (!empresaAtual?.id) return;
+    const [mes, ano] = competencia.split('/');
+    // Vencimento do FGTS Digital: dia 20 do mês seguinte à competência; se cair
+    // em fim de semana/prorrogação legal, o próprio usuário ajusta no diálogo.
+    const venc = new Date(Number(ano), Number(mes), 20);
+    if (venc < new Date()) {
+      toast.error('Vencimento já passou para esta competência. Selecione uma competência em aberto.');
+      return;
+    }
+    setGerandoFgtsDigital(true);
+    try {
+      const { data: r } = await edgeFunctionsService.gerarGuiaFgtsDigital({
+        empresaId: empresaAtual.id,
+        competencia: `${ano}-${mes}`,
+        tipo: 'mensal',
+        valorTotalCentavos: valorCentavos,
+        vencimento: formatDateLocalISO(venc),
+      });
+      qc.invalidateQueries({ queryKey: ['guias-fgts-digital'] });
+      toast.success(
+        `Guia FGTS Digital registrada — protocolo ${r?.protocolo ?? 'registrado'}. Este é o lançamento interno de RH; a guia pagável é emitida por você no portal FGTS Digital.`
+      );
+      setOpenFgtsDigital(false);
+    } catch (err) {
+      toast.error(safeErrorMessage(err, 'Erro ao gerar guia FGTS Digital.'));
+    } finally {
+      setGerandoFgtsDigital(false);
+    }
+  };
 
   const gerarGuiasServidor = async () => {
     if (!empresaAtual?.id) return;

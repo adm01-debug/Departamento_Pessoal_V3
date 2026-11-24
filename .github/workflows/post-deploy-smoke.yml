@@ -32,8 +32,10 @@ jobs:
           # W91a: GITHUB_SHA aqui é o SHA do deploy que disparou o evento
           # deployment_status (não o HEAD de main) — é exatamente o commit
           # que deveria estar servido em DEPLOYMENT_URL.
-          # W91b: login E2E não-admin — visibilidade pós-deploy sem bloquear
-          # ainda (REQUIRE_LOGIN permanece 0/padrão até confirmar estabilidade).
+          # W91b: login E2E não-admin é obrigatório no canário de produção.
+          # Estabilidade confirmada nos smokes dos merges b09d76e8 e 50a87a9d
+          # (login HTTP 200) — REQUIRE_LOGIN=1 torna falha de Auth fatal.
+          REQUIRE_LOGIN: "1"
           E2E_NON_ADMIN_EMAIL: ${{ secrets.E2E_NON_ADMIN_EMAIL }}
           E2E_NON_ADMIN_PASSWORD: ${{ secrets.E2E_NON_ADMIN_PASSWORD }}
         run: |

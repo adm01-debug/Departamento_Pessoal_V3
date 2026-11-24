@@ -52,6 +52,9 @@ export default defineConfig({
       name: 'setup-mobile',
       testMatch: /auth\.setup\.ts/,
       grep: /autentica usuário de teste \(mobile\)/,
+      // Mesmo usuário e mesmo fator TOTP do 'setup': os dois verify MFA em paralelo
+      // davam deadlock no Auth (HTTP 500 em /auth/v1/factors/:id/verify).
+      dependencies: ['setup'],
     },
     // 1c) Setup de usuário não-admin (para specs RBAC)
     {
@@ -111,7 +114,7 @@ export default defineConfig({
     // A Edge Function restringe Origin. O proxy Vite aplica a origem de
     // desenvolvimento permitida; sem esta variável o E2E local faria fetch
     // direto e transformaria uma resposta válida em erro de CORS.
-    command: 'VITE_DEV_PORT=4173 VITE_SUPABASE_FUNCTIONS_BASE=/functions/v1 npm run dev',
+    command: 'VITE_DEV_PORT=4173 VITE_SUPABASE_FUNCTIONS_BASE=/functions/v1 VITE_DESEMPENHO_MOCK=true npm run dev',
     url: baseURL,
     // Codex review (P1, PR #238): com CI=true, reuseExistingServer=false
     // significa "sempre suba um servidor novo" -- e o Playwright ERRA (não

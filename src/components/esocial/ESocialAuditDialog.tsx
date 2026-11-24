@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ShieldAlert, CheckCircle, AlertTriangle, Loader2, Sparkles, ShieldCheck } from 'lucide-react';
+import { ShieldAlert, CheckCircle, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ESocialEvento } from '@/services/esocialService';
-import { Progress } from '@/components/ui/progress';
+import type { ESocialEvento } from '@/services/esocialService';
 import { cn } from '@/lib/utils';
 
 interface ESocialAuditDialogProps {
@@ -88,7 +87,7 @@ export function ESocialAuditDialog({ open, onOpenChange, eventos }: ESocialAudit
             <div>
               <DialogTitle className="font-display">Auditoria Proativa IA</DialogTitle>
               <DialogDescription className="font-body text-primary/70">
-                Verificação profunda de conformidade eSocial
+                Regras básicas aplicadas aos {eventos.length} eventos carregados: erros, pendências e S-1200 sem S-1210
               </DialogDescription>
             </div>
           </div>

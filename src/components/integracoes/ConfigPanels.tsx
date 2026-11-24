@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,13 +9,26 @@ import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Spinner } from '@/components/ui/spinner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { ExternalLink, RefreshCw, XCircle, Settings, History, Plus, Zap } from 'lucide-react';
 import { bitrix24Service } from '@/services/tabelasComplementaresService';
 import { cnabService, webhookService } from '@/services/integracaoService';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { whatsappService, WhatsAppConfig } from '@/services/whatsappService';
+import type { WhatsAppConfig } from '@/services/whatsappService';
+import { whatsappService } from '@/services/whatsappService';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useAuth } from '@/contexts';
 
 export function Bitrix24ConfigPanel() {
   const qc = useQueryClient();
@@ -129,12 +142,88 @@ export function Bitrix24ConfigPanel() {
   );
 }
 
+type CnabRemessa = Awaited<ReturnType<typeof cnabService.getRemessas>>[number];
+
+const nomeArquivoRemessa = (r: CnabRemessa) => `REMESSA_${r.sequencial_arquivo ?? r.id.slice(0, 8)}.txt`;
+
+// Busca o conteúdo só no clique (a listagem não traz o arquivo). Retorna false se não há arquivo ou a busca falhou.
+async function baixarRemessa(empresaId: string, r: CnabRemessa): Promise<boolean> {
+  try {
+    const conteudo = await cnabService.getArquivoRemessa(empresaId, r.id);
+    if (!conteudo) {
+      toast.error('Arquivo de remessa ainda não disponível');
+      return false;
+    }
+    const blob = new Blob([conteudo], { type: 'text/plain;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nomeArquivoRemessa(r);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    return true;
+  } catch (err) {
+    toast.error(safeErrorMessage(err, 'Erro ao baixar o arquivo de remessa'));
+    return false;
+  }
+}
+
 export function CnabConfigPanel() {
   const [tab, setTab] = useState('remessas');
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id || '';
   const { data: config } = useQuery({ queryKey: ['cnab_config', empresaId], queryFn: () => cnabService.getConfig(empresaId), enabled: !!empresaId });
   const { data: remessas = [], isLoading } = useQuery({ queryKey: ['cnab_remessas', empresaId], queryFn: () => cnabService.getRemessas(empresaId), enabled: !!empresaId });
+
+  const qc = useQueryClient();
+  const [form, setForm] = useState({
+    nome_empresa: '',
+    banco_codigo: '',
+    agencia: '',
+    conta: '',
+    conta_digito: '',
+    codigo_empresa: '',
+    convenio: '',
+  });
+  // Recarrega o formulário quando chega a config salva (ou a ausência dela) de outra empresa.
+  const [carregadoDe, setCarregadoDe] = useState<string | null>(null);
+  const chaveConfig = config ? config.id : config === null ? `nova:${empresaId}` : null;
+  if (chaveConfig && carregadoDe !== chaveConfig) {
+    setForm({
+      nome_empresa: config?.nome_empresa ?? '',
+      banco_codigo: config?.banco_codigo ?? '',
+      agencia: config?.agencia ?? '',
+      conta: config?.conta ?? '',
+      conta_digito: config?.conta_digito ?? '',
+      codigo_empresa: config?.codigo_empresa ?? '',
+      convenio: config?.convenio ?? '',
+    });
+    setCarregadoDe(chaveConfig);
+  }
+  const setCampo = (campo: keyof typeof form) => (e: ChangeEvent<HTMLInputElement>) =>
+    setForm((f) => ({ ...f, [campo]: e.target.value }));
+
+  const salvarConfig = useMutation({
+    mutationFn: () => {
+      const d = Object.fromEntries(Object.entries(form).map(([k, v]) => [k, v.trim()])) as typeof form;
+      if (!d.banco_codigo || !d.agencia || !d.conta || !d.conta_digito || !d.convenio) {
+        throw new Error('Preencha código do banco, agência, conta, dígito da conta e convênio.');
+      }
+      return cnabService.saveConfig(empresaId, {
+        ...d,
+        nome_empresa: d.nome_empresa || null,
+        codigo_empresa: d.codigo_empresa || null,
+        id: config?.id,
+      });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['cnab_config', empresaId] });
+      toast.success('Configuração bancária salva!');
+    },
+    onError: (err: unknown) => toast.error(safeErrorMessage(err, 'Erro ao salvar configuração bancária')),
+  });
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col overflow-hidden">
@@ -181,7 +270,13 @@ export function CnabConfigPanel() {
                <div className="space-y-2"><Label>Layout CNAB</Label><Input placeholder="Ex: CNAB 240" defaultValue={(config as any)?.layout_cnab} /></div>
                <div className="space-y-2"><Label>Convênio</Label><Input placeholder="Código de convênio" defaultValue={(config as any)?.convenio} /></div>
             </div>
-            <Button className="w-fit px-8 rounded-xl shadow-lg shadow-primary/20">Salvar Configurações</Button>
+            <Button
+              className="w-fit px-8 rounded-xl shadow-lg shadow-primary/20"
+              onClick={() => salvarConfig.mutate()}
+              disabled={!empresaId || carregandoConfig || erroConfig || config === undefined || salvarConfig.isPending}
+            >
+              {salvarConfig.isPending ? 'Salvando...' : 'Salvar Configurações'}
+            </Button>
           </div>
         </TabsContent>
       </div>
@@ -195,6 +290,17 @@ export function WebhookConfigPanel() {
   const empresaId = empresaAtual?.id || '';
   const { data: webhooks = [], isLoading: loadWebhooks } = useQuery({ queryKey: ['webhooks', empresaId], queryFn: () => webhookService.listar(empresaId), enabled: !!empresaId });
   const { data: logs = [], isLoading: loadLogs } = useQuery({ queryKey: ['webhook_logs', empresaId], queryFn: () => webhookService.getLogs(empresaId), enabled: !!empresaId });
+
+  const qc = useQueryClient();
+  const removerWebhook = useMutation({
+    mutationFn: (id: string) => webhookService.excluir(empresaId, id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['webhooks', empresaId] });
+      qc.invalidateQueries({ queryKey: ['webhook_logs', empresaId] });
+      toast.success('Webhook removido.');
+    },
+    onError: (err: unknown) => toast.error(safeErrorMessage(err, 'Erro ao remover webhook')),
+  });
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col overflow-hidden">
@@ -263,6 +369,13 @@ export function WebhookConfigPanel() {
 
 export function WhatsAppConfigPanel() {
   const { empresaAtual } = useEmpresas();
+  const { isAdmin, hasRole } = useAuth();
+  // whatsapp_config guarda a api_key da Evolution API. A policy
+  // whatsapp_config_admin_rh (migration 20261118223000) limita leitura e
+  // escrita a admin/rh — o mesmo escopo que a edge whatsapp-send exige. Sem
+  // este gate, quem não tem o papel via o formulário vazio e um erro mudo ao
+  // salvar.
+  const podeGerir = isAdmin || hasRole('rh');
   const [loading, setLoading] = useState(false);
   const [config, setConfig] = useState<Partial<WhatsAppConfig>>({
     instancia_url: '',
@@ -295,6 +408,16 @@ export function WhatsAppConfigPanel() {
       setLoading(false);
     }
   };
+
+  if (!podeGerir) {
+    return (
+      <div className="p-6" data-testid="whatsapp-sem-permissao">
+        <p className="text-sm text-muted-foreground">
+          A configuração do WhatsApp guarda a chave da Evolution API e é restrita a administradores e ao RH.
+        </p>
+      </div>
+    );
+  }
 
   if (isLoading) return <Spinner />;
 

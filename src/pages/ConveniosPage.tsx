@@ -6,25 +6,50 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Spinner } from '@/components/ui/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
+import { useAuth } from '@/contexts';
 import { toast } from 'sonner';
 import { Plus, Handshake, Trash2 } from 'lucide-react';
 
 export default function ConveniosPage() {
   const { empresaAtual } = useEmpresas();
+  const { isAdmin, hasRole } = useAuth();
+  const podeGerir = isAdmin || hasRole('rh');
   const qc = useQueryClient();
   const [tab, setTab] = useState('convenios');
 
   // === Convênios ===
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ nome: '', tipo: '', limite_global: '' });
+  const formVazio = { nome: '', tipo: '', limite_global: '', ativo: true };
+  const [form, setForm] = useState(formVazio);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [excluirAlvo, setExcluirAlvo] = useState<{ id: string; nome: string } | null>(null);
+
+  const onOpenChange = (v: boolean) => {
+    setOpen(v);
+    if (!v) {
+      setEditId(null);
+      setForm(formVazio);
+    }
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ['convenios', empresaAtual?.id],
@@ -43,6 +68,37 @@ export default function ConveniosPage() {
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['convenios'] }); setOpen(false); setForm({ nome: '', tipo: '', limite_global: '' }); toast.success('Convênio criado'); }});
+
+  const editar = useMutation({
+    mutationFn: async ({ id, d }: { id: string; d: typeof form }) => {
+      const { data, error } = await supabase
+        .from('convenios')
+        .update(
+          validateTablePayload(
+            'convenios',
+            {
+              nome: d.nome,
+              tipo: d.tipo || null,
+              limite_global: d.limite_global ? Number(d.limite_global) : null,
+              ativo: d.ativo,
+            },
+            'ConveniosPage:convenios:update'
+          )
+        )
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Convênio não encontrado ou sem permissão para alterar');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['convenios'] });
+      qc.invalidateQueries({ queryKey: ['convenios-colaboradores'] });
+      onOpenChange(false);
+      toast.success('Convênio atualizado');
+    },
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao atualizar convênio')),
+  });
 
   const excluir = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from('convenios').delete().eq('id', id).eq('empresa_id', empresaAtual!.id); if (error) throw error; },

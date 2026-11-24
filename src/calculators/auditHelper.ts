@@ -12,17 +12,13 @@ export async function signCalculation(data: unknown) {
   const rawData = JSON.stringify(data);
   const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(rawData));
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-export async function auditCalculation(
-  colaboradorId: string,
-  competencia: string,
-  resultado: FolhaResultado
-) {
+export async function auditCalculation(colaboradorId: string, competencia: string, resultado: FolhaResultado) {
   // Gera assinatura digital única do resultado
   const signature = await signCalculation(resultado);
-  
+
   await auditLogger.log({
     tabela: 'folhas_pagamento',
     registro_id: colaboradorId,
@@ -31,13 +27,17 @@ export async function auditCalculation(
       competencia,
       signature,
       // Metadados essenciais para conferência rápida
-      total_proventos: (resultado.proventos as { totalProventos?: number } | undefined)?.totalProventos ?? (resultado.proventos as number | undefined),
-      total_descontos: (resultado.descontos as { totalDescontos?: number } | undefined)?.totalDescontos ?? (resultado.descontos as number | undefined),
+      total_proventos:
+        (resultado.proventos as { totalProventos?: number } | undefined)?.totalProventos ??
+        (resultado.proventos as number | undefined),
+      total_descontos:
+        (resultado.descontos as { totalDescontos?: number } | undefined)?.totalDescontos ??
+        (resultado.descontos as number | undefined),
       salario_liquido: resultado.salarioLiquido || resultado.liquido,
       // Flag de integridade
       integridade_calculo: 'ASSINADO_SHA256',
-      timestamp: new Date().toISOString()
-    }
+      timestamp: new Date().toISOString(),
+    },
   });
 
   return signature;

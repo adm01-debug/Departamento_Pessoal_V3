@@ -8,8 +8,8 @@
 // • Auditoria bloqueante + log de integração
 // • no-store em todas respostas
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { z } from 'https://esm.sh/zod@3.23.8';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
+import { z } from 'npm:zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
@@ -187,22 +187,38 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     const tiposAlvo: Array<keyof typeof CODIGOS_RECEITA> =
-      tipo === 'TODAS' ? ['GPS', 'DARF', 'FGTS', 'FGTS_DIGITAL'] : [tipo];
+      // FGTS Digital substituiu a GRF: nunca gerar FGTS e FGTS_DIGITAL juntos (FGTS em dobro).
+      tipo === 'TODAS' ? ['GPS', 'DARF', 'FGTS_DIGITAL'] : [tipo];
+    // DARF não tem tabela própria no banco: é calculada e devolvida, mas não é gravada
+    // (gravar em guias_inss somaria IRRF ao total de INSS da tela).
+    const tabelaDaGuia = (t: string): 'guias_fgts' | 'guias_inss' | null =>
+      t === 'DARF' ? null : (t === 'FGTS' || t === 'FGTS_DIGITAL' || t === 'GFD') ? 'guias_fgts' : 'guias_inss';
 
     // Duplicidade — bloqueia guias já ativas para (empresa, competencia, tipo)
     const guias: Array<Record<string, unknown>> = [];
     const duplicatas: string[] = [];
+    const naoPersistidas: Array<Record<string, unknown>> = [];
 
     for (const t of tiposAlvo) {
-      const tabela = (t === 'FGTS' || t === 'FGTS_DIGITAL' || t === 'GFD') ? 'guias_fgts' : 'guias_inss';
-      const { data: existente } = await supabase
-        .from(tabela)
-        .select('id')
-        .eq('empresa_id', empresa_id)
-        .eq('competencia', competencia)
-        .in('status', ['pendente', 'emitida', 'ativa'])
-        .limit(1);
-      if (existente?.length) { duplicatas.push(t); continue; }
+      const tabela = tabelaDaGuia(t);
+      if (tabela) {
+        const { data: existente } = await supabase
+          .from(tabela)
+          .select('id')
+          .eq('empresa_id', empresa_id)
+          .eq('competencia', competencia)
+          .eq('tipo', t)
+          .in('status', ['gerada', 'pendente', 'emitida', 'ativa', 'paga'])
+          .limit(1);
+        // Os status reais gravados hoje sao `gerada` (tela e auto) e `paga`.
+        // O filtro antigo nao incluia nenhum dos dois, entao o proprio "Auto"
+        // reemitia por cima da guia que acabara de criar — e, com `paga` na
+        // lista, uma competencia ja quitada tambem deixa de ser reemitida,
+        // que era o valor em dobro apontado na thread BUG ...0001 da PR #822.
+        // Reemissao legitima (retificacao) e ato explicito, nao um clique em
+        // "Auto".
+        if (existente?.length) { duplicatas.push(t); continue; }
+      }
 
       let valorTotalCents = 0n;
       let codReceita = codigo_receita ?? '';
@@ -249,26 +265,33 @@ serve(async (req: Request): Promise<Response> => {
         protocolo,
       };
       const hash = await sha256Hex(JSON.stringify(payload));
-      guias.push({ ...payload, hash_sha256: hash, status: 'pendente' });
+      if (tabela) guias.push({ ...payload, hash_sha256: hash, status: 'pendente' });
+      else naoPersistidas.push({ ...payload, hash_sha256: hash, motivo: 'sem tabela de DARF no banco; valor apenas calculado' });
     }
 
     // Persist guias to database
     if (guias.length > 0) {
       for (const guia of guias) {
-        const t = guia.tipo as string;
-        const tabela = (t === 'FGTS' || t === 'FGTS_DIGITAL' || t === 'GFD') ? 'guias_fgts' : 'guias_inss';
+        const tabela = tabelaDaGuia(guia.tipo as string)!;
+        // Só colunas que existem em guias_fgts/guias_inss; codigo_receita, protocolo e
+        // hash ficam no audit_log abaixo.
+        const valores = guia.valores as Record<string, number>;
+        const especificas = tabela === 'guias_inss'
+          ? {
+              valor_empresa: centsToReais(
+                reaisToCents(valores.inss_patronal ?? 0) + reaisToCents(valores.rat ?? 0) + reaisToCents(valores.terceiros ?? 0),
+              ),
+              valor_segurados: valores.inss_empregado ?? 0,
+            }
+          : { valor_total_recolher: guia.valor_total };
         const { error: insertErr } = await supabase.from(tabela).insert({
           empresa_id: guia.empresa_id,
           competencia: guia.competencia,
           tipo: guia.tipo,
-          codigo_receita: guia.codigo_receita,
           valor_total: guia.valor_total,
-          valores: guia.valores,
-          vencimento: guia.vencimento,
-          protocolo: guia.protocolo,
-          hash_sha256: guia.hash_sha256,
+          data_vencimento: guia.vencimento,
           status: 'pendente',
-          gerado_por: userId,
+          ...especificas,
         });
         if (insertErr) throw insertErr;
       }
@@ -286,6 +309,10 @@ serve(async (req: Request): Promise<Response> => {
         guias_geradas: guias.length,
         duplicatas_bloqueadas: duplicatas,
         protocolos: guias.map((g) => g.protocolo),
+        guias: guias.map((g) => ({
+          tipo: g.tipo, codigo_receita: g.codigo_receita, protocolo: g.protocolo, hash_sha256: g.hash_sha256,
+        })),
+        nao_persistidas: naoPersistidas.map((g) => g.tipo),
       },
     });
     if (auditErr) throw auditErr;
@@ -305,6 +332,7 @@ serve(async (req: Request): Promise<Response> => {
       total_folha_bruta: centsToReais(totSalariosCents),
       guias,
       duplicatas_bloqueadas: duplicatas,
+      nao_persistidas: naoPersistidas,
       gerado_em: new Date().toISOString(),
     });
   } catch (error: unknown) {

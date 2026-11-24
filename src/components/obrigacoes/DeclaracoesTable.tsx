@@ -31,7 +31,6 @@ export function DctfTable({ data }: DctfTableProps) {
             <TableHead className="font-display">Status</TableHead>
             <TableHead className="font-display">Data Envio</TableHead>
             <TableHead className="font-display">Valor Total</TableHead>
-            <TableHead className="font-display">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -50,6 +49,15 @@ export function DctfTable({ data }: DctfTableProps) {
       </Table>
     </Card>
   );
+}
+
+function baixarSefip(competencia: string, conteudo: string) {
+  const url = URL.createObjectURL(new Blob([conteudo], { type: 'text/plain;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `SEFIP_${competencia}.re`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 interface SefipTableProps {

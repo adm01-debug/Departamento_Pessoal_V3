@@ -32,18 +32,50 @@ interface ExameFormDialogProps {
     resultado: string;
   }) => void;
   isPending?: boolean;
+  /** Modo edição (controlado): valores iniciais, estado de abertura e título. */
+  initial?: { [K in keyof typeof emptyForm]?: string | null };
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  title?: string;
 }
 
 const emptyForm = { colaborador_id: '', tipo: '', data_exame: '', data_validade: '', medico: '', crm: '', resultado: '' };
 
-export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFormDialogProps) {
-  const [open, setOpen] = useState(false);
+export function ExameFormDialog({
+  colaboradores,
+  onSubmit,
+  isPending,
+  initial,
+  open: openProp,
+  onOpenChange,
+  title,
+}: ExameFormDialogProps) {
+  const [openState, setOpenState] = useState(false);
   const [form, setForm] = useState(emptyForm);
+  const controlled = openProp !== undefined;
+  const open = controlled ? openProp : openState;
+  const setOpen = (o: boolean) => (controlled ? onOpenChange?.(o) : setOpenState(o));
+
+  // Modo edição: ao receber um novo registro, preenche o formulário com seus valores.
+  const [prevInitial, setPrevInitial] = useState(initial);
+  if (initial !== prevInitial) {
+    setPrevInitial(initial);
+    if (initial) {
+      const base = { ...emptyForm };
+      for (const k of Object.keys(base) as (keyof typeof emptyForm)[]) base[k] = initial[k] ?? '';
+      setForm(base);
+    }
+  }
+
+  // Validade anterior à data do exame viola o CHECK exames_validade_coerente no banco.
+  const validadeInvalida = !!form.data_exame && !!form.data_validade && form.data_validade < form.data_exame;
 
   const handleSubmit = () => {
-    onSubmit(form);
-    setForm(emptyForm);
-    setOpen(false);
+    // Fecha só quando o pai confirmar o sucesso; em erro o diálogo fica aberto com os dados digitados.
+    onSubmit(form, () => {
+      setForm(emptyForm);
+      setOpen(false);
+    });
   };
 
   return (
@@ -55,7 +87,7 @@ export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFor
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display">Registrar Exame Ocupacional</DialogTitle>
+          <DialogTitle className="font-display">{title ?? 'Registrar Exame Ocupacional'}</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <div>
@@ -92,6 +124,9 @@ export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFor
               <Input type="date" value={form.data_validade} onChange={e => setForm(p => ({ ...p, data_validade: e.target.value }))} />
             </div>
           </div>
+          {validadeInvalida && (
+            <p className="text-sm text-destructive">A validade não pode ser anterior à data do exame.</p>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -119,9 +154,9 @@ export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFor
           <Button
             className="w-full rounded-xl"
             onClick={handleSubmit}
-            disabled={!form.colaborador_id || !form.tipo || isPending}
+            disabled={!form.colaborador_id || !form.tipo || validadeInvalida || isPending}
           >
-            Registrar Exame
+            {controlled ? 'Salvar Alterações' : 'Registrar Exame'}
           </Button>
         </div>
       </DialogContent>

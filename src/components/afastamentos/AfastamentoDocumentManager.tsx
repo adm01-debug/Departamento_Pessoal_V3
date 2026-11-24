@@ -10,6 +10,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { format } from 'date-fns';
 import { safeHref } from '@/utils/safeUrl';
 import { toast } from 'sonner';
+import { hasValidSignature, type SignedFileType } from '@/utils/fileSignature';
 import { loggerService } from '@/services/loggerService';
 
 interface AfastamentoDocumentManagerProps {

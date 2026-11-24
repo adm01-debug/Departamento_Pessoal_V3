@@ -47,7 +47,7 @@ const MAX_DEPTH = 4;
  * requisição em vez de `auth.uid()`.
  */
 const AUTHZ_MARKERS =
-  /auth\.uid\(\)|has_role|is_admin|pertence_a_empresa|user_belongs_to_empresa|get_user_empresas|get_user_scope_empresas|current_setting/i;
+  /auth\.uid\s*\(\s*\)|has_role|is_admin|pertence_a_empresa|user_belongs_to_empresa|get_user_empresas|get_user_scope_empresas|current_setting/i;
 
 /**
  * Funções deliberadamente alcançáveis sem sessão. A autorização delas NÃO é
@@ -151,14 +151,22 @@ function main() {
     seen.add(name);
     for (const callee of fns.keys()) {
       if (callee === name) continue;
-      // Só desce em funções efetivamente citadas no corpo.
-      if (!new RegExp(`\\b${callee}\\s*\\(`).test(fn.src)) continue;
+      // Só desce em funções efetivamente citadas no corpo. Identificador SQL
+      // não diferencia maiúsculas: `PUBLIC.Meu_Helper(` chama `meu_helper`.
+      if (!new RegExp(`\\b${callee}\\s*\\(`, 'i').test(fn.src)) continue;
       if (isAuthorized(callee, depth + 1, seen)) {
         memo.set(name, true);
         return true;
       }
     }
     return false;
+  }
+
+  // Guard: se o banco respondeu mas devolveu zero funções, a consulta falhou
+  // silenciosamente (permissão, schema errado) — reprovar em vez de dar OK vazio.
+  if (fns.size === 0) {
+    console.error('[secdef-authz] ERRO: consulta retornou 0 funções — schema vazio ou sem permissão SELECT em pg_proc.');
+    return 1;
   }
 
   const violations = [];

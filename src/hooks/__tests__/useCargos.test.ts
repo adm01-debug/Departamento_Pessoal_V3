@@ -24,7 +24,9 @@ function wrapper({ children }: { children: React.ReactNode }) {
 }
 
 describe('useCargos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns cargos array', async () => {
     const { result } = renderHook(() => useCargos(), { wrapper });

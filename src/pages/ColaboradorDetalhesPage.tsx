@@ -5,6 +5,7 @@ import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { useQuery } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AnimatedTabsList, AnimatedTabsTrigger } from '@/components/ui/animated-tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
@@ -37,6 +38,15 @@ import {
   PendenciasDialog, type PendenciaItem,
   ProximosEventosDialog, type EventoDetalhado,
 } from '@/components/colaborador-detalhes';
+import { RecontratarColaboradorDialog } from '@/components/colaboradores/RecontratarColaboradorDialog';
+import { PendenciasDialog, type PendenciaItem } from '@/components/colaborador-detalhes/PendenciasDialog';
+import { ProximosEventosDialog, type EventoDetalhado } from '@/components/colaborador-detalhes/ProximosEventosDialog';
+import { AfastamentosTab } from '@/components/colaborador-detalhes/AfastamentosTab';
+import { DadosPessoaisTab } from '@/components/colaborador-detalhes/DadosPessoaisTab';
+import { destinoPendencia, destinoEvento, type DestinoDossie } from '@/components/colaborador-detalhes/destinosDossie';
+import { format } from 'date-fns';
+import { parseDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
+import { usePendenciasColaborador } from '@/hooks/usePendenciasColaborador';
 import { Card, CardContent } from '@/components/ui/card';
 import { AnimatedCascadeDialog } from '@/components/ui/animated-cascade-dialog';
 import {
@@ -1015,6 +1025,16 @@ export default function ColaboradorDetalhesPage() {
                 colaboradorId={id!}
                 proximosEventos={proximosEventos}
                 onVerTodosProximosEventos={() => setEventosOpen(true)}
+              />
+            )}
+          </TabsContent>
+
+          <TabsContent value="timeline">
+            {activeMainTab === 'timeline' && (
+              <HistoricoColaborador
+                colaboradorId={id!}
+                proximosEventos={proximosEventos.eventos}
+                proximosEventosIndisponiveis={proximosEventos.isError}
               />
             )}
           </TabsContent>

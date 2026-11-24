@@ -14,7 +14,10 @@ const { mockFrom, mockLog } = vi.hoisted(() => ({
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
+  supabase: {
+    from: (...a: unknown[]) => deepChain(mockFrom(...a)),
+    functions: { invoke: (...a: unknown[]) => mockInvoke(...a) },
+  },
 }));
 
 vi.mock('@/utils/auditLogger', () => ({
@@ -171,6 +174,30 @@ describe('contratacaoService.transmitirESocial', () => {
 
     await expect(contratacaoService.transmitirESocial('adm-1', EMPRESA_ID)).rejects.toThrow(
       'Falha na transmissão para o eSocial'
+    );
+  });
+});
+
+// ─── enviarEmailLinkCandidato ─────────────────────────────────────────────────
+
+describe('contratacaoService.enviarEmailLinkCandidato', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('manda só o id do token — link e destinatário são montados no servidor', async () => {
+    mockInvoke.mockResolvedValue({ data: { sent: true }, error: null });
+    const r = await contratacaoService.enviarEmailLinkCandidato('adm-1', EMPRESA_ID, 'a@b.com', 'tok-1');
+    expect(r).toEqual({ sent: true, motivo: undefined });
+    expect(mockInvoke).toHaveBeenCalledWith('enviar-email-admissao', {
+      body: { empresa_id: EMPRESA_ID, admissao_id: 'adm-1', token_id: 'tok-1', email: 'a@b.com' },
+    });
+    const body = (mockInvoke.mock.calls[0][1] as { body: Record<string, unknown> }).body;
+    expect(body).not.toHaveProperty('link');
+  });
+
+  it('provedor não configurado devolve o motivo sem lançar', async () => {
+    mockInvoke.mockResolvedValue({ data: { sent: false, motivo: 'email_provider_not_configured' }, error: null });
+    await expect(contratacaoService.enviarEmailLinkCandidato('adm-1', EMPRESA_ID, 'a@b.com', 'tok-1')).resolves.toEqual(
+      { sent: false, motivo: 'email_provider_not_configured' }
     );
   });
 });

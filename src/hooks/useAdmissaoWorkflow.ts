@@ -132,5 +132,5 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
     },
   });
 
-  return { workflow, isLoading, iniciarWorkflow, avancarEtapa };
+  return { workflow, isLoading, isError, iniciarWorkflow, avancarEtapa };
 }

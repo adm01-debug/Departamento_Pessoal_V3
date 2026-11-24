@@ -511,8 +511,39 @@ Deno.serve(async (req) => {
     if (TABLE_DENYLIST.has(table!)) {
       return jsonError(403, "TABLE_DENIED", `Table '${table}' is not accessible via bridge`, req);
     }
+    // Deny-by-default: só relações do catálogo (tables + views usadas pelo app)
+    // trafegam pela ponte. Tabela nova/desconhecida = negada até ser catalogada.
+    if (!TABLE_ALLOWLIST.has(table!.toLowerCase())) {
+      return jsonError(403, "TABLE_NOT_CATALOGED", `Table '${table}' is not in the bridge catalog`);
+    }
     if (columns !== undefined && !isSafeColumnsExpr(columns)) {
       return jsonError(400, "INVALID_COLUMNS", "Columns expression is invalid", req);
+    }
+    // Projeção: `*` negada em tabelas com colunas secretas; coluna secreta ou
+    // embed de tabela negada/desconhecida = fail-closed.
+    if (action === "select") {
+      const verdict = checkSelectColumns(
+        table!,
+        columns,
+        (t) => TABLE_ALLOWLIST.has(t),
+        (t) => TABLE_DENYLIST.has(t),
+      );
+      if (!verdict.ok) {
+        return jsonError(403, verdict.code!, verdict.message!);
+      }
+    }
+    // Write payloads com coluna secreta não trafegam pela ponte (credencial
+    // só entra/sai via edge dedicada com service_role).
+    if (isWrite) {
+      const rows = (Array.isArray(data) ? data : [data]).filter(
+        (r): r is Record<string, unknown> => r !== null && typeof r === "object",
+      );
+      for (const row of rows) {
+        const secret = findSecretWriteColumn(table!, row);
+        if (secret) {
+          return jsonError(403, "SECRET_COLUMN", `Coluna '${secret}' de '${table}' não é acessível via bridge`);
+        }
+      }
     }
   }
 
@@ -679,6 +710,7 @@ Deno.serve(async (req) => {
       }
       if (body.order) query = query.order(body.order.column, { ascending: body.order.ascending !== false });
       if (body.single) query = query.single();
+      else if (body.maybeSingle) query = query.maybeSingle();
 
       const { data: selectData, error, count } = await query;
       const durationMs = Math.round(performance.now() - t0);

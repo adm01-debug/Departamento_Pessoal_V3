@@ -4,19 +4,26 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Trash2, ShieldCheck, ShieldAlert, HardHat } from 'lucide-react';
+import { Trash2, ShieldCheck, ShieldAlert, HardHat, Pencil } from 'lucide-react';
 
 const categoryLabels: Record<string, string> = {
   cabeca: 'Cabeça', olhos: 'Olhos/Face', auditiva: 'Auditiva', respiratoria: 'Respiratória',
   maos: 'Mãos', pes: 'Pés', corpo: 'Corpo', queda: 'Queda', outros: 'Outros',
 };
 
+// O cadastro/edição grava `validade_ca`; `ca_validade` é coluna legada.
+function formatValidadeCa(e: Pick<Tables<'epis'>, 'validade_ca' | 'ca_validade'>): string {
+  const validade = e.validade_ca ?? e.ca_validade;
+  return validade ? format(parseISO(validade), 'dd/MM/yyyy') : '—';
+}
+
 interface EpiCatalogoTableProps {
   data: any[];
   onExcluir: (id: string) => void;
+  onEditar?: (epi: Tables<'epis'>) => void;
 }
 
-export function EpiCatalogoTable({ data, onExcluir }: EpiCatalogoTableProps) {
+export function EpiCatalogoTable({ data, onExcluir, onEditar }: EpiCatalogoTableProps) {
   return (
     <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
       <div className="h-[2px] bg-gradient-to-r from-primary via-accent to-primary/50" />
@@ -32,7 +39,7 @@ export function EpiCatalogoTable({ data, onExcluir }: EpiCatalogoTableProps) {
                   <TableHead className="font-display font-semibold text-xs">Categoria</TableHead>
                   <TableHead className="font-display font-semibold text-xs">Estoque</TableHead>
                   <TableHead className="font-display font-semibold text-xs">Validade</TableHead>
-                  <TableHead className="font-display font-semibold text-xs w-[80px] pr-6">Ações</TableHead>
+                  <TableHead className="font-display font-semibold text-xs w-[100px] pr-6">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

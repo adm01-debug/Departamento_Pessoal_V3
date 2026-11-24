@@ -36,6 +36,10 @@ const tipoLabels: Record<string, string> = {
   suspensao_disciplinar: 'Suspensão Disc.',
   outros: 'Outros'};
 
+/** Espelha o trigger tr_impedir_alteracao_afastamento_encerrado: encerrado/cancelado/aprovado é imutável. */
+const podeProrrogar = (af: AfastamentoItem): boolean =>
+  af.status !== 'encerrado' && af.status !== 'cancelado' && !af.aprovado_em;
+
 interface AfastamentoTableProps {
   data: any[];
   onEdit: (afastamento: any) => void;
@@ -191,7 +195,15 @@ export function AfastamentoTable({ data, onEdit, onProrrogacao, onDocuments, onT
                     <DropdownMenuItem onClick={() => onDocuments(af)}>
                       <FileText className="mr-2 h-4 w-4" /> Documentos
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onProrrogacao(af)}>
+                    <DropdownMenuItem
+                      disabled={!podeProrrogar(af)}
+                      title={
+                        podeProrrogar(af)
+                          ? undefined
+                          : 'Afastamento encerrado, cancelado ou aprovado não pode ser prorrogado'
+                      }
+                      onClick={() => onProrrogacao(af)}
+                    >
                       <Calendar className="mr-2 h-4 w-4" /> Prorrogar
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />

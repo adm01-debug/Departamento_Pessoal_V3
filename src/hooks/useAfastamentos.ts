@@ -138,3 +138,18 @@ export function useDocumentosAfastamento(afastamentoId?: string) {
     excluir: excluirMutation.mutateAsync,
   };
 }
+
+/**
+ * Afastamentos recentes de um colaborador (Dossiê → Férias & Afastamentos).
+ * Chave na família ['afastamentos'], que os writers da área já invalidam.
+ */
+export function useAfastamentosRecentes(colaboradorId: string, dias = 60) {
+  const { empresaAtual } = useEmpresas();
+  return useQuery({
+    queryKey: ['afastamentos', 'recentes', colaboradorId, empresaAtual?.id, dias],
+    queryFn: async () =>
+      mockOr(getMockAfastamentos(colaboradorId)) ??
+      afastamentoService.listarHistoricoRecente(colaboradorId, empresaAtual!.id, dias),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
+  });
+}

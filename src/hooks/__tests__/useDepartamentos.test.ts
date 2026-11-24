@@ -24,7 +24,9 @@ function wrapper({ children }: { children: React.ReactNode }) {
 }
 
 describe('useDepartamentos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns departamentos array', async () => {
     const { result } = renderHook(() => useDepartamentos(), { wrapper });

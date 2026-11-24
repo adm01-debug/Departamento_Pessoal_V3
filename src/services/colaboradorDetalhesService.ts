@@ -245,6 +245,19 @@ export async function salvarPeriodoExperiencia(colaboradorId: string, dados: Dad
     if (error) throw error;
     return data;
   }
+  const { data, error } = await supabase
+    .from('periodos_experiencia')
+    .insert(
+      validateTablePayload(
+        'periodos_experiencia',
+        [{ ...dados, colaborador_id: colaboradorId }],
+        'colaboradorDetalhesService:periodos_experiencia'
+      )
+    )
+    .select()
+    .maybeSingle();
+  if (error) throw error;
+  return data;
 }
 
 // =============================================

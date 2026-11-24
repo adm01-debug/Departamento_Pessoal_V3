@@ -363,7 +363,6 @@ export default function FinanceiroBancarioPage() {
             <TabsList className="grid w-full grid-cols-2 max-w-[400px] mb-4">
               <TabsTrigger value="remessas">Remessas CNAB</TabsTrigger>
               <TabsTrigger value="pix">Lotes PIX</TabsTrigger>
-              <TabsTrigger value="cambio">Taxas de Câmbio</TabsTrigger>
             </TabsList>
             <TabsContent value="remessas">
               <Card className="border border-border/30 rounded-2xl overflow-hidden">

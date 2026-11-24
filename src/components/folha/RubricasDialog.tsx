@@ -32,6 +32,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 
 export function RubricasDialog() {
+  const { empresaAtual } = useEmpresas();
   const [isOpen, setIsOpen] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [newRubrica, setNewRubrica] = useState({
@@ -103,6 +104,82 @@ export function RubricasDialog() {
       toast.error(safeErrorMessage(error, 'Erro ao remover rubrica.'));
     }});
 
+  const importarPadraoMutation = useMutation({
+    mutationFn: async () => {
+      const { data: existentes, error: selectError } = await supabase.from('rubricas_folha').select('codigo');
+      if (selectError) throw selectError;
+      const codigosExistentes = new Set((existentes ?? []).map((r) => r.codigo));
+      const novas = RUBRICAS_PADRAO.filter((r) => !codigosExistentes.has(r.codigo)).map((r) => ({
+        codigo: r.codigo,
+        descricao: r.descricao,
+        tipo: r.tipo === 'informativa' ? ('informativo' as const) : r.tipo,
+        incide_inss: r.incide_inss,
+        incide_fgts: r.incide_fgts,
+        incide_irrf: r.incide_irrf,
+        automatico: false,
+        ativo: true,
+        empresa_id: empresaAtual?.id ?? null,
+      }));
+      if (novas.length === 0) return 0;
+      const { error } = await supabase
+        .from('rubricas_folha')
+        .insert(validateTablePayload('rubricas_folha', novas, 'RubricasDialog:importarPadrao'));
+      if (error) throw error;
+      return novas.length;
+    },
+    onSuccess: (inseridas: number) => {
+      queryClient.invalidateQueries({ queryKey: ['rubricas_folha'] });
+      if (inseridas === 0) {
+        toast.info('Todas as rubricas padrão já estão cadastradas.');
+      } else {
+        toast.success(`${inseridas} rubrica(s) padrão importada(s) com sucesso.`);
+      }
+    },
+    onError: (error: unknown) => {
+      toast.error(safeErrorMessage(error, 'Erro ao importar rubricas padrão.'));
+    },
+  });
+
+  const corrigirMutation = useMutation({
+    mutationFn: async ({
+      id,
+      correcao,
+    }: {
+      id: string;
+      correcao: NonNullable<ReturnType<typeof sugerirCorrecaoRubrica>>;
+    }) => {
+      const { data, error } = await supabase
+        .from('rubricas_folha')
+        .update(
+          validateTablePayload(
+            'rubricas_folha',
+            {
+              tipo: correcao.tipo as 'provento' | 'desconto' | 'informativo',
+              incide_inss: correcao.incide_inss,
+              incide_fgts: correcao.incide_fgts,
+              incide_irrf: correcao.incide_irrf,
+              descricao: correcao.descricao,
+            },
+            'RubricasDialog:rubricas_folha'
+          )
+        )
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual?.id ?? '')
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) {
+        throw new Error('Nenhuma rubrica foi alterada. Verifique se você tem permissão para editar esta rubrica.');
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rubricas_folha'] });
+      toast.success('Rubrica saneada com sucesso!');
+    },
+    onError: (error: unknown) => {
+      toast.error(safeErrorMessage(error, 'Erro ao corrigir a rubrica.'));
+    },
+  });
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -124,9 +201,10 @@ export function RubricasDialog() {
                 size="sm" 
                 className="gap-2 border-primary/20 text-primary hover:bg-primary/5"
                 onClick={() => {
-                  if (confirm('Deseja importar as rubricas padrão do eSocial?')) {
-                    toast.success('Rubricas padrão importadas com sucesso!');
-                    queryClient.invalidateQueries({ queryKey: ['rubricas_folha'] });
+                  if (
+                    confirm('Deseja importar as rubricas padrão do eSocial? Códigos já cadastrados serão mantidos.')
+                  ) {
+                    importarPadraoMutation.mutate();
                   }
                 }}
               >

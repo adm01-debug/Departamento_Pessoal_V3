@@ -127,10 +127,37 @@ interface DocumentoProcesso {
 export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailSheetProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  // Parametros das modalidades, vindos da main: o motor aceita aviso trabalhado,
+  // ferias vencidas, saldo FGTS, pedido de demissao com desconto de aviso
+  // (art. 487 §2º) e termino de contrato a prazo (arts. 479/480). Persistem em
+  // `detalhes_calculo._parametros` e sao relidos aqui a cada registro — a versao
+  // desta tela na muri lia esses valores de colunas que nao existem em
+  // `desligamentos`, entao a rescisao saia subcalculada.
+  const [params, setParams] = useState<ParametrosCalculo>(
+    (desligamento?.detalhes_calculo as { _parametros?: ParametrosCalculo } | null | undefined)?._parametros ?? {}
+  );
+  const [paramsLoaded, setParamsLoaded] = useState('');
   const [calculating, setCalculating] = useState(false);
   const [homologating, setHomologating] = useState(false);
   const [mostrarBaseCalculo, setMostrarBaseCalculo] = useState(false);
   const d = desligamento;
+  if (d && paramsLoaded !== d.id) {
+    setParamsLoaded(d.id);
+    setParams((d.detalhes_calculo as { _parametros?: ParametrosCalculo } | null | undefined)?._parametros ?? {});
+  }
+
+  // Itemizado das verbas: o cálculo passa a gravar a rescisão linha a linha em
+  // `verbas_rescisorias` (rescisaoService.calcularESalvar). Registros calculados
+  // antes disso têm a tabela vazia — a aba cai nas colunas decompostas de
+  // `desligamentos`, que seguem sendo a fonte dos totais.
+  const { data: verbas = [] } = useQuery({
+    queryKey: ['verbas-rescisorias', d?.id],
+    queryFn: () => (d ? rescisaoService.obterVerbas(d.id) : Promise.resolve([])),
+    enabled: Boolean(d?.id),
+    staleTime: 30_000,
+  });
+  const verbasProvento = verbas.filter((v) => v.tipo === 'provento');
+  const verbasDesconto = verbas.filter((v) => v.tipo === 'desconto');
 
   if (!d) return null;
 
@@ -233,6 +260,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
         d.empresa_id
       );
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
+      queryClient.invalidateQueries({ queryKey: ['verbas-rescisorias', d.id] });
       toast.success('Rescisão calculada com sucesso');
     } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao calcular rescisão.'));

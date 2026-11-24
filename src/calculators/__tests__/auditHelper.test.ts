@@ -37,7 +37,9 @@ describe('signCalculation', () => {
 });
 
 describe('auditCalculation', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('calls auditLogger.log with correct tabela and acao', async () => {
     await auditCalculation('col-1', '2024-07', { proventos: 3000, descontos: 300, salarioLiquido: 2700 });
@@ -48,9 +50,7 @@ describe('auditCalculation', () => {
 
   it('calls auditLogger.log with colaboradorId as registro_id', async () => {
     await auditCalculation('colaborador-abc', '2024-07', {});
-    expect(mockAuditLog).toHaveBeenCalledWith(
-      expect.objectContaining({ registro_id: 'colaborador-abc' })
-    );
+    expect(mockAuditLog).toHaveBeenCalledWith(expect.objectContaining({ registro_id: 'colaborador-abc' }));
   });
 
   it('returns a SHA-256 hex string (signature)', async () => {

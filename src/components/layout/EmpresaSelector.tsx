@@ -17,8 +17,15 @@ import { DROPDOWN_MOTION } from '@/components/ui/motion-presets';
 
 interface EmpresaSelectorProps {
   collapsed: boolean;
-  empresaAtual: { id: string; nome_fantasia?: string | null; razao_social?: string | null; cnpj?: string | null } | null;
-  userEmpresas: Array<{ empresa_id: string; empresa?: { nome_fantasia?: string | null; razao_social?: string | null } | null }> | undefined;
+  empresaAtual: {
+    id: string;
+    nome_fantasia?: string | null;
+    razao_social?: string | null;
+    cnpj?: string | null;
+  } | null;
+  userEmpresas:
+    | Array<{ empresa_id: string; empresa?: { nome_fantasia?: string | null; razao_social?: string | null } | null }>
+    | undefined;
   temMultiplasEmpresas: boolean;
   trocarEmpresa: (id: string) => void;
   /**
@@ -46,7 +53,9 @@ export function EmpresaSelector({ collapsed, empresaAtual, userEmpresas, temMult
               <Building2 className="h-4 w-4 text-primary" />
             </div>
           </TooltipTrigger>
-          <TooltipContent side="right"><p>{empresaNome}</p></TooltipContent>
+          <TooltipContent side="right">
+            <p>{empresaNome}</p>
+          </TooltipContent>
         </Tooltip>
       </div>
     );
@@ -120,7 +129,10 @@ export function EmpresaSelector({ collapsed, empresaAtual, userEmpresas, temMult
               {userEmpresas?.map((ue) => (
                 <button
                   key={ue.empresa_id}
-                  onClick={() => { trocarEmpresa(ue.empresa_id); setMenuOpen(false); }}
+                  onClick={() => {
+                    trocarEmpresa(ue.empresa_id);
+                    setMenuOpen(false);
+                  }}
                   className={cn(
                     'w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-left transition-colors',
                     ue.empresa_id === empresaAtual?.id

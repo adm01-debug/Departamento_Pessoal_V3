@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# ============================================================================
+# PLANO_100 · Runner de validação das migrations em Postgres real
+# Sobe postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24 (docker), aplica stubs Supabase + drift simulado +
+# as migrations 20260830*_plano100_* (2 passes = idempotência) e a suíte de
+# asserts comportamentais. Qualquer falha → exit ≠ 0.
+# Uso: bash scripts/tests/migrations-plano100.sh
+# Vars: MIGTEST_IMAGE (default postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24), MIGTEST_KEEP=1 p/ inspecionar
+# ============================================================================
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
+NAME="dp-migtest-$$"
+FIXTURES="$REPO_ROOT/supabase/tests/plano100"
+MIGS=$(ls "$REPO_ROOT"/supabase/migrations/2026083*_plano100_*.sql 2>/dev/null | sort)
+
+[ -n "$MIGS" ] || { echo "❌ nenhuma migration plano100 encontrada"; exit 1; }
+command -v docker >/dev/null || { echo "❌ docker necessário"; exit 1; }
+
+LOG_DIR="$(mktemp -d)"
+cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true; rm -rf "$LOG_DIR"; }
+trap cleanup EXIT
+
+echo "── Container $IMAGE ($NAME)"
+docker rm -f -v "$NAME" >/dev/null 2>&1 || true
+docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
+
+# O entrypoint oficial inicia primeiro um servidor temporário somente via socket
+# para executar a inicialização e depois o reinicia em modo definitivo. Aguardar
+# pelo socket gera uma corrida no CI: o primeiro pg_isready passa e a chamada
+# seguinte pode cair exatamente durante o restart. TCP só fica disponível no
+# servidor definitivo, portanto é o sinal de readiness correto para esta suíte.
+postgres_ready=0
+for i in $(seq 1 60); do
+  if docker exec "$NAME" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then
+    postgres_ready=1
+    break
+  fi
+
+  if [ "$(docker inspect -f '{{.State.Running}}' "$NAME" 2>/dev/null || true)" != "true" ]; then
+    echo "❌ container postgres encerrou durante a inicialização"
+    docker logs "$NAME" >&2 || true
+    exit 1
+  fi
+
+  sleep 1
+done
+if [ "$postgres_ready" != "1" ]; then
+  echo "❌ postgres não ficou pronto em 60 segundos"
+  docker logs "$NAME" >&2 || true
+  exit 1
+fi
+
+run_sql() { # arquivo, rótulo
+  docker cp "$1" "$NAME":/tmp/x.sql >/dev/null
+  if docker exec "$NAME" psql -U postgres -v ON_ERROR_STOP=1 -q -f /tmp/x.sql >/dev/null 2>"$LOG_DIR/err.log"; then
+    echo "✅ $2"
+  else
+    echo "❌ $2"; cat "$LOG_DIR/err.log" >&2; exit 1
+  fi
+}
+
+echo "── Stubs Supabase + drift simulado"
+run_sql "$FIXTURES/00_setup_stubs.sql" "setup"
+
+for pass in 1 2; do
+  for m in $MIGS; do
+    run_sql "$m" "pass$pass: $(basename "$m")"
+  done
+done
+
+echo "── Asserts comportamentais"
+docker cp "$FIXTURES/20_asserts.sql" "$NAME":/tmp/a.sql >/dev/null
+if docker exec "$NAME" psql -U postgres -v ON_ERROR_STOP=1 -f /tmp/a.sql > "$LOG_DIR/asserts.log" 2>&1; then
+  grep -q 'PLANO100_ASSERTS_OK' "$LOG_DIR/asserts.log" \
+    || { echo "❌ marcador PLANO100_ASSERTS_OK ausente"; exit 1; }
+  echo "✅ $(grep -o 'PLANO100_ASSERTS_OK.*' "$LOG_DIR/asserts.log")"
+else
+  echo "❌ asserts falharam:"; tail -25 "$LOG_DIR/asserts.log" >&2; exit 1
+fi
+echo "✅ MIGTEST_OK"

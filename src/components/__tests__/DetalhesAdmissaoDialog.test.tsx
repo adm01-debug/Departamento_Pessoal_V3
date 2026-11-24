@@ -138,6 +138,10 @@ const MOCK_ADMISSAO = {
 };
 
 describe('DetalhesAdmissaoDialog', () => {
+  beforeEach(() => {
+    workflowMock.mockReturnValue({ workflow: null, isLoading: false, isError: false });
+  });
+
   it('returns null when admissao is null', () => {
     const { container } = render(<DetalhesAdmissaoDialog admissao={null} open={true} onOpenChange={vi.fn()} />);
     expect(container.firstChild).toBeNull();
@@ -179,9 +183,49 @@ describe('DetalhesAdmissaoDialog', () => {
     expect(screen.getByText('Editar informações')).toBeInTheDocument();
   });
 
-  it('renders Ver Portal button', () => {
+  it('copia o link do portal (sem abrir sessão do candidato) e gera token se não houver vigente', async () => {
+    maybeSingleMock.mockResolvedValueOnce({ data: null, error: null });
+    enviarLinkMock.mockResolvedValueOnce({ token: 'tok-novo' });
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
     render(<DetalhesAdmissaoDialog admissao={MOCK_ADMISSAO} open={true} onOpenChange={vi.fn()} />);
-    expect(screen.getByText(/Ver Portal/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Copiar link do Portal/i }));
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith(`${window.location.origin}/contratacao?token=tok-novo`));
+    expect(enviarLinkMock).toHaveBeenCalledWith('adm-1', 'fernanda@test.com');
+    expect(toastMock.success).toHaveBeenCalledWith('Link copiado — envie ao candidato');
+    expect(openSpy).not.toHaveBeenCalled();
+    openSpy.mockRestore();
+  });
+
+  it('desabilita o link do portal em admissão encerrada e não gera token', () => {
+    enviarLinkMock.mockClear();
+    const encerrada = { ...MOCK_ADMISSAO, etapa: 'concluida' } as Tables<'admissoes'>;
+    render(<DetalhesAdmissaoDialog admissao={encerrada} open={true} onOpenChange={vi.fn()} />);
+    const btn = screen.getByRole('button', { name: /Copiar link do Portal/i });
+    expect(btn).toBeDisabled();
+    expect(btn).toHaveAttribute('title', expect.stringMatching(/Admissão encerrada/));
+    fireEvent.click(btn);
+    expect(enviarLinkMock).not.toHaveBeenCalled();
+  });
+
+  it('não afirma histórico vazio enquanto a consulta do workflow carrega', () => {
+    workflowMock.mockReturnValue({ workflow: null, isLoading: true, isError: false });
+    render(<DetalhesAdmissaoDialog admissao={MOCK_ADMISSAO} open={true} onOpenChange={vi.fn()} />);
+    expect(screen.queryByText(/Nenhum evento registrado/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Carregando histórico/i)).toBeInTheDocument();
+  });
+
+  it('não afirma histórico vazio quando a consulta do workflow falha', () => {
+    workflowMock.mockReturnValue({ workflow: null, isLoading: false, isError: true });
+    render(<DetalhesAdmissaoDialog admissao={MOCK_ADMISSAO} open={true} onOpenChange={vi.fn()} />);
+    expect(screen.queryByText(/Nenhum evento registrado/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/NÃO significa que não houve evento/i)).toBeInTheDocument();
+  });
+
+  it('afirma histórico vazio só quando a consulta terminou sem erro', () => {
+    render(<DetalhesAdmissaoDialog admissao={MOCK_ADMISSAO} open={true} onOpenChange={vi.fn()} />);
+    expect(screen.getByText(/Nenhum evento registrado/i)).toBeInTheDocument();
   });
 
   // ─── "Ir para ação" (Próxima ação → seção real da própria Central) ────────

@@ -12,8 +12,6 @@ import { Users, Download, FileSpreadsheet, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useExcelExport } from '@/hooks/useExcelExport';
 import { usePDFExport } from '@/hooks/usePDFExport';
-import { useDepartamentos } from '@/hooks/useDepartamentos';
-import { useCargos } from '@/hooks/useCargos';
 import { useColaboradores } from '@/hooks/useColaboradores';
 import { useVinculosResumo } from '@/hooks/useVinculos';
 import { useEmpresas } from '@/hooks/useEmpresas';
@@ -120,6 +118,27 @@ export default function ColaboradoresPage() {
     { value: 'ferias', label: 'Em Férias' },
     { value: 'afastado', label: 'Afastados' },
   ];
+
+  // Chips de filtro ativo (vem da `muri`). A busca por texto NAO vira chip: o
+  // proprio campo ja tem como limpar, e o texto pode ser longo. 'all' significa
+  // "sem filtro", entao nao gera chip.
+  const activeFilterChips = [
+    status !== 'all' && {
+      key: 'status',
+      label: statusOptions.find((o) => o.value === status)?.label ?? status,
+      onRemove: () => handleStatusChange('all'),
+    },
+    departamento !== 'all' && {
+      key: 'departamento',
+      label: departamento,
+      onRemove: () => handleDeptoChange('all'),
+    },
+    cargo !== 'all' && {
+      key: 'cargo',
+      label: cargo,
+      onRemove: () => handleCargoChange('all'),
+    },
+  ].filter(Boolean) as ActiveFilter[];
 
   const handleExportExcel = async () => {
     if (!empresaAtual?.id) return;

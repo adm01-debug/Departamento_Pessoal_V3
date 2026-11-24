@@ -162,5 +162,17 @@ describe('rescisaoService', () => {
       await expect(rescisaoService.processarPagamento('desl-1', 'empresa-uuid-1')).rejects.toThrow(/assinada/);
       expect(vinculoService.fecharVinculoAberto).not.toHaveBeenCalled();
     });
+
+    it('fecha o vínculo em aberto do colaborador após confirmar o pagamento', async () => {
+      mockPagamentoCalls();
+      await rescisaoService.processarPagamento('d1', EMP);
+      expect(vinculoService.fecharVinculoAberto).toHaveBeenCalledWith('c1', '2026-06-01');
+    });
+
+    it('bloqueia o pagamento (e não fecha vínculo) se a rescisão não estiver assinada pelas duas partes', async () => {
+      mockPagamentoCalls({ deslig: { ...desligRow, assinado_colaborador: false } });
+      await expect(rescisaoService.processarPagamento('d1', EMP)).rejects.toThrow(/assinada/);
+      expect(vinculoService.fecharVinculoAberto).not.toHaveBeenCalled();
+    });
   });
 });

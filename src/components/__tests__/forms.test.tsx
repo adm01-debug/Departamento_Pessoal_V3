@@ -91,22 +91,38 @@ describe('FormSwitch', () => {
 
 describe('FormSection', () => {
   it('renders title when provided', () => {
-    render(<FormSection title="Dados Pessoais"><div /></FormSection>);
+    render(
+      <FormSection title="Dados Pessoais">
+        <div />
+      </FormSection>
+    );
     expect(screen.getByText('Dados Pessoais')).toBeInTheDocument();
   });
 
   it('renders description when provided', () => {
-    render(<FormSection title="Contato" description="Informações de contato"><div /></FormSection>);
+    render(
+      <FormSection title="Contato" description="Informações de contato">
+        <div />
+      </FormSection>
+    );
     expect(screen.getByText('Informações de contato')).toBeInTheDocument();
   });
 
   it('renders children content', () => {
-    render(<FormSection><span>Filho</span></FormSection>);
+    render(
+      <FormSection>
+        <span>Filho</span>
+      </FormSection>
+    );
     expect(screen.getByText('Filho')).toBeInTheDocument();
   });
 
   it('does not render header block when no title or description', () => {
-    const { container } = render(<FormSection><div>content</div></FormSection>);
+    const { container } = render(
+      <FormSection>
+        <div>content</div>
+      </FormSection>
+    );
     expect(container.querySelector('h3')).toBeNull();
   });
 
@@ -116,7 +132,11 @@ describe('FormSection', () => {
   });
 
   it('FormActions renders children', () => {
-    render(<FormActions><button>Salvar</button></FormActions>);
+    render(
+      <FormActions>
+        <button>Salvar</button>
+      </FormActions>
+    );
     expect(screen.getByText('Salvar')).toBeInTheDocument();
   });
 });

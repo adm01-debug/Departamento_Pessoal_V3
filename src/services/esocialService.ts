@@ -307,6 +307,9 @@ export async function listarCertificados(empresaId: string): Promise<any[]> {
   
 }
 
+// #8: o upload de certificado NÃO passa pela bridge — a edge
+// `upload-certificado` cifra senha e arquivo server-side (AES-256/vault)
+// com service_role + RH + aal2. Senha em claro nunca toca o banco.
 export async function adicionarCertificado(cert: {
   empresa_id: string;
   subject: string;

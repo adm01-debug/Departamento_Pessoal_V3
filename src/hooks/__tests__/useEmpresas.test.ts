@@ -48,7 +48,7 @@ function createWrapper() {
     React.createElement(QueryClientProvider, { client: qc }, children);
 }
 
-import { useEmpresas, useEmpresaStore } from '../useEmpresas';
+import { compararOrdemExibicao, useEmpresas, useEmpresaStore } from '../useEmpresas';
 
 describe('useEmpresas', () => {
   beforeEach(() => {

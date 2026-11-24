@@ -44,6 +44,7 @@ export function useHistoricoContratos(colaboradorId: string) {
   return {
     historico: query.data || [],
     isLoading: query.isLoading,
+    isError: query.isError,
     criar: criarMutation.mutateAsync,
     excluir: excluirMutation.mutateAsync,
   };

@@ -2,14 +2,21 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuSeparator, DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { User, Settings, LogOut, Shield, HelpCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+
+// Mesmo canal de suporte do botão "Dar Feedback" da sidebar (AppSidebar.tsx).
+const SUPORTE_MAILTO =
+  'mailto:suporte@promobrindes.com.br?subject=' + encodeURIComponent('Ajuda — Departamento Pessoal V3');
 
 interface UserProfileMenuProps {
   user?: { name: string; email: string; avatar?: string };
@@ -19,7 +26,13 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const initials = user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'US';
+  const initials =
+    user?.name
+      ?.split(' ')
+      .map((n) => n[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase() || 'US';
 
   const handleSignOut = async () => {
     setIsLoggingOut(true);
@@ -75,7 +88,9 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
         <DropdownMenuSeparator className="bg-border/30" />
 
         <DropdownMenuItem onClick={() => navigate('/perfil')} className="gap-3 py-2.5 rounded-lg cursor-pointer">
-          <div className="p-1.5 rounded-lg bg-accent/80"><User className="h-3.5 w-3.5" /></div>
+          <div className="p-1.5 rounded-lg bg-accent/80">
+            <User className="h-3.5 w-3.5" />
+          </div>
           <div>
             <p className="text-sm font-body font-medium">Meu Perfil</p>
             <p className="text-[11px] text-muted-foreground">Dados pessoais</p>
@@ -83,7 +98,9 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
         </DropdownMenuItem>
 
         <DropdownMenuItem onClick={() => navigate('/configuracoes')} className="gap-3 py-2.5 rounded-lg cursor-pointer">
-          <div className="p-1.5 rounded-lg bg-accent/80"><Settings className="h-3.5 w-3.5" /></div>
+          <div className="p-1.5 rounded-lg bg-accent/80">
+            <Settings className="h-3.5 w-3.5" />
+          </div>
           <div>
             <p className="text-sm font-body font-medium">Configurações</p>
             <p className="text-[11px] text-muted-foreground">Preferências do sistema</p>
@@ -91,19 +108,25 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
         </DropdownMenuItem>
 
         <DropdownMenuItem onClick={() => navigate('/seguranca')} className="gap-3 py-2.5 rounded-lg cursor-pointer">
-          <div className="p-1.5 rounded-lg bg-accent/80"><Shield className="h-3.5 w-3.5" /></div>
+          <div className="p-1.5 rounded-lg bg-accent/80">
+            <Shield className="h-3.5 w-3.5" />
+          </div>
           <div>
             <p className="text-sm font-body font-medium">Segurança</p>
             <p className="text-[11px] text-muted-foreground">Senha e autenticação</p>
           </div>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="gap-3 py-2.5 rounded-lg cursor-pointer">
-          <div className="p-1.5 rounded-lg bg-accent/80"><HelpCircle className="h-3.5 w-3.5" /></div>
-          <div>
-            <p className="text-sm font-body font-medium">Ajuda</p>
-            <p className="text-[11px] text-muted-foreground">Suporte e documentação</p>
-          </div>
+        <DropdownMenuItem asChild className="gap-3 py-2.5 rounded-lg cursor-pointer">
+          <a href={SUPORTE_MAILTO}>
+            <div className="p-1.5 rounded-lg bg-accent/80">
+              <HelpCircle className="h-3.5 w-3.5" />
+            </div>
+            <div>
+              <p className="text-sm font-body font-medium">Ajuda</p>
+              <p className="text-[11px] text-muted-foreground">Falar com o suporte</p>
+            </div>
+          </a>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator className="bg-border/30" />

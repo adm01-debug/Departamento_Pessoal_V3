@@ -322,7 +322,8 @@ Responda em português brasileiro, tom profissional.`;
               'Authorization': `Bearer ${authToken}`,
             },
             body: JSON.stringify({
-              model: AI_GATEWAY_URL ? 'gpt-4o-mini' : 'gpt-4o-mini',
+              model: USA_DEEPSEEK ? aiModel() : 'gpt-4o-mini',
+              ...(USA_DEEPSEEK ? AI_NO_THINKING : {}),
               messages: [{ role: 'user', content: prompt }],
               max_tokens: 600,
               temperature: 0.3,

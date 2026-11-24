@@ -75,6 +75,24 @@ describe('usePontoMelhorado', () => {
     expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
   });
 
+  // Guardas de tenant resgatadas da branch `muri`. Sem empresa selecionada a
+  // main montava a clausula como `empresa_id=eq.undefined` (por causa do
+  // `empresaId!`) e o usuario via erro de uuid invalido vindo do banco.
+  it('sem empresaId a consulta NAO sai e a lista vem vazia', async () => {
+    const { result } = renderHook(() => usePontoMelhorado(undefined), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.solicitacoes).toEqual([]);
+    expect(mockFrom).not.toHaveBeenCalledWith('solicitacoes_ajuste_ponto');
+  });
+
+  it('sem empresaId responderSolicitacao falha explicitamente, sem tocar no banco', async () => {
+    const { result } = renderHook(() => usePontoMelhorado(undefined), { wrapper });
+    await expect(result.current.responderSolicitacao.mutateAsync({ id: 's1', status: 'aprovado' })).rejects.toThrow(
+      /empresa_id obrigatório/
+    );
+    expect(mockFrom).not.toHaveBeenCalledWith('solicitacoes_ajuste_ponto');
+  });
+
   it('exposes criarSolicitacao and responderSolicitacao mutations', () => {
     const { result } = renderHook(() => usePontoMelhorado('emp-1'), { wrapper });
     expect(typeof result.current.criarSolicitacao.mutate).toBe('function');

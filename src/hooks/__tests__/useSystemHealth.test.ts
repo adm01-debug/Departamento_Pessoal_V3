@@ -94,7 +94,7 @@ describe('useSystemHealth', () => {
       data: { session: { user: { id: 'user-1' } } },
     });
     mockInvoke.mockResolvedValue({
-      data: { monitoring: { success_rate: 98, avg_latency: 80, recent_failures: 0 } },
+      data: { monitoring: { success_rate_pct: 98, avg_latency_ms: 80, recent_failures: 0 } },
       error: null,
     });
     vi.spyOn(performance, 'now')
@@ -107,7 +107,7 @@ describe('useSystemHealth', () => {
       expect(result.current.metrics).not.toBeNull();
     });
 
-    expect(result.current.metrics?.success_rate).toBe(98);
+    expect(result.current.metrics?.success_rate_pct).toBe(98);
   });
 
   it('sets status to slow when success_rate drops below 90%', async () => {
@@ -115,7 +115,7 @@ describe('useSystemHealth', () => {
       data: { session: { user: { id: 'user-1' } } },
     });
     mockInvoke.mockResolvedValue({
-      data: { monitoring: { success_rate: 80, avg_latency: 100, recent_failures: 5 } },
+      data: { monitoring: { success_rate_pct: 80, avg_latency_ms: 100, recent_failures: 5 } },
       error: null,
     });
     vi.spyOn(performance, 'now')
@@ -127,6 +127,24 @@ describe('useSystemHealth', () => {
     await waitFor(() => {
       expect(result.current.status).toBe('slow');
     });
+  });
+
+  it('keeps status online when there is no telemetry yet (success_rate_pct null)', async () => {
+    mockGetSession.mockResolvedValue({
+      data: { session: { user: { id: 'user-1' } } },
+    });
+    mockInvoke.mockResolvedValue({
+      data: { monitoring: { success_rate_pct: null, avg_latency_ms: null, recent_failures: 0 } },
+      error: null,
+    });
+    vi.spyOn(performance, 'now').mockReturnValueOnce(0).mockReturnValueOnce(100);
+
+    const { result } = renderHook(() => useSystemHealth());
+
+    await waitFor(() => {
+      expect(result.current.metrics).not.toBeNull();
+    });
+    expect(result.current.status).toBe('online');
   });
 
   it('returns null metrics initially', () => {

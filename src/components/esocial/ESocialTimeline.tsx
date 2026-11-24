@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ESocialEvento } from '@/services/esocialService';
+import type { ESocialEvento } from '@/services/esocialService';
 import { Card } from '@/components/ui/card';
 import { FileCheck, Send, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import { format } from 'date-fns';

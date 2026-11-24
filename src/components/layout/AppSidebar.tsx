@@ -11,7 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { useState, memo, useCallback, useEffect } from 'react';
+import { useState, memo, useCallback, useEffect, useMemo } from 'react';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -78,6 +78,10 @@ export const menuGroups: MenuGroup[] = [
       { icon: CalendarClock, label: 'Turnos & Escalas', path: '/turnos', color: 'text-primary' },
       { icon: Umbrella, label: 'Férias', path: '/ferias', color: 'text-warning' },
       { icon: Heart, label: 'Afastamentos', path: '/afastamentos', color: 'text-destructive' },
+      // `/faltas` (FaltasPage, 485 linhas) estava registrada em App.tsx:219 e
+      // nao tinha entrada de menu nenhuma — tela pronta e inalcancavel. Nem a
+      // branch `muri` tinha: a lacuna e da propria main.
+      { icon: CalendarX, label: 'Faltas', path: '/faltas', color: 'text-destructive' },
       { icon: Calendar, label: 'Feriados', path: '/feriados', color: 'text-warning' },
       { icon: Fingerprint, label: 'Controle Acesso', path: '/controle-acesso', color: 'text-primary' },
     ]
@@ -133,7 +137,13 @@ export const menuGroups: MenuGroup[] = [
     icon: ShieldCheck,
     color: 'text-success',
     items: [
-      { icon: LayoutDashboard, label: 'Dashboard SST', path: '/admin/sst/dashboard', color: 'text-success' },
+      {
+        icon: LayoutDashboard,
+        label: 'Dashboard SST',
+        path: '/admin/sst/dashboard',
+        color: 'text-success',
+        adminOnly: true,
+      },
       { icon: Shield, label: 'Visão Geral SST', path: '/sst', color: 'text-success' },
       { icon: Building2, label: 'Clínicas Parceiras', path: '/admin/sst/clinicas', color: 'text-info' },
       { icon: CalendarClock, label: 'Agendamento de Exames', path: '/admin/sst/agendamentos', color: 'text-info' },
@@ -156,8 +166,14 @@ export const menuGroups: MenuGroup[] = [
       { icon: Calculator, label: 'Rescisão', path: '/calculadora-rescisao', color: 'text-warning' },
       { icon: Users, label: 'Importação', path: '/importacao', color: 'text-info' },
       { icon: Megaphone, label: 'Comunicação', path: '/comunicacao-interna', color: 'text-warning' },
-      { icon: Shield, label: 'Usuários', path: '/usuarios', color: 'text-warning' },
-      { icon: Settings, label: 'Configurações', path: '/configuracoes', color: 'text-muted-foreground' },
+      { icon: Shield, label: 'Usuários', path: '/usuarios', color: 'text-warning', adminOnly: true },
+      {
+        icon: Settings,
+        label: 'Configurações',
+        path: '/configuracoes',
+        color: 'text-muted-foreground',
+        adminOnly: true,
+      },
       { icon: Gift, label: 'Promo Brindes', path: '/promo-brindes', color: 'text-warning' },
       { icon: GitBranch, label: 'Vínculos Promo', path: '/promo-brindes/vinculos', color: 'text-info' },
       { icon: ClipboardList, label: 'Integrações', path: '/integracoes', color: 'text-info' },
@@ -361,7 +377,16 @@ export function AppSidebar({ onSearchOpen }: AppSidebarProps) {
   });
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
+  const visibleGroups = useMemo(
+    () =>
+      isAdmin
+        ? menuGroups
+        : menuGroups
+            .map((group) => ({ ...group, items: group.items.filter((item) => !item.adminOnly) }))
+            .filter((group) => group.items.length > 0),
+    [isAdmin]
+  );
   const { isInstallable, installApp } = usePWA();
 
   const handleLogout = async () => { 

@@ -1,4 +1,5 @@
-import { BaseService, ListOptions, ListResponse } from './baseService';
+import type { ListOptions, ListResponse } from './baseService';
+import { BaseService } from './baseService';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDateLocalISO } from '@/utils/dateLocal';
 import { validateUploadFile } from '@/utils/uploadValidation';
@@ -230,14 +231,20 @@ class AfastamentoService extends BaseService<AfastamentoRow> {
 
       if (error) throw error;
 
-      await this.atualizar(
-        d.afastamento_id,
-        {
-          data_fim_prevista: d.data_fim_nova,
-          status: 'prorrogado',
-        },
-        empresaId
-      );
+      try {
+        await this.atualizar(
+          d.afastamento_id,
+          {
+            data_fim_prevista: d.data_fim_nova,
+            status: 'prorrogado',
+          },
+          empresaId
+        );
+      } catch (e) {
+        // Compensação: sem o afastamento atualizado, a prorrogação não pode ficar órfã.
+        if (data?.id) await supabase.from('prorrogacoes_afastamento').delete().eq('id', data.id);
+        throw e;
+      }
 
       return data;
     } catch (e) {

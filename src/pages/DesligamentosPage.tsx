@@ -16,7 +16,9 @@ import { exportarDesligamentosExcel } from '@/utils/desligamentoExcel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SlidingIndicator } from '@/components/ui/sliding-indicator';
 import { loggerService } from '@/services/loggerService';
+import { resumoAtencao } from '@/components/desligamentos/desligamentosDerivacoes';
 import {
+  DesligamentoAtencaoBanner,
   DesligamentoKPIs,
   DesligamentoAtencaoBanner,
   TurnoverChart,

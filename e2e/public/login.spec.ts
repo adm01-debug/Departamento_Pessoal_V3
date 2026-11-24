@@ -14,9 +14,12 @@ test.describe('Tela de Login (público)', () => {
     await page.getByLabel(/senha|password/i).first().fill('senha-errada-123');
     await page.getByRole('button', { name: /entrar|login|acessar/i }).first().click();
 
-    // Aceita qualquer feedback de erro (toast, alert, mensagem inline)
+    // Aceita qualquer feedback de erro (toast, alert, mensagem inline).
+    // Budget 20s: o submit passa por checkLock (edge auth-login) + signIn no
+    // GoTrue e cold-start de edge function pode ultrapassar 10s no CI
+    // (evidência: botão ainda disabled no snapshot da falha de 2026-10-28).
     const erro = page.locator('[role="alert"], [data-sonner-toast], .text-destructive').first();
-    await expect(erro).toBeVisible({ timeout: 10_000 });
+    await expect(erro).toBeVisible({ timeout: 20_000 });
   });
 
   test('protege rotas privadas redirecionando para /login', async ({ page }) => {

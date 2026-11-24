@@ -52,7 +52,7 @@ export function ColaboradorFilters({
         <div className="relative flex-1 min-w-[220px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Buscar por nome, CPF ou e-mail..."
+            placeholder="Buscar por nome, matrícula, CPF, e-mail, cargo ou departamento..."
             value={currentFilters.search}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9 rounded-xl border-border/40 focus:ring-primary/20"

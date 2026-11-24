@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Database } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Database } from 'lucide-react';
 
 interface OffenderStats {
   count: number;
@@ -31,7 +31,9 @@ export function TelemetryTopOffenders({ offenders }: TelemetryTopOffendersProps)
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {offenders.map(([name, stats]) => (
             <div key={name} className="p-3 rounded-lg border border-border/50 bg-muted/30">
-              <p className="font-mono text-sm font-medium truncate" title={name}>{name}</p>
+              <p className="font-mono text-sm font-medium truncate" title={name}>
+                {name}
+              </p>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-xs text-muted-foreground">{stats.count}× alertas</span>
                 <span className="text-xs text-destructive">max {formatDuration(stats.maxMs)}</span>

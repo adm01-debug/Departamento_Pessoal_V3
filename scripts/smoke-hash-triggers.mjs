@@ -39,7 +39,11 @@ function psql(sql) {
 const INVENTORY_SQL = `
 SELECT p.proname
        || E'\t' || coalesce(string_agg(DISTINCT c.relname, ','), '')
-       || E'\t' || coalesce(bool_or((t.tgtype & 2) = 2 AND (t.tgtype & 28) > 0)::text, 'false')
+       -- bool_and: TODO gatilho da função precisa selar (bool_or aprovava a função
+       -- com uma tabela BEFORE e outra AFTER). Habilitado (O/A), por linha (1),
+       -- BEFORE (2) e INSERT/UPDATE (4|16) — DELETE (8) não grava NEW.
+       || E'\t' || coalesce(bool_and(t.tgenabled IN ('O', 'A') AND (t.tgtype & 1) = 1
+                                    AND (t.tgtype & 2) = 2 AND (t.tgtype & 20) > 0)::text, 'false')
        || E'\t' || coalesce(array_to_string(p.proconfig, ','), '')
 FROM pg_proc p
 JOIN pg_namespace n ON n.oid = p.pronamespace AND n.nspname = 'public'
@@ -98,7 +102,7 @@ function main() {
     }
     if (!row.beforeWrite) {
       failures.push(
-        `${row.fn}: gatilho não é BEFORE INSERT/UPDATE — o hash não chegaria ao disco`,
+        `${row.fn}: gatilho não é BEFORE INSERT/UPDATE por linha (ou está desabilitado) em alguma tabela — o hash não chegaria ao disco`,
       );
     }
 

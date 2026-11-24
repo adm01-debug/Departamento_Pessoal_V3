@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const { MockJsPDF, mockSave, mockToastSuccess } = vi.hoisted(() => {
   const mockSave = vi.fn();
+  const mockText = vi.fn();
   // Vitest 4 requires 'function' or 'class' (not arrow) for constructor mocks
   const MockJsPDF = vi.fn().mockImplementation(function(this: any) {
     this.setFontSize = vi.fn(); this.setTextColor = vi.fn(); this.setFont = vi.fn();
@@ -71,6 +72,31 @@ describe('gerarPDFRescisao', () => {
     });
   });
 
+  // Procedência: sem este carimbo o TRCT saía sem dizer de quando era o
+  // cálculo, se estava assinado e qual motor o produziu.
+  const linhaProcedencia = () => mockText.mock.calls.map((c) => String(c[0])).find((t) => t.startsWith('Cálculo: '));
+
+  it('carimba data, motor e assinatura do cálculo no TRCT', async () => {
+    await gerarPDFRescisao(
+      sampleForm,
+      { ...sampleResult, timestamp: '2026-11-19T10:00:00.000Z', assinaturaDigital: 'abc123' } as never,
+      null,
+      'servidor'
+    );
+    const linha = linhaProcedencia();
+    expect(linha).toBeDefined();
+    expect(linha).toContain(LABEL_ORIGEM_CALCULO.servidor);
+    expect(linha).toContain(formatarMomentoCalculo('2026-11-19T10:00:00.000Z'));
+    expect(linha).toContain('abc123');
+  });
+
+  it('declara motor e assinatura ausentes em vez de omitir o carimbo', async () => {
+    await gerarPDFRescisao(sampleForm, { ...sampleResult, timestamp: '' } as never);
+    const linha = linhaProcedencia();
+    expect(linha).toContain('não registrado');
+    expect(linha).toContain('Assinatura: ausente');
+  });
+
   it('creates a jsPDF instance and saves the PDF', async () => {
     await gerarPDFRescisao(sampleForm, sampleResult as any);
     expect(MockJsPDF).toHaveBeenCalledTimes(1);
@@ -90,5 +116,28 @@ describe('gerarPDFRescisao', () => {
   it('handles minimal form fields without throwing', async () => {
     const minimalForm = { nomeColaborador: 'Test', tipo: 'pedido_demissao' };
     await expect(gerarPDFRescisao(minimalForm, sampleResult as any)).resolves.toBeUndefined();
+  });
+});
+
+/**
+ * O TRCT baixado pelo detalhe do desligamento passa pelo mapeamento, não pelo
+ * motor. Enquanto o mapeamento descartava `assinaturaDigital`, o carimbo de
+ * procedência declarava "Assinatura: ausente" para um cálculo ASSINADO — falso
+ * negativo num documento rescisório (achado da review na PR #727).
+ */
+describe('mapearResultadoDeDesligamento', () => {
+  it('preserva a assinatura digital do cálculo salvo', () => {
+    const r = mapearResultadoDeDesligamento({
+      valor_liquido: 9388,
+      detalhes_calculo: { assinaturaDigital: 'abc123', timestamp: '2026-11-19T10:00:00.000Z' },
+    });
+    expect(r.assinaturaDigital).toBe('abc123');
+    expect(r.timestamp).toBe('2026-11-19T10:00:00.000Z');
+  });
+
+  it('cálculo antigo sem assinatura continua sem assinatura', () => {
+    const r = mapearResultadoDeDesligamento({ valor_liquido: 100, detalhes_calculo: null });
+    expect(r.assinaturaDigital).toBeUndefined();
+    expect(r.timestamp).toBe('');
   });
 });

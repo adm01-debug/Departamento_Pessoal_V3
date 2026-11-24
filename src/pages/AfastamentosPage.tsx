@@ -17,6 +17,7 @@ import { AfastamentoTable } from '@/components/afastamentos/AfastamentoTable';
 import { AfastamentoForm } from '@/components/afastamentos/AfastamentoForm';
 import { AfastamentoDocumentManager } from '@/components/afastamentos/AfastamentoDocumentManager';
 import { AfastamentoTimeline } from '@/components/afastamentos/AfastamentoTimeline';
+import { ProrrogacaoDialog } from '@/components/afastamentos/ProrrogacaoDialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
@@ -253,7 +254,7 @@ export default function AfastamentosPage() {
                   data={filteredAfastamentos} 
                   onEdit={handleEdit}
                   onDocuments={handleDocuments}
-                  onProrrogacao={handleEdit}
+                  onProrrogacao={handleProrrogacao}
                   onTimeline={handleTimeline}
                 />
               )}
@@ -440,6 +441,8 @@ export default function AfastamentosPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <ProrrogacaoDialog open={isProrrOpen} onOpenChange={setIsProrrOpen} afastamento={selectedAfastamento} />
     </PageLayout>
   );
 }

@@ -25,6 +25,7 @@ import {
   vincularDependenteBeneficio,
   desvincularDependenteBeneficio,
 } from '../tabelasReferenciaService';
+import type { Insertable } from '@/integrations/supabase/database.types';
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
@@ -392,6 +393,67 @@ describe('criarContaBancaria (PARTE 4B — tenant + principal)', () => {
     mockColaborador('emp-1');
     const { insertFn } = mockInsert({ id: 'cb-new' });
     await criarContaBancaria({ colaborador_id: 'c1', principal: false }, 'emp-1');
+    expect(insertFn).toHaveBeenCalled();
+  });
+
+  it('rejeita quando empresaId não é informado', async () => {
+    await expect(criarContaBancaria({ colaborador_id: COLAB_ID }, '')).rejects.toThrow('empresa_id obrigatório');
+  });
+
+  it('rejeita quando colaborador_id não é informado', async () => {
+    await expect(criarContaBancaria({ banco_nome: 'X' } as Insertable<'contas_bancarias'>, EMPRESA_ID)).rejects.toThrow(
+      'colaborador_id obrigatório'
+    );
+  });
+
+  it('rejeita quando o colaborador não existe', async () => {
+    mockColaborador(null);
+    await expect(criarContaBancaria({ colaborador_id: COLAB_ID }, EMPRESA_ID)).rejects.toThrow('isolamento de tenant');
+  });
+
+  it('rejeita quando o colaborador pertence a outra empresa', async () => {
+    mockColaborador('00000000-0000-4000-8000-0000000000e2');
+    await expect(criarContaBancaria({ colaborador_id: COLAB_ID }, EMPRESA_ID)).rejects.toThrow('isolamento de tenant');
+  });
+
+  it('injeta empresa_id no insert e ignora qualquer empresa_id vindo do chamador', async () => {
+    mockColaborador(EMPRESA_ID);
+    const { insertFn } = mockInsertOnce({ id: 'cb-new', empresa_id: EMPRESA_ID });
+    await criarContaBancaria(
+      { colaborador_id: COLAB_ID, banco_nome: 'X', empresa_id: '00000000-0000-4000-8000-0000000000f9' },
+      EMPRESA_ID
+    );
+    expect(insertFn).toHaveBeenCalledWith([{ colaborador_id: COLAB_ID, banco_nome: 'X', empresa_id: EMPRESA_ID }]);
+  });
+
+  it('permite criar a primeira conta principal quando nenhuma existe', async () => {
+    mockColaborador(EMPRESA_ID);
+    mockPrincipalCount(0);
+    const { insertFn } = mockInsertOnce({ id: 'cb-new' });
+    await criarContaBancaria({ colaborador_id: COLAB_ID, principal: true }, EMPRESA_ID);
+    expect(insertFn).toHaveBeenCalled();
+  });
+
+  it('bloqueia a criação de uma segunda conta principal para o mesmo colaborador', async () => {
+    mockColaborador(EMPRESA_ID);
+    mockPrincipalCount(1);
+    await expect(criarContaBancaria({ colaborador_id: COLAB_ID, principal: true }, EMPRESA_ID)).rejects.toThrow(
+      'Este colaborador já possui uma conta bancária principal.'
+    );
+  });
+
+  it('não realiza insert nem qualquer alteração na conta principal existente ao bloquear', async () => {
+    mockColaborador(EMPRESA_ID);
+    mockPrincipalCount(1);
+    await expect(criarContaBancaria({ colaborador_id: COLAB_ID, principal: true }, EMPRESA_ID)).rejects.toThrow();
+    // Só as duas checagens (colaborador + contagem de principal) ocorreram — nenhum insert/update.
+    expect(mockFrom).toHaveBeenCalledTimes(2);
+  });
+
+  it('permite criar uma conta não-principal mesmo já existindo uma principal (não faz a checagem de contagem)', async () => {
+    mockColaborador(EMPRESA_ID);
+    const { insertFn } = mockInsertOnce({ id: 'cb-new' });
+    await criarContaBancaria({ colaborador_id: COLAB_ID, principal: false }, EMPRESA_ID);
     expect(insertFn).toHaveBeenCalled();
   });
 

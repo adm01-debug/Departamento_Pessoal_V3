@@ -294,6 +294,9 @@ jobs:
     needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # Edge Functions não usam package.json: bump do front não pode quebrar --frozen.
+    env:
+      DENO_NO_PACKAGE_JSON: '1'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         if: github.event_name != 'pull_request' || needs.changes.outputs.edge == 'true'
@@ -342,6 +345,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
@@ -350,6 +354,14 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install
         run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Integridade das instruções para agentes (GA02)
+        # Garante que AGENTS.md (CLAUDE.md é só `@AGENTS.md`) não foi apagado
+        # ou esvaziado por outra sessão: existe, tem as 4 seções obrigatórias
+        # e não encolheu >30% vs a main. fetch-depth:0 acima é necessário
+        # para origin/main existir localmente.
+        env:
+          CLAUDE_MD_BASE: origin/main
+        run: node scripts/ci/check-claude-md-integrity.mjs
       - name: Contrato físico dos eventos de auditoria Edge
         # Análise AST estática (não precisa de banco nem secrets). Movido
         # de typecheck para cá para manter typecheck puro.
@@ -366,16 +378,26 @@ jobs:
           node scripts/audit-security-config.mjs
           node scripts/audit-required-checks.mjs
           node scripts/audit-bridge-frontend-contract.mjs
+          node scripts/ratchet-any.mjs
+          node --test scripts/tests/audit-baseline-portabilidade.test.mjs
           node scripts/validate-plan-50.mjs
           node scripts/audit-canonical-project.mjs
           node scripts/audit-migration-style.mjs
           node scripts/tests/rebaseline-artifact.test.mjs
           node scripts/tests/validate-canonical-db-url.test.mjs
           node scripts/tests/workflows-contract.test.mjs
+      - name: Contexto e inventário para agentes de IA (offline)
+        # Suítes dos scripts autônomos portados do Zapp Web V2 (sem banco, rede ou credencial):
+        # geradores de contexto (codigo/, supabase/, regras/), publicação real da branch contexto
+        # com git local, índice único, inventário do banco/rotas e rotas.json em dia com o código.
+        run: node --test scripts/tests/contexto-*.test.mjs scripts/tests/inventario-*.test.mjs
       - name: Lockfile único npm (W03)
         run: bash scripts/tests/lockfile-single.test.sh
       - name: Paridade package.json ↔ package-lock.json (W98)
         run: bash scripts/tests/lockfile-parity.test.sh
+      - name: Testes do coletor do relógio de ponto (Python, sem dependência)
+        # Lógica pura de tools/coletor-ponto-atecsoft (sem banco Firebird nem rede).
+        run: python3 -m unittest discover -s tools/coletor-ponto-atecsoft/tests
       - name: Resumo dos contratos (GITHUB_STEP_SUMMARY)
         if: always()
         run: |
@@ -384,8 +406,10 @@ jobs:
             echo "| Script | Status |"
             echo "|--------|--------|"
             echo "| workflows-contract | ${{ job.status }} |"
+            echo "| baseline-portabilidade | ${{ job.status }} |"
             echo "| lockfile-single | ${{ job.status }} |"
             echo "| lockfile-parity | ${{ job.status }} |"
+            echo "| coletor-ponto (python) | ${{ job.status }} |"
           } >> "$GITHUB_STEP_SUMMARY"
 
   p0-database-migrations:
@@ -481,7 +505,7 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
        github.event.pull_request.head.repo.full_name == github.repository)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # ubuntu-latest=26.04 não tem postgresql-client-16 (W41)
     timeout-minutes: 15
     env:
       DATABASE_URL: ${{ secrets.SUPABASE_DB_URL_READONLY }}

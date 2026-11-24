@@ -1,4 +1,4 @@
-import { FieldValues, UseFormSetError, Path } from 'react-hook-form';
+import type { FieldValues, UseFormSetError, Path } from 'react-hook-form';
 import { toast } from 'sonner';
 
 interface ValidationErrorField {

@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { beneficioService } from '@/services';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { Edit, Gift, LayoutDashboard, List, History, Settings, TrendingUp, ArrowRight } from 'lucide-react';
+import { Edit, Gift, LayoutDashboard, List, History, Settings, ArrowRight } from 'lucide-react';
 
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';

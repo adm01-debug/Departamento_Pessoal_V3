@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -12,15 +12,19 @@ import {
   AlertTriangle,
   Download,
   FileText,
-  Smartphone,
   ShieldCheck,
   Activity,
   Filter,
   History,
 } from 'lucide-react';
 import { PontoInconsistencyPanel } from './PontoInconsistencyPanel';
+import { PontoAuditTimeline } from './PontoAuditTimeline';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
+import { useAuth } from '@/contexts';
+import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { exportPontoCSV, exportPontoPDF } from '@/services/exportService';
 import { batidasPontoService } from '@/services/batidasPontoService';
@@ -48,10 +52,17 @@ import { formatDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
  */
 export function GestaoRegistrosPonto() {
   const { empresaAtual } = useEmpresas();
+  const { user, isAdmin, hasRole } = useAuth();
+  // Aprovação segue pode_gerir_pessoas (RH/gestor); a trilha (get_audit_trail) é restrita a RH/admin.
+  const podeAprovar = isAdmin || hasRole('rh') || hasRole('gestor');
+  const podeVerHistorico = isAdmin || hasRole('rh');
+  const queryClient = useQueryClient();
   const [selecionados, setSelecionados] = useState<string[]>([]);
+  const [historico, setHistorico] = useState<{ id: string; nome: string } | null>(null);
   const [filtroData, setFiltroData] = useState(todayLocalISO());
   const [filtroFim, setFiltroFim] = useState(todayLocalISO());
   const [tipoExcecao, setTipoExcecao] = useState('todas');
+  const [filtroOrigem, setFiltroOrigem] = useState<'todas' | 'relogio' | 'outras'>('todas');
   const [busca, setBusca] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -92,7 +103,9 @@ export function GestaoRegistrosPonto() {
     const depto = r.colaborador?.departamento?.toLowerCase() || '';
     const query = busca.toLowerCase();
 
-    const buscaMatch = !busca || nome.includes(query) || cargo.includes(query) || depto.includes(query);
+    const origemMatch = filtroOrigem === 'todas' || (filtroOrigem === 'relogio' ? ehDoRelogio(r) : !ehDoRelogio(r));
+    const buscaMatch =
+      origemMatch && (!busca || nome.includes(query) || cargo.includes(query) || depto.includes(query));
 
     if (tipoExcecao === 'todas') return buscaMatch;
     if (tipoExcecao === 'atrasos') return buscaMatch && r.atraso_minutos > 0;
@@ -101,6 +114,8 @@ export function GestaoRegistrosPonto() {
 
     return buscaMatch;
   });
+  // Só aprova o que está selecionado E visível com os filtros atuais.
+  const selecionadosVisiveis = selecionados.filter((id) => filtrados.some((f) => f.id === id));
 
   const mudarDia = (offset: number) => {
     const d = new Date(filtroData + 'T12:00:00');
@@ -194,6 +209,19 @@ export function GestaoRegistrosPonto() {
                           <option value="incompletos">Incompletos/Abertos</option>
                         </select>
                       </div>
+                      <div className="space-y-2">
+                        <h4 className="font-bold text-xs uppercase text-muted-foreground">Origem</h4>
+                        <select
+                          aria-label="Origem"
+                          value={filtroOrigem}
+                          onChange={(e) => setFiltroOrigem(e.target.value as 'todas' | 'relogio' | 'outras')}
+                          className="w-full h-8 rounded-lg border border-input bg-background px-2 py-1 text-[10px] shadow-xs focus:ring-1 focus:ring-primary"
+                        >
+                          <option value="todas">Todas as origens</option>
+                          <option value="relogio">Relógio</option>
+                          <option value="outras">App, quiosque e ajustes</option>
+                        </select>
+                      </div>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -245,7 +273,7 @@ export function GestaoRegistrosPonto() {
               </div>
 
               <AnimatePresence>
-                {selecionados.length > 0 && (
+                {podeAprovar && selecionadosVisiveis.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -257,12 +285,10 @@ export function GestaoRegistrosPonto() {
                       variant="ghost"
                       size="sm"
                       className="h-7 px-2 text-[10px] text-primary hover:bg-primary/20"
-                      onClick={() => {
-                        toast.success(`${selecionados.length} registros aprovados em lote!`);
-                        setSelecionados([]);
-                      }}
+                      disabled={aprovarLote.isPending}
+                      onClick={() => aprovarLote.mutate(selecionadosVisiveis)}
                     >
-                      Aprovar Lote
+                      {aprovarLote.isPending ? 'Aprovando...' : 'Aprovar Lote'}
                     </Button>
                   </motion.div>
                 )}
@@ -481,6 +507,16 @@ export function GestaoRegistrosPonto() {
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={!!historico} onOpenChange={(open) => !open && setHistorico(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Histórico do registro de ponto</DialogTitle>
+            <DialogDescription>{historico?.nome}</DialogDescription>
+          </DialogHeader>
+          {historico && <PontoAuditTimeline filterTabela="registros_ponto" registroId={historico.id} />}
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

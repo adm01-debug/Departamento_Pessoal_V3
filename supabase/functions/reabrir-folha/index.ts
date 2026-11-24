@@ -10,7 +10,7 @@
 // - Cache-Control: no-store em todas as respostas
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, validateRequest, enforceOrigin, handlePreflight } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
@@ -72,6 +72,7 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    const aal = requireAal2(req); if (!aal.ok) return aal.response!;
     if (claimsErr || !claimsData?.user?.id) {
       return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     }

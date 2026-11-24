@@ -13,6 +13,7 @@ import { assinarXMLEsocial } from './utils/signer.ts';
 import { corsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';
+import { requireAal2 } from '../_shared/aal2.ts';
 import { captureException } from '../_shared/sentry.ts';
 import {
   beginIdempotency,

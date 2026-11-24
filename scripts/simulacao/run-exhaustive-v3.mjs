@@ -12,15 +12,33 @@
  * Saída: /mnt/documents/simulacao_exaustiva_v3.json + .md
  */
 import fs from 'node:fs';
+import path from 'node:path';
 import crypto from 'node:crypto';
 
-const envRaw = fs.readFileSync('.env', 'utf8');
-const env = Object.fromEntries(
-  envRaw.split('\n').map((l) => l.match(/^\s*([A-Z0-9_]+)\s*=\s*"?([^"\r\n]*)"?\s*$/))
-    .filter(Boolean).map((m) => [m[1], m[2]]),
-);
-const URL_ = env.VITE_SUPABASE_URL;
-const ANON = env.VITE_SUPABASE_PUBLISHABLE_KEY || env.VITE_SUPABASE_ANON_KEY;
+function loadEnv() {
+  const envPath = path.resolve(import.meta.dirname, '../..', '.env');
+  if (!fs.existsSync(envPath)) return {};
+  const out = {};
+  for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
+    const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*"?([^"\r\n]*)"?\s*$/);
+    if (m) out[m[1]] = m[2];
+  }
+  return out;
+}
+
+const env = loadEnv();
+const URL_ = process.env.VITE_SUPABASE_URL || env.VITE_SUPABASE_URL;
+const ANON =
+  process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.VITE_SUPABASE_ANON_KEY ||
+  env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  env.VITE_SUPABASE_ANON_KEY;
+
+if (!URL_ || !ANON) {
+  console.error('[run-exhaustive-v3] VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY ausentes — simulação ignorada neste ambiente.');
+  process.exit(0);
+}
+
 const ORIGIN_OK = 'https://unified-harmony-hub.lovable.app';
 const BRIDGE = `${URL_}/functions/v1/external-db-bridge`;
 const FECHAR = `${URL_}/functions/v1/fechar-folha`;
@@ -222,4 +240,12 @@ Ver \`simulacao_exaustiva_v3.json\`.
 `;
   fs.writeFileSync('/mnt/documents/simulacao_exaustiva_v3.md', md);
   console.log(`\n📝 Relatório salvo em /mnt/documents/simulacao_exaustiva_v3.{json,md}`);
+
+  // Antes o script saía 0 mesmo com payload hostil aceito ou origem não bloqueada.
+  const failed =
+    !idem.allSameStatus || fuzz.pass !== fuzz.total || orig.pass !== orig.total || enf.pass !== enf.total;
+  if (failed) {
+    console.error('❌ Simulação v3 com divergências (idempotência/fuzz/origins/enforceOrigin) — veja o relatório.');
+    process.exit(1);
+  }
 })();

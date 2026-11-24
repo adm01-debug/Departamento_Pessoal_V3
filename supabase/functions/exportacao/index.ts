@@ -1,12 +1,13 @@
 // Onda 24 — Hardening avançado: CSRF + anti CSV-injection + BOM UTF-8 +
 // filtros restritos por regex + paginação sinalizada + tenant scope estrito.
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { z } from 'https://esm.sh/zod@3.23.8';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
+import { z } from 'npm:zod@3.23.8';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { requireRh } from '../_shared/authz.ts';
+import { requireAal2 } from '../_shared/aal2.ts';
 
 const HARD_CAP = 10_000;
 
@@ -79,6 +80,7 @@ serve(async (req) => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    const aal = requireAal2(req); if (!aal.ok) return aal.response!;
     if (claimsErr || !claimsData?.user?.id) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     const userId = claimsData.user.id;
 

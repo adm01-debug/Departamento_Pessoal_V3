@@ -1,0 +1,12 @@
+numero,titulo,autor,branch,estado,veredito,merge_sha,ci,motivo
+309,"fix admissoes S-2200 + email pre-admissao",devin,devin/...,MERGED,MERGEAR,3d2f0d5e,success,Admissao corrigida S-2200 e email pre-admissao
+313,"fix rescisao modalidades + RPC pagamento",devin,devin/...,MERGED,MERGEAR,219c2f93,success,Rescisao modalidades e RPC quitacao
+317,"fix govbr+esocial login anonimo + XML S-2299",devin,devin/...,MERGED,MERGEAR,271d5b5e,success,Login anonimo bloqueado e XML esocial corrigido
+319,"docs pendencias externas fora de escopo",devin,devin/...,MERGED,MERGEAR,e1a18efd,success,Documentacao de pendencias externas
+322,"chore codigo orfao liga LanguageSelector/PDF-PDI",devin,devin/...,MERGED,MERGEAR,7db8ba84,success,Limpeza de codigo orfao e ligacao de componentes
+330,"docs reconciliacao auditorias anteriores",adm01-debug,claude/...,MERGED,MERGEAR,199c855e,success,Arquivo auditorias-anteriores.md inicial
+331,"chore suplemento auditoria D-27/D-37/D-38/D-39/D-40",adm01-debug,claude/...,MERGED,MERGEAR,49bcf8f2,success,Suplemento de reconciliacao 5 documentos
+332,"chore arquivos de rastreamento analise-prs/",adm01-debug,claude/...,MERGED,MERGEAR,54652ab9,success,prs.json progresso.json decisoes.md dossies RELATORIO
+315,"fix security gaps bridge aal2 cert via edge",devin,devin/1793220119-security-gaps,OPEN,DECISAO_HUMANA,,unknown,Toca .github/workflows/ (Rule 8)
+209,"fix rotinas agendadas que falhavam todo dia",adm01-debug,claude/fix-rotinas-agendadas-261012-0737,CLOSED,BLOQUEADA_RULE8,,unknown,Tocava .github/workflows/ — migration nao aplicada
+328,"Create main.yml",adm01-debug,adm01-debug-patch-1,CLOSED,BLOQUEADA_RULE8,,unknown,Workflow file — Rule 8

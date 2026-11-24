@@ -36,35 +36,55 @@ describe('AdminRoute', () => {
 
   it('shows loading spinner while not ready', () => {
     mockUseAuth.mockReturnValue({ user: null, isReady: false, loading: true, isAdmin: false });
-    renderRoute(<AdminRoute><div>admin content</div></AdminRoute>);
+    renderRoute(
+      <AdminRoute>
+        <div>admin content</div>
+      </AdminRoute>
+    );
     expect(screen.queryByText('admin content')).toBeNull();
     expect(screen.getByText('Verificando privilégios...')).toBeInTheDocument();
   });
 
   it('redirects to /login when no user', () => {
     mockUseAuth.mockReturnValue({ user: null, isReady: true, loading: false, isAdmin: false });
-    renderRoute(<AdminRoute><div>admin content</div></AdminRoute>);
+    renderRoute(
+      <AdminRoute>
+        <div>admin content</div>
+      </AdminRoute>
+    );
     expect(screen.queryByText('admin content')).toBeNull();
   });
 
   it('shows access denied when user is not admin', () => {
     mockUseAuth.mockReturnValue({ user: { id: '1' }, isReady: true, loading: false, isAdmin: false });
-    renderRoute(<AdminRoute><div>admin content</div></AdminRoute>);
+    renderRoute(
+      <AdminRoute>
+        <div>admin content</div>
+      </AdminRoute>
+    );
     expect(screen.queryByText('admin content')).toBeNull();
     expect(screen.getByText('Acesso Restrito')).toBeInTheDocument();
   });
 
   it('renders children when user is admin com sessão aal2', async () => {
     mockUseAuth.mockReturnValue({ user: { id: '1' }, isReady: true, loading: false, isAdmin: true });
-    renderRoute(<AdminRoute><div>admin content</div></AdminRoute>);
+    renderRoute(
+      <AdminRoute>
+        <div>admin content</div>
+      </AdminRoute>
+    );
     expect(await screen.findByText('admin content')).toBeInTheDocument();
   });
 
   it('fail-closed: bloqueia admin quando a verificação de MFA falha', async () => {
     mockGetAAL.mockRejectedValue(new Error('network'));
     mockUseAuth.mockReturnValue({ user: { id: '1' }, isReady: true, loading: false, isAdmin: true });
-    renderRoute(<AdminRoute><div>admin content</div></AdminRoute>);
-    await new Promise(r => setTimeout(r, 0));
+    renderRoute(
+      <AdminRoute>
+        <div>admin content</div>
+      </AdminRoute>
+    );
+    await new Promise((r) => setTimeout(r, 0));
     expect(screen.queryByText('admin content')).toBeNull();
   });
 
@@ -72,8 +92,12 @@ describe('AdminRoute', () => {
     mockGetAAL.mockResolvedValue({ data: { currentLevel: 'aal1', nextLevel: 'aal2' }, error: null });
     mockListFactors.mockResolvedValue({ data: { totp: [{ id: 'f1', status: 'verified' }] }, error: null });
     mockUseAuth.mockReturnValue({ user: { id: '1' }, isReady: true, loading: false, isAdmin: true });
-    renderRoute(<AdminRoute><div>admin content</div></AdminRoute>);
-    await new Promise(r => setTimeout(r, 0));
+    renderRoute(
+      <AdminRoute>
+        <div>admin content</div>
+      </AdminRoute>
+    );
+    await new Promise((r) => setTimeout(r, 0));
     expect(screen.queryByText('admin content')).toBeNull();
   });
 });

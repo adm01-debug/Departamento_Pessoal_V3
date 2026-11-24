@@ -152,6 +152,51 @@ describe('premiacoesService.criarCampanha', () => {
   });
 });
 
+// ─── rascunhos de campanha ────────────────────────────────────────────────────
+
+describe('premiacoesService.lancarRascunhoCampanha / excluirRascunhoCampanha', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it('lançar só atualiza rascunho da empresa para ativo', async () => {
+    const { updateFn, eqFn } = setupChain([{ id: 'c1' }]);
+    await premiacoesService.lancarRascunhoCampanha('c1', EMPRESA_ID);
+    expect(updateFn).toHaveBeenCalledWith({ status: 'ativo' });
+    expect(eqFn).toHaveBeenCalledWith('id', 'c1');
+    expect(eqFn).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    expect(eqFn).toHaveBeenCalledWith('status', 'rascunho');
+  });
+
+  it('lançar com 0 linhas afetadas lança erro', async () => {
+    setupChain([]);
+    await expect(premiacoesService.lancarRascunhoCampanha('c1', EMPRESA_ID)).rejects.toThrow(/Rascunho não encontrado/);
+  });
+
+  it('excluir só apaga rascunho da empresa', async () => {
+    const { chain, eqFn } = setupChain([{ id: 'c1' }]);
+    mockFrom.mockReturnValueOnce(makeChain({ data: [], error: null }));
+    await premiacoesService.excluirRascunhoCampanha('c1', EMPRESA_ID);
+    expect(chain.delete).toHaveBeenCalled();
+    expect(eqFn).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    expect(eqFn).toHaveBeenCalledWith('status', 'rascunho');
+  });
+
+  it('excluir recusa rascunho com pagamentos (cascade) sem chamar delete', async () => {
+    const { chain } = setupChain([{ id: 'p1' }]);
+    await expect(premiacoesService.excluirRascunhoCampanha('c1', EMPRESA_ID)).rejects.toThrow(/pagamentos vinculados/);
+    expect(mockFrom).toHaveBeenCalledWith('premiacoes_pagamentos');
+    expect(chain.delete).not.toHaveBeenCalled();
+  });
+
+  it('excluir com 0 linhas afetadas lança erro', async () => {
+    setupChain([]);
+    await expect(premiacoesService.excluirRascunhoCampanha('c1', EMPRESA_ID)).rejects.toThrow(
+      /Rascunho não encontrado/
+    );
+  });
+});
+
 // ─── criarRegra ───────────────────────────────────────────────────────────────
 
 describe('premiacoesService.criarRegra', () => {
@@ -240,16 +285,37 @@ describe('premiacoesService.reconciliarFolha', () => {
 describe('premiacoesService.listarAuditoria', () => {
   beforeEach(() => { vi.resetAllMocks(); });
 
-  it('returns auditoria records', async () => {
-    const records = [{ id: 'a1', acao: 'INSERT' }];
-    setupOrderChain(records);
+  it('returns auditoria records filtradas por tenant (ids de pagamento da empresa)', async () => {
+    const records = [{ id: 'a1', acao: 'INSERT', entidade_tipo: 'pagamento', entidade_id: 'pg1' }];
+    mockFrom.mockReturnValueOnce(makeChain({ data: records, error: null }));
+    mockFrom.mockReturnValueOnce(makeChain({ data: [{ id: 'pg1' }], error: null }));
     expect(await premiacoesService.listarAuditoria(undefined, EMPRESA_ID)).toEqual(records);
   });
 
+  it('filtra fora auditoria de pagamentos de OUTRA empresa', async () => {
+    mockFrom.mockReturnValueOnce(
+      makeChain({
+        data: [
+          { id: 'a1', entidade_tipo: 'pagamento', entidade_id: 'pg-meu' },
+          { id: 'a2', entidade_tipo: 'pagamento', entidade_id: 'pg-outro' },
+        ],
+        error: null,
+      })
+    );
+    mockFrom.mockReturnValueOnce(makeChain({ data: [{ id: 'pg-meu' }], error: null }));
+    const result = await premiacoesService.listarAuditoria(undefined, EMPRESA_ID);
+    expect(result).toEqual([{ id: 'a1', entidade_tipo: 'pagamento', entidade_id: 'pg-meu' }]);
+  });
+
   it('filters by entidade_id when provided', async () => {
-    const { chain } = setupOrderChain([]);
+    const auditChain = makeChain({
+      data: [{ id: 'a2', acao: 'UPDATE', entidade_tipo: 'pagamento', entidade_id: 'pg1' }],
+      error: null,
+    });
+    mockFrom.mockReturnValueOnce(auditChain);
+    mockFrom.mockReturnValueOnce(makeChain({ data: [{ id: 'pg1' }], error: null }));
     await premiacoesService.listarAuditoria('pg1', EMPRESA_ID);
-    expect(chain.eq).toHaveBeenCalledWith('entidade_id', 'pg1');
+    expect(auditChain.eq).toHaveBeenCalledWith('entidade_id', 'pg1');
   });
 });
 
