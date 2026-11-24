@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: fixa o schema da extensao no search_path do dreno (#866)",
    "fix: sidecar do dreno devolve 'ok' literal no caso inerte (#864)",
    "fix: nao reexecuta o script da extensao pg_cron/pg_net no canonico (#862)",
    "chore: pina por hash os tres pip install sinalizados pelo Scorecard (#861)",
-   "infra: inclui a migration do cron do dreno no lote canonico (#860)",
-   "infra: agenda o dreno da fila de notificacoes quando os segredos existirem (#855)"
+   "infra: inclui a migration do cron do dreno no lote canonico (#860)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8893aba19201573487a2d3aa80144e83b9c30110` (2026-11-24T09:46:07-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `90a640d77a780d91de7000230d3964ccb4d8e100` (2026-11-24T10:41:05-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2007), SQL (1006), Markdown (345), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2007), SQL (1008), Markdown (345), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 3734 |
+| arquivos_total | 3736 |
 | arquivos_codigo | 2150 |
 | linhas_codigo | 430698 |
 | rotas | 116 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 122 |
 | edge_functions | 68 |
 | tabelas | 438 |
-| migrations | 932 |
+| migrations | 934 |
 | cron_jobs | 43 |
 | testes | 813 |
 | workflows | 21 |
@@ -399,14 +399,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28309 nós · 63773 arestas · 2489 comunidades · grafo do commit `8893aba1`
+- 28311 nós · 63773 arestas · 2491 comunidades · grafo do commit `90a640d7`
 - comunidades maiores: lucide-react (552), useEmpresas (496), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (441), client.ts (364), vitest (337), cn (264), ColaboradorDetalhesPage.tsx (218), react (212), contract.ts (185), ref_node_path (165)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (33)
-- inventario/estado/rotas.json (22)
+- .github/workflows/canonical-migrations.yml (34)
+- inventario/estado/rotas.json (21)
 - scripts/canonical-invariants.sql (21)
 - docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
 - src/integrations/supabase/types.ts (12)
@@ -657,6 +657,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-24 `90a640d` fix: fixa o schema da extensao no search_path do dreno (#866)
 - 2026-11-24 `8893aba` fix: sidecar do dreno devolve 'ok' literal no caso inerte (#864)
 - 2026-11-24 `bb8ebe2` fix: nao reexecuta o script da extensao pg_cron/pg_net no canonico (#862)
 - 2026-11-24 `084b528` chore: pina por hash os tres pip install sinalizados pelo Scorecard (#861)
@@ -671,7 +672,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-23 `132ece1` chore: resgata autofix de eslint (type-imports e inferrable-types) de agente interrompido (#854)
 - 2026-11-23 `066f553` fix: impede que destinatario nao-roteavel derrube o lote de alertas por e-mail (#852)
 - 2026-11-23 `59be355` chore: remove config.ts orfao de processar-agendamentos (#851)
-- 2026-11-23 `bd79c79` fix: filtra destinatarios orfaos em alertas-dp para nao violar FK (#850)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8893aba19201573487a2d3aa80144e83b9c30110",
+  "commit": "90a640d77a780d91de7000230d3964ccb4d8e100",
   "branch": "main",
-  "data_commit": "2026-11-24T09:46:07-03:00",
+  "data_commit": "2026-11-24T10:41:05-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "90a640d",
+    "data": "2026-11-24",
+    "assunto": "fix: fixa o schema da extensao no search_path do dreno (#866)"
+   },
    {
     "sha": "8893aba",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "9c7a64a",
     "data": "2026-11-22",
     "assunto": "feat: itemiza verbas rescisorias em verbas_rescisorias (#838)"
-   },
-   {
-    "sha": "e3410c9",
-    "data": "2026-11-22",
-    "assunto": "feat: converte dia do relogio em batidas (etapa 41 do Ponto AtecSoft) (#837)"
    }
   ],
-  "arquivos_mudados_7d": 503,
+  "arquivos_mudados_7d": 495,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -180,12 +180,12 @@
     "mudancas": 35
    },
    {
-    "pasta": "src/pages/__tests__",
+    "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 34
    },
    {
-    "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 33
+    "pasta": "src/pages/__tests__",
+    "mudancas": 34
    },
    {
     "pasta": "src/components/desligamentos",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 33
+    "mudancas": 34
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 22
+    "mudancas": 21
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3734,
+  "arquivos_total": 3736,
   "arquivos_codigo": 2150,
   "linhas_codigo": 430698,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 122,
   "edge_functions": 68,
   "tabelas": 438,
-  "migrations": 932,
+  "migrations": 934,
   "cron_jobs": 43,
   "testes": 813,
   "workflows": 21,

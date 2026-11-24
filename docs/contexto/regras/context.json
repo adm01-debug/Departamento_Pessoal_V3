@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8893aba19201573487a2d3aa80144e83b9c30110",
+  "sha": "90a640d77a780d91de7000230d3964ccb4d8e100",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-24 12:47 UTC",
-  "files_total": 3748,
-  "code_files": 3154,
-  "code_lines": 502204
+  "generated_at": "2026-11-24 13:43 UTC",
+  "files_total": 3750,
+  "code_files": 3156,
+  "code_lines": 502237
  },
  "version": "1.3.2",
- "facts_hash": "eed6970e8f9ae2b5",
+ "facts_hash": "da25bb0391fa0a08",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".tsx": 1038,
-   ".sql": 1006,
+   ".sql": 1008,
    ".ts": 969,
    ".mjs": 110,
    ".js": 15,
@@ -73761,6 +73761,8 @@
    "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.verify.sql",
    "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
    "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql",
+   "supabase/migrations/20261124120000_dreno_search_path_extensao.sql",
+   "supabase/migrations/20261124120000_dreno_search_path_extensao.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -106415,8 +106417,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 932,
-   "lines": 84631,
+   "files": 934,
+   "lines": 84664,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -337613,6 +337615,14 @@
    "path": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql",
    "lines": 45
   },
+  "supabase/migrations/20261124120000_dreno_search_path_extensao.sql": {
+   "path": "supabase/migrations/20261124120000_dreno_search_path_extensao.sql",
+   "lines": 13
+  },
+  "supabase/migrations/20261124120000_dreno_search_path_extensao.verify.sql": {
+   "path": "supabase/migrations/20261124120000_dreno_search_path_extensao.verify.sql",
+   "lines": 20
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -338008,10 +338018,21 @@
   }
  },
  "git": {
-  "sha": "8893aba19201573487a2d3aa80144e83b9c30110",
+  "sha": "90a640d77a780d91de7000230d3964ccb4d8e100",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "90a640d",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "fix: fixa o schema da extensao no search_path do dreno (#866)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "supabase/migrations/20261124120000_dreno_search_path_extensao.sql",
+     "supabase/migrations/20261124120000_dreno_search_path_extensao.verify.sql"
+    ]
+   },
    {
     "sha": "8893aba",
     "date": "2026-11-24",
@@ -338338,17 +338359,6 @@
      "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql",
      "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.verify.sql"
     ]
-   },
-   {
-    "sha": "7084a10",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "perf: cria indices nas 3 FKs de join do ponto e do PIX (#832)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.sql",
-     "supabase/migrations/20261122130000_indices_fk_join_ponto_pix.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -338405,6 +338415,14 @@
     2
    ],
    [
+    "supabase/migrations/20261124120000_dreno_search_path_extensao.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261124120000_dreno_search_path_extensao.verify.sql",
+    1
+   ],
+   [
     ".claude/hooks/session-start.sh",
     1
    ],
@@ -338422,14 +338440,6 @@
    ],
    [
     "Dockerfile",
-    1
-   ],
-   [
-    "Dockerfile.prod",
-    1
-   ],
-   [
-    ".env.example",
     1
    ]
   ]
