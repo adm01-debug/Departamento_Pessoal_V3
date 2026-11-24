@@ -25,8 +25,20 @@
 -- e entregue. Com isso: a cada 5 minutos a funcao processa as agendas e drena
 -- ate 20 itens da fila.
 
-CREATE EXTENSION IF NOT EXISTS pg_cron;
-CREATE EXTENSION IF NOT EXISTS pg_net;
+-- A plataforma ja instala pg_cron/pg_net. `CREATE EXTENSION IF NOT EXISTS` num ambiente
+-- onde a extensao ja existe reexecuta o script de instalacao dela e quebra com
+-- "ERROR: dependent privileges exist" (o script do pg_cron faz REVOKE sem CASCADE no
+-- cron.job). Por isso a criacao so acontece quando a extensao realmente falta.
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_extension WHERE extname = 'pg_cron') THEN
+    EXECUTE 'CREATE EXTENSION pg_cron';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_extension WHERE extname = 'pg_net') THEN
+    EXECUTE 'CREATE EXTENSION pg_net';
+  END IF;
+END
+$$;
 
 CREATE OR REPLACE FUNCTION public.agendar_dreno_fila_notificacoes()
 RETURNS text
