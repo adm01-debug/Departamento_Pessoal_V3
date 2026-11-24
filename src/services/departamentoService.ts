@@ -1,13 +1,11 @@
 import { BaseService } from './baseService';
 import { Departamento } from '@/types/entities';
-import { departamentoSchema } from '@/schemas/departamento';
 
 class DepartamentoService extends BaseService<Departamento> {
   constructor() {
-    super('departamentos', {
-      searchColumn: 'nome',
-      defaultOrderBy: 'nome',
-      schema: departamentoSchema,
+    super('departamentos', { 
+      searchColumn: 'nome', 
+      defaultOrderBy: 'nome' 
     });
   }
 }

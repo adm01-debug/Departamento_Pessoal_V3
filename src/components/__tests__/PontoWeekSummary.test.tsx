@@ -1,13 +1,5 @@
-import type { ReactNode } from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
-  },
-}));
-
 import { PontoWeekSummary } from '../ponto/PontoWeekSummary';
 
 const REGISTROS = [
@@ -37,18 +29,15 @@ describe('PontoWeekSummary', () => {
     expect(screen.getByText('+00:30')).toBeInTheDocument();
   });
 
-  it('renders atraso badge when > 0', () => {
+  it('renders atraso as negative saldo when > 0', () => {
     render(<PontoWeekSummary registrosSemana={REGISTROS} />);
-    expect(screen.getByText('15m')).toBeInTheDocument();
+    expect(screen.getByText('-00:15')).toBeInTheDocument();
   });
 
   it('limits display to 7 entries', () => {
     const many = Array.from({ length: 10 }, (_, i) => ({
-      id: `r${i}`,
-      data: `2025-07-${String(i + 1).padStart(2, '0')}`,
-      horas_trabalhadas: '08:00',
-      horas_extras: null,
-      atraso_minutos: 0,
+      id: `r${i}`, data: `2025-07-${String(i + 1).padStart(2, '0')}`,
+      horas_trabalhadas: '08:00', horas_extras: null, atraso_minutos: 0,
     }));
     render(<PontoWeekSummary registrosSemana={many} />);
     const rows = screen.getAllByText('08:00');

@@ -88,7 +88,7 @@ export function EpiKPIs({ stats }: EpiKPIsProps) {
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.3 }}
+                  transition={{ delay: i * 0.05, duration: 0.35 }}
                 >
                   <Card className={`border ${kpi.borderColor} ${kpi.bgColor} shadow-xs rounded-2xl cursor-default hover:shadow-md transition-shadow`}>
                     <CardContent className="pt-4 pb-3 px-4">
@@ -101,7 +101,7 @@ export function EpiKPIs({ stats }: EpiKPIsProps) {
                           <span className="flex h-2 w-2 rounded-full bg-warning animate-pulse" />
                         )}
                       </div>
-                      <p className="text-2xl font-display font-bold tracking-tight">{value}</p>
+                      <p className="text-2xl font-display font-semibold tracking-tight">{value}</p>
                       <p className="text-xs text-muted-foreground font-body mt-0.5">{kpi.label}</p>
                     </CardContent>
                   </Card>

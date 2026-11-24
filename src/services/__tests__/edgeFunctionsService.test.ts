@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { EdgeFunctionInvokeError, edgeFunctionsService, isDefinitiveIdempotencyFailure } from '../edgeFunctionsService';
+import { edgeFunctionsService } from '../edgeFunctionsService';
 
 const { mockInvoke, mockBitrixExecute, mockResendExecute, mockGenericExecute } = vi.hoisted(() => ({
   mockInvoke: vi.fn(),
@@ -23,22 +23,19 @@ vi.mock('@/lib/circuitBreaker', () => ({
 describe('edgeFunctionsService.dispararAlertasDP', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGenericExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
+    mockGenericExecute.mockImplementation((fn: any) => fn());
   });
 
-  it('calls invoke with "alertas-dp" and an explicit tenant', async () => {
-    mockInvoke.mockResolvedValue({
-      data: { success: true, alertas_processados: 3, email_delivery: 'accepted' },
-      error: null,
-    });
-    const result = await edgeFunctionsService.dispararAlertasDP('empresa-1');
-    expect(mockInvoke).toHaveBeenCalledWith('alertas-dp', { body: { empresaId: 'empresa-1' } });
-    expect(result).toEqual({ success: true, alertas_processados: 3, email_delivery: 'accepted' });
+  it('calls invoke with "alertas-dp" and trigger body', async () => {
+    mockInvoke.mockResolvedValue({ data: { sent: 3 }, error: null });
+    const result = await edgeFunctionsService.dispararAlertasDP();
+    expect(mockInvoke).toHaveBeenCalledWith('alertas-dp', { body: { trigger: 'manual' } });
+    expect(result).toEqual({ sent: 3 });
   });
 
   it('uses genericBreaker', async () => {
     mockInvoke.mockResolvedValue({ data: {}, error: null });
-    await edgeFunctionsService.dispararAlertasDP('empresa-1');
+    await edgeFunctionsService.dispararAlertasDP();
     expect(mockGenericExecute).toHaveBeenCalled();
     expect(mockResendExecute).not.toHaveBeenCalled();
     expect(mockBitrixExecute).not.toHaveBeenCalled();
@@ -50,30 +47,22 @@ describe('edgeFunctionsService.dispararAlertasDP', () => {
 describe('edgeFunctionsService.enviarRelatorioEmail', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockResendExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
+    mockResendExecute.mockImplementation((fn: any) => fn());
   });
 
   it('calls invoke with "enviar-relatorio" and uses resendBreaker', async () => {
-    mockInvoke.mockResolvedValue({ data: { success: true, status: 'sucesso' }, error: null });
+    mockInvoke.mockResolvedValue({ data: { messageId: 'msg-1' }, error: null });
     const params = {
-      tipoRelatorio: 'folha_resumo' as const,
-      formato: 'csv' as const,
-      emailDestinatario: 'rh@empresa.com',
+      tipo: 'folha',
+      destinatarios: ['rh@empresa.com'],
       empresaId: 'emp-1',
       competencia: '2026-07',
     };
     const result = await edgeFunctionsService.enviarRelatorioEmail(params);
-    expect(mockInvoke).toHaveBeenCalledWith('enviar-relatorio', {
-      body: {
-        tipoRelatorio: 'folha_resumo',
-        formato: 'csv',
-        emailDestinatario: 'rh@empresa.com',
-        parametros: { empresaId: 'emp-1', competencia: '2026-07' },
-      },
-    });
+    expect(mockInvoke).toHaveBeenCalledWith('enviar-relatorio', { body: params });
     expect(mockResendExecute).toHaveBeenCalled();
     expect(mockGenericExecute).not.toHaveBeenCalled();
-    expect(result).toEqual({ success: true, status: 'sucesso' });
+    expect(result).toEqual({ messageId: 'msg-1' });
   });
 });
 
@@ -82,7 +71,7 @@ describe('edgeFunctionsService.enviarRelatorioEmail', () => {
 describe('edgeFunctionsService.sincronizarBitrix', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockBitrixExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
+    mockBitrixExecute.mockImplementation((fn: any) => fn());
   });
 
   it('calls invoke with "sincronizar-bitrix" and uses bitrixBreaker', async () => {
@@ -100,7 +89,7 @@ describe('edgeFunctionsService.sincronizarBitrix', () => {
 describe('edgeFunctionsService.healthcheck', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGenericExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
+    mockGenericExecute.mockImplementation((fn: any) => fn());
   });
 
   it('calls invoke with "healthcheck" and empty body', async () => {
@@ -116,7 +105,7 @@ describe('edgeFunctionsService.healthcheck', () => {
 describe('edgeFunctionsService.calcularFolha', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGenericExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
+    mockGenericExecute.mockImplementation((fn: any) => fn());
   });
 
   it('calls invoke with idempotency_key when provided', async () => {
@@ -152,39 +141,12 @@ describe('edgeFunctionsService.calcularFolha', () => {
 describe('edgeFunctionsService error handling', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGenericExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
+    mockGenericExecute.mockImplementation((fn: any) => fn());
   });
 
   it('throws wrapped Error when invoke returns a supabase error object', async () => {
     mockInvoke.mockResolvedValue({ data: null, error: { message: 'Function not found' } });
     await expect(edgeFunctionsService.healthcheck()).rejects.toThrow('Function not found');
-  });
-
-  it('preserva status e código de uma rejeição HTTP definitiva', async () => {
-    mockInvoke.mockResolvedValue({
-      data: null,
-      error: { message: 'Edge Function returned a non-2xx status code' },
-      response: new Response(JSON.stringify({ error: 'Folha bloqueada', code: 'PAYROLL_LOCKED' }), { status: 409 }),
-    });
-    const error = await edgeFunctionsService
-      .calcularFolha({
-        empresaId: 'emp-1',
-        competencia: '2026-07',
-        idempotencyKey: 'idem-key',
-      })
-      .catch((caught) => caught);
-    expect(error).toBeInstanceOf(EdgeFunctionInvokeError);
-    expect(error).toMatchObject({ status: 409, code: 'PAYROLL_LOCKED', message: 'Folha bloqueada' });
-    expect(isDefinitiveIdempotencyFailure(error)).toBe(true);
-  });
-
-  it('mantém a chave para estado indeterminado ou falha de transporte', () => {
-    expect(
-      isDefinitiveIdempotencyFailure(
-        new EdgeFunctionInvokeError('reconcile', { status: 409, code: 'IDEMPOTENCY_STATE_INDETERMINATE' })
-      )
-    ).toBe(false);
-    expect(isDefinitiveIdempotencyFailure(new Error('Network timeout'))).toBe(false);
   });
 
   it('throws wrapped Error when invoke rejects with an exception', async () => {

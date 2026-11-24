@@ -19,6 +19,7 @@ vi.mock('@/integrations/supabase/client', () => ({
   },
 }));
 
+
 vi.mock('./pontoMonitorService', () => ({
   pontoMonitorService: { trackGeofenceFailure: vi.fn() },
 }));
@@ -40,6 +41,7 @@ vi.mock('@/utils/dateLocal', async (importOriginal) => ({
   formatDateLocalISO: (d: Date) => d.toISOString().slice(0, 10),
 }));
 
+
 vi.mock('crypto-js', () => ({
   default: { SHA256: vi.fn(() => ({ toString: () => 'mock-hash-abc123' })) },
 }));
@@ -47,9 +49,7 @@ vi.mock('crypto-js', () => ({
 // ─── getSettings ──────────────────────────────────────────────────────────────
 
 describe('pontoService.getSettings', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns settings for empresa', async () => {
     const settings = { empresa_id: 'emp-1', exige_geolocalizacao: false };
@@ -86,13 +86,11 @@ describe('pontoService.getSettings', () => {
 // ─── buscarRegistroHoje ───────────────────────────────────────────────────────
 
 describe('pontoService.buscarRegistroHoje', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
-  function setupBatidaChain(data: unknown, error: { message: string; code?: string } | null = null) {
+  function setupBatidaChain(data: any[], error: any = null) {
     const orderFn = vi.fn().mockResolvedValue({ data, error });
-    const baseQuery: Record<string, unknown> = {};
+    const baseQuery: any = {};
     const eqFn = vi.fn().mockReturnValue(baseQuery);
     Object.assign(baseQuery, { eq: eqFn, order: orderFn });
     const selectFn = vi.fn().mockReturnValue(baseQuery);
@@ -108,7 +106,7 @@ describe('pontoService.buscarRegistroHoje', () => {
   });
 
   it('returns empty array when no records', async () => {
-    setupBatidaChain(null as never);
+    setupBatidaChain(null as any);
     const result = await pontoService.buscarRegistroHoje('c1');
     expect(result).toEqual([]);
   });
@@ -134,13 +132,11 @@ describe('pontoService.buscarRegistroHoje', () => {
 // ─── buscarRegistrosSemana ────────────────────────────────────────────────────
 
 describe('pontoService.buscarRegistrosSemana', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
-  function setupSemanaChain(data: unknown, error: { message: string; code?: string } | null = null) {
+  function setupSemanaChain(data: any[], error: any = null) {
     const orderFn = vi.fn().mockResolvedValue({ data, error });
-    const baseQuery: Record<string, unknown> = {};
+    const baseQuery: any = {};
     const eqFn = vi.fn().mockReturnValue(baseQuery);
     const gteFn = vi.fn().mockReturnValue(baseQuery);
     Object.assign(baseQuery, { eq: eqFn, gte: gteFn, order: orderFn });
@@ -157,7 +153,7 @@ describe('pontoService.buscarRegistrosSemana', () => {
   });
 
   it('returns empty array when no records', async () => {
-    setupSemanaChain(null as never);
+    setupSemanaChain(null as any);
     const result = await pontoService.buscarRegistrosSemana('c1');
     expect(result).toEqual([]);
   });
@@ -189,12 +185,12 @@ describe('pontoService.buscarRegistrosSemana', () => {
 // ─── registrar ────────────────────────────────────────────────────────────────
 
 describe('pontoService.registrar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('throws immediately when colaboradorId is empty', async () => {
-    await expect(pontoService.registrar('entrada', '')).rejects.toThrow('Colaborador é obrigatório');
+    await expect(pontoService.registrar('entrada', '')).rejects.toThrow(
+      'Colaborador é obrigatório'
+    );
   });
 
   it('throws when a duplicate ponto record exists', async () => {
@@ -202,24 +198,29 @@ describe('pontoService.registrar', () => {
     // atômica `registrar_batida_ponto` (código Postgres 23505) — não mais por
     // um SELECT pré-checagem, que era sujeito a corrida.
     // Chamada 1: colaborador encontrado
-    mockFrom.mockReturnValueOnce(createQueryBuilder({ data: { id: 'c1', empresa_id: 'emp-1' }, error: null }));
+    mockFrom.mockReturnValueOnce(
+      createQueryBuilder({ data: { id: 'c1', empresa_id: 'emp-1' }, error: null }),
+    );
     // Chamada 2: getSettings — sem exigência de geolocalização
     mockFrom.mockReturnValueOnce(
-      createQueryBuilder({ data: { empresa_id: 'emp-1', exige_geolocalizacao: false }, error: null })
+      createQueryBuilder({ data: { empresa_id: 'emp-1', exige_geolocalizacao: false }, error: null }),
     );
     mockRpc.mockResolvedValueOnce({
       data: null,
       error: { code: '23505', message: 'duplicate key value violates unique constraint' },
     });
 
-    await expect(pontoService.registrar('entrada', 'c1')).rejects.toThrow('Já existe um registro idêntico');
+    await expect(pontoService.registrar('entrada', 'c1')).rejects.toThrow(
+      'Já existe um registro idêntico'
+    );
     expect(mockRpc).toHaveBeenCalledWith('registrar_batida_ponto', expect.any(Object));
   });
+
 
   it('throws when colaborador is not found', async () => {
     // Call 1: no duplicate (null)
     const noDupMaybe = vi.fn().mockResolvedValue({ data: null, error: null });
-    const noDupQuery: Record<string, unknown> = {};
+    const noDupQuery: any = {};
     const noDupEq = vi.fn().mockReturnValue(noDupQuery);
     Object.assign(noDupQuery, { eq: noDupEq, maybeSingle: noDupMaybe });
     const selectDup = vi.fn().mockReturnValue(noDupQuery);
@@ -227,22 +228,22 @@ describe('pontoService.registrar', () => {
 
     // Call 2: colaborador query returns null
     const colabMaybe = vi.fn().mockResolvedValue({ data: null, error: null });
-    const colabQuery: Record<string, unknown> = {};
+    const colabQuery: any = {};
     const colabEq = vi.fn().mockReturnValue(colabQuery);
     Object.assign(colabQuery, { eq: colabEq, maybeSingle: colabMaybe });
     const selectColab = vi.fn().mockReturnValue(colabQuery);
     mockFrom.mockReturnValueOnce({ select: selectColab });
 
-    await expect(pontoService.registrar('entrada', 'c1')).rejects.toThrow('Colaborador não encontrado');
+    await expect(pontoService.registrar('entrada', 'c1')).rejects.toThrow(
+      'Colaborador não encontrado'
+    );
   });
 });
 
 // ─── validarBiometria ─────────────────────────────────────────────────────────
 
 describe('pontoService.validarBiometria', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls functions.invoke with correct payload', async () => {
     mockFunctionsInvoke.mockResolvedValue({ data: { valid: true }, error: null });

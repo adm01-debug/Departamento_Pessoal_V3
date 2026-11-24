@@ -14,11 +14,11 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
-import { calcularINSSCents } from '../_shared/inss.ts';
 
 const CHUNK = 500;
 const MAX_COLABS = 50_000;
 const MAX_GUIA_CENTS = 10_000_000_000n; // R$ 100.000.000,00
+const TETO_INSS_CENTS = 815_741n;
 
 // Códigos de receita permitidos por tipo
 const CODIGOS_RECEITA = {
@@ -50,6 +50,19 @@ async function sha256Hex(s: string): Promise<string> {
   const buf = new TextEncoder().encode(s);
   const hash = await crypto.subtle.digest('SHA-256', buf);
   return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+function calcularINSSCents(baseCents: bigint): bigint {
+  if (baseCents <= 0n) return 0n;
+  const b = baseCents < TETO_INSS_CENTS ? baseCents : TETO_INSS_CENTS;
+  const F1 = 151_800n, F2 = 279_388n, F3 = 419_083n;
+  let inss: bigint;
+  if (b <= F1) inss = (b * 75n) / 1000n;
+  else if (b <= F2) inss = 11_385n + ((b - F1) * 90n) / 1000n;
+  else if (b <= F3) inss = 22_868n + ((b - F2) * 120n) / 1000n;
+  else inss = 39_631n + ((b - F3) * 140n) / 1000n;
+  const TETO_DESC = 95_163n;
+  return inss < TETO_DESC ? inss : TETO_DESC;
 }
 
 function calcularIRRFCents(baseCents: bigint): bigint {
@@ -101,9 +114,10 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
+    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    const raw = _pb;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ success: false, error: 'Payload inválido', code: 'VALIDATION_ERROR', details: parsed.error.flatten() }, 422);
@@ -123,13 +137,13 @@ serve(async (req: Request): Promise<Response> => {
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(supabase, userId, empresa_id, req);
+      const authz = await requireRh(supabase, userId, empresa_id);
       if (authz.denied) return authz.denied;
     }
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `gerar-guias:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     // Contagem prévia + cap
     const { count: totalColabs, error: countErr } = await supabase
@@ -162,7 +176,7 @@ serve(async (req: Request): Promise<Response> => {
       for (const c of colabs) {
         const sc = reaisToCents(Number(c.salario_base) || 0);
         if (sc <= 0n) continue;
-        const inssEmp = calcularINSSCents(sc, competencia);
+        const inssEmp = calcularINSSCents(sc);
         totSalariosCents += sc;
         totINSSEmpCents += inssEmp;
         totINSSPatCents += (sc * 200n) / 1000n;
@@ -264,10 +278,9 @@ serve(async (req: Request): Promise<Response> => {
     const { error: auditErr } = await supabase.from('audit_log').insert({
       tabela: 'guias_fiscais',
       registro_id: crypto.randomUUID(),
-      acao: 'SYSTEM_ACTION',
+      acao: 'GENERATE_GUIAS',
       user_id: userId,
       dados_novos: {
-        evento: 'GENERATE_GUIAS',
         empresa_id, competencia, tipo,
         total_colaboradores: totalColabs,
         guias_geradas: guias.length,

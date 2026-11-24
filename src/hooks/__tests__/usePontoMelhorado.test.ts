@@ -29,17 +29,17 @@ vi.mock('sonner', () => ({ toast: { success: mockToastSuccess, error: mockToastE
 
 import { usePontoMelhorado } from '../usePontoMelhorado';
 
-function buildChain(data: unknown[]) {
-  const chain: Record<string, unknown> = {};
+function buildChain(data: any[]) {
+  const chain: any = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.insert = vi.fn().mockReturnValue(chain);
   chain.update = vi.fn().mockReturnValue(chain);
   chain.single = vi.fn().mockResolvedValue({ data: data[0] || null, error: null });
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).finally(fn);
+  chain.then = (fn: any) => Promise.resolve({ data, error: null }).then(fn);
+  chain.catch = (fn: any) => Promise.resolve({ data, error: null }).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve({ data, error: null }).finally(fn);
   return chain;
 }
 
@@ -98,12 +98,10 @@ describe('usePontoMelhorado', () => {
       });
     });
 
-    expect(chain.insert).toHaveBeenCalledWith(
-      expect.objectContaining({
-        colaborador_id: 'col-1',
-        tipo_ponto: 'entrada',
-      })
-    );
+    expect(chain.insert).toHaveBeenCalledWith(expect.objectContaining({
+      colaborador_id: 'col-1',
+      tipo_ponto: 'entrada',
+    }));
     await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Solicitação de ajuste enviada com sucesso.'));
   });
 });

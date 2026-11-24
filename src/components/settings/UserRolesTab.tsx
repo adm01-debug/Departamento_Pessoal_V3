@@ -10,35 +10,25 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { auditLogger } from '@/utils/auditLogger';
 import { safeErrorMessage } from '@/utils/safeError';
-import type { Enums } from '@/integrations/supabase/database.types';
-
-interface UserRoleRow {
-  id: string;
-  user_id: string;
-  role: Enums<'app_role'>;
-  created_at: string;
-}
 
 export function UserRolesTab() {
   const qc = useQueryClient();
   const { data: roles = [], isLoading } = useQuery({
     queryKey: ['user-roles-list'],
-    queryFn: async (): Promise<UserRoleRow[]> => {
+    queryFn: async () => {
       // user_roles está na TABLE_DENYLIST do bridge — leitura direta retorna
       // 403 mesmo para admins. Único caminho é esta RPC. Ver
       // 20260718230000_admin_role_management_rpc.sql (achado R1 da auditoria).
-      const { data, error } = await supabase.rpc('admin_list_user_roles', {});
+      const { data, error } = await supabase.rpc('admin_list_user_roles', {} as never);
       if (error) throw error;
-      return (data as UserRoleRow[]) || [];
-    },
-  });
+      return data || [];
+    }});
 
   const upgradeToAdmin = useMutation({
     mutationFn: async (userId: string) => {
       const { error } = await supabase.rpc('admin_set_user_role', {
         _target_user_id: userId,
-        _role: 'admin',
-      });
+        _role: 'admin'});
       if (error) throw error;
     },
     onSuccess: (_, userId) => {
@@ -48,11 +38,9 @@ export function UserRolesTab() {
         tabela: 'user_roles',
         registro_id: userId,
         acao: 'UPDATE',
-        dados_novos: { role: 'admin', user_id: userId },
-      });
+        dados_novos: { role: 'admin', user_id: userId }});
     },
-    onError: (err: unknown) => toast.error(safeErrorMessage(err, 'Erro ao atualizar perfil do usuário.')),
-  });
+    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao atualizar perfil do usuário.'))});
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
@@ -82,13 +70,13 @@ export function UserRolesTab() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {roles.map((r) => (
+                {roles.map((r: any) => (
                   <TableRow key={r.id}>
                     <TableCell className="font-mono text-[10px]">{r.user_id}</TableCell>
                     <TableCell>
                       <Badge
                         variant={r.role === 'admin' ? 'default' : 'secondary'}
-                        className="gap-1 rounded-full uppercase text-[10px] font-bold tracking-tight"
+                        className="gap-1 rounded-full uppercase text-[10px] font-medium tracking-tight"
                       >
                         {r.role === 'admin' ? <ShieldCheck className="h-3 w-3" /> : <Users className="h-3 w-3" />}
                         {r.role}

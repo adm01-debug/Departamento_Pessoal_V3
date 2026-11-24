@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,7 +15,6 @@ import {
   Smartphone,
   ShieldCheck,
   Activity,
-  TrendingUp,
   Filter,
   History,
 } from 'lucide-react';
@@ -25,15 +23,29 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { exportPontoCSV, exportPontoPDF } from '@/services/exportService';
-import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { batidasPontoService } from '@/services/batidasPontoService';
-import { GestaoPontoAnalytics } from './GestaoPontoAnalytics';
-import { PontoGeoAnalytics } from './PontoGeoAnalytics';
 import { toast } from 'sonner';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { todayLocalISO } from '@/utils/dateLocal';
+import { formatDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
 
+/**
+ * PAINEL DE CONSULTA DAS BATIDAS DE PONTO (busca por colaborador/departamento/
+ * cargo, filtros avançados, fechamento de período, exportação CSV/PDF,
+ * indicadores operacionais, tabela de batidas com ações e histórico).
+ *
+ * MONTAGEM ATUAL: nenhuma. A navegação do módulo Ponto tem exatamente quatro
+ * abas (Visão Geral, Geofencing, Registros e Auditoria) e a aba **Registros**
+ * renderiza a Central de Ajustes (`PontoAdjustmentRequests`) diretamente. Não
+ * há sub-aba "Ajustes" nem "Batidas & Analytics" — por isso este componente não
+ * é renderizado por `PontoPage`. Ele permanece no projeto, íntegro, como a
+ * implementação de consulta/exportação das batidas (as mesmas consultas seguem
+ * em uso via hooks e serviços), pronto para ser remontado sem reescrita.
+ *
+ * A antiga sub-aba interna "Inteligência & Analytics" foi eliminada: repetia o
+ * `GestaoPontoAnalytics` que já é o corpo da aba Visão Geral. O componente
+ * continua no projeto e continua sendo usado na Visão Geral.
+ */
 export function GestaoRegistrosPonto() {
   const { empresaAtual } = useEmpresas();
   const [selecionados, setSelecionados] = useState<string[]>([]);
@@ -41,14 +53,16 @@ export function GestaoRegistrosPonto() {
   const [filtroFim, setFiltroFim] = useState(todayLocalISO());
   const [tipoExcecao, setTipoExcecao] = useState('todas');
   const [busca, setBusca] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+
   const { data: registros = [], isLoading } = useQuery({
     queryKey: ['gestao-registros-ponto', empresaAtual?.id, filtroData, filtroFim],
     queryFn: async () => {
       if (!empresaAtual?.id) return [];
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('registros_ponto')
         .select(
-          '*, colaborador:colaboradores!registros_ponto_colaborador_id_fkey(nome_completo, cargo, departamento, foto_url)'
+          '*, colaborador:colaboradores!batidas_ponto_colaborador_id_fkey(nome_completo, cargo, departamento, foto_url)'
         )
         .eq('empresa_id', empresaAtual.id)
         .gte('data', filtroData)
@@ -60,35 +74,19 @@ export function GestaoRegistrosPonto() {
     enabled: !!empresaAtual?.id,
   });
 
-  const { data: batidas = [] } = useQuery({
-    queryKey: ['gestao-batidas-ponto-geo', empresaAtual?.id, filtroData, filtroFim],
-    queryFn: async () => {
-      if (!empresaAtual?.id) return [];
-      const { data, error } = await supabase
-        .from('batidas_ponto')
-        .select('*, colaborador:colaboradores(nome_completo)')
-        .eq('empresa_id', empresaAtual.id)
-        .gte('data', filtroData)
-        .lte('data', filtroFim);
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!empresaAtual?.id,
-  });
-
-  const formatTime = (val: string | null | undefined) => {
+  const formatTime = (val: any) => {
     if (!val) return '--:--';
     const m = String(val).match(/(\d+):(\d+)/);
     return m ? `${m[1].padStart(2, '0')}:${m[2].padStart(2, '0')}` : '--:--';
   };
 
-  const formatInterval = (val: string | null | undefined) => {
+  const formatInterval = (val: any) => {
     if (!val) return '00:00';
     const m = String(val).match(/(\d+):(\d+)/);
     return m ? `${m[1].padStart(2, '0')}:${m[2].padStart(2, '0')}` : '00:00';
   };
 
-  const filtrados = registros.filter((r) => {
+  const filtrados = registros.filter((r: any) => {
     const nome = r.colaborador?.nome_completo?.toLowerCase() || '';
     const cargo = r.colaborador?.cargo?.toLowerCase() || '';
     const depto = r.colaborador?.departamento?.toLowerCase() || '';
@@ -97,12 +95,18 @@ export function GestaoRegistrosPonto() {
     const buscaMatch = !busca || nome.includes(query) || cargo.includes(query) || depto.includes(query);
 
     if (tipoExcecao === 'todas') return buscaMatch;
-    if (tipoExcecao === 'atrasos') return buscaMatch && (r.atraso_minutos ?? 0) > 0;
+    if (tipoExcecao === 'atrasos') return buscaMatch && r.atraso_minutos > 0;
     if (tipoExcecao === 'faltas') return buscaMatch && !r.entrada_1 && !r.saida_1;
     if (tipoExcecao === 'incompletos') return buscaMatch && r.entrada_1 && !r.saida_1;
 
     return buscaMatch;
   });
+
+  const mudarDia = (offset: number) => {
+    const d = new Date(filtroData + 'T12:00:00');
+    d.setDate(d.getDate() + offset);
+    setFiltroData(formatDateLocalISO(d));
+  };
 
   const exportData = (format: 'csv' | 'pdf') => {
     if (filtrados.length === 0) {
@@ -110,7 +114,7 @@ export function GestaoRegistrosPonto() {
       return;
     }
 
-    const dataToExport = filtrados.map((r) => ({
+    const dataToExport = filtrados.map((r: any) => ({
       colaborador: r.colaborador?.nome_completo,
       data: r.data,
       entrada_1: formatTime(r.entrada_1),
@@ -121,10 +125,6 @@ export function GestaoRegistrosPonto() {
       horas_extras: formatInterval(r.horas_extras),
     }));
 
-    void registrarAcessoPII('ponto_registros', 'export', {
-      empresaId: empresaAtual?.id,
-      registroCount: dataToExport.length,
-    });
     if (format === 'csv') {
       exportPontoCSV(dataToExport, `ponto-${filtroData}.csv`);
     } else {
@@ -148,7 +148,6 @@ export function GestaoRegistrosPonto() {
       className="mt-6"
     >
       <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
-        <div className="h-[2px] bg-gradient-to-r from-primary to-primary-glow" />
         <CardHeader>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -165,7 +164,7 @@ export function GestaoRegistrosPonto() {
                   <PopoverContent className="w-80 p-4" align="end">
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <h4 className="font-bold text-xs uppercase text-muted-foreground">Período</h4>
+                        <h4 className="font-medium text-xs uppercase text-muted-foreground">Período</h4>
                         <div className="flex items-center gap-2">
                           <Input
                             type="date"
@@ -183,7 +182,7 @@ export function GestaoRegistrosPonto() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <h4 className="font-bold text-xs uppercase text-muted-foreground">Tipo de Exceção</h4>
+                        <h4 className="font-medium text-xs uppercase text-muted-foreground">Tipo de Exceção</h4>
                         <select
                           value={tipoExcecao}
                           onChange={(e) => setTipoExcecao(e.target.value)}
@@ -253,7 +252,7 @@ export function GestaoRegistrosPonto() {
                     exit={{ opacity: 0, x: 20 }}
                     className="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-lg border border-primary/20"
                   >
-                    <span className="text-[10px] font-bold text-primary">{selecionados.length} selecionados</span>
+                    <span className="text-[10px] font-medium text-primary">{selecionados.length} selecionados</span>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -272,232 +271,214 @@ export function GestaoRegistrosPonto() {
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="lista" className="w-full">
-            <div className="flex items-center justify-between mb-4">
-              <TabsList className="bg-muted/50 p-1 rounded-xl">
-                <TabsTrigger value="lista" className="text-xs rounded-lg px-4">
-                  <Activity className="h-3 w-3 mr-2" /> Registros
-                </TabsTrigger>
-                <TabsTrigger value="analytics" className="text-xs rounded-lg px-4">
-                  <TrendingUp className="h-3 w-3 mr-2" /> Inteligência & Analytics
-                </TabsTrigger>
-              </TabsList>
-            </div>
-
-            <TabsContent value="lista">
-              {isLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <Clock className="h-6 w-6 animate-spin text-muted-foreground" />
+          <div className="w-full">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Clock className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : filtrados.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="p-3 rounded-2xl bg-muted/50 mb-3">
+                  <Users className="h-8 w-8 text-muted-foreground" />
                 </div>
-              ) : filtrados.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12">
-                  <div className="p-3 rounded-2xl bg-muted/50 mb-3">
-                    <Users className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <p className="text-sm text-muted-foreground font-body">Nenhum registro encontrado para esta data</p>
+                <p className="text-sm text-muted-foreground font-body">Nenhum registro encontrado para esta data</p>
+              </div>
+            ) : (
+              <>
+                <PontoInconsistencyPanel registros={registros} />
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                  <Card className="bg-muted/30 border-none">
+                    <CardContent className="p-4 flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                        <Smartphone className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase text-muted-foreground font-medium">Status Quiosques</p>
+                        <p className="text-sm font-display font-medium">3 Ativos / 1 Offline</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-muted/30 border-none">
+                    <CardContent className="p-4 flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-success/10 text-success">
+                        <ShieldCheck className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase text-muted-foreground font-medium">
+                          Conformidade (MTP 671)
+                        </p>
+                        <p className="text-sm font-display font-medium">100% Integridade</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-muted/30 border-none">
+                    <CardContent className="p-4 flex items-center gap-3">
+                      <div className="p-2 rounded-lg bg-info/10 text-info">
+                        <Activity className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase text-muted-foreground font-medium">
+                          Tentativas de Sincronização
+                        </p>
+                        <p className="text-sm font-display font-medium">128 hoje (2 falhas)</p>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
-              ) : (
-                <>
-                  <PontoInconsistencyPanel registros={registros} />
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                    <Card className="bg-muted/30 border-none">
-                      <CardContent className="p-4 flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                          <Smartphone className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="text-[10px] uppercase text-muted-foreground font-bold">Status Quiosques</p>
-                          <p className="text-sm font-display font-bold">3 Ativos / 1 Offline</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <Card className="bg-muted/30 border-none">
-                      <CardContent className="p-4 flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-success/10 text-success">
-                          <ShieldCheck className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="text-[10px] uppercase text-muted-foreground font-bold">
-                            Conformidade (MTP 671)
-                          </p>
-                          <p className="text-sm font-display font-bold">100% Integridade</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <Card className="bg-muted/30 border-none">
-                      <CardContent className="p-4 flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-info/10 text-info">
-                          <Activity className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="text-[10px] uppercase text-muted-foreground font-bold">
-                            Tentativas de Sincronização
-                          </p>
-                          <p className="text-sm font-display font-bold">128 hoje (2 falhas)</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+                <div className="overflow-x-auto mt-6">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/30 hover:bg-muted/30">
+                        <TableHead className="w-10">
+                          <input
+                            type="checkbox"
+                            className="rounded border-gray-300"
+                            checked={selecionados.length === filtrados.length && filtrados.length > 0}
+                            onChange={(e) => {
+                              if (e.target.checked) setSelecionados(filtrados.map((f: any) => f.id));
+                              else setSelecionados([]);
+                            }}
+                          />
+                        </TableHead>
+                        <TableHead className="font-display font-semibold">Colaborador</TableHead>
+                        <TableHead className="font-display font-semibold">Escala</TableHead>
+                        <TableHead className="font-display font-semibold">Entrada 1</TableHead>
+                        <TableHead className="font-display font-semibold">Saída Int.</TableHead>
+                        <TableHead className="font-display font-semibold">Ret. Int.</TableHead>
+                        <TableHead className="font-display font-semibold">Saída 1</TableHead>
+                        <TableHead className="font-display font-semibold">Trabalhadas</TableHead>
+                        <TableHead className="font-display font-semibold">Extras</TableHead>
+                        <TableHead className="font-display font-semibold">Status</TableHead>
+                        <TableHead className="font-display font-semibold text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
 
-                  <div className="overflow-x-auto mt-6">
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="bg-muted/30 hover:bg-muted/30">
-                          <TableHead className="w-10">
-                            <input
-                              type="checkbox"
-                              className="rounded border-gray-300"
-                              checked={selecionados.length === filtrados.length && filtrados.length > 0}
-                              onChange={(e) => {
-                                if (e.target.checked) setSelecionados(filtrados.map((f) => f.id));
-                                else setSelecionados([]);
-                              }}
-                            />
-                          </TableHead>
-                          <TableHead className="font-display font-semibold">Colaborador</TableHead>
-                          <TableHead className="font-display font-semibold">Escala</TableHead>
-                          <TableHead className="font-display font-semibold">Entrada 1</TableHead>
-                          <TableHead className="font-display font-semibold">Saída Int.</TableHead>
-                          <TableHead className="font-display font-semibold">Ret. Int.</TableHead>
-                          <TableHead className="font-display font-semibold">Saída 1</TableHead>
-                          <TableHead className="font-display font-semibold">Trabalhadas</TableHead>
-                          <TableHead className="font-display font-semibold">Extras</TableHead>
-                          <TableHead className="font-display font-semibold">Status</TableHead>
-                          <TableHead className="font-display font-semibold text-right">Ações</TableHead>
-                        </TableRow>
-                      </TableHeader>
+                    <TableBody>
+                      {filtrados.map((r: any) => {
+                        const trabalhadas = formatInterval(r.horas_trabalhadas);
+                        const extras = formatInterval(r.horas_extras);
+                        const temAtraso = r.atraso_minutos > 0;
+                        const temFalta = formatInterval(r.horas_falta) !== '00:00';
+                        const aberto = !r.saida_1 && r.entrada_1;
 
-                      <TableBody>
-                        {filtrados.map((r) => {
-                          const trabalhadas = formatInterval(r.horas_trabalhadas);
-                          const extras = formatInterval(r.horas_extras);
-                          const temAtraso = (r.atraso_minutos ?? 0) > 0;
-                          const temFalta = formatInterval(r.horas_falta) !== '00:00';
-                          const aberto = !r.saida_1 && r.entrada_1;
-
-                          return (
-                            <TableRow
-                              key={r.id}
-                              className={`hover:bg-accent/30 transition-colors ${selecionados.includes(r.id) ? 'bg-primary/5' : ''}`}
-                            >
-                              <TableCell>
-                                <input
-                                  type="checkbox"
-                                  className="rounded border-gray-300"
-                                  checked={selecionados.includes(r.id)}
-                                  onChange={(e) => {
-                                    if (e.target.checked) setSelecionados([...selecionados, r.id]);
-                                    else setSelecionados(selecionados.filter((id) => id !== r.id));
-                                  }}
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex items-center gap-2">
-                                  {r.colaborador?.foto_url ? (
-                                    <img
-                                      src={r.colaborador.foto_url}
-                                      alt=""
-                                      className="h-7 w-7 rounded-full object-cover"
-                                    />
-                                  ) : (
-                                    <div className="h-7 w-7 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
-                                      {(r.colaborador?.nome_completo || '?')[0]}
-                                    </div>
-                                  )}
-                                  <div>
-                                    <p className="font-body font-medium text-sm">
-                                      {r.colaborador?.nome_completo || '—'}
-                                    </p>
-                                    <p className="text-[10px] text-muted-foreground">{r.colaborador?.cargo}</p>
-                                  </div>
-                                </div>
-                              </TableCell>
-                              <TableCell className="text-[10px] text-muted-foreground whitespace-nowrap">
-                                {r.entrada_esperada ? `${r.entrada_esperada} - ${r.saida_esperada}` : 'Não def.'}
-                              </TableCell>
-                              <TableCell
-                                className={`font-mono text-sm ${temAtraso ? 'text-destructive font-bold' : ''}`}
-                              >
-                                {formatTime(r.entrada_1)}
-                              </TableCell>
-                              <TableCell className="font-mono text-sm">{formatTime(r.saida_intervalo)}</TableCell>
-                              <TableCell className="font-mono text-sm">{formatTime(r.retorno_intervalo)}</TableCell>
-                              <TableCell className="font-mono text-sm">{formatTime(r.saida_1)}</TableCell>
-                              <TableCell>
-                                <span className="font-mono text-sm font-medium text-success">{trabalhadas}</span>
-                              </TableCell>
-                              <TableCell>
-                                {extras !== '00:00' ? (
-                                  <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-info">
-                                    +{extras}
-                                  </Badge>
+                        return (
+                          <TableRow
+                            key={r.id}
+                            className={`hover:bg-accent/30 transition-colors ${selecionados.includes(r.id) ? 'bg-primary/5' : ''}`}
+                          >
+                            <TableCell>
+                              <input
+                                type="checkbox"
+                                className="rounded border-gray-300"
+                                checked={selecionados.includes(r.id)}
+                                onChange={(e) => {
+                                  if (e.target.checked) setSelecionados([...selecionados, r.id]);
+                                  else setSelecionados(selecionados.filter((id) => id !== r.id));
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                {r.colaborador?.foto_url ? (
+                                  <img
+                                    src={r.colaborador.foto_url}
+                                    alt=""
+                                    className="h-7 w-7 rounded-full object-cover"
+                                  />
                                 ) : (
-                                  <span className="text-xs text-muted-foreground">—</span>
+                                  <div className="h-7 w-7 rounded-full bg-muted flex items-center justify-center text-xs font-medium text-muted-foreground">
+                                    {(r.colaborador?.nome_completo || '?')[0]}
+                                  </div>
                                 )}
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex gap-1">
-                                  {aberto && (
-                                    <Badge
-                                      variant="outline"
-                                      className="text-[10px] h-5 px-1.5 text-warning border-warning/30"
-                                    >
-                                      <Clock className="h-3 w-3 mr-0.5" /> Aberto
-                                    </Badge>
-                                  )}
-                                  {temAtraso && (
-                                    <Badge variant="destructive" className="text-[10px] h-5 px-1.5">
-                                      <AlertTriangle className="h-3 w-3 mr-0.5" /> {r.atraso_minutos}min
-                                    </Badge>
-                                  )}
-                                  {temFalta && (
-                                    <Badge variant="destructive" className="text-[10px] h-5 px-1.5">
-                                      Falta
-                                    </Badge>
-                                  )}
-                                  {!aberto && !temAtraso && !temFalta && r.saida_1 && (
-                                    <Badge
-                                      className="text-[10px] h-5 px-1.5 bg-success/10 text-success border-success/30"
-                                      variant="outline"
-                                    >
-                                      ✓ OK
-                                    </Badge>
-                                  )}
+                                <div>
+                                  <p className="font-body font-medium text-sm">
+                                    {r.colaborador?.nome_completo || '—'}
+                                  </p>
+                                  <p className="text-[10px] text-muted-foreground">{r.colaborador?.cargo}</p>
                                 </div>
-                              </TableCell>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-[10px] text-muted-foreground whitespace-nowrap">
+                              {r.entrada_esperada ? `${r.entrada_esperada} - ${r.saida_esperada}` : 'Não def.'}
+                            </TableCell>
+                            <TableCell
+                              className={`text-numeric text-sm ${temAtraso ? 'text-destructive font-medium' : ''}`}
+                            >
+                              {formatTime(r.entrada_1)}
+                            </TableCell>
+                            <TableCell className="text-numeric text-sm">{formatTime(r.saida_intervalo)}</TableCell>
+                            <TableCell className="text-numeric text-sm">{formatTime(r.retorno_intervalo)}</TableCell>
+                            <TableCell className="text-numeric text-sm">{formatTime(r.saida_1)}</TableCell>
+                            <TableCell>
+                              <span className="text-numeric text-sm font-medium text-success">{trabalhadas}</span>
+                            </TableCell>
+                            <TableCell>
+                              {extras !== '00:00' ? (
+                                <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-info">
+                                  +{extras}
+                                </Badge>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">—</span>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-1">
+                                {aberto && (
+                                  <Badge
+                                    variant="outline"
+                                    className="text-[10px] h-5 px-1.5 text-warning border-warning/30"
+                                  >
+                                    <Clock className="h-3 w-3 mr-0.5" /> Aberto
+                                  </Badge>
+                                )}
+                                {temAtraso && (
+                                  <Badge variant="destructive" className="text-[10px] h-5 px-1.5">
+                                    <AlertTriangle className="h-3 w-3 mr-0.5" /> {r.atraso_minutos}min
+                                  </Badge>
+                                )}
+                                {temFalta && (
+                                  <Badge variant="destructive" className="text-[10px] h-5 px-1.5">
+                                    Falta
+                                  </Badge>
+                                )}
+                                {!aberto && !temAtraso && !temFalta && r.saida_1 && (
+                                  <Badge
+                                    className="text-[10px] h-5 px-1.5 bg-success/10 text-success border-success/30"
+                                    variant="outline"
+                                  >
+                                    ✓ OK
+                                  </Badge>
+                                )}
+                              </div>
+                            </TableCell>
 
-                              <TableCell className="text-right">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  aria-label="Histórico"
-                                  className="h-7 w-7 rounded-lg hover:bg-info/10 text-info"
-                                  onClick={() =>
-                                    toast.info(`Visualizando auditoria de ${r.colaborador?.nome_completo}...`)
-                                  }
-                                >
-                                  <History className="h-4 w-4" />
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                    <p className="text-xs text-muted-foreground mt-3 font-body">
-                      {filtrados.length} registro(s) encontrado(s)
-                    </p>
-                  </div>
-                </>
-              )}
-            </TabsContent>
-
-            <TabsContent value="analytics" className="space-y-6">
-              <GestaoPontoAnalytics registros={registros} />
-              <PontoGeoAnalytics batidas={batidas} />
-            </TabsContent>
-          </Tabs>
+                            <TableCell className="text-right">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                aria-label="Histórico"
+                                className="h-7 w-7 rounded-lg hover:bg-info/10 text-info"
+                                onClick={() =>
+                                  toast.info(`Visualizando auditoria de ${r.colaborador?.nome_completo}...`)
+                                }
+                              >
+                                <History className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                  <p className="text-xs text-muted-foreground mt-3 font-body">
+                    {filtrados.length} registro(s) encontrado(s)
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
         </CardContent>
       </Card>
     </motion.div>

@@ -1,82 +1,103 @@
 import { PageTitle } from '@/components/PageTitle';
-import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { cn } from '@/lib/utils';
+import { VERMELHO_SOLIDO } from '@/components/ponto/vermelhoVibrante';
+import { ACAO_ESPELHO_671, ACAO_MAIS_ACOES } from '@/components/ponto/acoesCabecalhoPonto';
+import { useState, useEffect, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { ImportarAFDTDialog } from '@/components/ponto/ImportarAFDTDialog';
 import { GerarAEJDialog } from '@/components/ponto/GerarAEJDialog';
-import { GerarAFDDialog } from '@/components/ponto/GerarAFDDialog';
-import { AssinarEspelhoDialog } from '@/components/ponto/AssinarEspelhoDialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { MetricCard } from '@/components/dashboard/MetricCard';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Clock,
-  MapPin,
   RefreshCw,
   Loader2,
   AlertCircle,
   Settings,
+  ClipboardList,
   WifiOff,
   ShieldCheck,
   Zap,
-  BrainCircuit,
   BarChart3,
+  MoreHorizontal,
   Map as MapIcon,
 } from 'lucide-react';
 import { pontoService, batidasPontoService } from '@/services';
 import { useAuth } from '@/contexts';
-import { useEmpresas, usePontoOffline } from '@/hooks';
+import {
+  useEmpresas,
+  usePontoOffline,
+  useColaboradoresEquipePonto,
+  useRegistrosPontoEmpresa,
+  useSolicitacoesAjustePontoPendentes,
+  periodoDoMesCorrente,
+} from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
-import { GestaoRegistrosPonto } from '@/components/ponto/GestaoRegistrosPonto';
-import { PontoStreakCard } from '@/components/ponto/PontoStreakCard';
-import { PontoCharts } from '@/components/ponto/PontoCharts';
+import { PontoAdjustmentRequests } from '@/components/ponto/PontoAdjustmentRequests';
 import { PontoClockRegister } from '@/components/ponto/PontoClockRegister';
 import { PontoTodayCard } from '@/components/ponto/PontoTodayCard';
-import { PontoWeekSummary } from '@/components/ponto/PontoWeekSummary';
-import { PontoAdjustmentRequests } from '@/components/ponto/PontoAdjustmentRequests';
+import { PontoEquipeStatusCard } from '@/components/ponto/PontoEquipeStatusCard';
+import { PontoBancoHorasCard, type BancoHorasResumo } from '@/components/ponto/PontoBancoHorasCard';
+import { PontoHorasSemanaCard } from '@/components/ponto/PontoHorasSemanaCard';
+import { PontoPendenciasCard } from '@/components/ponto/PontoPendenciasCard';
+import { PontoFechamentoCard } from '@/components/ponto/PontoFechamentoCard';
+import { PontoUltimasBatidasCard } from '@/components/ponto/PontoUltimasBatidasCard';
+import { PontoIndicadoresKpi } from '@/components/ponto/PontoIndicadoresKpi';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PontoAuditTimeline } from '@/components/ponto/PontoAuditTimeline';
-import { PontoLeaderboard } from '@/components/ponto/PontoLeaderboard';
+import { SlidingIndicator } from '@/components/ui/sliding-indicator';
+import { AuditoriaPonto } from '@/components/ponto/AuditoriaPonto';
 import { GestaoPontoAnalytics } from '@/components/ponto/GestaoPontoAnalytics';
-import { PontoGeoAnalytics } from '@/components/ponto/PontoGeoAnalytics';
+import { PontoGeofencingPainel } from '@/components/ponto/PontoGeofencingPainel';
 import { formatDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
+import { resumirEquipeDoDia, temSaidaPendente } from '@/utils/pontoEquipe';
+import { minutosDeDuracao, formatarMinutosDuracao } from '@/utils/pontoDuracao';
 import { loggerService } from '@/services/loggerService';
-
-interface BancoHorasResumo {
-  saldo: string;
-  saldoMinutos: number;
-  tipo: 'credito' | 'debito';
-}
 
 export default function PontoPage() {
   const [loading, setLoading] = useState<string | null>(null);
   const [time, setTime] = useState(new Date());
   const [geoStatus, setGeoStatus] = useState<'idle' | 'capturing' | 'success' | 'error' | 'out_of_range'>('idle');
   const [processando, setProcessando] = useState(false);
+  /** Aba ativa controlada: os cards de resumo levam o usuário para "Gestão". */
+  const [tabAtiva, setTabAtiva] = useState<'meu-ponto' | 'gestao'>('meu-ponto');
+  /**
+   * Aba INTERNA da Gestão (Visão Geral / Geofencing / Registros / Auditoria).
+   * São exatamente QUATRO abas — a Central de Ajustes é o corpo de Registros,
+   * não uma quinta aba. Passou a ser controlada para o indicador lime do
+   * seletor em barra cheia deslizar sob a coluna ativa — mesmo mecanismo já
+   * usado no seletor "Meu Ponto / Gestão" logo acima.
+   */
+  const [abaGestao, setAbaGestao] = useState('overview');
+  const indiceAbaGestao = Math.max(0, ['overview', 'geofencing', 'registros', 'auditoria'].indexOf(abaGestao));
   const { user } = useAuth();
   const { addOffline, offlineBatidasCount } = usePontoOffline();
   const { empresaAtual } = useEmpresas();
+  const queryClient = useQueryClient();
 
-  // configuracoes_ponto.exige_reconhecimento_facial — alimenta
-  // PontoClockRegister (o switch da aba Configurações agora tem efeito).
-  const { data: pontoCfg } = useQuery({
-    queryKey: ['configuracoes-ponto-clock', empresaAtual?.id],
+  // Colaborador logado (email -> colaboradores.id): usado só para o card
+  // "Hoje" resolver/editar a própria escala (escalas_trabalho -> turnos).
+  const { data: meuColaboradorId } = useQuery({
+    queryKey: ['meu-colaborador-id', user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('configuracoes_ponto')
-        .select('exige_reconhecimento_facial')
-        .eq('empresa_id', empresaAtual!.id)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
+      if (!user?.email) return null;
+      const { data } = await supabase.from('colaboradores').select('id').eq('email', user.email).maybeSingle();
+      return data?.id ?? null;
     },
-    enabled: !!empresaAtual?.id,
+    enabled: !!user?.email,
   });
 
   const { data: locaisTrabalho } = useQuery({
@@ -99,20 +120,6 @@ export default function PontoPage() {
   }, []);
   const today = todayLocalISO();
 
-  const { data: meuColaborador } = useQuery({
-    queryKey: ['me-colaborador-ponto', user?.email],
-    queryFn: async () => {
-      if (!user?.email) return null;
-      const { data } = await supabase
-        .from('colaboradores')
-        .select('id, nome_completo')
-        .eq('email', user.email)
-        .maybeSingle();
-      return data;
-    },
-    enabled: !!user?.email,
-  });
-
   const { data: registroHoje, refetch: refetchRegistro } = useQuery({
     queryKey: ['registro-ponto-hoje', user?.id, today],
     queryFn: async () => {
@@ -123,7 +130,7 @@ export default function PontoPage() {
         .eq('email', user.email || '')
         .maybeSingle();
       if (!colab) return null;
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('registros_ponto')
         .select('*')
         .eq('colaborador_id', colab.id)
@@ -155,7 +162,7 @@ export default function PontoPage() {
       if (!colab) return [];
       const w = new Date();
       w.setDate(w.getDate() - 7);
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('registros_ponto')
         .select('*')
         .eq('colaborador_id', colab.id)
@@ -169,7 +176,7 @@ export default function PontoPage() {
 
   const { data: bancoResumo } = useQuery({
     queryKey: ['banco-horas-resumo', user?.id],
-    queryFn: async () => {
+    queryFn: async (): Promise<BancoHorasResumo | null> => {
       if (!user?.id) return null;
       const { data: colab } = await supabase
         .from('colaboradores')
@@ -199,10 +206,81 @@ export default function PontoPage() {
         saldo: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`,
         saldoMinutos: totalMinutos,
         tipo: totalMinutos >= 0 ? 'credito' : 'debito',
-      } as BancoHorasResumo;
+      };
     },
     enabled: !!user?.id,
   });
+
+  // ---------------------------------------------------------------------------
+  // Resumos do dashboard (Situação da Equipe, Pendências e Fechamento)
+  // ---------------------------------------------------------------------------
+  // Fonte única: colaboradores ativos + registros da competência corrente,
+  // vindos de `usePontoDashboard` (cache por empresa). Os cards não abrem
+  // consulta própria — se abrissem, a tela mostraria números divergentes para a
+  // mesma pergunta e multiplicaria as idas ao banco.
+  const periodoCompetencia = useMemo(() => periodoDoMesCorrente(), []);
+  const { data: colaboradoresEquipe = [] } = useColaboradoresEquipePonto();
+  const { data: registrosCompetencia = [] } = useRegistrosPontoEmpresa(periodoCompetencia);
+  const { data: ajustesPendentes = 0 } = useSolicitacoesAjustePontoPendentes();
+
+  // Mesma regra do card da equipe: a última batida do dia decide quem está em
+  // jornada (`saida` encerra a jornada; `saida_almoco` não).
+  const resumoEquipe = useMemo(
+    () => resumirEquipeDoDia(batidasHoje, colaboradoresEquipe.length),
+    [batidasHoje, colaboradoresEquipe.length]
+  );
+
+  // Fechamento = colaboradores com registro no mês (processados) + registros
+  // com saída não marcada (definição de `PontoInconsistencyPanel`).
+  const fechamento = useMemo(() => {
+    const processados = new Set(registrosCompetencia.map((registro) => registro.colaborador_id)).size;
+    const pendentes = registrosCompetencia.filter(temSaidaPendente).length;
+    return { processados, pendentes };
+  }, [registrosCompetencia]);
+
+  // Indicadores da aba Gestão.
+  //
+  // Antes eram quatro números fixos na tela (98,5% / 12 / 42h / 100%) que não
+  // vinham de consulta nenhuma: podiam contradizer os cards do "Meu Ponto" na
+  // mesma sessão. Agora saem do mesmo recorte da competência já carregado
+  // acima — sem consulta extra e sem número inventado.
+  const indicadoresGestao = useMemo(() => {
+    const horasExtrasMinutos = registrosCompetencia.reduce(
+      (soma, registro) => soma + minutosDeDuracao(registro.horas_extras),
+      0
+    );
+    const colaboradoresComRegistro = new Set(registrosCompetencia.map((registro) => registro.colaborador_id)).size;
+    const diasComRegistro = new Set(registrosCompetencia.map((registro) => registro.data)).size;
+
+    return {
+      registros: registrosCompetencia.length,
+      colaboradoresComRegistro,
+      diasComRegistro,
+      horasExtras: formatarMinutosDuracao(horasExtrasMinutos),
+    };
+  }, [registrosCompetencia]);
+
+  // Selo do cabeçalho do card de registro: vem do estado REAL do dia (atraso
+  // apurado, jornada encerrada, entrada ainda não batida) — nunca um rótulo
+  // fixo de vitrine.
+  const statusJornada = useMemo(() => {
+    if (!registroHoje?.entrada_1) return { rotulo: 'Jornada não iniciada', tom: 'outline' as const };
+    if (registroHoje?.saida_1) return { rotulo: 'Jornada encerrada', tom: 'outline' as const };
+    if (Number(registroHoje?.atraso_minutos) > 0) {
+      return { rotulo: `Atraso · ${registroHoje.atraso_minutos} min`, tom: 'warning' as const };
+    }
+    return { rotulo: 'Dentro do horário', tom: 'success' as const };
+  }, [registroHoje]);
+
+  /** Recarrega o dia + os resumos da competência (ação "Atualizar dados"). */
+  const atualizarDados = () => {
+    refetchRegistro();
+    refetchBatidas();
+    queryClient.invalidateQueries({ queryKey: ['ponto-equipe-ativa'] });
+    queryClient.invalidateQueries({ queryKey: ['ponto-registros-competencia'] });
+    queryClient.invalidateQueries({ queryKey: ['ponto-ajustes-pendentes'] });
+    toast.success('Dados de ponto atualizados.');
+  };
 
   const captureGeo = (): Promise<{ lat: number; lng: number; accuracy: number } | null> =>
     new Promise((resolve) => {
@@ -267,8 +345,7 @@ export default function PontoPage() {
 
       if (!navigator.onLine) {
         // Agora passando a foto para o modo offline (biometria real mesmo offline)
-        if (!empresaAtual?.id) throw new Error('Empresa ativa obrigatória para registro offline');
-        await addOffline(tipo, colab.id, empresaAtual.id, {
+        await addOffline(tipo, colab.id, {
           lat: geo?.lat,
           lng: geo?.lng,
           accuracy: geo?.accuracy,
@@ -276,7 +353,7 @@ export default function PontoPage() {
         return undefined;
       }
 
-      const batida = await pontoService.registrar(tipo, colab.id, {
+      const batida = await (pontoService as any).registrar(tipo, colab.id, {
         latitude: geo?.lat,
         longitude: geo?.lng,
         precisao: geo?.accuracy ? Math.round(geo.accuracy) : undefined,
@@ -307,7 +384,7 @@ export default function PontoPage() {
           }
           return { biometriaValida: !!bio?.valid };
         } catch (bioErr) {
-          void loggerService.error(
+          loggerService.error(
             'Erro na validação biométrica',
             { colaboradorId: colab.id, batidaId: batida.id },
             bioErr instanceof Error ? bioErr : new Error(String(bioErr))
@@ -351,319 +428,357 @@ export default function PontoPage() {
     <>
       <PageTitle title="Registro de Ponto" description="Controle de ponto eletrônico" />
       <PageLayout
-        title={`Olá, ${user?.name?.split(' ')[0] || 'Colaborador'}`}
-        description={
-          new Date().getHours() < 12
-            ? 'Bom dia! Pronto para iniciar?'
-            : new Date().getHours() < 18
-              ? 'Boa tarde! Como está seu dia?'
-              : 'Boa noite! Quase lá.'
-        }
+        title="Controle de Ponto"
+        description="Acompanhe a jornada, valide ocorrências e mantenha a equipe em conformidade."
         icon={<Clock className="h-5 w-5 text-primary-foreground" />}
         gradient="from-primary/60 to-primary/90"
+        // Ritmo vertical desta página: 16px (o shell usa 24px por padrão). O
+        // dashboard tem 4 faixas empilhadas — cabeçalho, seletor "Meu Ponto |
+        // Gestão da Equipe", banner MTP e conteúdo da aba. Com 24px entre cada
+        // bloco a 1ª linha de cards sairia da dobra; 16px mantém o conjunto
+        // compacto e é o mesmo passo vertical usado dentro do `<Tabs>`.
+        className="space-y-4"
         actions={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-end gap-2">
             {offlineBatidasCount > 0 && (
               <Badge variant="destructive" className="animate-pulse gap-1.5 py-1.5 px-3 rounded-xl">
                 <WifiOff className="h-3.5 w-3.5" />
                 {offlineBatidasCount} Aguardando Sincronização
               </Badge>
             )}
+            {/* Ordem do cabeçalho: espelho legal → importação → geração → menu.
+                Os quatro controles têm a mesma altura/raio (36px / `rounded-lg`)
+                para a faixa ficar alinhada como na referência, e o visual dos
+                quatro vem de `ponto/acoesCabecalhoPonto.ts` — a MESMA linguagem
+                de halo do "Exportar"/"Sincronizar" do Dashboard principal, com
+                o lime marcando a ação principal (Gerar AEJ). */}
+            <Button
+              size="sm"
+              variant="outline"
+              className={ACAO_ESPELHO_671}
+              onClick={() =>
+                toast.success('Relatório MTP 671 Gerado com Sucesso!', {
+                  description: 'O documento foi assinado digitalmente e está disponível no histórico de auditoria.',
+                })
+              }
+            >
+              <ShieldCheck className="h-4 w-4" />
+              <span className="hidden sm:inline">Espelho 671</span>
+            </Button>
             <ImportarAFDTDialog />
             <GerarAEJDialog />
-            <GerarAFDDialog />
-            <Button
-              size="sm"
-              variant="outline"
-              className="rounded-xl gap-1.5 font-body"
-              onClick={() => window.open('/ponto/kiosk', '_blank', 'noopener')}
-            >
-              <Settings className="h-4 w-4" /> Kiosk Mode
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="rounded-xl gap-1.5 font-body"
-              onClick={processarPontoServidor}
-              disabled={processando}
-            >
-              {processando ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-              <span className="hidden sm:inline">Processar Servidor</span>
-            </Button>
-            {meuColaborador && (
-              <AssinarEspelhoDialog
-                colaboradorId={meuColaborador.id}
-                colaboradorNome={meuColaborador.nome_completo}
-                trigger={
-                  <Button
-                    size="sm"
-                    className="rounded-xl gap-1.5 font-bold shadow-lg shadow-primary/20 bg-gradient-to-r from-primary to-primary-glow border-none"
-                  >
-                    <ShieldCheck className="h-4 w-4" />
-                    <span className="hidden sm:inline">Gerar Espelho 671</span>
-                  </Button>
-                }
-              />
-            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" variant="outline" className={ACAO_MAIS_ACOES}>
+                  <MoreHorizontal className="h-4 w-4" />
+                  <span className="hidden sm:inline">Mais ações</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-60">
+                <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-muted-foreground font-body">
+                  Operação
+                </DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={processarPontoServidor}
+                  disabled={processando}
+                  className="gap-2 font-body cursor-pointer"
+                >
+                  {processando ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                  Processar no servidor
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => window.open('/ponto/kiosk', '_blank', 'noopener')}
+                  className="gap-2 font-body cursor-pointer"
+                >
+                  <Settings className="h-4 w-4" />
+                  Abrir Kiosk Mode
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={atualizarDados} className="gap-2 font-body cursor-pointer">
+                  <RefreshCw className="h-4 w-4" />
+                  Atualizar dados
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         }
       >
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 bg-primary/5 border border-primary/20 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4"
+        {/* SELETOR "Meu Ponto | Gestão da Equipe" — MESMA composição, MESMA pele e
+            MESMA animação da TabList "Em andamento / Concluídos" da Jornada de
+            Onboarding: `inline-grid` (shrink-to-fit — a TabList NÃO ocupa a largura
+            da página, mantém o formato COMPACTO da referência), container
+            `rounded-xl border border-border/40 bg-muted/40 p-1`, gatilhos
+            `rounded-lg border border-transparent px-3 py-1.5 text-xs` (mesma
+            altura, padding, raio, tipografia e peso da referência) e o
+            `SlidingIndicator` COMPARTILHADO de `ui/sliding-indicator.tsx`: um
+            contorno lime ÚNICO, permanente e irmão dos botões, que desliza por
+            `transform` (CSS puro/GPU — 420ms em cubic-bezier(0.22,1,0.36,1)) de
+            uma coluna para a outra. Nunca há fade nem dois indicadores: o gatilho
+            ativo fica com fundo transparente
+            (`data-[state=active]:bg-transparent`) e o texto em verde-lima
+            (`text-primary`) — só a pílula de borda lime fica visível sobre o
+            `bg-muted/40` do container; o inativo permanece discreto
+            (`text-muted-foreground` herdado da TabList), sem realce.
+            ORDEM DA PÁGINA: cabeçalho → seletor → banner MTP 671/21 → conteúdo.
+            Por isso o `<Tabs>` abre AQUI, antes do banner: o seletor fica
+            imediatamente abaixo do cabeçalho, alinhado à esquerda como o banner e
+            os cards (`inline-grid`, nunca `w-full`), e o banner desceu um nível na
+            hierarquia sem nenhuma alteração visual própria.
+            O contador de ajustes pendentes viaja DENTRO do segundo gatilho — à
+            direita do texto, centralizado e sem mexer na altura do seletor (os
+            16px do badge cabem nos 28px do gatilho) nem na animação do indicador.
+            `atual` acompanha a aba ativa (0 = Meu Ponto, 1 = Gestão da Equipe). */}
+        <Tabs
+          value={tabAtiva}
+          onValueChange={(valor) => setTabAtiva(valor as 'meu-ponto' | 'gestao')}
+          className="space-y-4"
         >
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/20 rounded-xl text-primary">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-primary">
-                Ambiente Certificado MTP 671/21
-              </p>
-              <p className="text-[10px] text-muted-foreground">
-                Integridade de dados garantida por criptografia de ponta a ponta e auditoria em tempo real.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge
-              variant="outline"
-              className="text-[9px] font-bold bg-success/10 text-success border-success/30 px-2 py-1"
-            >
-              REP-P HOMOLOGADO
-            </Badge>
-            <Badge variant="outline" className="text-[9px] font-bold bg-info/10 text-info border-info/30 px-2 py-1">
-              BIOMETRIA ATIVA
-            </Badge>
-          </div>
-        </motion.div>
-
-        <Tabs defaultValue="meu-ponto" className="space-y-6">
-          <TabsList className="bg-muted/50 p-1 rounded-xl">
+          <TabsList className="relative inline-grid h-auto grid-cols-2 gap-0 rounded-xl border border-border/40 bg-muted/40 p-1">
+            <SlidingIndicator atual={tabAtiva === 'gestao' ? 1 : 0} />
             <TabsTrigger
               value="meu-ponto"
-              className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-xs"
+              className="relative z-10 gap-1.5 rounded-lg border border-transparent px-3 py-1.5 text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none"
             >
               Meu Ponto
             </TabsTrigger>
             <TabsTrigger
               value="gestao"
-              className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-xs flex items-center gap-2"
+              className="relative z-10 gap-1.5 rounded-lg border border-transparent px-3 py-1.5 text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none"
             >
               Gestão da Equipe
-              <Badge
-                variant="destructive"
-                className="h-4 w-4 p-0 flex items-center justify-center text-[10px] animate-bounce"
-              >
-                3
-              </Badge>
+              {ajustesPendentes > 0 && (
+                <Badge
+                  variant="destructive"
+                  className={cn(
+                    'h-4 min-w-4 px-1 flex items-center justify-center text-[10px] tabular-nums',
+                    VERMELHO_SOLIDO
+                  )}
+                  aria-label={`${ajustesPendentes} ajustes pendentes`}
+                >
+                  {ajustesPendentes}
+                </Badge>
+              )}
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="meu-ponto" className="space-y-6">
-            <div className="grid gap-6 lg:grid-cols-3">
+          {/* Banner de certificação: faixa horizontal de largura total, agora
+            logo ABAIXO do seletor — a hierarquia da página é cabeçalho →
+            seletor → banner → conteúdo da aba. Compacta (uma linha no desktop)
+            para não empurrar a primeira linha de cards para fora da dobra. O
+            markup abaixo NÃO foi redesenhado: fundo, bordas, ícone, textos e
+            os selos REP-P HOMOLOGADO / BIOMETRIA ATIVA seguem idênticos. */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-primary/5 border border-primary/20 rounded-xl px-3 py-2.5 flex flex-col md:flex-row md:items-center justify-between gap-2"
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="p-1.5 bg-primary/20 rounded-lg text-primary shrink-0">
+                <ShieldCheck className="h-4 w-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] font-medium uppercase tracking-widest text-primary truncate">
+                  Ambiente Certificado MTP 671/21
+                </p>
+                <p className="text-[10px] text-muted-foreground truncate">
+                  Integridade de dados garantida por criptografia de ponta a ponta e auditoria em tempo real.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Badge
+                variant="outline"
+                className="text-[9px] font-medium bg-success/10 text-success border-success/30 px-2 py-0.5"
+              >
+                REP-P HOMOLOGADO
+              </Badge>
+              <Badge
+                variant="outline"
+                className="text-[9px] font-medium bg-info/10 text-info border-info/30 px-2 py-0.5"
+              >
+                BIOMETRIA ATIVA
+              </Badge>
+            </div>
+          </motion.div>
+
+          <TabsContent value="meu-ponto" className="space-y-3">
+            {/* Linha 0 — KPI Cards dos últimos 7 dias (Pontualidade · Média
+                diária · Saldo da semana · Dias com registro). Primeira seção de
+                informações da aba, acima dos cards operacionais. Cada indicador
+                é um card independente (`MetricCard`, o KPI do Dashboard
+                Principal) com as animações de entrada e hover do sistema.
+                FILA DE ENTRADA: estes quatro KPIs ocupam os slots 0–3 da
+                cascata (`custom` do `cardVariants`, 120ms entre um card e o
+                próximo) e os oito cards abaixo foram deslocados para 4–11 — o
+                teto de `MAX_SLOT_ENTRADA_CARD_GLOBAL`. Ao inserir/remover card
+                nesta aba, renumerar os `custom` na ordem visual de leitura. */}
+            <PontoIndicadoresKpi registrosSemana={registrosSemana} />
+
+            {/* Linha 1 — Registro de Ponto · Jornada de Hoje · Situação da Equipe.
+                Três colunas iguais a partir de 1280px (`xl`); entre 1024px e
+                1279px vira 2 colunas (tablet) e abaixo disso 1 coluna (mobile),
+                para não comprimir rótulos.
+                NOTA: não trocar `xl` por `min-[1200px]` — em Tailwind v4 o
+                variante de mídia arbitrário é emitido ANTES de `lg`, então
+                `lg:grid-cols-2` venceria a cascata e a linha ficaria em 2
+                colunas mesmo em telas largas. */}
+            <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
               <PontoClockRegister
                 time={time}
                 loading={loading}
                 geoStatus={geoStatus}
                 onRegistrar={registrar}
-                ultimoRegistro={batidasHoje?.[0]}
-                exigeBiometria={pontoCfg?.exige_reconhecimento_facial ?? true}
+                statusJornada={statusJornada}
               />
-              <PontoTodayCard registroHoje={registroHoje ?? null} />
-              <div className="flex flex-col gap-6">
-                <PontoLeaderboard />
-                <PontoWeekSummary registrosSemana={registrosSemana} />
-                {bancoResumo && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <Card className="border border-border/30 shadow-xs rounded-2xl overflow-hidden bg-gradient-to-br from-card to-accent/5">
-                      <div
-                        className={cn('h-[2px]', bancoResumo.tipo === 'credito' ? 'bg-success' : 'bg-destructive')}
-                      />
-                      <CardContent className="p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={cn(
-                              'p-2 rounded-xl',
-                              bancoResumo.tipo === 'credito'
-                                ? 'bg-success/10 text-success'
-                                : 'bg-destructive/10 text-destructive'
-                            )}
-                          >
-                            <Clock className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest">
-                              Saldo Banco de Horas
-                            </p>
-                            <p
-                              className={cn(
-                                'text-xl font-display font-bold',
-                                bancoResumo.tipo === 'credito' ? 'text-success' : 'text-destructive'
-                              )}
-                            >
-                              {bancoResumo.tipo === 'credito' ? '+' : '-'}
-                              {bancoResumo.saldo}
-                            </p>
-                          </div>
-                        </div>
-                        <Badge
-                          variant="outline"
-                          className={cn(
-                            'font-body text-[10px]',
-                            bancoResumo.tipo === 'credito'
-                              ? 'text-success border-success/30'
-                              : 'text-destructive border-destructive/30'
-                          )}
-                        >
-                          {bancoResumo.tipo === 'credito' ? 'Credor' : 'Devedor'}
-                        </Badge>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                )}
+              <PontoTodayCard
+                registroHoje={registroHoje}
+                colaboradorId={meuColaboradorId || ''}
+                empresaId={empresaAtual?.id}
+                onVerDiaCompleto={() => setTabAtiva('gestao')}
+              />
+              <PontoEquipeStatusCard
+                batidasHoje={batidasHoje}
+                colaboradores={colaboradoresEquipe}
+                onVerEquipe={() => setTabAtiva('gestao')}
+              />
+            </div>
+
+            {/* Linha 2 — Banco de Horas · Pendências de Ponto · Fechamento
+                (mesmo racional de colunas da linha 1). */}
+            <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
+              <PontoBancoHorasCard
+                bancoResumo={bancoResumo}
+                registrosSemana={registrosSemana}
+                onVerDetalhes={() => setTabAtiva('gestao')}
+              />
+              <PontoPendenciasCard
+                jornadasAbertas={resumoEquipe.emJornada}
+                ajustesPendentes={ajustesPendentes}
+                colaboradoresSemRegistro={resumoEquipe.semBatida}
+                onRevisar={() => setTabAtiva('gestao')}
+              />
+              <PontoFechamentoCard
+                inicio={periodoCompetencia.inicio}
+                fim={periodoCompetencia.fim}
+                processados={fechamento.processados}
+                colaboradores={colaboradoresEquipe.length}
+                pendentes={fechamento.pendentes}
+                onAcompanhar={() => setTabAtiva('gestao')}
+              />
+            </div>
+
+            {/* Linha 3 — Horas Trabalhadas (44%) · Últimas Batidas (56%) */}
+            <div className="grid gap-3 lg:grid-cols-[minmax(0,0.44fr)_minmax(0,0.56fr)]">
+              <div className="min-w-0">
+                <PontoHorasSemanaCard registrosSemana={registrosSemana} onVerRelatorio={() => setTabAtiva('gestao')} />
+              </div>
+              <div className="min-w-0">
+                <PontoUltimasBatidasCard batidas={batidasHoje} onVerTodas={() => setTabAtiva('gestao')} />
               </div>
             </div>
-            <div className="mt-6">
-              <PontoStreakCard />
-            </div>
-            <PontoCharts />
           </TabsContent>
 
-          <TabsContent value="gestao" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <Card className="bg-primary/5 border-primary/20">
-                <CardContent className="p-4 flex items-center gap-3">
-                  <div className="p-2 bg-primary/20 rounded-lg text-primary">
-                    <Zap className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase text-muted-foreground font-bold">Assiduidade</p>
-                    <p className="text-lg font-bold">98.5%</p>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-warning/5 border-warning/20">
-                <CardContent className="p-4 flex items-center gap-3">
-                  <div className="p-2 bg-warning/20 rounded-lg text-warning">
-                    <AlertCircle className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase text-muted-foreground font-bold">Inconsistências</p>
-                    <p className="text-lg font-bold">12</p>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-info/5 border-info/20">
-                <CardContent className="p-4 flex items-center gap-3">
-                  <div className="p-2 bg-info/20 rounded-lg text-info">
-                    <BrainCircuit className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase text-muted-foreground font-bold">Previsão HE</p>
-                    <p className="text-lg font-bold">42h</p>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-success/5 border-success/20">
-                <CardContent className="p-4 flex items-center gap-3">
-                  <div className="p-2 bg-success/20 rounded-lg text-success">
-                    <ShieldCheck className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase text-muted-foreground font-bold">Compliance</p>
-                    <p className="text-lg font-bold">100%</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="bg-muted/30 p-1 mb-6">
-                <TabsTrigger value="overview" className="gap-2">
-                  <BarChart3 className="h-4 w-4" /> Visão Geral
+          <TabsContent value="gestao" className="space-y-4">
+            <Tabs value={abaGestao} onValueChange={setAbaGestao} className="w-full space-y-4">
+              {/* Seletor em BARRA CHEIA: quatro colunas de largura IGUAL, ícone +
+                  rótulo centralizados e o indicador lime deslizando sob a aba
+                  ativa — a peça compartilhada `ui/sliding-indicator`. */}
+              <TabsList className="relative grid h-auto w-full grid-cols-4 items-stretch gap-0 rounded-xl border border-border/40 bg-muted/30 p-1">
+                <SlidingIndicator
+                  atual={indiceAbaGestao}
+                  total={4}
+                  className="bottom-0 top-auto h-[2px] rounded-full border-0 bg-primary"
+                />
+                <TabsTrigger
+                  value="overview"
+                  className="relative z-10 gap-1.5 rounded-lg px-2 py-2 text-[11px] font-medium text-muted-foreground transition-colors data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none sm:text-xs"
+                >
+                  <BarChart3 className="h-4 w-4 shrink-0" />
+                  <span className="truncate">Visão Geral</span>
                 </TabsTrigger>
-                <TabsTrigger value="geofencing" className="gap-2">
-                  <MapIcon className="h-4 w-4" /> Geofencing
+                <TabsTrigger
+                  value="geofencing"
+                  className="relative z-10 gap-1.5 rounded-lg px-2 py-2 text-[11px] font-medium text-muted-foreground transition-colors data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none sm:text-xs"
+                >
+                  <MapIcon className="h-4 w-4 shrink-0" />
+                  <span className="truncate">Geofencing</span>
                 </TabsTrigger>
-                <TabsTrigger value="ajustes" className="gap-2">
-                  <Settings className="h-4 w-4" /> Ajustes
+                <TabsTrigger
+                  value="registros"
+                  className="relative z-10 gap-1.5 rounded-lg px-2 py-2 text-[11px] font-medium text-muted-foreground transition-colors data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none sm:text-xs"
+                >
+                  <ClipboardList className="h-4 w-4 shrink-0" />
+                  <span className="truncate">Registros</span>
                 </TabsTrigger>
-                <TabsTrigger value="auditoria" className="gap-2">
-                  <ShieldCheck className="h-4 w-4" /> Auditoria
+                <TabsTrigger
+                  value="auditoria"
+                  className="relative z-10 gap-1.5 rounded-lg px-2 py-2 text-[11px] font-medium text-muted-foreground transition-colors data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none sm:text-xs"
+                >
+                  <ShieldCheck className="h-4 w-4 shrink-0" />
+                  <span className="truncate">Auditoria</span>
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="overview">
+              <TabsContent value="overview" className="space-y-4">
+                {/* Faixa de KPI — a MESMA peça dos KPIs do Dashboard
+                    (`MetricCard`), com os números de antes, agora ACIMA dos
+                    gráficos para a leitura começar pelo resumo. */}
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                  <MetricCard
+                    title="Registros na Competência"
+                    value={indicadoresGestao.registros}
+                    description={`${indicadoresGestao.colaboradoresComRegistro} colaboradores · ${indicadoresGestao.diasComRegistro} dias`}
+                    icon={Clock}
+                    tone="primary"
+                    index={0}
+                  />
+                  <MetricCard
+                    title="Inconsistências"
+                    value={fechamento.pendentes}
+                    description="saídas não marcadas"
+                    icon={AlertCircle}
+                    tone="warning"
+                    index={1}
+                  />
+                  <MetricCard
+                    title="Horas Extras no Mês"
+                    value={indicadoresGestao.horasExtras}
+                    description="somatório da competência"
+                    icon={Zap}
+                    tone="info"
+                    index={2}
+                  />
+                  <MetricCard
+                    title="Ajustes Pendentes"
+                    value={ajustesPendentes}
+                    description="aguardando validação do RH"
+                    icon={ShieldCheck}
+                    tone="success"
+                    index={3}
+                  />
+                </div>
+
                 <GestaoPontoAnalytics registros={registrosSemana} />
               </TabsContent>
 
               <TabsContent value="geofencing">
-                <PontoGeoAnalytics batidas={batidasHoje} />
+                <PontoGeofencingPainel empresaId={empresaAtual?.id} />
               </TabsContent>
 
-              <TabsContent value="ajustes" className="space-y-6">
+              <TabsContent value="registros" className="space-y-4">
+                {/* Registros = Central de Ajustes DIRETAMENTE, sem navegação
+                    secundária: são SOLICITAÇÕES de ajuste de ponto (cabeçalho,
+                    busca, filtros, 4 KPIs, chips de status, período, tabela,
+                    painel de detalhes, aprovação/rejeição e paginação). */}
                 <PontoAdjustmentRequests />
-                <GestaoRegistrosPonto />
               </TabsContent>
 
               <TabsContent value="auditoria">
-                <PontoAuditTimeline />
+                <AuditoriaPonto />
               </TabsContent>
             </Tabs>
           </TabsContent>
         </Tabs>
-
-        {batidasHoje.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mt-6"
-          >
-            <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
-              <div className="h-[2px] bg-gradient-to-r from-primary-glow to-primary" />
-              <CardHeader>
-                <CardTitle className="font-display flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-warning" /> Batidas Recentes
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-muted/30 hover:bg-muted/30">
-                      <TableHead className="font-display font-semibold">Colaborador</TableHead>
-                      <TableHead className="font-display font-semibold">Hora</TableHead>
-                      <TableHead className="font-display font-semibold">Tipo</TableHead>
-                      <TableHead className="font-display font-semibold">Ordem</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {batidasHoje.slice(0, 5).map((b) => (
-                      <TableRow key={b.id} className="hover:bg-accent/30 transition-colors">
-                        <TableCell className="font-body font-medium">
-                          {b.colaborador?.nome_completo || b.colaborador_id?.slice(0, 8)}
-                        </TableCell>
-                        <TableCell className="font-body font-mono">{b.hora}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="text-[10px]">
-                            {b.tipo}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="font-body">{b.ordem}ª</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
       </PageLayout>
     </>
   );

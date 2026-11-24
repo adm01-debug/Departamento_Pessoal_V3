@@ -1,7 +1,19 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
-import type { Tables } from '@/integrations/supabase/database.types';
 
-export type FolhaRecord = Tables<'folhas_pagamento'>;
+export interface FolhaRecord {
+  id: string;
+  empresa_id: string;
+  competencia: string;
+  data_pagamento?: string;
+  salario_base?: number;
+  total_proventos?: number;
+  total_descontos?: number;
+  total_liquido?: number;
+  status: string;
+  version?: number;
+  created_at?: string;
+  updated_at?: string;
+}
 
 export interface FolhaFilters {
   competencia?: string;
@@ -11,7 +23,7 @@ export interface FolhaFilters {
 class FolhaService extends BaseService<FolhaRecord> {
   constructor() {
     super('folhas_pagamento', {
-      defaultOrderBy: 'competencia',
+      defaultOrderBy: 'competencia'
     });
   }
 
@@ -42,6 +54,8 @@ class FolhaService extends BaseService<FolhaRecord> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     return this.list(competencia, empresaId);
   }
+
+
 }
 
 export const folhaService = new FolhaService();

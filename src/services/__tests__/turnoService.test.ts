@@ -11,21 +11,21 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // select → order → optional eq → await (thenable)
-function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupListChain(data: any[], error: any = null) {
   const response = { data, error };
-  const chain: Record<string, unknown> = {};
+  const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
 }
 
 // insert/update → eq → select → maybeSingle
-function setupWriteChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupWriteChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();
@@ -34,28 +34,23 @@ function setupWriteChain(data: unknown, error: { message: string; code?: string 
   return { maybeSingle, selectFn, eqFn };
 }
 
-function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupInsertChain(data: any, error: any = null) {
   const { maybeSingle, selectFn } = setupWriteChain(data, error);
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
   mockFrom.mockReturnValue({ insert: insertFn });
   return { insertFn, selectFn, maybeSingle };
 }
 
-function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupUpdateChain(data: any, error: any = null) {
   const { maybeSingle, selectFn, eqFn } = setupWriteChain(data, error);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn, selectFn, maybeSingle };
 }
 
-function setupDeleteChain(error: { message: string; code?: string } | null = null) {
+function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = {
-    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
-    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
-    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
-    eq: eqFn,
-  };
+  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -65,9 +60,7 @@ function setupDeleteChain(error: { message: string; code?: string } | null = nul
 // ─── listarTurnos ─────────────────────────────────────────────────────────────
 
 describe('turnoService.listarTurnos', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns all turnos without empresa filter', async () => {
     const records = [{ id: 't1', nome: 'Manhã' }];
@@ -77,7 +70,7 @@ describe('turnoService.listarTurnos', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     const result = await turnoService.listarTurnos(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -103,37 +96,31 @@ describe('turnoService.listarTurnos', () => {
 // ─── criarTurno ───────────────────────────────────────────────────────────────
 
 describe('turnoService.criarTurno', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  const turnoInsert = { nome: 'Noite', horario_inicio: '22:00', horario_fim: '06:00' };
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns new turno', async () => {
-    const created = { id: 't-new', ...turnoInsert };
+    const created = { id: 't-new', nome: 'Noite' };
     const { insertFn } = setupInsertChain(created);
-    const result = await turnoService.criarTurno(turnoInsert);
-    expect(insertFn).toHaveBeenCalledWith(turnoInsert);
+    const result = await turnoService.criarTurno({ nome: 'Noite' });
+    expect(insertFn).toHaveBeenCalledWith({ nome: 'Noite' });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(turnoService.criarTurno(turnoInsert)).rejects.toThrow();
+    await expect(turnoService.criarTurno({})).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(turnoService.criarTurno(turnoInsert)).rejects.toBeDefined();
+    await expect(turnoService.criarTurno({})).rejects.toBeDefined();
   });
 });
 
 // ─── atualizarTurno ───────────────────────────────────────────────────────────
 
 describe('turnoService.atualizarTurno', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates and returns the turno', async () => {
     const updated = { id: 't1', nome: 'Tarde' };
@@ -153,9 +140,7 @@ describe('turnoService.atualizarTurno', () => {
 // ─── excluirTurno ─────────────────────────────────────────────────────────────
 
 describe('turnoService.excluirTurno', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('deletes turno by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
@@ -173,9 +158,7 @@ describe('turnoService.excluirTurno', () => {
 // ─── listarEscalas ────────────────────────────────────────────────────────────
 
 describe('turnoService.listarEscalas', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns all escalas without filters', async () => {
     const records = [{ id: 'e1', data: '2026-07-24' }];
@@ -185,7 +168,7 @@ describe('turnoService.listarEscalas', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     const result = await turnoService.listarEscalas(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -205,8 +188,12 @@ describe('turnoService.listarEscalas', () => {
   it('includes colaborador and turno joins in select', async () => {
     const { selectFn } = setupListChain([]);
     await turnoService.listarEscalas(EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
-    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('turno:turnos'));
+    expect(selectFn).toHaveBeenCalledWith(
+      expect.stringContaining('colaborador:colaboradores')
+    );
+    expect(selectFn).toHaveBeenCalledWith(
+      expect.stringContaining('turno:turnos')
+    );
   });
 
   it('throws on DB error', async () => {
@@ -215,35 +202,76 @@ describe('turnoService.listarEscalas', () => {
   });
 });
 
+// select → eq → eq → order → limit → maybeSingle
+function setupSingleChain(data: any, error: any = null) {
+  const maybeSingle = vi.fn().mockResolvedValue({ data, error });
+  const chain: any = {};
+  chain.eq = vi.fn().mockReturnValue(chain);
+  chain.order = vi.fn().mockReturnValue(chain);
+  chain.limit = vi.fn().mockReturnValue({ maybeSingle });
+  const selectFn = vi.fn().mockReturnValue(chain);
+  mockFrom.mockReturnValue({ select: selectFn });
+  return { selectFn, chain, maybeSingle };
+}
+
+// ─── buscarEscalaAtual ────────────────────────────────────────────────────────
+
+describe('turnoService.buscarEscalaAtual', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('returns the most recent escala for the colaborador', async () => {
+    const escala = { id: 'e1', data: '2026-07-24', turno: { nome: 'Manhã' } };
+    setupSingleChain(escala);
+    const result = await turnoService.buscarEscalaAtual('col-1', EMPRESA_ID);
+    expect(result).toEqual(escala);
+  });
+
+  it('filters by colaborador_id and empresa_id', async () => {
+    const { chain } = setupSingleChain(null);
+    await turnoService.buscarEscalaAtual('col-1', EMPRESA_ID);
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+  });
+
+  it('returns null when there is no escala registered', async () => {
+    setupSingleChain(null);
+    const result = await turnoService.buscarEscalaAtual('col-1', EMPRESA_ID);
+    expect(result).toBeNull();
+  });
+
+  it('throws when empresaId is missing', async () => {
+    await expect(turnoService.buscarEscalaAtual('col-1', '')).rejects.toThrow('empresa_id obrigatório');
+  });
+
+  it('throws on DB error', async () => {
+    setupSingleChain(null, { message: 'fail' });
+    await expect(turnoService.buscarEscalaAtual('col-1', EMPRESA_ID)).rejects.toBeDefined();
+  });
+});
+
 // ─── criarEscala ──────────────────────────────────────────────────────────────
 
 describe('turnoService.criarEscala', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  const escalaInsert = { data: '2026-07-24', colaborador_id: 'c1', turno_id: 't1' };
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns new escala', async () => {
-    const created = { id: 'e-new', ...escalaInsert };
+    const created = { id: 'e-new', data: '2026-07-24' };
     const { insertFn } = setupInsertChain(created);
-    const result = await turnoService.criarEscala(escalaInsert);
-    expect(insertFn).toHaveBeenCalledWith(escalaInsert);
+    const result = await turnoService.criarEscala({ data: '2026-07-24' });
+    expect(insertFn).toHaveBeenCalledWith({ data: '2026-07-24' });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(turnoService.criarEscala(escalaInsert)).rejects.toThrow();
+    await expect(turnoService.criarEscala({})).rejects.toThrow();
   });
 });
 
 // ─── excluirEscala ────────────────────────────────────────────────────────────
 
 describe('turnoService.excluirEscala', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('deletes escala by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
@@ -255,5 +283,65 @@ describe('turnoService.excluirEscala', () => {
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
     await expect(turnoService.excluirEscala('e1', EMPRESA_ID)).rejects.toBeDefined();
+  });
+});
+
+// ─── obterEscalaDoDia ─────────────────────────────────────────────────────────
+
+describe('turnoService.obterEscalaDoDia', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('returns the escala for the colaborador on the given date', async () => {
+    const escala = { id: 'e1', turno_id: 't1', turno: { nome: 'Comercial', horario_inicio: '08:00', horario_fim: '17:00' } };
+    setupSingleChain(escala);
+    const result = await turnoService.obterEscalaDoDia('col-1', EMPRESA_ID, '2026-09-23');
+    expect(result).toEqual(escala);
+  });
+
+  it('filters by colaborador_id, empresa_id and the exact date', async () => {
+    const { chain } = setupSingleChain(null);
+    await turnoService.obterEscalaDoDia('col-1', EMPRESA_ID, '2026-09-23');
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    expect(chain.eq).toHaveBeenCalledWith('data', '2026-09-23');
+  });
+
+  it('returns null when there is no escala for that date', async () => {
+    setupSingleChain(null);
+    const result = await turnoService.obterEscalaDoDia('col-1', EMPRESA_ID, '2026-09-23');
+    expect(result).toBeNull();
+  });
+
+  it('throws when empresaId is missing', async () => {
+    await expect(turnoService.obterEscalaDoDia('col-1', '', '2026-09-23')).rejects.toThrow('empresa_id obrigatório');
+  });
+
+  it('throws on DB error', async () => {
+    setupSingleChain(null, { message: 'fail' });
+    await expect(turnoService.obterEscalaDoDia('col-1', EMPRESA_ID, '2026-09-23')).rejects.toBeDefined();
+  });
+});
+
+// ─── atualizarEscala ──────────────────────────────────────────────────────────
+
+describe('turnoService.atualizarEscala', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('updates only turno_id and returns the escala', async () => {
+    const updated = { id: 'e1', turno_id: 't2' };
+    const { updateFn, eqFn } = setupUpdateChain(updated);
+    const result = await turnoService.atualizarEscala('e1', { turno_id: 't2' }, EMPRESA_ID);
+    expect(updateFn).toHaveBeenCalledWith({ turno_id: 't2' });
+    expect(eqFn).toHaveBeenCalledWith('id', 'e1');
+    expect(result).toEqual(updated);
+  });
+
+  it('throws when data is null', async () => {
+    setupUpdateChain(null);
+    await expect(turnoService.atualizarEscala('e1', { turno_id: 't2' }, EMPRESA_ID)).rejects.toThrow();
+  });
+
+  it('throws when empresaId is missing', async () => {
+    await expect(turnoService.atualizarEscala('e1', { turno_id: 't2' }, '')).rejects.toThrow('empresa_id obrigatório');
   });
 });

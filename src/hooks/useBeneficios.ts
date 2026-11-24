@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { beneficioService } from '@/services/beneficioService';
 import { useEmpresas } from './useEmpresas';
 import { useGenericCrud } from './useGenericCrud';
+import { isColaboradoresMockEnabled, MOCK_PLANOS_BENEFICIO } from '@/mocks/colaboradoresMock';
 
 export function useBeneficios() {
   const { empresaAtual } = useEmpresas();
@@ -25,24 +26,32 @@ export function useBeneficios() {
     enabled: !!empresaId,
   });
 
+  // MOCK TEMPORÁRIO: se não houver planos reais cadastrados (e não estiver
+  // carregando), usa planos fictícios só para o dropdown funcionar na
+  // pré-visualização — nunca oculta planos reais já configurados.
+  const beneficiosExibidos =
+    isColaboradoresMockEnabled() && !crud.isLoading && (!crud.items || (crud.items as unknown[]).length === 0)
+      ? MOCK_PLANOS_BENEFICIO
+      : crud.items;
+
   return {
     ...crud,
-    beneficios: crud.items,
+    beneficios: beneficiosExibidos,
     resumo: resumoQuery.data || {},
     isLoading: crud.isLoading || resumoQuery.isLoading,
-    criarBeneficio: {
-      mutateAsync: (data: unknown) => crud.criar(data),
-      mutate: crud.criarMutate,
-      isPending: crud.isCreating,
-    },
-    atualizarBeneficio: {
-      mutateAsync: (args: { id: string; dados: unknown }) => crud.atualizar({ id: args.id, data: args.dados }),
-      isPending: crud.isUpdating,
-    },
-    excluirBeneficio: {
-      mutateAsync: (id: string) => crud.excluir(id),
-      isPending: crud.isDeleting,
-    },
-    tiposBeneficio: ['transporte', 'alimentacao', 'saude', 'vida', 'outros'],
+    criarBeneficio: { 
+      mutateAsync: (data: any) => crud.criar(data), 
+      mutate: (data: any) => crud.criar(data), 
+      isPending: crud.isCreating 
+    } as any,
+    atualizarBeneficio: { 
+      mutateAsync: (args: any) => crud.atualizar(args.id, args.dados),
+      isPending: crud.isUpdating 
+    } as any,
+    excluirBeneficio: { 
+      mutateAsync: (id: string) => crud.excluir(id), 
+      isPending: crud.isDeleting 
+    } as any,
+    tiposBeneficio: ['transporte', 'alimentacao', 'saude', 'vida', 'outros']
   };
 }

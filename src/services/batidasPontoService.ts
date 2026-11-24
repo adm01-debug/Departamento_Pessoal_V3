@@ -1,34 +1,25 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 import { pontoAuditService } from './pontoAuditService';
-import { validateTablePayload } from '@/schemas/validate';
-
-type BatidaPonto = Tables<'batidas_ponto'>;
-type PeriodoPonto = Tables<'periodos_ponto'>;
-type BatidaComColaborador = BatidaPonto & {
-  colaborador: Pick<Tables<'colaboradores'>, 'nome_completo' | 'foto_url'> | null;
-};
-
 export const batidasPontoService = {
-  async listar(
-    colaboradorId: string,
-    dataInicio?: string,
-    dataFim?: string,
-    empresaId?: string
-  ): Promise<BatidaPonto[]> {
+  async listar(colaboradorId: string, dataInicio?: string, dataFim?: string, empresaId?: string): Promise<any[]> {
     if (empresaId !== undefined && !empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    let q = supabase.from('batidas_ponto').select('*').eq('colaborador_id', colaboradorId).order('data').order('ordem');
+    let q = (supabase as any)
+      .from('batidas_ponto')
+      .select('*')
+      .eq('colaborador_id', colaboradorId)
+      .order('data')
+      .order('ordem');
     if (empresaId) q = q.eq('empresa_id', empresaId);
     if (dataInicio) q = q.gte('data', dataInicio);
     if (dataFim) q = q.lte('data', dataFim);
     const { data, error } = await q;
     if (error) throw error;
-    return (data || []) as unknown as BatidaPonto[];
+    return data || [];
   },
-  async listarPorData(data: string, empresaId: string): Promise<BatidaComColaborador[]> {
+  async listarPorData(data: string, empresaId: string): Promise<any[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
-    let q = supabase
+    let q = (supabase as any)
       .from('batidas_ponto')
       .select('*, colaborador:colaboradores!batidas_ponto_colaborador_id_fkey(nome_completo, foto_url)')
       .eq('data', data)
@@ -36,31 +27,52 @@ export const batidasPontoService = {
     q = q.eq('empresa_id', empresaId);
     const { data: result, error } = await q;
     if (error) throw error;
-    return (result || []) as unknown as BatidaComColaborador[];
+    return result || [];
   },
-  async registrar(d: TablesInsert<'batidas_ponto'>): Promise<BatidaPonto> {
-    const { data, error } = await supabase
+  /**
+   * Batidas de um INTERVALO de datas locais (`yyyy-MM-dd`), com o colaborador
+   * embutido — usado pelo painel de Geofencing, que precisa do período inteiro
+   * (e não só do dia) para calcular conformidade, faixas de distância e a
+   * comparação com o período anterior.
+   *
+   * O filtro de tenant é obrigatório aqui como em todas as leituras deste
+   * serviço: sem `empresa_id` não há isolamento e a consulta é recusada em vez
+   * de rodar contra os dados de outra empresa.
+   */
+  async listarPorPeriodo(empresaId: string, dataInicio: string, dataFim: string): Promise<any[]> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    if (!dataInicio || !dataFim) throw new Error('intervalo de datas obrigatório para listar batidas');
+
+    const { data: result, error } = await (supabase as any)
       .from('batidas_ponto')
-      .insert(validateTablePayload('batidas_ponto', d, 'batidasPontoService:batidas_ponto'))
-      .select()
-      .maybeSingle();
+      .select('*, colaborador:colaboradores!batidas_ponto_colaborador_id_fkey(nome_completo, foto_url)')
+      .eq('empresa_id', empresaId)
+      .gte('data', dataInicio)
+      .lte('data', dataFim)
+      .order('data')
+      .order('hora');
+    if (error) throw error;
+    return result || [];
+  },
+  async registrar(d: any): Promise<any> {
+    const { data, error } = await (supabase as any).from('batidas_ponto').insert(d).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de batida de ponto foi retornado.');
-    return data as unknown as BatidaPonto;
+    return data;
   },
-  async ajustar(id: string, d: TablesUpdate<'batidas_ponto'>, empresaId: string): Promise<BatidaPonto> {
+  async ajustar(id: string, d: any, empresaId: string): Promise<any> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     try {
-      const { data: anterior } = await supabase
+      const { data: anterior } = await (supabase as any)
         .from('batidas_ponto')
         .select('*')
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .single();
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('batidas_ponto')
-        .update(validateTablePayload('batidas_ponto', { ...d, ajustado: true }, 'batidasPontoService:batidas_ponto'))
+        .update({ ...d, ajustado: true })
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .select()
@@ -72,61 +84,43 @@ export const batidasPontoService = {
       }
 
       if (!data) throw new Error('Nenhum registro de batida de ponto foi retornado.');
-      return data as unknown as BatidaPonto;
+      return data;
     } catch (e) {
       throw new Error('Falha ao ajustar batida de ponto', { cause: e });
     }
   },
   async excluir(id: string, empresaId: string): Promise<void> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data: anterior } = await supabase
+    const { data: anterior } = await (supabase as any)
       .from('batidas_ponto')
       .select('*')
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .single();
 
-    const { error } = await supabase.from('batidas_ponto').delete().eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await (supabase as any).from('batidas_ponto').delete().eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
 
     if (anterior) {
       await pontoAuditService.logExclusion(id, anterior);
     }
   },
-  async fecharPeriodo(empresaId: string, dataInicio: string, dataFim: string): Promise<PeriodoPonto> {
-    // periodos_ponto é um calendário GLOBAL de competências (sem empresa_id):
-    // um registro 'fechado' vale para todas as empresas. O período gravado é
-    // sempre a competência inteira do mês de data_inicio — um recorte (ex.: um
-    // dia) não pode ser gravado como período porque sugeriria fechamento
-    // parcial. Callers que passam um filtro qualquer (ex.: hoje–hoje) fecham a
-    // competência corrente.
-    const ini = new Date(`${dataInicio}T00:00:00Z`);
-    const competencia = dataInicio.slice(0, 7);
-    const inicioMes = `${competencia}-01`;
-    const ultimoDia = new Date(Date.UTC(ini.getUTCFullYear(), ini.getUTCMonth() + 1, 0)).getUTCDate();
-    const fimMes = `${competencia}-${String(ultimoDia).padStart(2, '0')}`;
-
-    const { data, error } = await supabase
+  async fecharPeriodo(empresaId: string, dataInicio: string, dataFim: string): Promise<any> {
+    const { data, error } = await (supabase as any)
       .from('periodos_ponto')
-      .insert(
-        validateTablePayload(
-          'periodos_ponto',
-          {
-            competencia,
-            data_inicio: inicioMes,
-            data_fim: fimMes,
-            status: 'fechado',
-            fechado_em: new Date().toISOString(),
-          } as unknown as TablesInsert<'periodos_ponto'>,
-          'batidasPontoService:periodos_ponto'
-        )
-      )
+      .insert({
+        empresa_id: empresaId,
+        data_inicio: dataInicio,
+        data_fim: dataFim,
+        status: 'fechado',
+        fechado_em: new Date().toISOString(),
+      })
       .select()
       .single();
 
     if (error) throw error;
 
     await pontoAuditService.logMassAction(empresaId, 'FECHAMENTO_PERIODO', { dataInicio, dataFim });
-    return data as unknown as PeriodoPonto;
+    return data;
   },
 };

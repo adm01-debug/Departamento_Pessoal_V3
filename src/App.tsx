@@ -2,13 +2,16 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { AdminRoute } from '@/components/AdminRoute';
-import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
-import { lazy, Suspense } from 'react';
+import { PermissionRoute } from '@/components/PermissionRoute';
+import { RouteErrorBoundary, clearChunkReloadGuard } from '@/components/RouteErrorBoundary';
+import { lazy, Suspense, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSessionTimeout } from '@/hooks/useSessionTimeout';
 import { useSecureVisibility } from '@/hooks/useSecureVisibility';
 import { useSecurityMonitor } from '@/hooks/useSecurityMonitor';
+import { useStaggerCards } from '@/hooks/use-stagger-cards';
 
+import MeasureTestPage from '@/pages/__MeasureTestPage';
 // Core pages with optimized pre-loading
 import LoginPage from '@/pages/LoginPage';
 import DashboardPage from '@/pages/DashboardPage';
@@ -32,6 +35,12 @@ const RelatoriosPage = lazy(() => import('@/pages/RelatoriosPage'));
 const ESocialPage = lazy(() => import('@/pages/ESocialPage'));
 const ConfiguracoesPage = lazy(() => import('@/pages/ConfiguracoesPage'));
 const DesignSystemPage = lazy(() => import('@/pages/DesignSystemPage'));
+/**
+ * PRÉVIA LOCAL dos controles do feedback (Nine-Box) — declarada apenas em DEV.
+ * Fora de DEV o valor é `null` e o `import()` é eliminado do build, de modo que
+ * a prévia não existe (nem como rota, nem como chunk) em produção.
+ */
+const NineBoxPreviewPage = import.meta.env.DEV ? lazy(() => import('@/pages/NineBoxPreviewPage')) : null;
 const AdmissoesPage = lazy(() => import('@/pages/AdmissoesPage'));
 const AfastamentosPage = lazy(() => import('@/pages/AfastamentosPage'));
 const CargosPage = lazy(() => import('@/pages/CargosPage'));
@@ -68,6 +77,7 @@ const DespesasPage = lazy(() => import('@/pages/DespesasPage'));
 const ControleAcessoPage = lazy(() => import('@/pages/ControleAcessoPage'));
 const LGPDPage = lazy(() => import('@/pages/LGPDPage'));
 const BancoHorasPage = lazy(() => import('@/pages/BancoHorasPage'));
+const EPIsPage = lazy(() => import('@/pages/EPIsPage'));
 const FaltasPage = lazy(() => import('@/pages/FaltasPage'));
 const MedidasDisciplinaresPage = lazy(() => import('@/pages/MedidasDisciplinaresPage'));
 const JornadasPage = lazy(() => import('@/pages/JornadasPage'));
@@ -124,7 +134,7 @@ const ContratosGeradosPage = lazy(() => import('@/pages/ContratosGeradosPage'));
 
 function PageLoader() {
   return (
-    <div className="flex flex-col space-y-6 p-6 animate-in fade-in duration-500">
+    <div className="flex flex-col space-y-6 p-6 animate-in fade-in duration-slower">
       <div className="flex justify-between items-center mb-6">
         <div className="space-y-3">
           <Skeleton className="h-9 w-64 rounded-xl bg-muted/50" />
@@ -157,11 +167,20 @@ function PageLoader() {
   );
 }
 
+function LazyPageMounted({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    clearChunkReloadGuard();
+  }, []);
+  return <>{children}</>;
+}
+
 function LazyPage({ Component }: { Component: React.LazyExoticComponent<() => React.ReactElement> }) {
   return (
     <RouteErrorBoundary>
       <Suspense fallback={<PageLoader />}>
-        <Component />
+        <LazyPageMounted>
+          <Component />
+        </LazyPageMounted>
       </Suspense>
     </RouteErrorBoundary>
   );
@@ -171,23 +190,40 @@ export default function App() {
   useSessionTimeout();
   useSecureVisibility();
   useSecurityMonitor();
+  useStaggerCards();
 
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/auth/callback" element={<AuthCallbackPage />} />
-      <Route
-        path="/ponto/kiosk"
-        element={
-          <ProtectedRoute>
-            <LazyPage Component={PontoKioskPage} />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/ponto/kiosk" element={<LazyPage Component={PontoKioskPage} />} />
       <Route path="/assinar-contrato/:token" element={<LazyPage Component={AssinarContratoPage} />} />
       <Route path="/verificar-contrato" element={<LazyPage Component={VerificarContratoPage} />} />
       <Route path="/verificar-contrato/:hash" element={<LazyPage Component={VerificarContratoPage} />} />
       <Route path="/ciencia-medida/:token" element={<LazyPage Component={CienciaMedidaPage} />} />
+      <Route path="/__measure-test" element={<MeasureTestPage />} />
+
+      {/* PRÉVIA LOCAL (SOMENTE DEV): controles do feedback do Nine-Box com dados
+          fictícios e serviço simulado. O `import.meta.env.DEV` é substituído por
+          `false` no build de produção, então a rota NÃO existe lá (e a própria
+          página também devolve `null` fora de DEV — dupla trava).
+          Renderizada com a mesma casca de `LazyPage` (RouteErrorBoundary →
+          Suspense → LazyPageMounted), montada aqui porque a página pode devolver
+          `null`, o que não casa com a assinatura `LazyExoticComponent`. */}
+      {import.meta.env.DEV && NineBoxPreviewPage && (
+        <Route
+          path="/dev/ninebox-preview"
+          element={
+            <RouteErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <LazyPageMounted>
+                  <NineBoxPreviewPage />
+                </LazyPageMounted>
+              </Suspense>
+            </RouteErrorBoundary>
+          }
+        />
+      )}
 
       <Route
         path="/"
@@ -214,7 +250,6 @@ export default function App() {
         <Route path="ferias" element={<LazyPage Component={FeriasPage} />} />
         <Route path="ferias/programacao" element={<LazyPage Component={FeriasProgramacaoPage} />} />
         <Route path="ponto" element={<LazyPage Component={PontoPage} />} />
-        <Route path="faltas" element={<LazyPage Component={FaltasPage} />} />
         <Route path="beneficios" element={<LazyPage Component={BeneficiosPage} />} />
         <Route path="beneficios/novo" element={<LazyPage Component={BeneficioFormPage} />} />
 
@@ -239,8 +274,8 @@ export default function App() {
         <Route path="departamentos" element={<LazyPage Component={DepartamentosPage} />} />
         <Route path="lotacoes" element={<LazyPage Component={LotacoesPage} />} />
         <Route path="locais-trabalho" element={<LazyPage Component={LocaisTrabalhoPage} />} />
-        <Route path="centros-custo" element={<LazyPage Component={CentrosCustoPage} />} />
         <Route path="times" element={<LazyPage Component={TimesPage} />} />
+        <Route path="centros-custo" element={<LazyPage Component={CentrosCustoPage} />} />
         <Route path="promo-brindes" element={<LazyPage Component={PromoBrindesPage} />} />
         <Route path="promo-brindes/vinculos" element={<LazyPage Component={VinculosPromoPage} />} />
         <Route path="organograma" element={<LazyPage Component={OrganogramaPage} />} />
@@ -259,12 +294,16 @@ export default function App() {
         <Route path="esocial" element={<LazyPage Component={ESocialPage} />} />
         <Route path="obrigacoes-fiscais" element={<LazyPage Component={ObrigacoesFiscaisPage} />} />
         <Route path="sst" element={<LazyPage Component={SSTPage} />} />
+        {/* Auditoria: NÃO é exclusividade de admin — a matriz `public.permissions`
+            concede `('admin'|'gestor'|'rh', 'auditoria', 'read')`, então esta rota
+            usa o guard POR PERMISSÃO (que preserva o MFA via `MfaGate`); quem não
+            tem a permissão continua vendo "Acesso Restrito". */}
         <Route
           path="auditoria"
           element={
-            <AdminRoute>
+            <PermissionRoute permission="auditoria.read">
               <LazyPage Component={AuditoriaPage} />
-            </AdminRoute>
+            </PermissionRoute>
           }
         />
         <Route path="canal-etica" element={<LazyPage Component={CanalEticaPage} />} />

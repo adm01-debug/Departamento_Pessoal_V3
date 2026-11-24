@@ -29,7 +29,7 @@ export interface CardProps
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant, gradient, children, ...props }, ref) => (
-    <div ref={ref} className={cn(cardVariants({ variant }), className)} {...props}>
+    <div ref={ref} className={cn(cardVariants({ variant }), 'animate-squash', className)} {...props}>
       {variant === 'gradient' && gradient && (
         <>
           <div className={cn("absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r", gradient)} />
@@ -51,14 +51,14 @@ CardHeader.displayName = 'CardHeader';
 
 const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
-    <h3 ref={ref} className={cn('text-2xl font-semibold leading-none tracking-tight', className)} {...props} />
+    <h3 ref={ref} className={cn('text-base font-medium leading-snug tracking-tight', className)} {...props} />
   )
 );
 CardTitle.displayName = 'CardTitle';
 
 const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ className, ...props }, ref) => (
-    <p ref={ref} className={cn('text-sm text-muted-foreground', className)} {...props} />
+    <p ref={ref} className={cn('text-xs font-normal tracking-normal leading-relaxed text-muted-foreground', className)} {...props} />
   )
 );
 CardDescription.displayName = 'CardDescription';

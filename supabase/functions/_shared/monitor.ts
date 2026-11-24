@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders } from './contract.ts';
 
 export async function withMonitoring(
@@ -17,16 +17,13 @@ export async function withMonitoring(
     const duration = Date.now() - startTime;
 
     // Log métricas de sucesso de forma assíncrona (não bloqueia a resposta)
-    const telemetryWrite = supabase.from('metricas_processamento').insert({
+    EdgeRuntime.waitUntil(
+      supabase.from('metricas_processamento').insert({
         funcao_nome: funcaoNome,
         status: response.status >= 200 && response.status < 300 ? 'success' : 'error',
         tempo_execucao_ms: duration
-      });
-    const edgeRuntime = (globalThis as unknown as {
-      EdgeRuntime?: { waitUntil(promise: PromiseLike<unknown>): void };
-    }).EdgeRuntime;
-    if (edgeRuntime) edgeRuntime.waitUntil(telemetryWrite);
-    else void Promise.resolve(telemetryWrite).catch(() => undefined);
+      })
+    );
 
     return response;
   } catch (error: any) {

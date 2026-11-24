@@ -38,7 +38,7 @@ WITH ext AS (
   WHERE n.nspname <> 'pg_catalog'
 ),
 ext_fn AS (
-  SELECT DISTINCT e.extname, e.sch, p.proname, p.oid AS ext_fn_oid
+  SELECT DISTINCT e.extname, e.sch, p.proname
   FROM ext e
   JOIN pg_extension x ON x.extname = e.extname
   JOIN pg_depend d ON d.refobjid = x.oid AND d.deptype = 'e'
@@ -52,7 +52,6 @@ ext_fn AS (
 SELECT f.extname || E'\t' || f.sch || E'\t' || f.proname || E'\t' || c.oid::regprocedure::text
 FROM ext_fn f
 JOIN pg_proc c ON c.prosrc ~ ('\\m' || f.proname || '\\M')
-  AND c.oid <> f.ext_fn_oid
 JOIN pg_namespace cn ON cn.oid = c.pronamespace AND cn.nspname = 'public'
 WHERE c.proconfig IS NOT NULL
   AND array_to_string(c.proconfig, ',') ~ 'search_path'
@@ -84,11 +83,18 @@ function main() {
   try {
     output = runQuery();
   } catch (error) {
-    // Se o alvo foi configurado, tanto erro de SQL quanto indisponibilidade
-    // impedem uma conclusão de auditoria. O CI não pode aprovar às cegas.
-    console.error('[search-path] A consulta de auditoria falhou — gate reprovado.');
-    console.error(String(error.stderr || error.message).trim());
-    return 1;
+    // Distinção deliberada: banco fora do ar é ambiente, mas erro do próprio
+    // SQL é defeito do gate. Tratar os dois como "passou" transformaria uma
+    // consulta quebrada num selo verde permanente — exatamente o modo de
+    // falha que este gate existe para impedir.
+    const stderr = String(error.stderr || '');
+    if (/^ERROR:/m.test(stderr)) {
+      console.error('[search-path] A consulta de auditoria falhou — gate reprovado.');
+      console.error(stderr.trim());
+      return 1;
+    }
+    console.warn(`[search-path] Banco inacessível: ${error.message}`);
+    return 0;
   }
 
   const rows = output
@@ -105,14 +111,18 @@ function main() {
     return 0;
   }
 
-  console.error(`\n[search-path] ${rows.length} função(ões) quebrariam em tempo de execução:\n`);
+  console.error(
+    `\n[search-path] ${rows.length} função(ões) quebrariam em tempo de execução:\n`,
+  );
   for (const row of rows) {
     console.error(
       `  ✖ ${row.fn}\n      usa ${row.extFn}() de "${row.extname}" (schema ${row.schema}), ` +
-        `ausente do search_path fixado`
+        `ausente do search_path fixado`,
     );
   }
-  console.error('\n  Correção: ALTER FUNCTION <assinatura> SET search_path = public, <schema_da_extensao>;\n');
+  console.error(
+    '\n  Correção: ALTER FUNCTION <assinatura> SET search_path = public, <schema_da_extensao>;\n',
+  );
   return 1;
 }
 

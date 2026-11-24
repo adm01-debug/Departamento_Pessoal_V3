@@ -38,10 +38,17 @@ export default function VerificarContratoPage() {
     }
     setLoading(true);
     try {
-      // Rate-limit server-side pelo IP real da conexão (rightmost XFF do
-      // gateway) — o cliente não envia p_ip forjável.
+      // Captura IP público (best-effort, para rate limit)
+      let ip: string | null = null;
+      try {
+        const res = await fetch('https://api.ipify.org?format=json', { cache: 'no-store' });
+        if (res.ok) ip = (await res.json())?.ip ?? null;
+      } catch {
+        // ignore — servidor tratará como 'unknown'
+      }
       const { data, error } = await supabase.rpc('contrato_verificar_autenticidade_v2', {
         p_hash: hashParaVerificar.trim(),
+        p_ip: ip,
       });
       if (error) throw error;
       setResult(data as unknown as VerificacaoResult);
@@ -65,11 +72,10 @@ export default function VerificarContratoPage() {
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
             <ShieldCheck className="h-7 w-7 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold">Verificação de Autenticidade</h1>
+          <h1 className="text-3xl font-medium">Verificação de Autenticidade</h1>
           <p className="text-muted-foreground">
             Valide a autenticidade de um contrato de trabalho assinado eletronicamente
-            <br />
-            conforme MP 2.200-2/2001
+            <br />conforme MP 2.200-2/2001
           </p>
         </div>
 
@@ -100,8 +106,14 @@ export default function VerificarContratoPage() {
 
         {result && (
           <Alert variant={result.valido ? 'default' : 'destructive'}>
-            {result.valido ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
-            <AlertTitle>{result.valido ? 'Contrato autêntico e assinado' : 'Contrato não validado'}</AlertTitle>
+            {result.valido ? (
+              <CheckCircle2 className="h-5 w-5" />
+            ) : (
+              <XCircle className="h-5 w-5" />
+            )}
+            <AlertTitle>
+              {result.valido ? 'Contrato autêntico e assinado' : 'Contrato não validado'}
+            </AlertTitle>
             <AlertDescription>
               {result.valido ? (
                 <div className="mt-3 space-y-2 text-sm">

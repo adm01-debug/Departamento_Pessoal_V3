@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -9,15 +8,15 @@ import { BackButton } from '../layout/BackButton';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
+    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
   },
-  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
 // Mock useNavigate
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = (await importOriginal()) as object;
+  const actual = await importOriginal() as object;
   return { ...actual, useNavigate: () => mockNavigate };
 });
 

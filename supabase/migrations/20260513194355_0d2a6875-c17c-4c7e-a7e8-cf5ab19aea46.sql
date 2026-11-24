@@ -29,8 +29,7 @@ ALTER TABLE public.beneficio_utilizacao ENABLE ROW LEVEL SECURITY;
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Colaboradores podem ver seu próprio extrato de benefícios') THEN
-        DROP POLICY IF EXISTS "Colaboradores podem ver seu próprio extrato de benefícios" ON public.beneficio_utilizacao;
-CREATE POLICY "Colaboradores podem ver seu próprio extrato de benefícios" 
+        CREATE POLICY "Colaboradores podem ver seu próprio extrato de benefícios" 
         ON public.beneficio_utilizacao 
         FOR SELECT 
         USING (

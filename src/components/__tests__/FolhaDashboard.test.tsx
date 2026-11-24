@@ -1,21 +1,16 @@
-import type { ReactNode } from 'react';
-import { beforeEach, describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-
-const { mockUseQuery } = vi.hoisted(() => ({ mockUseQuery: vi.fn() }));
-
-vi.mock('@tanstack/react-query', () => ({ useQuery: mockUseQuery }));
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   },
 }));
 
 vi.mock('recharts', () => ({
-  LineChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  AreaChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  PieChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  LineChart: ({ children }: any) => <div>{children}</div>,
+  AreaChart: ({ children }: any) => <div>{children}</div>,
+  PieChart: ({ children }: any) => <div>{children}</div>,
   Line: () => null,
   Area: () => null,
   Pie: () => null,
@@ -25,24 +20,20 @@ vi.mock('recharts', () => ({
   CartesianGrid: () => null,
   Tooltip: () => null,
   Legend: () => null,
-  ResponsiveContainer: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
 }));
 
 import { FolhaDashboard } from '../folha/FolhaDashboard';
 
 describe('FolhaDashboard', () => {
-  beforeEach(() => {
-    mockUseQuery.mockReturnValue({ data: [], isLoading: false });
+  it('renders Tendência de Custo chart title', () => {
+    render(<FolhaDashboard competencia="2024-06" />);
+    expect(screen.getByText(/Tendência de Custo/)).toBeInTheDocument();
   });
 
-  it('renders Tendência de Proventos chart title', () => {
+  it('renders Headcount vs Custo Médio chart title', () => {
     render(<FolhaDashboard competencia="2024-06" />);
-    expect(screen.getByText(/Tendência de Proventos/)).toBeInTheDocument();
-  });
-
-  it('renders Headcount vs Proventos Médios chart title', () => {
-    render(<FolhaDashboard competencia="2024-06" />);
-    expect(screen.getByText(/Headcount vs Proventos Médios/)).toBeInTheDocument();
+    expect(screen.getByText(/Headcount vs Custo Médio/)).toBeInTheDocument();
   });
 
   it('renders Composição de Custos chart title', () => {
@@ -53,11 +44,5 @@ describe('FolhaDashboard', () => {
   it('renders without crashing for any competencia', () => {
     const { container } = render(<FolhaDashboard competencia="2025-01" />);
     expect(container.firstChild).toBeInTheDocument();
-  });
-
-  it('shows an explicit empty state instead of static payroll amounts', () => {
-    render(<FolhaDashboard competencia="09/2026" empresaId="empresa-1" />);
-    expect(screen.getAllByText('Sem histórico para a empresa selecionada.')).toHaveLength(2);
-    expect(screen.getByText('Sem valores calculados para esta competência.')).toBeInTheDocument();
   });
 });

@@ -85,7 +85,7 @@ export function GerarLinkCienciaDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="font-display">Link de ciência digital</DialogTitle>
           <DialogDescription>

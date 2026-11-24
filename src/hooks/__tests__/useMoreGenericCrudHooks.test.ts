@@ -24,20 +24,14 @@ vi.mock('../useGenericCrud', () => ({
 
 vi.mock('@/services/webhookService', () => ({
   webhookService: {
-    listar: vi.fn(),
-    criar: vi.fn(),
-    atualizar: vi.fn(),
-    excluir: vi.fn(),
+    listar: vi.fn(), criar: vi.fn(), atualizar: vi.fn(), excluir: vi.fn(),
     listarLogs: mockListarLogs,
   },
 }));
 
 vi.mock('@/services/afastamentoService', () => ({
   afastamentoService: {
-    listar: vi.fn(),
-    criar: vi.fn(),
-    atualizar: vi.fn(),
-    excluir: vi.fn(),
+    listar: vi.fn(), criar: vi.fn(), atualizar: vi.fn(), excluir: vi.fn(),
     listarConfiguracoes: mockListarConfiguracoes,
     listarProrrogacoes: mockListarProrrogacoes,
     criarProrrogacao: vi.fn().mockResolvedValue({ id: 'p1' }),
@@ -48,20 +42,14 @@ vi.mock('@/services/afastamentoService', () => ({
 
 vi.mock('@/services/beneficioService', () => ({
   beneficioService: {
-    listar: vi.fn(),
-    criar: vi.fn(),
-    atualizar: vi.fn(),
-    excluir: vi.fn(),
+    listar: vi.fn(), criar: vi.fn(), atualizar: vi.fn(), excluir: vi.fn(),
     obterResumoCustos: vi.fn().mockResolvedValue({}),
   },
 }));
 
 vi.mock('@/services/colaboradorService', () => ({
   colaboradorService: {
-    listar: vi.fn(),
-    criar: vi.fn(),
-    atualizar: vi.fn(),
-    excluir: vi.fn(),
+    listar: vi.fn(), criar: vi.fn(), atualizar: vi.fn(), excluir: vi.fn(),
     getSummary: vi.fn().mockResolvedValue({}),
   },
 }));
@@ -77,7 +65,7 @@ import { useAfastamentos } from '../useAfastamentos';
 import { useBeneficios } from '../useBeneficios';
 import { useColaboradores } from '../useColaboradores';
 
-function makeCrudReturn(overrides: Record<string, unknown> = {}) {
+function makeCrudReturn(overrides: Record<string, any> = {}) {
   return {
     items: [],
     isLoading: false,
@@ -123,7 +111,7 @@ describe('useWebhookLogs', () => {
   });
 
   it('is disabled when no webhookId', () => {
-    renderHook(() => useWebhookLogs(''), { wrapper });
+    const { result } = renderHook(() => useWebhookLogs(''), { wrapper });
     expect(mockListarLogs).not.toHaveBeenCalled();
   });
 
@@ -151,7 +139,6 @@ describe('useAfastamentos', () => {
     renderHook(() => useAfastamentos(), { wrapper });
     expect(mockUseGenericCrud).toHaveBeenCalledWith(
       expect.objectContaining({
-        empresaId: 'emp-1',
         successMessages: expect.objectContaining({ create: expect.any(String) }),
       })
     );

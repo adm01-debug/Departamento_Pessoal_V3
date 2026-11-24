@@ -13,15 +13,15 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Thenable chain for select → order → limit → (optional eq) → await
-function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupListChain(data: any[], error: any = null) {
   const response = { data, error };
-  const chain: Record<string, unknown> = {};
+  const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.limit = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
@@ -30,9 +30,7 @@ function setupListChain(data: unknown, error: { message: string; code?: string }
 // ─── listarDocumentos ─────────────────────────────────────────────────────────
 
 describe('documentoService.listarDocumentos', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns documents without filters', async () => {
     const records = [{ id: 'd1', nome: 'Holerite Jan' }];
@@ -42,7 +40,7 @@ describe('documentoService.listarDocumentos', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     const result = await documentoService.listarDocumentos(EMP);
     expect(result).toEqual([]);
   });
@@ -81,7 +79,9 @@ describe('documentoService.listarDocumentos', () => {
   it('selects with colaborador join including id, nome_completo, cpf', async () => {
     const { selectFn } = setupListChain([]);
     await documentoService.listarDocumentos(EMP);
-    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
+    expect(selectFn).toHaveBeenCalledWith(
+      expect.stringContaining('colaborador:colaboradores')
+    );
   });
 
   it('throws on DB error', async () => {
@@ -93,9 +93,7 @@ describe('documentoService.listarDocumentos', () => {
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('documentoService.listar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns { data, total } delegating to listarDocumentos', async () => {
     const records = [{ id: 'd2' }, { id: 'd3' }];

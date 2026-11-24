@@ -1,28 +1,6 @@
-import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
-import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
-import { validateInput, validateTablePayload } from '@/schemas/validate';
-import { cursoSchema, trilhaSchema, inscricaoCursoSchema, trilhaCursoSchema } from '@/schemas/cursos';
-
-/** Linha de trilhas_cursos com o join `curso` retornado por `listarTrilhasCursos`. */
-export type InscricaoComJoins = Tables<'inscricoes_cursos'> & {
-  colaborador: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
-  curso: Pick<Tables<'catalogo_cursos'>, 'nome'> | null;
-};
-
-export type CertificadoComJoins = Tables<'treinamento_certificados'> & {
-  colaborador: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
-  curso: Pick<Tables<'catalogo_cursos'>, 'nome' | 'carga_horaria'> | null;
-};
-
-export type TrilhaCursoComCurso = Tables<'trilhas_cursos'> & {
-  curso: Pick<Tables<'catalogo_cursos'>, 'id' | 'nome' | 'carga_horaria'> | null;
-};
-
-/** Instância com os joins `curso` e `instrutor` retornados por `listarInstancias`. */
-export type InstanciaComJoins = Tables<'treinamento_instancias'> & {
-  curso: Pick<Tables<'catalogo_cursos'>, 'nome'> | null;
-  instrutor: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
-};
+import { supabase } from '@/integrations/supabase/client';
+// MOCK VISUAL — ver src/mocks/treinamentosMock.ts.
+import { getMockTrilhasCursos } from '@/mocks/treinamentosMock';
 
 const ensure = <T>(d: T | null, e: string): T => {
   if (!d) throw new Error(`Nenhum registro de ${e} retornado.`);
@@ -30,7 +8,7 @@ const ensure = <T>(d: T | null, e: string): T => {
 };
 
 export const catalogoCursoService = {
-  async listarCursos(empresaId: string): Promise<Tables<'catalogo_cursos'>[]> {
+  async listarCursos(empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('catalogo_cursos')
@@ -38,29 +16,19 @@ export const catalogoCursoService = {
       .eq('empresa_id', empresaId)
       .order('nome');
     if (error) throw error;
-    return (data as Tables<'catalogo_cursos'>[] | null) || [];
+    return data || [];
   },
-  async criarCurso(d: Insertable<'catalogo_cursos'>): Promise<Tables<'catalogo_cursos'>> {
+  async criarCurso(d: any) {
     if (!d.empresa_id) throw new Error('empresa_id obrigatório');
-    validateInput(cursoSchema, d, 'catalogo.criarCurso');
-    const { data, error } = await supabase
-      .from('catalogo_cursos')
-      .insert(validateTablePayload('catalogo_cursos', d, 'catalogoCursoService:catalogo_cursos'))
-      .select()
-      .maybeSingle();
+    const { data, error } = await supabase.from('catalogo_cursos').insert(d).select().maybeSingle();
     if (error) throw error;
     return ensure(data, 'curso');
   },
-  async atualizarCurso(
-    id: string,
-    d: Updatable<'catalogo_cursos'>,
-    empresaId: string
-  ): Promise<Tables<'catalogo_cursos'>> {
+  async atualizarCurso(id: string, d: any, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    validateInput(cursoSchema, d, 'catalogo.atualizarCurso');
     const { data, error } = await supabase
       .from('catalogo_cursos')
-      .update(validateTablePayload('catalogo_cursos', d, 'catalogoCursoService:catalogo_cursos'))
+      .update(d)
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -68,12 +36,20 @@ export const catalogoCursoService = {
     if (error) throw error;
     return ensure(data, 'curso');
   },
-  async excluirCurso(id: string, empresaId: string): Promise<void> {
+  async excluirCurso(id: string, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { error } = await supabase.from('catalogo_cursos').delete().eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   },
-  async listarTrilhas(empresaId: string): Promise<Tables<'trilhas_aprendizado'>[]> {
+  /**
+   * Lista as trilhas da empresa.
+   *
+   * O schema efetivo (`src/integrations/supabase/types.ts` +
+   * `20260315212539_*`) usa `nome`; `titulo` não existe em
+   * `trilhas_aprendizado`. Ordenar por coluna inexistente derruba a consulta
+   * inteira — por isso `order('nome')`.
+   */
+  async listarTrilhas(empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('trilhas_aprendizado')
@@ -81,57 +57,63 @@ export const catalogoCursoService = {
       .eq('empresa_id', empresaId)
       .order('nome');
     if (error) throw error;
-    return (data as Tables<'trilhas_aprendizado'>[] | null) || [];
+    return data || [];
   },
-  async criarTrilha(d: Insertable<'trilhas_aprendizado'>): Promise<Tables<'trilhas_aprendizado'>> {
-    if (!d.empresa_id) throw new Error('empresa_id obrigatório');
-    validateInput(trilhaSchema, d, 'catalogo.criarTrilha');
-    const { data, error } = await supabase
-      .from('trilhas_aprendizado')
-      .insert(validateTablePayload('trilhas_aprendizado', d, 'catalogoCursoService:trilhas_aprendizado'))
-      .select()
-      .maybeSingle();
+  /**
+   * Cria uma trilha.
+   *
+   * Compatibilidade: o formulário do Hub envia `titulo` (nome do campo na UI),
+   * mas a coluna real chama-se `nome`. Normalizamos aqui — a interface do
+   * formulário aprovado não muda — e enviamos APENAS colunas existentes.
+   */
+  async criarTrilha(d: any) {
+    if (!d?.empresa_id) throw new Error('empresa_id obrigatório');
+    const nome = String(d.nome ?? d.titulo ?? '').trim();
+    if (!nome) throw new Error('nome da trilha obrigatório');
+    const registro: {
+      empresa_id: string;
+      nome: string;
+      descricao?: string | null;
+      nivel?: string | null;
+      ativo?: boolean | null;
+    } = { empresa_id: d.empresa_id, nome };
+    if (d.descricao !== undefined) registro.descricao = d.descricao;
+    if (d.nivel !== undefined) registro.nivel = d.nivel;
+    if (d.ativo !== undefined) registro.ativo = d.ativo;
+    const { data, error } = await supabase.from('trilhas_aprendizado').insert(registro).select().maybeSingle();
     if (error) throw error;
     return ensure(data, 'trilha');
   },
-  async excluirTrilha(id: string, empresaId: string): Promise<void> {
+  async excluirTrilha(id: string, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { error } = await supabase.from('trilhas_aprendizado').delete().eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   },
-  async listarInscricoes(empresaId: string, cursoId?: string): Promise<InscricaoComJoins[]> {
+  async listarInscricoes(empresaId: string, cursoId?: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = supabase
       .from('inscricoes_cursos')
-      .select('*, colaborador:colaboradores(nome_completo), curso:catalogo_cursos(nome)')
+      .select(
+        '*, colaborador:colaboradores(nome_completo, foto_url, cargo, departamento), curso:catalogo_cursos(nome, categoria)'
+      )
       .eq('empresa_id', empresaId)
       .order('created_at', { ascending: false });
     if (cursoId) q = q.eq('curso_id', cursoId);
     const { data, error } = await q;
     if (error) throw error;
-    return (data as InscricaoComJoins[] | null) || [];
+    return data || [];
   },
-  async criarInscricao(d: Insertable<'inscricoes_cursos'>): Promise<Tables<'inscricoes_cursos'>> {
+  async criarInscricao(d: any) {
     if (!d.empresa_id) throw new Error('empresa_id obrigatório');
-    validateInput(inscricaoCursoSchema, d, 'catalogo.criarInscricao');
-    const { data, error } = await supabase
-      .from('inscricoes_cursos')
-      .insert(validateTablePayload('inscricoes_cursos', d, 'catalogoCursoService:inscricoes_cursos'))
-      .select()
-      .maybeSingle();
+    const { data, error } = await supabase.from('inscricoes_cursos').insert(d).select().maybeSingle();
     if (error) throw error;
     return ensure(data, 'inscrição');
   },
-  async atualizarInscricao(
-    id: string,
-    d: Updatable<'inscricoes_cursos'>,
-    empresaId: string
-  ): Promise<Tables<'inscricoes_cursos'>> {
+  async atualizarInscricao(id: string, d: any, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    validateInput(inscricaoCursoSchema, d, 'catalogo.atualizarInscricao');
     const { data, error } = await supabase
       .from('inscricoes_cursos')
-      .update(validateTablePayload('inscricoes_cursos', d, 'catalogoCursoService:inscricoes_cursos'))
+      .update(d)
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -140,73 +122,112 @@ export const catalogoCursoService = {
     return ensure(data, 'inscrição');
   },
 
-  async listarTrilhasCursos(trilhaId: string): Promise<TrilhaCursoComCurso[]> {
+  async listarTrilhasCursos(trilhaId: string) {
+    // MOCK VISUAL — ver src/mocks/treinamentosMock.ts. `[]` (trilha sem cursos)
+    // é truthy, então curto-circuita também nesse caso.
+    const mock = getMockTrilhasCursos(trilhaId);
+    if (mock) return mock;
     const { data, error } = await supabase
       .from('trilhas_cursos')
-      .select('*, curso:catalogo_cursos(id, nome, carga_horaria)')
+      .select('*, curso:catalogo_cursos(id, nome, carga_horaria, modalidade)')
       .eq('trilha_id', trilhaId)
       .order('ordem');
     if (error) throw error;
-    return (data as TrilhaCursoComCurso[] | null) || [];
+    return data || [];
   },
-  async vincularCursoTrilha(d: {
-    trilha_id: string;
-    curso_id: string;
-    ordem?: number;
-    obrigatorio?: boolean;
-  }): Promise<Tables<'trilhas_cursos'> | null> {
-    validateInput(trilhaCursoSchema, d, 'catalogoCursoService:vincularCursoTrilha');
-    const { data, error } = await supabase
-      .from('trilhas_cursos')
-      .insert(validateTablePayload('trilhas_cursos', d, 'catalogoCursoService:trilhas_cursos'))
-      .select()
-      .maybeSingle();
+  async vincularCursoTrilha(d: { trilha_id: string; curso_id: string; ordem?: number; obrigatorio?: boolean }) {
+    const { data, error } = await supabase.from('trilhas_cursos').insert(d).select().maybeSingle();
     if (error) throw error;
     return data;
   },
-  async desvincularCursoTrilha(id: string, trilhaId: string): Promise<void> {
+  async desvincularCursoTrilha(id: string, trilhaId: string) {
     if (!trilhaId) throw new Error('trilha_id obrigatório para isolamento de tenant');
     const { error } = await supabase.from('trilhas_cursos').delete().eq('id', id).eq('trilha_id', trilhaId);
     if (error) throw error;
   },
 
-  // `treinamento_instancias` não tem empresa_id direto — o isolamento de
-  // tenant é feito pela RLS via curso_id → catalogo_cursos.empresa_id
-  // (migration 20260724001500_fix_treinamento_rls_cross_tenant.sql). O
-  // `.eq('empresa_id', ...)` que existia aqui antes referenciava uma
-  // coluna inexistente: sob a tipagem antiga genérica compilava, mas o
-  // PostgREST recusaria a query em runtime — e esta função É chamada de
-  // verdade por TreinamentosPage.tsx, então a página quebraria ao carregar
-  // instâncias. RLS já garante o isolamento; não há filtro de aplicação
-  // correspondente a repor.
-  async listarInstancias(cursoId?: string): Promise<InstanciaComJoins[]> {
-    let q = supabase
+  /**
+   * Instâncias (turmas) da empresa.
+   *
+   * `treinamento_instancias` NÃO possui `empresa_id` — o escopo real é o CURSO
+   * (`curso_id → catalogo_cursos.empresa_id`), como já definido na policy
+   * `treinamento_instancias_tenant`. Por isso o filtro é aplicado no recurso
+   * embutido (`!inner` + `curso.empresa_id`): devolve apenas turmas da empresa
+   * e mantém a ordenação por `data_inicio`.
+   */
+  async listarInstancias(empresaId: string, cursoId?: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    let q = (supabase as any)
       .from('treinamento_instancias')
       .select(
-        '*, curso:catalogo_cursos!treinamento_instancias_curso_id_fkey(nome), instrutor:colaboradores!treinamento_instancias_instrutor_id_fkey(nome_completo)'
+        '*, curso:catalogo_cursos!treinamento_instancias_curso_id_fkey!inner(nome, empresa_id), instrutor:colaboradores!treinamento_instancias_instrutor_id_fkey(nome_completo)'
       )
+      .eq('curso.empresa_id', empresaId)
       .order('data_inicio', { ascending: true });
     if (cursoId) q = q.eq('curso_id', cursoId);
     const { data, error } = await q;
     if (error) throw error;
-    return (data as InstanciaComJoins[] | null) || [];
+    return data || [];
   },
-  async criarInstancia(d: Insertable<'treinamento_instancias'>): Promise<Tables<'treinamento_instancias'> | null> {
-    const { data, error } = await supabase
-      .from('treinamento_instancias')
-      .insert(validateTablePayload('treinamento_instancias', d, 'catalogoCursoService:treinamento_instancias'))
-      .select()
+  /**
+   * Cria uma turma (instância).
+   *
+   * `treinamento_instancias` NÃO possui `empresa_id`: o vínculo é
+   * `curso_id → catalogo_cursos.empresa_id` (policy
+   * `treinamento_instancias_tenant`). Por isso:
+   *   1. o curso é lido antes do INSERT (a RLS de `catalogo_cursos` só devolve
+   *      curso do próprio tenant);
+   *   2. quando o chamador informa `empresa_id`, ele é conferido contra o curso
+   *      — nunca gravado na tabela;
+   *   3. `empresa_id` é REMOVIDO do payload antes do INSERT.
+   */
+  async criarInstancia(d: any) {
+    if (!d?.curso_id) throw new Error('curso_id obrigatório');
+    const { empresa_id: empresaInformada, ...dados } = d;
+
+    // Defesa: nenhum caminho pode gravar empresa_id nessa tabela.
+    delete dados.empresa_id;
+
+    const { data: curso, error: erroCurso } = await supabase
+      .from('catalogo_cursos')
+      .select('id, empresa_id')
+      .eq('id', dados.curso_id)
       .maybeSingle();
+    if (erroCurso) throw erroCurso;
+    if (!curso) throw new Error('Curso não encontrado para esta empresa.');
+    if (empresaInformada && curso.empresa_id !== empresaInformada) {
+      throw new Error('Curso não pertence à empresa informada.');
+    }
+
+    const { data, error } = await supabase.from('treinamento_instancias').insert(dados).select().maybeSingle();
     if (error) throw error;
     return data;
   },
-  async atualizarInstancia(
-    id: string,
-    d: Updatable<'treinamento_instancias'>
-  ): Promise<Tables<'treinamento_instancias'> | null> {
-    const { data, error } = await supabase
+  /**
+   * Atualiza uma turma sem `empresa_id` (coluna inexistente).
+   *
+   * O escopo de tenant é validado ANTES do UPDATE pelo curso embutido
+   * (`curso.catalogo_cursos.empresa_id`). Se a turma não pertencer à empresa,
+   * nada é gravado — a mensagem não distingue "não existe" de "não é sua".
+   */
+  async atualizarInstancia(id: string, d: any, empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data: atual, error: erroAtual } = await (supabase as any)
       .from('treinamento_instancias')
-      .update(validateTablePayload('treinamento_instancias', d, 'catalogoCursoService:treinamento_instancias'))
+      .select('id, curso:catalogo_cursos!treinamento_instancias_curso_id_fkey!inner(empresa_id)')
+      .eq('id', id)
+      .eq('curso.empresa_id', empresaId)
+      .maybeSingle();
+    if (erroAtual) throw erroAtual;
+    if (!atual) throw new Error('Turma não encontrada para esta empresa.');
+
+    const dados = { ...(d ?? {}) };
+    delete dados.empresa_id;
+    if (Object.keys(dados).length === 0) return atual;
+
+    const { data, error } = await (supabase as any)
+      .from('treinamento_instancias')
+      .update(dados)
       .eq('id', id)
       .select()
       .maybeSingle();
@@ -219,58 +240,47 @@ export const catalogoCursoService = {
     nota_satisfacao: number;
     comentario?: string;
     aplicabilidade_nota?: number;
-  }): Promise<Tables<'treinamento_feedback'> | null> {
-    const { data, error } = await supabase
-      .from('treinamento_feedback')
-      .insert(validateTablePayload('treinamento_feedback', d, 'catalogoCursoService:treinamento_feedback'))
-      .select()
-      .maybeSingle();
+  }) {
+    const { data, error } = await supabase.from('treinamento_feedback').insert(d).select().maybeSingle();
     if (error) throw error;
     return data;
   },
 
-  // SEGURANÇA (achado ao eliminar casts genéricos desta função, não corrigido aqui):
-  // `treinamento_certificados` não tem empresa_id direto, e a RLS em
-  // 20260513193156_...sql ("RH e Gestores veem todos os certificados")
-  // NÃO tem escopo de tenant — qualquer usuário com role admin/rh/gestor
-  // de QUALQUER empresa pode ler certificados de TODAS as empresas via
-  // RLS. Nenhuma migration posterior corrige isso. Isso precisa de uma
-  // migration própria (padrão da 20260724001500_fix_treinamento_rls_cross_tenant.sql,
-  // que já corrigiu o mesmo problema em treinamento_instancias/feedback) —
-  // fora do escopo desta etapa de tipagem. O filtro abaixo via curso_id é
-  // defesa em profundidade na aplicação, não substitui a correção de RLS.
-  //
-  // O `.eq('empresa_id', ...)` que existia aqui antes referenciava uma
-  // coluna inexistente; sob a tipagem genérica anterior compilava, mas a página de treinamentos
-  // (TreinamentosPage.tsx) que chama isto de verdade sempre falharia ao
-  // carregar certificados.
-  async listarCertificados(empresaId: string, colaboradorId?: string): Promise<CertificadoComJoins[]> {
+  /**
+   * Lista os certificados da empresa.
+   *
+   * `treinamento_certificados` NÃO possui `empresa_id` (schema real). O vínculo
+   * de tenant é `colaborador_id → colaboradores.empresa_id`, exatamente como a
+   * RLS `treinamento_certificados` já assume. Por isso o filtro é aplicado no
+   * recurso embutido com `!inner`: sem colaborador (ou com colaborador de outra
+   * empresa) o certificado não pertence a nenhum tenant consultável e é omitido.
+   *
+   * O `select('*')` preserva todos os campos exibidos hoje (data de emissão,
+   * validade, código de autenticação, arquivo) e o embed do curso continua
+   * opcional (certificado pode não ter curso). `empresa_id` entra apenas no
+   * embed do colaborador para permitir o filtro — nunca é uma coluna nova.
+   */
+  async listarCertificados(empresaId: string, colaboradorId?: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const cursoIdsQuery = await supabase.from('catalogo_cursos').select('id').eq('empresa_id', empresaId);
-    if (cursoIdsQuery.error) throw cursoIdsQuery.error;
-    const cursoIds = (cursoIdsQuery.data ?? []).map((c) => c.id);
-    if (cursoIds.length === 0) return [];
-
-    let q = (
-      supabase
-        .from('treinamento_certificados')
-        .select(
-          '*, curso:catalogo_cursos(nome, carga_horaria), colaborador:colaboradores(nome_completo)'
-        ) as unknown as QueryBuilderType
-    ).in('curso_id', cursoIds);
+    let q = (supabase as any)
+      .from('treinamento_certificados')
+      .select(
+        '*, curso:catalogo_cursos(nome, carga_horaria), colaborador:colaboradores!treinamento_certificados_colaborador_id_fkey!inner(nome_completo, empresa_id)'
+      )
+      .eq('colaborador.empresa_id', empresaId);
     if (colaboradorId) q = q.eq('colaborador_id', colaboradorId);
     const { data, error } = await q.order('data_emissao', { ascending: false });
     if (error) throw error;
-    return (data as CertificadoComJoins[] | null) || [];
+    return data || [];
   },
 
-  async getCertificado(id: string): Promise<Tables<'treinamento_certificados'>> {
+  async getCertificado(id: string) {
     const { data, error } = await supabase
       .from('treinamento_certificados')
       .select('*, curso:catalogo_cursos(*), colaborador:colaboradores(*)')
       .eq('id', id)
       .single();
     if (error) throw error;
-    return data as Tables<'treinamento_certificados'>;
+    return data;
   },
 };

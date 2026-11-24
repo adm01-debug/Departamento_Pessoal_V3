@@ -4,31 +4,15 @@ const { MockJsPDF, mockSave, mockText } = vi.hoisted(() => {
   const mockSave = vi.fn();
   const mockText = vi.fn();
   const mockDoc = {
-    setFontSize: vi.fn(),
-    setTextColor: vi.fn(),
-    setFont: vi.fn(),
-    setFillColor: vi.fn(),
-    setDrawColor: vi.fn(),
-    setLineWidth: vi.fn(),
-    rect: vi.fn(),
-    line: vi.fn(),
-    text: mockText,
-    save: mockSave,
+    setFontSize: vi.fn(), setTextColor: vi.fn(), setFont: vi.fn(),
+    setFillColor: vi.fn(), setDrawColor: vi.fn(), setLineWidth: vi.fn(),
+    rect: vi.fn(), line: vi.fn(), text: mockText, save: mockSave,
     internal: {
-      pageSize: {
-        getWidth: function () {
-          return 210;
-        },
-        getHeight: function () {
-          return 297;
-        },
-      },
+      pageSize: { getWidth: function() { return 210; }, getHeight: function() { return 297; } },
     },
     lastAutoTable: { finalY: 100 },
   };
-  const MockJsPDF = vi.fn().mockImplementation(function () {
-    return mockDoc;
-  });
+  const MockJsPDF = vi.fn().mockImplementation(function() { return mockDoc; });
   return { MockJsPDF, mockSave, mockText };
 });
 
@@ -53,27 +37,13 @@ const sampleHolerite = {
 describe('gerarPDFHolerite', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    MockJsPDF.mockImplementation(function () {
+    MockJsPDF.mockImplementation(function() {
       return {
-        setFontSize: vi.fn(),
-        setTextColor: vi.fn(),
-        setFont: vi.fn(),
-        setFillColor: vi.fn(),
-        setDrawColor: vi.fn(),
-        setLineWidth: vi.fn(),
-        rect: vi.fn(),
-        line: vi.fn(),
-        text: mockText,
-        save: mockSave,
+        setFontSize: vi.fn(), setTextColor: vi.fn(), setFont: vi.fn(),
+        setFillColor: vi.fn(), setDrawColor: vi.fn(), setLineWidth: vi.fn(),
+        rect: vi.fn(), line: vi.fn(), text: mockText, save: mockSave,
         internal: {
-          pageSize: {
-            getWidth: function () {
-              return 210;
-            },
-            getHeight: function () {
-              return 297;
-            },
-          },
+          pageSize: { getWidth: function() { return 210; }, getHeight: function() { return 297; } },
         },
         lastAutoTable: { finalY: 100 },
       };
@@ -92,14 +62,14 @@ describe('gerarPDFHolerite', () => {
 
   it('includes competencia in text output', () => {
     gerarPDFHolerite(sampleHolerite);
-    const calls = mockText.mock.calls.map((c: unknown[]) => String(c[0]));
-    expect(calls.some((t) => t.includes('07/2024'))).toBe(true);
+    const calls = mockText.mock.calls.map((c: any[]) => String(c[0]));
+    expect(calls.some(t => t.includes('07/2024'))).toBe(true);
   });
 
   it('includes colaborador name in text output', () => {
     gerarPDFHolerite(sampleHolerite);
-    const calls = mockText.mock.calls.map((c: unknown[]) => String(c[0]));
-    expect(calls.some((t) => t.includes('Alice Santos'))).toBe(true);
+    const calls = mockText.mock.calls.map((c: any[]) => String(c[0]));
+    expect(calls.some(t => t.includes('Alice Santos'))).toBe(true);
   });
 
   it('does not throw with optional fields missing', () => {

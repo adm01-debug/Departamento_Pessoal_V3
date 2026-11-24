@@ -1,33 +1,24 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
 import { Documento } from '@/types/entities';
 
-/** Documento com o join de colaborador e metadados de storage opcionais retornados pelo Supabase. */
-export interface DocumentoListItem extends Documento {
-  nome_arquivo?: string | null;
-  mime_type?: string | null;
-  storage_path?: string | null;
-  tamanho?: number | null;
-  colaborador?: { id: string; nome_completo: string | null; cpf?: string | null } | null;
-}
-
 class DocumentoService extends BaseService<Documento> {
   constructor() {
     super('documentos', {
       searchColumn: 'nome',
-      defaultOrderBy: 'created_at',
+      defaultOrderBy: 'created_at'
     });
   }
 
   async listar(options: ListOptions = {}): Promise<ListResponse<Documento>> {
     const { filters } = options;
-    const colabId = filters?.colaborador_id as string | undefined;
-    const empId = filters?.empresa_id as string | undefined;
+    const colabId = (filters as any)?.colaborador_id;
+    const empId = (filters as any)?.empresa_id;
     if (!empId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const data = await this.listarDocumentos(empId, colabId);
     return { data, total: data.length };
   }
 
-  async listarDocumentos(empresaId: string, colaboradorId?: string): Promise<DocumentoListItem[]> {
+  async listarDocumentos(empresaId: string, colaboradorId?: string): Promise<Documento[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let query = this.getQuery()
       .select('*, colaborador:colaboradores(id, nome_completo, cpf)')
@@ -39,8 +30,10 @@ class DocumentoService extends BaseService<Documento> {
 
     const { data, error } = await query;
     if (error) throw error;
-    return (data as DocumentoListItem[]) || [];
+    return (data as Documento[]) || [];
   }
+
+
 }
 
 export const documentoService = new DocumentoService();

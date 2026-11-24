@@ -1,9 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import type { Insertable } from '@/integrations/supabase/database.types';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { validateTablePayload } from '@/schemas/validate';
+import { mockOr, getMockBeneficiosColaborador } from '@/mocks/colaboradoresMock';
 
 export function useBeneficiosColaborador(colaboradorId?: string) {
   const queryClient = useQueryClient();
@@ -12,14 +11,15 @@ export function useBeneficiosColaborador(colaboradorId?: string) {
     queryKey: ['beneficios-colaborador', colaboradorId],
     enabled: !!colaboradorId,
     queryFn: async () => {
+      const mock = mockOr(getMockBeneficiosColaborador(colaboradorId));
+      if (mock !== undefined) return mock;
+
       const { data, error } = await supabase
         .from('beneficios_colaborador')
-        .select(
-          `
+        .select(`
           *,
-          tipo_beneficio:tipos_beneficio(nome, codigo)
-        `
-        )
+          beneficio:beneficios(nome, tipo)
+        `)
         .eq('colaborador_id', colaboradorId!);
 
       if (error) throw error;
@@ -28,16 +28,10 @@ export function useBeneficiosColaborador(colaboradorId?: string) {
   });
 
   const vincularBeneficio = useMutation({
-    mutationFn: async (dados: Omit<Insertable<'beneficios_colaborador'>, 'colaborador_id'>) => {
+    mutationFn: async (dados: any) => {
       const { data, error } = await supabase
         .from('beneficios_colaborador')
-        .insert(
-          validateTablePayload(
-            'beneficios_colaborador',
-            [{ ...dados, colaborador_id: colaboradorId! }],
-            'useBeneficiosColaborador:beneficios_colaborador'
-          )
-        )
+        .insert([{ ...dados, colaborador_id: colaboradorId }])
         .select()
         .single();
 
@@ -48,7 +42,7 @@ export function useBeneficiosColaborador(colaboradorId?: string) {
       queryClient.invalidateQueries({ queryKey: ['beneficios-colaborador', colaboradorId] });
       toast.success('Benefício vinculado com sucesso!');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(safeErrorMessage(error, 'Erro ao vincular benefício.'));
     },
   });
@@ -67,7 +61,7 @@ export function useBeneficiosColaborador(colaboradorId?: string) {
       queryClient.invalidateQueries({ queryKey: ['beneficios-colaborador', colaboradorId] });
       toast.success('Benefício removido!');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(safeErrorMessage(error, 'Erro ao remover benefício.'));
     },
   });

@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -8,15 +7,15 @@ vi.mock('@/hooks', () => ({
 }));
 
 vi.mock('@/components/ui/scroll-area', () => ({
-  ScrollArea: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  ScrollArea: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/skeleton', () => ({
-  Skeleton: ({ className }: { className?: string }) => <div data-testid="skeleton" className={className} />,
+  Skeleton: ({ className }: any) => <div data-testid="skeleton" className={className} />,
 }));
 
 vi.mock('@/components/ui/progress', () => ({
-  Progress: ({ value }: { value?: string }) => <div data-testid="progress" data-value={value} />,
+  Progress: ({ value }: any) => <div data-testid="progress" data-value={value} />,
 }));
 
 import { FeriasSaldoReport } from '../ferias/FeriasSaldoReport';
@@ -25,12 +24,12 @@ const MOCK_COLABORADORES = [
   {
     id: 'col-001',
     nome_completo: 'João Silva',
-    departamento: 'TI',
+    departamento: { nome: 'TI' },
   },
   {
     id: 'col-002',
     nome_completo: 'Maria Souza',
-    departamento: 'RH',
+    departamento: { nome: 'RH' },
   },
 ];
 
@@ -62,21 +61,21 @@ describe('FeriasSaldoReport', () => {
 
   it('shows skeleton when loading', async () => {
     const { useColaboradores } = await import('@/hooks');
-    vi.mocked(useColaboradores).mockReturnValueOnce({ colaboradores: [], isLoading: true } as never);
+    vi.mocked(useColaboradores).mockReturnValueOnce({ colaboradores: [], isLoading: true } as any);
     render(<FeriasSaldoReport />);
     expect(screen.getByTestId('skeleton')).toBeInTheDocument();
   });
 
   it('renders colaborador name when data provided', async () => {
     const { useColaboradores } = await import('@/hooks');
-    vi.mocked(useColaboradores).mockReturnValueOnce({ colaboradores: MOCK_COLABORADORES, isLoading: false } as never);
+    vi.mocked(useColaboradores).mockReturnValueOnce({ colaboradores: MOCK_COLABORADORES, isLoading: false } as any);
     render(<FeriasSaldoReport />);
     expect(screen.getByText('João Silva')).toBeInTheDocument();
   });
 
   it('renders departamento name when data provided', async () => {
     const { useColaboradores } = await import('@/hooks');
-    vi.mocked(useColaboradores).mockReturnValueOnce({ colaboradores: MOCK_COLABORADORES, isLoading: false } as never);
+    vi.mocked(useColaboradores).mockReturnValueOnce({ colaboradores: MOCK_COLABORADORES, isLoading: false } as any);
     render(<FeriasSaldoReport />);
     expect(screen.getByText('TI')).toBeInTheDocument();
   });

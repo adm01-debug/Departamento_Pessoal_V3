@@ -70,16 +70,13 @@ ALTER TABLE public.prorrogacoes_afastamento ENABLE ROW LEVEL SECURITY;
 DO $$ 
 BEGIN 
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'cid10' AND policyname = 'Users can view CID10') THEN
-        DROP POLICY IF EXISTS "Users can view CID10" ON public.cid10;
-CREATE POLICY "Users can view CID10" ON public.cid10 FOR SELECT USING (true);
+        CREATE POLICY "Users can view CID10" ON public.cid10 FOR SELECT USING (true);
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'documentos_afastamento' AND policyname = 'Users can manage their company docs') THEN
-        DROP POLICY IF EXISTS "Users can manage their company docs" ON public.documentos_afastamento;
-CREATE POLICY "Users can manage their company docs" ON public.documentos_afastamento FOR ALL USING (afastamento_id IN (SELECT id FROM public.afastamentos));
+        CREATE POLICY "Users can manage their company docs" ON public.documentos_afastamento FOR ALL USING (afastamento_id IN (SELECT id FROM public.afastamentos));
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'prorrogacoes_afastamento' AND policyname = 'Users can manage their company prorrogacoes') THEN
-        DROP POLICY IF EXISTS "Users can manage their company prorrogacoes" ON public.prorrogacoes_afastamento;
-CREATE POLICY "Users can manage their company prorrogacoes" ON public.prorrogacoes_afastamento FOR ALL USING (afastamento_id IN (SELECT id FROM public.afastamentos));
+        CREATE POLICY "Users can manage their company prorrogacoes" ON public.prorrogacoes_afastamento FOR ALL USING (afastamento_id IN (SELECT id FROM public.afastamentos));
     END IF;
 END $$;
 

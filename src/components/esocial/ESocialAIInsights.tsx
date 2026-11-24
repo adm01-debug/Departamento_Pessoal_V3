@@ -42,11 +42,11 @@ export function ESocialAIInsights() {
               </div>
               <div className="flex-1">
                 <div className="flex justify-between items-center mb-1">
-                  <h4 className="text-xs font-bold">{insight.title}</h4>
-                  <span className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">Impacto {insight.impact}</span>
+                  <h4 className="text-xs font-medium">{insight.title}</h4>
+                  <span className="text-[9px] uppercase font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">Impacto {insight.impact}</span>
                 </div>
                 <p className="text-[10px] text-muted-foreground leading-relaxed">{insight.desc}</p>
-                <button className="flex items-center gap-1 text-[9px] font-bold text-primary mt-2 group-hover:gap-2 transition-all">
+                <button className="flex items-center gap-1 text-[9px] font-medium text-primary mt-2 group-hover:gap-2 transition-all">
                   VER RECOMENDAÇÃO <ArrowRight className="h-2.5 w-2.5" />
                 </button>
               </div>

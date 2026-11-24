@@ -1,37 +1,25 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
-  Gift,
-  Calendar,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  UserPlus,
-  FileText,
-  ChevronRight,
-  Coffee,
-  Database,
-  Zap,
-  Loader2,
-  Trash2,
-  Bell,
-  ShieldAlert,
+  Gift, Calendar, AlertTriangle,
+  CheckCircle2, Clock, UserPlus, FileText,
+  ChevronRight, Coffee, ShieldAlert
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseBase } from '@/integrations/supabase/client';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { CardSkeleton } from '@/components/ui/module-skeleton';
-import { edgeFunctionsService } from '@/services/edgeFunctionsService';
-import { toast } from 'sonner';
-import { safeErrorMessage } from '@/utils/safeError';
-import { useState } from 'react';
+// MOCK VISUAL — ver src/mocks/dashboardMockData.ts (só ativo em dev + VITE_DASHBOARD_MOCK=true).
+import { isDashboardMockEnabled, mockMorningBriefing } from '@/mocks/dashboardMockData';
 
-interface BriefingData {
+// Exportados para reuso em `ResumoOperacionalCard` e `ProximasAtividadesCard`
+// (Linha 4 do Dashboard) — mesmo dado já buscado aqui, sem query nova; o
+// `react-query` deduplica pela `queryKey` ('morning-briefing').
+export interface BriefingData {
   aniversariantes: { nome: string; dia: number }[];
   feriasPeriodo: { nome: string; inicio: string; fim: string }[];
   afastadosHoje: { nome: string; tipo: string }[];
@@ -39,66 +27,21 @@ interface BriefingData {
   vencimentosHoje: { descricao: string; tipo: string }[];
   totalAtivos: number;
   pontosRegistradosHoje: number;
-  esocialHealth: number | null;
+  esocialHealth: number;
 }
 
-function useMorningBriefing(empresaId?: string) {
+// eslint-disable-next-line react-refresh/only-export-components
+export function useMorningBriefing() {
   return useQuery<BriefingData>({
-    queryKey: ['morning-briefing', empresaId],
-    enabled: Boolean(empresaId),
+    queryKey: ['morning-briefing'],
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
-      if (!empresaId) throw new Error('Selecione uma empresa para carregar o briefing.');
       const hoje = new Date();
       const hojeStr = format(hoje, 'yyyy-MM-dd');
       const mesAtual = hoje.getMonth() + 1;
       const em7Dias = format(new Date(hoje.getTime() + 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd');
 
       // Fire ALL queries in parallel
-      const responses = await Promise.all([
-        supabase
-          .from('colaboradores')
-          .select('nome_completo, data_nascimento')
-          .eq('empresa_id', empresaId)
-          .eq('status', 'ativo')
-          .not('data_nascimento', 'is', null),
-        supabase
-          .from('ferias')
-          .select('data_inicio, data_fim, colaboradores!ferias_colaborador_id_fkey(nome_completo)')
-          .eq('empresa_id', empresaId)
-          .in('status', ['aprovada', 'em_andamento'])
-          .lte('data_inicio', hojeStr)
-          .gte('data_fim', hojeStr),
-        supabase
-          .from('afastamentos')
-          .select('tipo, colaboradores!afastamentos_colaborador_id_fkey(nome_completo)')
-          .eq('empresa_id', empresaId)
-          .eq('status', 'ativo')
-          .lte('data_inicio', hojeStr)
-          .gte('data_fim_prevista', hojeStr),
-        supabase.from('admissoes').select('nome, cargo').eq('empresa_id', empresaId).eq('data_prevista', hojeStr),
-        supabase
-          .from('exames')
-          .select('data_validade, tipo, colaboradores!inner(nome_completo)')
-          .eq('colaboradores.empresa_id', empresaId)
-          .gte('data_validade', hojeStr)
-          .lte('data_validade', em7Dias),
-        supabase
-          .from('colaboradores')
-          .select('id', { count: 'exact', head: true })
-          .eq('empresa_id', empresaId)
-          .eq('status', 'ativo'),
-        supabase
-          .from('batidas_ponto')
-          .select('id', { count: 'exact', head: true })
-          .eq('empresa_id', empresaId)
-          .eq('data', hojeStr),
-        supabase.from('esocial_eventos').select('status').eq('empresa_id', empresaId),
-      ]);
-
-      const failed = responses.find((response) => response.error);
-      if (failed?.error) throw failed.error;
-
       const [
         { data: colabs },
         { data: feriasData },
@@ -108,63 +51,47 @@ function useMorningBriefing(empresaId?: string) {
         { count: totalAtivos },
         { count: pontosHoje },
         { data: esocialData },
-      ] = responses;
+      ] = await Promise.all([
+        supabaseBase.from('colaboradores').select('nome_completo, data_nascimento').eq('status', 'ativo').not('data_nascimento', 'is', null),
+        supabaseBase.from('ferias').select('data_inicio, data_fim, colaboradores!ferias_colaborador_id_fkey(nome_completo)').in('status', ['aprovada', 'em_andamento']).lte('data_inicio', hojeStr).gte('data_fim', hojeStr),
+        supabaseBase.from('afastamentos').select('tipo, colaboradores!afastamentos_colaborador_id_fkey(nome_completo)').eq('status', 'ativo').lte('data_inicio', hojeStr).gte('data_fim_prevista', hojeStr),
+        supabaseBase.from('admissoes').select('nome, cargo').eq('data_prevista', hojeStr),
+        supabaseBase.from('exames').select('data_validade, tipo, colaboradores!exames_colaborador_id_fkey(nome_completo)').gte('data_validade', hojeStr).lte('data_validade', em7Dias),
+        supabaseBase.from('colaboradores').select('id', { count: 'exact', head: true }).eq('status', 'ativo'),
+        supabaseBase.from('batidas_ponto').select('id', { count: 'exact', head: true }).eq('data', hojeStr),
+        supabaseBase.from('esocial_eventos').select('status'),
+      ]);
 
       const esocialEventos = esocialData || [];
       const esocialTotal = esocialEventos.length;
-      const esocialErros = esocialEventos.filter((evento) => evento.status === 'erro').length;
-      const esocialHealth = esocialTotal > 0 ? Math.round(((esocialTotal - esocialErros) / esocialTotal) * 100) : null;
+      const esocialErros = esocialEventos.filter((e: any) => e.status === 'erro').length;
+      const esocialHealth = esocialTotal > 0 ? Math.round(((esocialTotal - esocialErros) / esocialTotal) * 100) : 100;
 
       const aniversariantes = (colabs || [])
-        .filter((c) => {
+        .filter(c => {
           if (!c.data_nascimento) return false;
           const d = parseISO(c.data_nascimento);
           return d.getMonth() + 1 === mesAtual;
         })
-        .map((c) => ({ nome: c.nome_completo, dia: parseISO(c.data_nascimento!).getDate() }))
+        .map(c => ({ nome: c.nome_completo, dia: parseISO(c.data_nascimento!).getDate() }))
         .sort((a, b) => a.dia - b.dia);
 
-      const feriasPeriodo = (feriasData || []).map((f) => ({
-        nome: f.colaboradores?.nome_completo || 'Colaborador',
-        inicio: f.data_inicio,
-        fim: f.data_fim,
-      }));
-      const afastadosHoje = (afastData || []).map((a) => ({
-        nome: a.colaboradores?.nome_completo || 'Colaborador',
-        tipo: a.tipo,
-      }));
-      const admissoesHoje = (admData || []).map((a) => ({ nome: a.nome, cargo: a.cargo }));
-      const vencimentosHoje = (asoData || []).map((a) => ({
-        descricao: `Exame ${a.tipo} de ${a.colaboradores?.nome_completo || 'Colaborador'} - ${a.data_validade ? format(parseISO(a.data_validade), 'dd/MM') : '—'}`,
-        tipo: 'exame',
-      }));
+      const feriasPeriodo = (feriasData || []).map((f: any) => ({ nome: f.colaboradores?.nome_completo || 'Colaborador', inicio: f.data_inicio, fim: f.data_fim }));
+      const afastadosHoje = (afastData || []).map((a: any) => ({ nome: a.colaboradores?.nome_completo || 'Colaborador', tipo: a.tipo }));
+      const admissoesHoje = (admData || []).map(a => ({ nome: a.nome, cargo: a.cargo }));
+      const vencimentosHoje = (asoData || []).map((a: any) => ({
+        descricao: `Exame ${a.tipo} de ${a.colaboradores?.nome_completo || 'Colaborador'} - ${format(parseISO(a.data_validade), 'dd/MM')}`,
+        tipo: 'exame'}));
 
       return {
-        aniversariantes,
-        feriasPeriodo,
-        afastadosHoje,
-        admissoesHoje,
-        vencimentosHoje,
-        totalAtivos: totalAtivos || 0,
-        pontosRegistradosHoje: pontosHoje || 0,
-        esocialHealth,
-      };
-    },
-  });
+        aniversariantes, feriasPeriodo, afastadosHoje, admissoesHoje, vencimentosHoje,
+        totalAtivos: totalAtivos || 0, pontosRegistradosHoje: pontosHoje || 0,
+        esocialHealth};
+    }});
 }
 
-function BriefingItem({
-  icon: Icon,
-  label,
-  count,
-  gradient,
-  onClick,
-}: {
-  icon: React.ElementType;
-  label: string;
-  count: number;
-  gradient: string;
-  onClick?: () => void;
+function BriefingItem({ icon: Icon, label, count, gradient, onClick, compact = false }: {
+  icon: React.ElementType; label: string; count: number; gradient: string; onClick?: () => void; compact?: boolean;
 }) {
   if (count === 0) return null;
   return (
@@ -173,57 +100,48 @@ function BriefingItem({
       animate={{ opacity: 1, x: 0 }}
       whileHover={{ scale: 1.01 }}
       onClick={onClick}
-      className="flex items-center gap-3 p-3 rounded-xl glass border border-border/30 hover:border-primary/30 transition-all w-full text-left group"
+      className={cn(
+        'flex items-center gap-3 rounded-xl glass border border-border/30 hover:border-primary/30 transition-all w-full text-left group',
+        compact ? 'gap-2 p-1.5' : 'p-3',
+      )}
     >
-      <div className={cn('p-2 rounded-xl bg-gradient-to-br shadow-lg', gradient)}>
-        <Icon className="h-4 w-4 text-primary-foreground" />
+      <div className={cn('rounded-lg bg-gradient-to-br shadow-lg', gradient, compact ? 'p-1' : 'p-2')}>
+        <Icon className={cn('text-primary-foreground', compact ? 'h-3 w-3' : 'h-4 w-4')} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-body font-body font-medium truncate">{label}</p>
+        <p className={cn('font-body font-medium truncate', compact ? 'text-overline normal-case tracking-normal' : 'text-body')}>{label}</p>
       </div>
-      <Badge variant="secondary" className="font-display font-bold">
-        {count}
-      </Badge>
-      <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+      {/* `text-[10px]` além de `text-overline`: o Badge já injeta `text-xs` via
+          seu próprio `cn()` interno, que vence a cascata sobre nosso token
+          customizado — a sintaxe nativa do Tailwind faz o merge corretamente. */}
+      <Badge variant="secondary" className={cn('font-display font-medium', compact && 'px-1.5 py-0 text-overline text-[10px]')}>{count}</Badge>
+      {!compact && <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />}
     </motion.button>
   );
 }
 
-export function MorningBriefing({ empresaId }: { empresaId?: string }) {
-  const { data, isLoading, error } = useMorningBriefing(empresaId);
-  const [runningAction, setRunningAction] = useState<string | null>(null);
+interface MorningBriefingProps {
+  /**
+   * `compact` — card de "Próximos Eventos" para a coluna estreita do Dashboard:
+   * só a lista de eventos. As rotinas de manutenção que ficavam no rodapé deste
+   * card foram para o `SystemStatusCard`, ao lado do status que elas afetam.
+   */
+  variant?: 'full' | 'compact';
+}
+
+export function MorningBriefing({ variant = 'full' }: MorningBriefingProps = {}) {
+  const realBriefing = useMorningBriefing();
+  // MOCK VISUAL — substitui o resultado já resolvido do hook real acima;
+  // nenhuma chamada extra é feita. Remover estas linhas desativa o mock aqui.
+  const { data, isLoading, error } = isDashboardMockEnabled()
+    ? { data: mockMorningBriefing, isLoading: false, error: null }
+    : realBriefing;
   const navigate = useNavigate();
+  const isCompact = variant === 'compact';
+  const hoje = new Date();
 
-  const handleAction = async (id: string, fn: () => Promise<unknown>, successMsg: string) => {
-    setRunningAction(id);
-    try {
-      await fn();
-      toast.success(successMsg);
-    } catch (err) {
-      toast.error(safeErrorMessage(err, 'Erro ao executar ação.'));
-    } finally {
-      setRunningAction(null);
-    }
-  };
-
-  const handleAlertas = async () => {
-    if (!empresaId) {
-      toast.error('Selecione uma empresa antes de disparar alertas.');
-      return;
-    }
-    await handleAction(
-      'alertas',
-      async () => {
-        const result = await edgeFunctionsService.dispararAlertasDP(empresaId);
-        if (!result.success) {
-          throw new Error('O provedor não confirmou a entrega dos alertas.');
-        }
-      },
-      'O provedor confirmou a entrega dos alertas.'
-    );
-  };
-  if (isLoading) return <CardSkeleton className="h-64" />;
-
+  if (isLoading) return <CardSkeleton className={isCompact ? 'h-full' : 'h-64'} />;
+  
   if (error) {
     return (
       <Card className="border-destructive/50 bg-destructive/5 shadow-none">
@@ -233,7 +151,7 @@ export function MorningBriefing({ empresaId }: { empresaId?: string }) {
             Erro de Esquema (Banco Externo)
           </CardTitle>
           <CardDescription className="text-destructive/80 font-mono text-xs">
-            {error instanceof Error ? error.message : 'Falha ao carregar o briefing.'}
+            {(error as any).message}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -247,16 +165,59 @@ export function MorningBriefing({ empresaId }: { empresaId?: string }) {
 
   if (!data) return null;
 
-  const hoje = new Date();
+  const hasContent = data.aniversariantes.length > 0 || data.feriasPeriodo.length > 0 ||
+    data.afastadosHoje.length > 0 || data.admissoesHoje.length > 0 || data.vencimentosHoje.length > 0;
 
-  const hasContent =
-    data.aniversariantes.length > 0 ||
-    data.feriasPeriodo.length > 0 ||
-    data.afastadosHoje.length > 0 ||
-    data.admissoesHoje.length > 0 ||
-    data.vencimentosHoje.length > 0;
+  const aniversariantesHoje = data.aniversariantes.filter(a => a.dia === hoje.getDate());
 
-  const aniversariantesHoje = data.aniversariantes.filter((a) => a.dia === hoje.getDate());
+  const eventos = (
+    <>
+      <BriefingItem compact={isCompact} icon={UserPlus} label="Admissões previstas hoje" count={data.admissoesHoje.length}
+        gradient="from-primary to-primary-glow" onClick={() => navigate('/admissoes')} />
+      <BriefingItem compact={isCompact} icon={Calendar} label="Colaboradores em férias" count={data.feriasPeriodo.length}
+        gradient="from-primary/80 to-primary" onClick={() => navigate('/ferias')} />
+      <BriefingItem compact={isCompact} icon={AlertTriangle} label="Afastamentos ativos" count={data.afastadosHoje.length}
+        gradient="from-destructive to-destructive/70" onClick={() => navigate('/afastamentos')} />
+      <BriefingItem compact={isCompact} icon={FileText} label="Exames vencendo em 7 dias" count={data.vencimentosHoje.length}
+        gradient="from-warning to-warning/70" onClick={() => navigate('/exames')} />
+      <BriefingItem compact={isCompact} icon={Gift} label="Aniversariantes do mês" count={data.aniversariantes.length}
+        gradient="from-primary-glow to-primary" onClick={() => navigate('/colaboradores')} />
+    </>
+  );
+
+  if (isCompact) {
+    return (
+      <Card className="flex h-full min-h-[110px] flex-col overflow-hidden border border-border/60 rounded-xl">
+        <CardHeader className="p-3 pb-1.5 space-y-0">
+          <CardTitle className="flex items-center gap-1.5 whitespace-nowrap text-base">
+            <Calendar className="h-3.5 w-3.5 shrink-0 text-primary" />
+            Próximos Eventos
+          </CardTitle>
+          <p className="text-overline text-muted-foreground mt-1 normal-case tracking-normal line-clamp-1">
+            {format(hoje, "EEEE, dd 'de' MMMM", { locale: ptBR })}
+          </p>
+        </CardHeader>
+        <CardContent className="flex min-h-0 flex-1 flex-col p-3.5 pt-0">
+          {hasContent ? (
+            // Lista flexível (não `max-h` fixo): ocupa exatamente a altura que
+            // a coluna lateral oferece — ela divide com "Status do Sistema" a
+            // altura das 2 linhas de conteúdo ao lado — e rola só se os
+            // eventos reais passarem disso.
+            // `gap-2` (era `gap-1`) + `px-1`: o destaque de hover (borda +
+            // leve glow) de cada linha precisa de uma margem própria — muito
+            // coladas umas nas outras e na borda do container com scroll
+            // (`overflow-y-auto`), o realce ficava cortado.
+            <div className="grid min-h-0 flex-1 content-start gap-2 overflow-y-auto custom-scrollbar px-1">{eventos}</div>
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center text-center py-4">
+              <CheckCircle2 className="h-5 w-5 text-success mb-2" />
+              <p className="text-caption text-muted-foreground font-body">Nenhum evento para hoje</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden relative">
@@ -264,7 +225,7 @@ export function MorningBriefing({ empresaId }: { empresaId?: string }) {
       <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-primary/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/4" />
 
       <CardHeader className="relative pb-2">
-        <CardTitle className="flex items-center gap-3 text-h3 font-display">
+        <CardTitle className="flex items-center gap-3 font-display">
           <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow shadow-glow">
             <Coffee className="h-5 w-5 text-primary-foreground" />
           </div>
@@ -291,27 +252,14 @@ export function MorningBriefing({ empresaId }: { empresaId?: string }) {
             </Badge>
           )}
           {data.afastadosHoje.length > 0 && (
-            <Badge
-              variant="outline"
-              className="gap-1.5 py-1.5 rounded-xl font-body text-destructive border-destructive/30"
-            >
+            <Badge variant="outline" className="gap-1.5 py-1.5 rounded-xl font-body text-destructive border-destructive/30">
               <AlertTriangle className="h-3 w-3" />
               {data.afastadosHoje.length} afastados
             </Badge>
           )}
-          <Badge
-            variant="outline"
-            className={cn(
-              'gap-1.5 py-1.5 rounded-xl font-body',
-              data.esocialHealth === null
-                ? 'text-muted-foreground border-border/50'
-                : data.esocialHealth < 90
-                  ? 'text-destructive border-destructive/30'
-                  : 'text-success border-success/30'
-            )}
-          >
+          <Badge variant="outline" className={cn("gap-1.5 py-1.5 rounded-xl font-body", data.esocialHealth < 90 ? "text-destructive border-destructive/30" : "text-success border-success/30")}>
             <ShieldAlert className="h-3 w-3" />
-            Conformidade eSocial: {data.esocialHealth === null ? 'sem eventos' : `${data.esocialHealth}%`}
+            Conformidade eSocial: {data.esocialHealth}%
           </Badge>
         </div>
 
@@ -326,11 +274,9 @@ export function MorningBriefing({ empresaId }: { empresaId?: string }) {
               <Gift className="h-4 w-4 text-primary-foreground" />
             </div>
             <div className="flex-1">
-              <p className="text-body font-display font-semibold">
-                🎉 Aniversariante{aniversariantesHoje.length > 1 ? 's' : ''} do dia!
-              </p>
+              <p className="text-body font-display font-medium">🎉 Aniversariante{aniversariantesHoje.length > 1 ? 's' : ''} do dia!</p>
               <p className="text-caption text-muted-foreground font-body">
-                {aniversariantesHoje.map((a) => a.nome).join(', ')}
+                {aniversariantesHoje.map(a => a.nome).join(', ')}
               </p>
             </div>
           </motion.div>
@@ -338,107 +284,7 @@ export function MorningBriefing({ empresaId }: { empresaId?: string }) {
 
         {/* Briefing items */}
         <div className="grid gap-2 grid-cols-1 sm:grid-cols-2">
-          <BriefingItem
-            icon={UserPlus}
-            label={`Admissões previstas hoje`}
-            count={data.admissoesHoje.length}
-            gradient="from-primary to-primary-glow"
-            onClick={() => navigate('/admissoes')}
-          />
-          <BriefingItem
-            icon={Calendar}
-            label={`Colaboradores em férias`}
-            count={data.feriasPeriodo.length}
-            gradient="from-primary/80 to-primary"
-            onClick={() => navigate('/ferias')}
-          />
-          <BriefingItem
-            icon={AlertTriangle}
-            label={`Afastamentos ativos`}
-            count={data.afastadosHoje.length}
-            gradient="from-destructive to-destructive/70"
-            onClick={() => navigate('/afastamentos')}
-          />
-          <BriefingItem
-            icon={FileText}
-            label={`Exames vencendo em 7 dias`}
-            count={data.vencimentosHoje.length}
-            gradient="from-warning to-warning/70"
-            onClick={() => navigate('/exames')}
-          />
-          <BriefingItem
-            icon={Gift}
-            label={`Aniversariantes do mês`}
-            count={data.aniversariantes.length}
-            gradient="from-primary-glow to-primary"
-            onClick={() => navigate('/colaboradores')}
-          />
-        </div>
-
-        <div className="pt-4 border-t border-border/20">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold mb-3">
-            Manutenção do Sistema
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!!runningAction || !empresaId}
-              onClick={handleAlertas}
-              className="rounded-xl h-auto py-2 flex-col gap-1 text-[10px] font-body"
-            >
-              {runningAction === 'alertas' ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Bell className="h-4 w-4 text-amber-500" />
-              )}
-              <span>Alertas DP</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!!runningAction}
-              onClick={() =>
-                handleAction('cache', () => edgeFunctionsService.cache({ action: 'invalidate' }), 'Cache limpo!')
-              }
-              className="rounded-xl h-auto py-2 flex-col gap-1 text-[10px] font-body"
-            >
-              {runningAction === 'cache' ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Zap className="h-4 w-4 text-primary" />
-              )}
-              <span>Limpar Cache</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!!runningAction}
-              onClick={() => handleAction('limpeza', edgeFunctionsService.limpezaDados, 'Limpeza concluída!')}
-              className="rounded-xl h-auto py-2 flex-col gap-1 text-[10px] font-body"
-            >
-              {runningAction === 'limpeza' ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Trash2 className="h-4 w-4 text-destructive" />
-              )}
-              <span>Limpeza</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={!!runningAction}
-              onClick={() => handleAction('health', edgeFunctionsService.healthcheck, 'Sistema saudável!')}
-              className="rounded-xl h-auto py-2 flex-col gap-1 text-[10px] font-body"
-            >
-              {runningAction === 'health' ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Database className="h-4 w-4 text-success" />
-              )}
-              <span>Saúde</span>
-            </Button>
-          </div>
+          {eventos}
         </div>
 
         {!hasContent && (
@@ -446,7 +292,7 @@ export function MorningBriefing({ empresaId }: { empresaId?: string }) {
             <div className="p-3 rounded-2xl bg-gradient-to-br from-success/20 to-finance/10 mb-3">
               <CheckCircle2 className="h-6 w-6 text-success" />
             </div>
-            <p className="font-display font-semibold">Tudo tranquilo hoje!</p>
+            <p className="font-display font-medium">Tudo tranquilo hoje!</p>
             <p className="text-caption text-muted-foreground font-body mt-1">Nenhuma pendência ou evento para hoje</p>
           </div>
         )}

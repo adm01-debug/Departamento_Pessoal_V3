@@ -19,11 +19,11 @@ const _extraOrigins = (Deno.env.get('EXTRA_ALLOWED_ORIGINS') ?? '')
   .filter(Boolean);
 
 const ALLOWED_ORIGINS = [
-  // Origem canônica. Origens adicionais só entram por configuração explícita
-  // porque módulos legados ainda consomem o objeto CORS estático.
-  'https://departamento-pessoal-v3.vercel.app',
+  'https://sistema-dp.lovable.app',
+  'https://unified-harmony-hub.lovable.app',
   ..._extraOrigins,
 ];
+const LOVABLE_HOST_RE = /\.lovable\.(app|dev)$/;
 
 // Localhost only allowed when running Supabase locally
 const _supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
@@ -50,8 +50,10 @@ function isOriginAllowed(origin: string): boolean {
   try {
     const url = new URL(origin);
     if (url.protocol !== "https:" && url.protocol !== "http:") return false;
+    const host = url.hostname;
     return (
       ALLOWED_ORIGINS.includes(origin) ||
+      LOVABLE_HOST_RE.test(host) ||
       IS_LOCAL_DEV && isLocalhostOrigin(origin)
     );
   } catch {
@@ -68,36 +70,19 @@ export const securityHeaders: Record<string, string> = {
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
 };
 
-const CORS_BASE_HEADERS: Record<string, string> = {
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type, x-hub-signature-256, idempotency-key, x-csrf-token',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
-  'Access-Control-Max-Age': '86400',
-  'Access-Control-Expose-Headers': 'idempotent-replay',
-  Vary: 'Origin',
-};
-
-/**
- * Headers CORS por requisição. Ecoa exatamente o Origin quando ele está na
- * allowlist — obrigatório para que o browser aceite a resposta (a spec exige
- * match exato, não vale devolver "outra" origem permitida).
- *
- * Sem `req` (compatibilidade com módulos legados), usa a origem primária da
- * allowlist. Nunca devolve wildcard: isso mantém o contrato fail-closed mesmo
- * quando uma função ainda usa o objeto estático `corsHeaders`.
- */
 export function getCorsHeaders(req?: Request): Record<string, string> {
   const origin = req?.headers.get('origin') || '';
-  const allowedOrigin = origin && isOriginAllowed(origin) ? origin : ALLOWED_ORIGINS[0];
+  const allowedOrigin = isOriginAllowed(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
-    ...CORS_BASE_HEADERS,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-hub-signature-256, idempotency-key, x-csrf-token',
+    'Access-Control-Expose-Headers': 'idempotent-replay',
+    'Vary': 'Origin',
     ...securityHeaders,
   };
 }
 
 export const corsHeaders = getCorsHeaders();
-
 
 /**
  * Strict origin gate. Retorna Response 403 quando o Origin é enviado
@@ -110,8 +95,8 @@ export function enforceOrigin(req: Request): Response | null {
   if (!origin) return null;
   if (isOriginAllowed(origin)) return null;
   return new Response(
-    JSON.stringify({ error: { code: 'FORBIDDEN_ORIGIN', message: 'Origin não autorizado' } }),
-    { status: 403, headers: { 'Content-Type': 'application/json', ...securityHeaders } }
+    JSON.stringify({ data: null, count: null, duration_ms: 0, error: 'Origin não autorizado', code: 'FORBIDDEN_ORIGIN' }),
+    { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
   );
 }
 
@@ -123,7 +108,7 @@ export function handlePreflight(req: Request): Response | null {
   if (req.method !== 'OPTIONS') return null;
   const origin = req.headers.get('origin') || '';
   if (origin && !isOriginAllowed(origin)) {
-    return new Response(null, { status: 403, headers: securityHeaders });
+    return new Response(null, { status: 403, headers: getCorsHeaders(req) });
   }
   return new Response(null, { status: 204, headers: getCorsHeaders(req) });
 }
@@ -172,85 +157,35 @@ export async function parseJsonBody(
   maxBytes: number = DEFAULT_MAX_PAYLOAD_BYTES
 ): Promise<{ body?: unknown; errorResponse?: Response }> {
   const contentLength = req.headers.get('content-length');
-  const declaredLength = contentLength ? Number(contentLength) : null;
-  if (declaredLength !== null && (!Number.isSafeInteger(declaredLength) || declaredLength < 0)) {
-    return {
-      errorResponse: createErrorResponse(
-        'Content-Length inválido',
-        400,
-        'INVALID_CONTENT_LENGTH',
-        undefined,
-        req,
-      ),
-    };
-  }
-  if (declaredLength !== null && declaredLength > maxBytes) {
+  if (contentLength && parseInt(contentLength, 10) > maxBytes) {
     return {
       errorResponse: createErrorResponse(
         `Payload excede o limite de ${Math.round(maxBytes / 1024)} KB`,
         413,
-        'PAYLOAD_TOO_LARGE',
-        undefined,
-        req,
+        'PAYLOAD_TOO_LARGE'
       ),
     };
   }
 
   try {
-    if (!req.body) {
+    const raw = await req.text();
+    if (raw.length > maxBytes) {
       return {
         errorResponse: createErrorResponse(
-          'JSON inválido ou corpo da requisição ausente',
-          400,
-          'INVALID_JSON',
-          undefined,
-          req,
+          `Payload excede o limite de ${Math.round(maxBytes / 1024)} KB`,
+          413,
+          'PAYLOAD_TOO_LARGE'
         ),
       };
     }
-
-    const reader = req.body.getReader();
-    const chunks: Uint8Array[] = [];
-    let receivedBytes = 0;
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      receivedBytes += value.byteLength;
-      if (receivedBytes > maxBytes) {
-        // `cancel()` pode aguardar o cancelamento de todos os ramos de um
-        // stream tee'd por Request.clone(). Um clone que ainda não foi lido
-        // faria a resposta 413 esperar indefinidamente. O limite já foi
-        // comprovado; sinalizamos o cancelamento sem bloquear a resposta.
-        void reader.cancel().catch(() => undefined);
-        return {
-          errorResponse: createErrorResponse(
-            `Payload excede o limite de ${Math.round(maxBytes / 1024)} KB`,
-            413,
-            'PAYLOAD_TOO_LARGE',
-            undefined,
-            req,
-          ),
-        };
-      }
-      chunks.push(value);
-    }
-
-    const bytes = new Uint8Array(receivedBytes);
-    let offset = 0;
-    for (const chunk of chunks) {
-      bytes.set(chunk, offset);
-      offset += chunk.byteLength;
-    }
-    const parsed = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
+    const parsed = JSON.parse(raw);
     return { body: parsed };
   } catch {
     return {
       errorResponse: createErrorResponse(
         'JSON inválido ou corpo da requisição ausente',
         400,
-        'INVALID_JSON',
-        undefined,
-        req,
+        'INVALID_JSON'
       ),
     };
   }
@@ -266,7 +201,7 @@ export async function validateRequest<T>(
 
   const result = schema.safeParse(body);
   if (!result.success) {
-    return { errorResponse: createValidationErrorResponse(result.error, req) };
+    return { errorResponse: createValidationErrorResponse(result.error) };
   }
   return { data: result.data };
 }

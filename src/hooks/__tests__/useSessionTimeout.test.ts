@@ -22,6 +22,10 @@ describe('useSessionTimeout', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
+    localStorage.clear();
+    sessionStorage.clear();
+    mockGetSession.mockResolvedValue({ data: { session: null } });
+    mockSignOut.mockResolvedValue({});
   });
 
   afterEach(() => {
@@ -52,6 +56,39 @@ describe('useSessionTimeout', () => {
     renderHook(() => useSessionTimeout());
     vi.advanceTimersByTime(31 * 60 * 1000); // > 30min inactivity
     await vi.advanceTimersByTimeAsync(60_000);
+    expect(mockSignOut).not.toHaveBeenCalled();
+  });
+
+  it('expira a sessão sem apagar dados locais e limpa só o token do Supabase', async () => {
+    mockGetSession.mockResolvedValue({ data: { session: { access_token: 'token' } } });
+    localStorage.setItem('sb-frjbfeamybqsejlvmqbl-auth-token', 'token');
+    localStorage.setItem('dp-desempenho-demo-registros', 'dados-demo');
+    localStorage.setItem('ponto_offline_queue', 'fila-offline');
+    localStorage.setItem('ui-theme', 'dark');
+
+    renderHook(() => useSessionTimeout());
+    await vi.advanceTimersByTimeAsync(31 * 60 * 1000);
+
+    expect(mockSignOut).toHaveBeenCalled();
+    expect(localStorage.getItem('sb-frjbfeamybqsejlvmqbl-auth-token')).toBeNull();
+    expect(localStorage.getItem('dp-desempenho-demo-registros')).toBe('dados-demo');
+    expect(localStorage.getItem('ponto_offline_queue')).toBe('fila-offline');
+    expect(localStorage.getItem('ui-theme')).toBe('dark');
+  });
+
+  it('não expira a sessão quando outra aba registra atividade recente', async () => {
+    mockGetSession.mockResolvedValue({ data: { session: { access_token: 'token' } } });
+
+    renderHook(() => useSessionTimeout());
+    await vi.advanceTimersByTimeAsync(25 * 60 * 1000);
+    window.dispatchEvent(
+      new StorageEvent('storage', {
+        key: 'dp_last_activity_at',
+        newValue: String(Date.now()),
+      })
+    );
+    await vi.advanceTimersByTimeAsync(10 * 60 * 1000);
+
     expect(mockSignOut).not.toHaveBeenCalled();
   });
 

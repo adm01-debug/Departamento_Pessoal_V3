@@ -1,14 +1,12 @@
 import { BaseService } from './baseService';
 import { Cargo } from '@/types/entities';
-import { cargoSchema } from '@/schemas/cargo';
 
 class CargoService extends BaseService<Cargo> {
   constructor() {
-    super('cargos', {
-      searchColumn: 'nome',
+    super('cargos', { 
+      searchColumn: 'nome', 
       defaultOrderBy: 'nome',
-      useVersioning: true,
-      schema: cargoSchema,
+      useVersioning: true 
     });
   }
 }

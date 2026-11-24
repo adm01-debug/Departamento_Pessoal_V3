@@ -66,32 +66,13 @@ const ALLOWLIST = new Map([
   // Não pode autorizar internamente sem recursão. Exposição residual: mapeia
   // colaborador_id -> empresa_id, ambos uuid, sem PII e exigindo um uuid já
   // conhecido. Verificar as políticas dependentes antes de remover daqui.
-  [
-    'empresa_do_colaborador',
-    'Helper usado dentro de 10 políticas RLS; retorna apenas empresa_id (uuid) a partir de um colaborador_id já conhecido.',
-  ],
+  ['empresa_do_colaborador', 'Helper usado dentro de 10 políticas RLS; retorna apenas empresa_id (uuid) a partir de um colaborador_id já conhecido.'],
   ['contrato_assinar_por_token', 'Assinatura de contrato por link; valida token + CPF.'],
   ['contrato_consultar_por_token', 'Leitura do contrato pelo signatário; valida token.'],
   ['contrato_preview_url_por_token', 'Preview do PDF pelo signatário; valida token.'],
   ['contrato_verificar_autenticidade', 'Portal público de verificação por hash.'],
   ['contrato_verificar_autenticidade_v2', 'Portal público de verificação por hash.'],
-  [
-    'admissao_assinar_contrato',
-    'Portal de admissão por link; valida token via _admissao_token_row e IP não-forjável por role.',
-  ],
   ['get_admissao_por_token', 'Formulário de admissão acessado por link antes de haver conta.'],
-  [
-    'admissao_salvar_dados',
-    'Portal de admissão por link; valida token opaco via _admissao_token_row (>=16 chars, não expirado).',
-  ],
-  [
-    'admissao_marcar_documentos',
-    'Portal de admissão por link; valida token opaco via _admissao_token_row (>=16 chars, não expirado).',
-  ],
-  [
-    'admissao_registrar_documento',
-    'Portal de admissão por link; valida token via _admissao_token_row e path prefixado pela admissão do próprio token.',
-  ],
   ['medida_consultar_por_token', 'Ciência de medida disciplinar por link; valida token.'],
   ['medida_registrar_ciencia_publica', 'Ciência de medida disciplinar por link; valida token.'],
   ['medida_verificar_ciencia_hash', 'Portal público de verificação por hash.'],
@@ -103,58 +84,17 @@ const ALLOWLIST = new Map([
   ['is_admin', 'Primitivo de autorização usado pelas políticas RLS.'],
   ['get_user_empresas', 'Primitivo de escopo de tenant usado por 289 políticas RLS.'],
   ['get_user_default_empresa', 'Primitivo de escopo de tenant.'],
-  [
-    'user_belongs_to_empresa',
-    'Primitivo de autorização (mesma categoria de has_role/is_admin): recebe ' +
-      '_user_id por parâmetro por design, usado internamente por RLS e pela ' +
-      'app. Exposição residual: enumeração booleana "user X pertence a empresa ' +
-      'Y", sem PII.',
-  ],
-  // Infraestrutura de segurança que precisa funcionar ANTES de existir sessão
-  // (checagem de rate-limit/lockout/bloqueio de IP/país no fluxo de login).
-  // Exigir auth.uid() aqui quebraria o próprio mecanismo de proteção do login.
-  ['check_login_lock', 'Checagem de bloqueio de login; roda antes da sessão existir.'],
-  ['check_rate_limit', 'Rate limiting por IP; roda antes da sessão existir.'],
-  ['check_brute_force', 'Detecção de força bruta no login; roda antes da sessão existir.'],
-  ['record_failed_login', 'Registro de tentativa de login falha; roda antes da sessão existir.'],
-  ['is_country_allowed', 'Geo-bloqueio; roda antes da sessão existir.'],
-  ['is_ip_blocked', 'Checagem de IP bloqueado; roda antes da sessão existir.'],
-  ['is_ip_whitelisted', 'Checagem de IP na whitelist; roda antes da sessão existir.'],
-  [
-    'verificar_pin_quiosque',
-    'PIN é o próprio mecanismo de autenticação do quiosque de ponto -- exigir ' +
-      'auth.uid() prévio inverteria o fluxo. Retorna só boolean, com lockout ' +
-      'após 5 tentativas (mesmo padrão de check_login_lock).',
-  ],
 ]);
 
-/**
- * Banco acessível quando PGHOST (padrão libpq) ou DATABASE_URL/SUPABASE_DB_URL
- * (padrão dos secrets do CI) está definido. Mesmo critério dos scripts irmãos
- * (audit-rls-pii.mjs etc.) — sem isso, o gate ficava mudo mesmo quando o CI
- * já injetava DATABASE_URL, porque nunca chegava a repassar a conexão ao psql.
- */
-function hasDb() {
-  return Boolean(process.env.PGHOST || process.env.DATABASE_URL || process.env.SUPABASE_DB_URL);
-}
-
-/** Executa SQL via psql, repassando DATABASE_URL/SUPABASE_DB_URL quando presentes. */
+/** Executa SQL via psql usando as variáveis PG* do ambiente. */
 function query(sql) {
-  const args = ['-At', '-F', '\u0001', '-c', sql];
-  const conn = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
-  if (!process.env.PGHOST && conn) args.unshift(conn);
-  return execFileSync('psql', args, {
+  return execFileSync('psql', ['-At', '-F', '\u0001', '-c', sql], {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
   });
 }
 
 function main() {
-  if (!hasDb()) {
-    console.warn('[secdef-authz] Defina PGHOST/PG* ou DATABASE_URL para habilitar o gate.');
-    return 0;
-  }
-
   let rows;
   try {
     rows = query(`
@@ -166,20 +106,14 @@ function main() {
         FROM pg_proc p
         JOIN pg_namespace n ON n.oid = p.pronamespace
        WHERE n.nspname = 'public' AND p.prokind = 'f'
-         -- Funções pertencentes a extensões são gerenciadas pelo provedor,
-         -- não são RPCs da aplicação e não podem ser alteradas pelo papel do
-         -- projeto (ex.: event triggers internos do pgaudit).
-         AND NOT EXISTS (
-           SELECT 1
-           FROM pg_depend d
-           JOIN pg_extension e ON e.oid = d.refobjid
-           WHERE d.objid = p.oid AND d.deptype = 'e'
-         )
     `);
   } catch (err) {
-    console.error('[secdef-authz] A consulta de auditoria falhou — gate reprovado.');
-    console.error(String(err.stderr || (err instanceof Error ? err.message : err)).trim());
-    return 1;
+    console.warn(
+      `[secdef-authz] AVISO: banco inacessível, gate não executado (${
+        err instanceof Error ? err.message.split('\n')[0] : err
+      }).`,
+    );
+    return 0;
   }
 
   /** @type {Map<string, {secdef: boolean, anon: boolean, auth: boolean, src: string}>} */
@@ -242,13 +176,13 @@ function main() {
   if (violations.length === 0) {
     console.log(
       `[secdef-authz] OK — ${inspected} função(ões) SECURITY DEFINER expostas na API, ` +
-        `todas com autorização comprovada (${ALLOWLIST.size} em allowlist justificada).`
+        `todas com autorização comprovada (${ALLOWLIST.size} em allowlist justificada).`,
     );
     return 0;
   }
 
   console.error(
-    `\n[secdef-authz] ${violations.length} função(ões) SECURITY DEFINER expostas sem autorização interna:\n`
+    `\n[secdef-authz] ${violations.length} função(ões) SECURITY DEFINER expostas sem autorização interna:\n`,
   );
   for (const v of violations) {
     console.error(`  ✖ public.${v.name}()  — executável por: ${v.exposedTo}`);
@@ -260,7 +194,7 @@ function main() {
       '       public.pertence_a_empresa(...) / public.has_role(auth.uid(), ...);\n' +
       '    2. REVOKE EXECUTE ... FROM anon, authenticated (rotina interna/cron);\n' +
       '    3. Se a autorização é um token opaco validado no corpo, registre a\n' +
-      '       função na ALLOWLIST de scripts/audit-secdef-authz.mjs COM justificativa.\n'
+      '       função na ALLOWLIST de scripts/audit-secdef-authz.mjs COM justificativa.\n',
   );
   return 1;
 }

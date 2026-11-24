@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { rescisaoService } from '../rescisaoService';
 import { supabase } from '@/integrations/supabase/client';
+import { vinculoService } from '../vinculoService';
 
 // Mock dependências
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(),
     rpc: vi.fn(),
-    auth: { getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null }) },
   },
 }));
 
@@ -17,30 +17,15 @@ vi.mock('@/utils/auditLogger', () => ({
   },
 }));
 
-const { mockLoggerError } = vi.hoisted(() => ({ mockLoggerError: vi.fn() }));
-vi.mock('../loggerService', () => ({
-  loggerService: { error: mockLoggerError },
+// Isola o teste de orquestração de processarPagamento da lógica interna de
+// vínculo (já coberta em vinculoService.test.ts).
+vi.mock('../vinculoService', () => ({
+  vinculoService: { fecharVinculoAberto: vi.fn().mockResolvedValue(undefined) },
 }));
 
 describe('rescisaoService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Drena a fila de mockReturnValueOnce que um teste que abortou no meio deixou.
-    (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReset();
-  });
-
-  // Chain padrão `select(...).eq().eq().single()` usada pelos fetches.
-  const fetchChain = (data: unknown, error: unknown = null) => ({
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue({ data, error }),
-  });
-  // Chain `update(...).eq().eq().select().single()` dos updates finais.
-  const updateChain = (updateFn: ReturnType<typeof vi.fn>, row: unknown) => ({
-    update: updateFn,
-    eq: vi.fn().mockReturnThis(),
-    select: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue({ data: row, error: null }),
   });
 
   describe('validarTransicao', () => {
@@ -51,11 +36,11 @@ describe('rescisaoService', () => {
         single: vi.fn().mockResolvedValue({ data: { etapa: 'comunicacao', status: 'pendente' }, error: null }),
       });
 
-      await expect(rescisaoService.validarTransicao('1', 'documentacao', 'empresa-uuid-1')).resolves.toBe(true);
+      await expect(rescisaoService.validarTransicao('1', 'documentacao', 'empresa-uuid-1'))
+        .resolves.toBe(true);
 
-      await expect(rescisaoService.validarTransicao('1', 'homologacao', 'empresa-uuid-1')).rejects.toThrow(
-        /Transição bloqueada/
-      );
+      await expect(rescisaoService.validarTransicao('1', 'homologacao', 'empresa-uuid-1'))
+        .rejects.toThrow(/Transição bloqueada/);
     });
 
     it('should block homologation if status is not calculado', async () => {
@@ -65,85 +50,8 @@ describe('rescisaoService', () => {
         single: vi.fn().mockResolvedValue({ data: { etapa: 'calculo', status: 'pendente' }, error: null }),
       });
 
-      await expect(rescisaoService.validarTransicao('1', 'homologacao', 'empresa-uuid-1')).rejects.toThrow(
-        /A rescisão precisa estar com status "calculado"/
-      );
-    });
-  });
-
-  describe('calcularESalvar', () => {
-    // Acompanha as colunas que só existem em runtime, não em `any`:
-    // `colaboradores.nome` (é `nome_completo`), `colaboradores.dependentes_irrf`
-    // (aposentada, virou `dependentes.para_irrf`) e `desligamentos.detalhes_calculo`
-    // (criada pela migration 20261018150000 para guardar o resultado do motor).
-    // As três juntas faziam esta função falhar sempre — sem nenhum teste que
-    // as tivesse pego antes, porque nenhum mock aqui validava nomes reais de
-    // coluna. Este teste fixa o payload exato que o serviço envia ao Postgres.
-    it('busca dependentes reais via para_irrf e persiste apenas colunas existentes', async () => {
-      const anterior = {
-        id: 'd1',
-        colaborador_id: 'c1',
-        colaborador: { data_admissao: '2020-01-01' },
-        salario_base: 3000,
-        data_desligamento: '2026-06-01',
-        tipo: 'sem_justa_causa',
-        etapa: 'documentacao',
-        status: 'pendente',
-      };
-      const novo = { id: 'd1', etapa: 'homologacao', status: 'calculado', valor_liquido: 4500 };
-
-      const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
-      const updateFn = vi.fn().mockReturnThis();
-      const selectAnteriorFn = vi.fn().mockReturnThis();
-      fromMock
-        // 1) select do desligamento + colaborador embutido
-        .mockReturnValueOnce({
-          select: selectAnteriorFn,
-          eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: anterior, error: null }),
-        })
-        // 2) validarTransicao — select interno de etapa/status
-        .mockReturnValueOnce({
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: { etapa: 'documentacao', status: 'pendente' }, error: null }),
-        })
-        // 3) contagem real de dependentes via `dependentes.para_irrf`
-        //    (select('id').eq('colaborador_id', ...).eq('para_irrf', true))
-        .mockReturnValueOnce({
-          select: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockResolvedValue({ data: [{ id: 'dep1' }, { id: 'dep2' }], error: null }),
-            }),
-          }),
-        })
-        // 4) update final
-        .mockReturnValueOnce({
-          update: updateFn,
-          eq: vi.fn().mockReturnThis(),
-          select: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: novo, error: null }),
-        });
-
-      const result = await rescisaoService.calcularESalvar(
-        'd1',
-        { salario_base: 3000, data_desligamento: '2026-06-01', tipo: 'sem_justa_causa' },
-        'empresa-uuid-1'
-      );
-
-      expect(result).toEqual(novo);
-      // `detalhes_calculo` recebe o resultado completo do motor (JSON) para o
-      // TRCT/PDF; chaves inexistentes (`nome`, `dependentes_irrf`) seguem fora.
-      const payload = updateFn.mock.calls[0][0];
-      expect(payload).toHaveProperty('detalhes_calculo');
-      expect(payload).toHaveProperty('saldo_salario');
-      expect(payload).toHaveProperty('status', 'calculado');
-      // O embed de colaborador não pode voltar a pedir `nome` (é
-      // `nome_completo`) nem `dependentes_irrf` (é `dependentes.para_irrf`).
-      const selectString = selectAnteriorFn.mock.calls[0][0] as string;
-      expect(selectString).not.toMatch(/\bnome\b/);
-      expect(selectString).not.toContain('dependentes_irrf');
-      expect(selectString).toContain('data_admissao');
+      await expect(rescisaoService.validarTransicao('1', 'homologacao', 'empresa-uuid-1'))
+        .rejects.toThrow(/A rescisão precisa estar com status "calculado"/);
     });
   });
 
@@ -184,138 +92,75 @@ describe('rescisaoService', () => {
     });
   });
 
-  describe('homologar', () => {
-    const EMP = 'empresa-uuid-1';
-    const desligRow = {
-      valor_liquido: 4500,
-      etapa: 'homologacao',
-      checklist_calculo_rescisao: true,
-      status: 'calculado',
-    };
-
-    function mockHomologarCalls(updatedRow: unknown) {
-      const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
-      const updateFn = vi.fn().mockReturnThis();
-      const upsertFn = vi.fn().mockResolvedValue({ data: null, error: null });
-      fromMock
-        // 1) fetch do desligamento
-        .mockReturnValueOnce(fetchChain(desligRow))
-        // 2) upsert em homologacoes_rescisao
-        .mockReturnValueOnce({ upsert: upsertFn })
-        // 3) update do desligamento
-        .mockReturnValueOnce(updateChain(updateFn, updatedRow));
-      return { updateFn, upsertFn };
-    }
-
-    it('etapa rh avança para financeiro mantendo em_homologacao', async () => {
-      const { updateFn, upsertFn } = mockHomologarCalls({ id: 'd1', status: 'em_homologacao' });
-      const result = await rescisaoService.homologar('d1', EMP, 'rh', 'ok');
-      expect(result.status).toBe('em_homologacao');
-      expect(upsertFn).toHaveBeenCalledWith(
-        expect.objectContaining({
-          desligamento_id: 'd1',
-          etapa: 'rh',
-          status: 'aprovado',
-          parecer: 'ok',
-          usuario_id: 'user-1',
-        }),
-        { onConflict: 'desligamento_id,etapa' }
-      );
-      expect(updateFn).toHaveBeenCalledWith(
-        expect.objectContaining({ status: 'em_homologacao', etapa: 'homologacao', checklist_homologacao: false })
-      );
-    });
-
-    it('última etapa (colaborador) marca homologado e etapa pagamento', async () => {
-      const { updateFn } = mockHomologarCalls({ id: 'd1', status: 'homologado' });
-      await rescisaoService.homologar('d1', EMP, 'colaborador');
-      expect(updateFn).toHaveBeenCalledWith(
-        expect.objectContaining({ status: 'homologado', etapa: 'pagamento', checklist_homologacao: true })
-      );
-    });
-
-    it('rejeita homologar sem cálculo salvo', async () => {
-      const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
-      fromMock.mockReturnValueOnce(fetchChain({ ...desligRow, valor_liquido: null }));
-      await expect(rescisaoService.homologar('d1', EMP, 'rh')).rejects.toThrow(/exige que o cálculo/);
-    });
-
-    it('propaga erro do fetch', async () => {
-      const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
-      fromMock.mockReturnValueOnce(fetchChain(null, { message: 'row not found' }));
-      // O catch de homologar embrulha erros não-Error na mensagem genérica.
-      await expect(rescisaoService.homologar('d1', EMP, 'rh')).rejects.toThrow(/Erro ao processar homologação/);
-    });
-
-    it('exige empresa_id', async () => {
-      await expect(rescisaoService.homologar('d1', '', 'rh')).rejects.toThrow(/empresa_id/);
-    });
-  });
-
   describe('processarPagamento', () => {
-    const EMP = 'empresa-uuid-1';
-    const desligRow = {
-      colaborador_id: 'c1',
-      data_desligamento: '2026-06-01',
-      valor_liquido: 4500,
+    const desligamentoRow = {
+      colaborador_id: 'colab-1',
+      data_desligamento: '2026-09-18',
+      valor_liquido: 1000,
       assinado_empresa: true,
       assinado_colaborador: true,
       checklist_homologacao: true,
     };
 
-    function mockPagamentoCalls(opts: { deslig?: unknown; updateRow?: unknown; colabError?: unknown } = {}) {
-      const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
-      const desligUpdate = vi.fn().mockReturnThis();
-      const colabUpdate = vi.fn().mockReturnThis();
-      const colabEq2 = vi.fn().mockResolvedValue({ data: null, error: opts.colabError ?? null });
-      const colabEq1 = vi.fn().mockReturnValue({ eq: colabEq2 });
-      fromMock
-        // 1) fetch do desligamento
-        .mockReturnValueOnce(fetchChain(opts.deslig ?? desligRow))
-        // 2) update do desligamento → pago
-        .mockReturnValueOnce(updateChain(desligUpdate, opts.updateRow ?? { id: 'd1', status: 'pago' }))
-        // 3) update do colaborador → desligado
-        .mockReturnValueOnce({ update: colabUpdate, eq: colabEq1 });
-      return { desligUpdate, colabUpdate };
+    function mockDesligamentosEColaboradores() {
+      const desligamentosChain = {
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              single: vi.fn().mockResolvedValue({ data: desligamentoRow, error: null }),
+            }),
+          }),
+        }),
+        update: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({ data: { id: 'desl-1', status: 'pago' }, error: null }),
+              }),
+            }),
+          }),
+        }),
+      };
+      const colaboradoresChain = {
+        update: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            eq: vi.fn().mockResolvedValue({ error: null }),
+          }),
+        }),
+      };
+      (supabase.from as unknown as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
+        if (table === 'desligamentos') return desligamentosChain;
+        if (table === 'colaboradores') return colaboradoresChain;
+        return { select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), single: vi.fn().mockResolvedValue({ data: null, error: null }) };
+      });
     }
 
-    it('marca pago, finaliza etapa e desativa colaborador', async () => {
-      const { desligUpdate, colabUpdate } = mockPagamentoCalls();
-      const result = await rescisaoService.processarPagamento('d1', EMP);
-      expect(result.status).toBe('pago');
-      expect(desligUpdate).toHaveBeenCalledWith(
-        expect.objectContaining({ status: 'pago', etapa: 'finalizado', checklist_pagamento: true })
-      );
-      expect(colabUpdate).toHaveBeenCalledWith(
-        expect.objectContaining({ status: 'desligado', data_desligamento: '2026-06-01' })
-      );
+    it('fecha o vínculo em aberto do colaborador após confirmar o pagamento', async () => {
+      mockDesligamentosEColaboradores();
+
+      await rescisaoService.processarPagamento('desl-1', 'empresa-uuid-1');
+
+      expect(vinculoService.fecharVinculoAberto).toHaveBeenCalledWith('colab-1', '2026-09-18');
     });
 
-    it('bloqueia sem assinatura das duas partes', async () => {
-      mockPagamentoCalls({ deslig: { ...desligRow, assinado_colaborador: false } });
-      await expect(rescisaoService.processarPagamento('d1', EMP)).rejects.toThrow(
-        /assinada pela empresa e pelo colaborador/
-      );
-    });
+    it('bloqueia o pagamento (e não fecha vínculo) se a rescisão não estiver assinada pelas duas partes', async () => {
+      (supabase.from as unknown as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
+        if (table === 'desligamentos') {
+          return {
+            select: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                eq: vi.fn().mockReturnValue({
+                  single: vi.fn().mockResolvedValue({ data: { ...desligamentoRow, assinado_colaborador: false }, error: null }),
+                }),
+              }),
+            }),
+          };
+        }
+        return { select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), single: vi.fn().mockResolvedValue({ data: null, error: null }) };
+      });
 
-    it('bloqueia sem homologação concluída', async () => {
-      mockPagamentoCalls({ deslig: { ...desligRow, checklist_homologacao: false } });
-      await expect(rescisaoService.processarPagamento('d1', EMP)).rejects.toThrow(/homologação não foi concluída/);
-    });
-
-    it('falha na desativação do colaborador loga mas não impede o pagamento', async () => {
-      mockPagamentoCalls({ colabError: { message: 'update denied' } });
-      const result = await rescisaoService.processarPagamento('d1', EMP);
-      expect(result.status).toBe('pago');
-      expect(mockLoggerError).toHaveBeenCalledWith(
-        'Erro ao desativar colaborador',
-        { colaboradorId: 'c1', desligamentoId: 'd1' },
-        { message: 'update denied' }
-      );
-    });
-
-    it('exige empresa_id', async () => {
-      await expect(rescisaoService.processarPagamento('d1', '')).rejects.toThrow(/empresa_id/);
+      await expect(rescisaoService.processarPagamento('desl-1', 'empresa-uuid-1')).rejects.toThrow(/assinada/);
+      expect(vinculoService.fecharVinculoAberto).not.toHaveBeenCalled();
     });
   });
 });

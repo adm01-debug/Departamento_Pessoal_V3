@@ -1,14 +1,15 @@
 import { useState, useCallback } from 'react';
-import type { TablesInsert } from '@/integrations/supabase/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresa } from '@/contexts';
 import { toast } from 'sonner';
-import { parseWorkbookBuffer, type ParsedImportRow } from '@/utils/importacao/parser';
+import {
+  parseWorkbookBuffer,
+  type ParsedImportRow,
+} from '@/utils/importacao/parser';
 import { normalizarCPF } from '@/utils/importacao/validators';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
-import { validateTablePayload } from '@/schemas/validate';
 
 export type ImportRow = ParsedImportRow;
 
@@ -27,7 +28,9 @@ export function useImportacaoColaboradores() {
           .from('colaboradores')
           .select('cpf')
           .eq('empresa_id', empresaAtual?.id || '');
-        const existingCPFs = new Set((existingCols || []).map((c) => normalizarCPF(c.cpf)));
+        const existingCPFs = new Set(
+          (existingCols || []).map((c: any) => normalizarCPF(c.cpf))
+        );
         const parsed = await parseWorkbookBuffer(buffer, { existingCPFs });
         setRows(parsed);
         return parsed;
@@ -49,19 +52,12 @@ export function useImportacaoColaboradores() {
     for (let i = 0; i < validos.length; i++) {
       const row = validos[i];
       try {
-        // `erros` é metadado do parser — não é coluna da tabela.
-        const { erros: _erros, ...dados } = row;
-        const { error } = await supabase.from('colaboradores').insert(
-          validateTablePayload(
-            'colaboradores',
-            {
-              ...dados,
-              empresa_id: empresaAtual?.id,
-              status: 'ativo',
-            } as unknown as TablesInsert<'colaboradores'>,
-            'useImportacaoColaboradores:colaboradores'
-          )
-        );
+        const { error } = await supabase.from('colaboradores').insert({
+          ...row,
+          empresa_id: empresaAtual?.id,
+          status: 'ativo',
+          erros: undefined,
+        } as any);
         if (error) throw error;
         successCount++;
       } catch (err: unknown) {

@@ -1,4 +1,3 @@
-import type { Tables } from '@/integrations/supabase/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -27,11 +26,7 @@ interface Inconsistency {
   gravidade: 'high' | 'medium' | 'low';
 }
 
-export type RegistroComColaborador = Tables<'registros_ponto'> & {
-  colaborador?: { nome_completo?: string | null } | null;
-};
-
-export function PontoInconsistencyPanel({ registros }: { registros: RegistroComColaborador[] }) {
+export function PontoInconsistencyPanel({ registros }: { registros: any[] }) {
   const [resolvedIds, setResolvedIds] = useState<string[]>([]);
 
   const detectInconsistencies = (): Inconsistency[] => {
@@ -151,7 +146,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
                     <CheckCircle2 className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-success-foreground">Tudo em conformidade!</p>
+                    <p className="text-sm font-medium text-success-foreground">Tudo em conformidade!</p>
                     <p className="text-[10px] text-muted-foreground">
                       Você resolveu {resolvedIds.length} inconsistências hoje.
                     </p>
@@ -169,7 +164,6 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
 
   return (
     <Card className="border-warning/30 bg-warning/5 shadow-xs mb-6 overflow-hidden">
-      <div className="h-1 bg-gradient-to-r from-warning/40 via-warning to-warning/40" />
       <CardHeader className="py-3 px-4 flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-sm font-display flex items-center gap-2 text-warning-foreground">
           <Zap className="h-4 w-4 fill-warning" />
@@ -192,7 +186,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95, x: 20 }}
                 key={inc.id}
-                className="group relative bg-background/95 p-3 rounded-xl border border-border/60 shadow-xs hover:shadow-md transition-all duration-300"
+                className="group relative bg-background/95 p-3 rounded-xl border border-border/60 shadow-xs hover:shadow-md transition-all duration-slow"
               >
                 <div className="flex items-start gap-3 mb-3">
                   <div
@@ -213,7 +207,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between mb-1">
-                      <p className="text-xs font-bold truncate group-hover:text-primary transition-colors">
+                      <p className="text-xs font-medium truncate group-hover:text-primary transition-colors">
                         {inc.colaborador}
                       </p>
                       <span className="text-[9px] text-muted-foreground font-mono bg-muted/50 px-1 rounded">
@@ -224,7 +218,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 mt-auto border-t pt-2 border-border/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="flex items-center gap-1.5 mt-auto border-t pt-2 border-border/40 opacity-0 group-hover:opacity-100 transition-opacity duration-slow">
                   {inc.tipo === 'forgotten_out' && (
                     <>
                       <Button
@@ -294,7 +288,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
               layout
               className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-border/60 bg-muted/5"
             >
-              <p className="text-[11px] text-muted-foreground font-bold mb-1">
+              <p className="text-[11px] text-muted-foreground font-medium mb-1">
                 + {inconsistencies.length - 6} CONFLITOS
               </p>
               <Button variant="link" size="sm" className="h-6 text-[10px] p-0 hovre:no-underline">
@@ -308,7 +302,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
   );
 }
 
-function Bell(props: React.SVGProps<SVGSVGElement>) {
+function Bell(props: any) {
   return (
     <svg
       {...props}

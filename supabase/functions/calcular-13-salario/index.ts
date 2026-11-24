@@ -13,9 +13,9 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
-import { calcularINSSCents } from '../_shared/inss.ts';
 
 const MAX_SALARIO_CENTS = 100_000_000n; // R$ 1.000.000,00
+const TETO_INSS_CENTS = 815_741n; // R$ 8.157,41
 
 const BodySchema = z.object({
   colaborador_id: z.string().uuid(),
@@ -43,6 +43,25 @@ function reaisToCents(v: number): bigint {
 }
 function centsToReais(c: bigint): number {
   return Number(c) / 100;
+}
+
+// INSS progressivo (retorna centavos)
+function calcularINSSCents(baseCents: bigint): bigint {
+  if (baseCents <= 0n) return 0n;
+  const b = baseCents < TETO_INSS_CENTS ? baseCents : TETO_INSS_CENTS;
+  // Faixas 2025 em centavos
+  const F1 = 151_800n;    // 1.518,00 @ 7.5%
+  const F2 = 279_388n;    // 2.793,88 @ 9%
+  const F3 = 419_083n;    // 4.190,83 @ 12%
+  let inss: bigint;
+  if (b <= F1) inss = (b * 75n) / 1000n;
+  else if (b <= F2) inss = 11_385n + ((b - F1) * 90n) / 1000n;
+  // 22_867n = 11_385 + floor((279_388-151_800)*90/1000) — BigInt division truncates per IN RFB 2110/2022
+  else if (b <= F3) inss = 22_867n + ((b - F2) * 120n) / 1000n;
+  // 39_630n = 22_867 + floor((419_083-279_388)*120/1000)
+  else inss = 39_630n + ((b - F3) * 140n) / 1000n;
+  const TETO_DESC = 95_163n; // R$ 951,63
+  return inss < TETO_DESC ? inss : TETO_DESC;
 }
 
 // IRRF progressivo (retorna centavos)
@@ -97,9 +116,10 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
+    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    const raw = _pb;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ success: false, error: 'Payload inválido', code: 'VALIDATION_ERROR', details: parsed.error.flatten() }, 422);
@@ -111,13 +131,13 @@ serve(async (req: Request): Promise<Response> => {
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(supabase, userId, d.empresa_id, req);
+      const authz = await requireRh(supabase, userId, d.empresa_id);
       if (authz.denied) return authz.denied;
     }
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `calc-13:${userId}`, limit: 30, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     // Idempotência (janela 10min por competencia+colaborador+parcela)
     const idemKey = req.headers.get('idempotency-key') ?? '';
@@ -139,7 +159,7 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // Avos proporcionais
-    const [anoRef] = d.competencia.split('-').map(Number);
+    const [anoRef, mesRef] = d.competencia.split('-').map(Number);
     const adm = new Date(d.data_admissao + 'T00:00:00Z');
     const anoAdm = adm.getUTCFullYear();
     const mesAdm = adm.getUTCMonth() + 1;
@@ -181,13 +201,13 @@ serve(async (req: Request): Promise<Response> => {
       dataLimite = `${anoRef}-11-30`;
     } else if (d.parcela === '2') {
       adiantamento1Cents = brutoIntegralCents / 2n;
-      inssCents = calcularINSSCents(brutoIntegralCents, d.competencia);
+      inssCents = calcularINSSCents(brutoIntegralCents);
       irrfCents = calcularIRRFCents(brutoIntegralCents - inssCents, d.dependentes_irrf);
       valorParcelaCents = brutoIntegralCents - adiantamento1Cents;
       dataLimite = `${anoRef}-12-20`;
     } else {
       // integral: única tributação (rescisão etc.)
-      inssCents = calcularINSSCents(brutoIntegralCents, d.competencia);
+      inssCents = calcularINSSCents(brutoIntegralCents);
       irrfCents = calcularIRRFCents(brutoIntegralCents - inssCents, d.dependentes_irrf);
       valorParcelaCents = brutoIntegralCents;
       dataLimite = `${anoRef}-12-20`;
@@ -227,7 +247,7 @@ serve(async (req: Request): Promise<Response> => {
     const { error: auditErr } = await supabase.from('audit_log').insert({
       tabela: 'calculo_13_salario',
       registro_id: idemKey ? idemHash : crypto.randomUUID(),
-      acao: 'DECIMO_CALC',
+      acao: 'CALCULATE',
       user_id: userId,
       dados_novos: { ...resultado, hash_sha256: hash },
     });

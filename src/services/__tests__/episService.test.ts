@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { episService, episEntregasService } from '../episService';
-import type { TablesInsert } from '@/integrations/supabase/types';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -12,21 +11,21 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Thenable chain with optional eq (listar)
-function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupListChain(data: any[], error: any = null) {
   const response = { data, error };
-  const chain: Record<string, unknown> = {};
+  const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
 }
 
 // select → eq → order → resolvedValue
-function setupEqOrderChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupEqOrderChain(data: any[], error: any = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ order: orderFn });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -35,7 +34,7 @@ function setupEqOrderChain(data: unknown, error: { message: string; code?: strin
 }
 
 // insert(d).select().maybeSingle()
-function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupInsertChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -44,7 +43,7 @@ function setupInsertChain(data: unknown, error: { message: string; code?: string
 }
 
 // update.eq.select.maybeSingle
-function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();
@@ -56,14 +55,9 @@ function setupUpdateChain(data: unknown, error: { message: string; code?: string
 }
 
 // delete.eq → resolvedValue
-function setupDeleteChain(error: { message: string; code?: string } | null = null) {
+function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = {
-    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
-    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
-    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
-    eq: eqFn,
-  };
+  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -73,9 +67,7 @@ function setupDeleteChain(error: { message: string; code?: string } | null = nul
 // ─── episService ──────────────────────────────────────────────────────────────
 
 describe('episService.listar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns EPIs without empresa filter', async () => {
     const records = [{ id: 'e1', nome: 'Capacete' }];
@@ -84,7 +76,7 @@ describe('episService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     expect(await episService.listar(EMPRESA_ID)).toEqual([]);
   });
 
@@ -101,9 +93,7 @@ describe('episService.listar', () => {
 });
 
 describe('episService.criar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns new EPI', async () => {
     const created = { id: 'e-new', nome: 'Luva' };
@@ -115,16 +105,12 @@ describe('episService.criar', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(episService.criar({ nome: 'Luva' } as TablesInsert<'epis'>)).rejects.toThrow(
-      'Nenhum registro de EPI foi retornado.'
-    );
+    await expect(episService.criar({})).rejects.toThrow('Nenhum registro de EPI foi retornado.');
   });
 });
 
 describe('episService.atualizar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates and returns EPI', async () => {
     const updated = { id: 'e1', nome: 'Capacete Atualizado' };
@@ -137,16 +123,12 @@ describe('episService.atualizar', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(episService.atualizar('e1', { nome: 'x' }, EMPRESA_ID)).rejects.toThrow(
-      'Nenhum registro de EPI foi retornado.'
-    );
+    await expect(episService.atualizar('e1', {}, EMPRESA_ID)).rejects.toThrow('Nenhum registro de EPI foi retornado.');
   });
 });
 
 describe('episService.excluir', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('deletes EPI by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
@@ -164,9 +146,7 @@ describe('episService.excluir', () => {
 // ─── episEntregasService ──────────────────────────────────────────────────────
 
 describe('episEntregasService.listar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns entregas without empresa filter', async () => {
     const records = [{ id: 'ee1' }];
@@ -181,15 +161,13 @@ describe('episEntregasService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     expect(await episEntregasService.listar(EMPRESA_ID)).toEqual([]);
   });
 });
 
 describe('episEntregasService.buscarPorColaborador', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('filters by colaborador_id', async () => {
     const records = [{ id: 'ee1', colaborador_id: 'c1' }];
@@ -201,29 +179,23 @@ describe('episEntregasService.buscarPorColaborador', () => {
 });
 
 describe('episEntregasService.criar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns new entrega', async () => {
     const created = { id: 'ee-new', epi_id: 'e1' };
     const { insertFn } = setupInsertChain(created);
-    const result = await episEntregasService.criar({ epi_id: 'e1' } as TablesInsert<'epis_entregas'>);
+    const result = await episEntregasService.criar({ epi_id: 'e1' });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(episEntregasService.criar({ epi_id: 'e1' } as TablesInsert<'epis_entregas'>)).rejects.toThrow(
-      'Nenhum registro de entrega de EPI foi retornado.'
-    );
+    await expect(episEntregasService.criar({})).rejects.toThrow('Nenhum registro de entrega de EPI foi retornado.');
   });
 });
 
 describe('episEntregasService.registrarDevolucao', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates data_devolucao and returns result', async () => {
     const updated = { id: 'ee1', data_devolucao: '2026-07-01' };
@@ -236,9 +208,7 @@ describe('episEntregasService.registrarDevolucao', () => {
 });
 
 describe('episEntregasService.excluir', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('deletes entrega by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();

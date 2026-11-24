@@ -12,9 +12,7 @@ import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { safeFetchWithRetry } from '../_shared/safe-fetch.ts';
 
-// Só buckets de documentos de identidade/admissão fazem sentido para OCR;
-// nunca aceitar um bucket arbitrário informado pelo cliente.
-const ALLOWED_BUCKETS = ['documentos', 'documentos-admissao'];
+const ALLOWED_BUCKETS = ['documentos', 'colaboradores', 'documents', 'arquivos', 'uploads'];
 
 function isAllowedFileUrl(urlStr: string): boolean {
   try {
@@ -56,6 +54,15 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
+// Só buckets de documentos de identidade/admissão fazem sentido para OCR;
+// nunca aceitar um bucket arbitrário informado pelo cliente.
+const ALLOWED_BUCKETS = new Set(['documentos', 'documentos-admissao']);
+
+function jsonError(status: number, code: string, message: string) {
+  return new Response(JSON.stringify({ success: false, error: message, code }), {
+    status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
+}
 
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -90,11 +97,10 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `ocr:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
 
-    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    const { body: raw, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    const raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ success: false, error: 'Payload inválido', details: parsed.error.flatten() }, 422);
@@ -125,8 +131,11 @@ serve(async (req: Request): Promise<Response> => {
     };
     const prompt = prompts[documentType] || prompts.generic;
 
+    // Host corrigido: `api.lovable.dev/v1/chat/completions` responde 404
+    // (nunca foi o endpoint de chat completions). O gateway de IA é
+    // `ai.gateway.lovable.dev`.
     const aiResponse = await safeFetchWithRetry(
-      'https://api.lovable.dev/v1/chat/completions',
+      'https://ai.gateway.lovable.dev/v1/chat/completions',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${lovableApiKey}` },

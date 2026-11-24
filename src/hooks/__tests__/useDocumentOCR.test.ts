@@ -47,11 +47,7 @@ describe('useDocumentOCR', () => {
 
   it('sets isProcessing true during processing', async () => {
     let resolveInvoke!: (v: unknown) => void;
-    mockInvoke.mockReturnValueOnce(
-      new Promise((r) => {
-        resolveInvoke = r;
-      })
-    );
+    mockInvoke.mockReturnValueOnce(new Promise(r => { resolveInvoke = r; }));
 
     const { result } = renderHook(() => useDocumentOCR());
     let promise!: Promise<unknown>;
@@ -78,7 +74,10 @@ describe('useDocumentOCR', () => {
       await result.current.processDocument(file, 'rg');
     });
 
-    expect(mockUpload).toHaveBeenCalledWith(expect.stringMatching(/^temp\/.*\.png$/), file);
+    expect(mockUpload).toHaveBeenCalledWith(
+      expect.stringMatching(/^temp\/.*\.png$/),
+      file
+    );
   });
 
   it('calls OCR edge function with correct doc type', async () => {
@@ -88,17 +87,14 @@ describe('useDocumentOCR', () => {
       await result.current.processDocument(makeFile(), 'cnh');
     });
 
-    expect(mockInvoke).toHaveBeenCalledWith(
-      'process-document-ocr',
-      expect.objectContaining({
-        body: expect.objectContaining({ docType: 'cnh' }),
-      })
-    );
+    expect(mockInvoke).toHaveBeenCalledWith('process-document-ocr', expect.objectContaining({
+      body: expect.objectContaining({ docType: 'cnh' }),
+    }));
   });
 
   it('returns OCR data on success', async () => {
     const { result } = renderHook(() => useDocumentOCR());
-    let ocr: Record<string, unknown> = {};
+    let ocr: any;
 
     await act(async () => {
       ocr = await result.current.processDocument(makeFile(), 'rg');
@@ -110,7 +106,7 @@ describe('useDocumentOCR', () => {
   it('returns error result when upload fails', async () => {
     mockUpload.mockResolvedValueOnce({ error: { message: 'storage full' } });
     const { result } = renderHook(() => useDocumentOCR());
-    let ocr: Record<string, unknown> = {};
+    let ocr: any;
 
     await act(async () => {
       ocr = await result.current.processDocument(makeFile(), 'rg');
@@ -124,7 +120,7 @@ describe('useDocumentOCR', () => {
   it('returns error result when function invocation fails', async () => {
     mockInvoke.mockResolvedValueOnce({ data: null, error: { message: 'function error' } });
     const { result } = renderHook(() => useDocumentOCR());
-    let ocr: Record<string, unknown> = {};
+    let ocr: any;
 
     await act(async () => {
       ocr = await result.current.processDocument(makeFile(), 'rg');

@@ -1,15 +1,14 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   },
 }));
 
 vi.mock('@/lib/utils', () => ({
-  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  cn: (...args: any[]) => args.filter(Boolean).join(' '),
 }));
 
 import { Users } from 'lucide-react';
@@ -32,7 +31,13 @@ describe('SectionHeader', () => {
   });
 
   it('renders action slot', () => {
-    render(<SectionHeader title="Colaboradores" icon={Users} action={<button>Adicionar</button>} />);
+    render(
+      <SectionHeader
+        title="Colaboradores"
+        icon={Users}
+        action={<button>Adicionar</button>}
+      />
+    );
     expect(screen.getByRole('button', { name: /Adicionar/i })).toBeInTheDocument();
   });
 
@@ -42,7 +47,9 @@ describe('SectionHeader', () => {
   });
 
   it('applies custom className', () => {
-    const { container } = render(<SectionHeader title="Equipe" icon={Users} className="custom-class" />);
+    const { container } = render(
+      <SectionHeader title="Equipe" icon={Users} className="custom-class" />
+    );
     expect(container.firstChild).toHaveClass('custom-class');
   });
 

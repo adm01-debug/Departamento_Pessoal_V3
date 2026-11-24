@@ -2,34 +2,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { calcularRescisao } from '@/utils/rescisaoCalc';
 import { auditLogger } from '@/utils/auditLogger';
 import { loggerService } from './loggerService';
-import type { Tables } from '@/integrations/supabase/database.types';
-import { validateTablePayload } from '@/schemas/validate';
+import { vinculoService } from './vinculoService';
 
 async function sha256Hex(data: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
-  return Array.from(new Uint8Array(buf))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 // Ordem lógica das etapas para validação
 const ORDEM_ETAPAS = ['comunicacao', 'documentacao', 'calculo', 'homologacao', 'pagamento', 'finalizado'];
-
-export interface CalcularRescisaoParams {
-  salario_base?: number;
-  data_admissao?: string;
-  data_desligamento?: string;
-  tipo?: string;
-  aviso_trabalhado?: boolean;
-  ferias_vencidas?: boolean;
-  saldo_fgts?: number;
-  data_pagamento?: string;
-  data_fim_contrato?: string;
-  termino_iniciativa?: 'empregador' | 'empregado' | 'natural';
-  dias_aviso_nao_cumpridos?: number;
-  /** Art. 480 CLT: perdas reais apuradas do empregador (teto = art. 479). */
-  indenizacao_art_480_prejuizo?: number;
-}
 
 export const rescisaoService = {
   async validarTransicao(id: string, novaEtapa: string, empresaId: string): Promise<boolean> {
@@ -62,24 +43,14 @@ export const rescisaoService = {
     }
   },
 
-  async calcularESalvar(
-    id: string,
-    params: CalcularRescisaoParams,
-    empresaId: string
-  ): Promise<Tables<'desligamentos'>> {
+  async calcularESalvar(id: string, params: any, empresaId: string): Promise<any> {
     if (!id) throw new Error('ID do desligamento é obrigatório');
     if (!empresaId) throw new Error('empresa_id é obrigatório');
 
     try {
-      // `colaboradores` não tem `nome` (é `nome_completo`) nem `dependentes_irrf`
-      // (aposentado há tempo em favor de `dependentes.para_irrf`, mesmo caso do
-      // calcular-folha Edge Function). O embed anterior pedia as duas colunas
-      // inexistentes: sob a tipagem genérica anterior isso compilava, mas o PostgREST recusaria a
-      // query inteira em runtime, quebrando 100% das tentativas de calcular
-      // uma rescisão pela UI (chamador real: DesligamentoDetailSheet.tsx).
       const { data: anterior, error: fetchError } = await supabase
         .from('desligamentos')
-        .select('*, colaborador:colaboradores!desligamentos_colaborador_id_fkey(data_admissao)')
+        .select('*, colaborador:colaboradores!desligamentos_colaborador_id_fkey(nome, data_admissao, dependentes_irrf)')
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .single();
@@ -88,38 +59,26 @@ export const rescisaoService = {
 
       await this.validarTransicao(id, 'calculo', empresaId);
 
-      const { data: depsRows, error: depsError } = await supabase
-        .from('dependentes')
-        .select('id')
-        .eq('colaborador_id', anterior.colaborador_id)
-        .eq('para_irrf', true);
-      if (depsError) throw depsError;
-      const dependentesIRRF = depsRows?.length ?? 0;
-
       const result = await calcularRescisao({
-        salario: params.salario_base ?? anterior.salario_base,
-        dataAdmissao: anterior.colaborador?.data_admissao || params.data_admissao || '',
-        dataDesligamento: params.data_desligamento || anterior.data_desligamento,
-        tipo: params.tipo || anterior.tipo,
-        avisoTrabalhado: params.aviso_trabalhado ?? false,
-        feriasVencidas: params.ferias_vencidas ?? false,
-        saldoFGTS: params.saldo_fgts ?? 0,
-        dependentes: dependentesIRRF,
-        // data_pagamento no banco é timestamptz — o motor espera 'YYYY-MM-DD'.
-        dataPagamento: (params.data_pagamento ?? anterior.data_pagamento)?.slice(0, 10),
-        dataFimContrato: params.data_fim_contrato,
-        terminoIniciativa: params.termino_iniciativa,
-        diasAvisoNaoCumpridos: params.dias_aviso_nao_cumpridos,
-        indenizacaoArt480Prejuizo: params.indenizacao_art_480_prejuizo,
+        salario: params.salario_base || (anterior as Record<string, unknown>).salario_base,
+        dataAdmissao: (anterior.colaborador as any)?.data_admissao || params.data_admissao,
+        dataDesligamento: params.data_desligamento || (anterior as Record<string, unknown>).data_desligamento,
+        tipo: params.tipo || (anterior as Record<string, unknown>).tipo,
+        avisoTrabalhado:
+          params.aviso_trabalhado !== undefined
+            ? params.aviso_trabalhado
+            : (anterior as Record<string, unknown>).aviso_trabalhado,
+        feriasVencidas:
+          params.ferias_vencidas !== undefined
+            ? params.ferias_vencidas
+            : (anterior as Record<string, unknown>).ferias_vencidas_check,
+        saldoFGTS:
+          params.saldo_fgts !== undefined ? params.saldo_fgts : (anterior as Record<string, unknown>).saldo_fgts || 0,
+        dependentes: (anterior.colaborador as any)?.dependentes_irrf || 0,
       });
       const resultado = result;
 
-      // detalhes_calculo (jsonb, migration 20261018150000) guarda o resultado
-      // completo do motor para o TRCT/PDF reproduzir todas as rubricas
-      // (INSS/IRRF, arts. 479/480, desconto do aviso, multa 477, saldo devedor);
-      // os campos decompostos abaixo seguem como fonte para relatórios/filtros.
-      const dadosAtualizados: Partial<Tables<'desligamentos'>> = {
-        detalhes_calculo: resultado as unknown as Tables<'desligamentos'>['detalhes_calculo'],
+      const dadosAtualizados = {
         saldo_salario: resultado.saldoSalario,
         decimo_terceiro: resultado.decimoTerceiro,
         ferias_proporcionais: resultado.feriasProporcionais,
@@ -130,6 +89,7 @@ export const rescisaoService = {
         total_proventos: resultado.totalProventos,
         total_descontos: resultado.totalDescontos,
         valor_liquido: resultado.totalLiquido,
+        detalhes_calculo: resultado,
         status: 'calculado',
         etapa: 'homologacao',
         checklist_calculo_rescisao: true,
@@ -137,7 +97,7 @@ export const rescisaoService = {
 
       const { data: novo, error: updateError } = await supabase
         .from('desligamentos')
-        .update(validateTablePayload('desligamentos', dadosAtualizados, 'rescisaoService:desligamentos'))
+        .update(dadosAtualizados as any)
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .select()
@@ -149,13 +109,12 @@ export const rescisaoService = {
         tabela: 'desligamentos',
         registro_id: id,
         acao: 'EXECUTE_CALC',
-        empresa_id: empresaId,
         dados_anteriores: { etapa: anterior.etapa, status: anterior.status },
         dados_novos: {
           etapa: novo.etapa,
           status: novo.status,
           valor_liquido: novo.valor_liquido,
-          hash_integridade: await sha256Hex(JSON.stringify(resultado)),
+          hash_integridade: await sha256Hex(JSON.stringify(resultado))
         },
       });
 
@@ -165,12 +124,7 @@ export const rescisaoService = {
     }
   },
 
-  async homologar(
-    id: string,
-    empresaId: string,
-    etapa: 'rh' | 'financeiro' | 'juridico' | 'colaborador' = 'rh',
-    parecer?: string
-  ): Promise<Tables<'desligamentos'>> {
+  async homologar(id: string, empresaId: string, etapa: 'rh' | 'financeiro' | 'juridico' | 'colaborador' = 'rh', parecer?: string): Promise<any> {
     if (!empresaId) throw new Error('empresa_id é obrigatório');
     try {
       const { data: d, error: fetchError } = await supabase
@@ -186,19 +140,16 @@ export const rescisaoService = {
       }
 
       const { data: userData } = await supabase.auth.getUser();
-      const { error: homError } = await supabase.from('homologacoes_rescisao').upsert(
-        validateTablePayload(
-          'homologacoes_rescisao',
-          {
-            desligamento_id: id,
-            etapa,
-            status: 'aprovado',
-            parecer,
-            usuario_id: userData?.user?.id,
-            data_decisao: new Date().toISOString(),
-          },
-          'rescisaoService:homologacoes_rescisao'
-        ),
+      const { error: homError } = await supabase
+        .from('homologacoes_rescisao')
+        .upsert({
+          desligamento_id: id,
+          etapa,
+          status: 'aprovado',
+          parecer,
+          usuario_id: userData?.user?.id,
+          data_decisao: new Date().toISOString(),
+        },
         { onConflict: 'desligamento_id,etapa' }
       );
 
@@ -216,17 +167,11 @@ export const rescisaoService = {
 
       const { data, error } = await supabase
         .from('desligamentos')
-        .update(
-          validateTablePayload(
-            'desligamentos',
-            {
-              status: novoStatus,
-              etapa: proximaEtapa === 'finalizado' ? 'pagamento' : 'homologacao',
-              checklist_homologacao: proximaEtapa === 'finalizado',
-            },
-            'rescisaoService:desligamentos'
-          )
-        )
+        .update({
+          status: novoStatus,
+          etapa: proximaEtapa === 'finalizado' ? 'pagamento' : 'homologacao',
+          checklist_homologacao: proximaEtapa === 'finalizado'
+        })
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .select()
@@ -238,7 +183,6 @@ export const rescisaoService = {
         tabela: 'desligamentos',
         registro_id: id,
         acao: 'UPDATE',
-        empresa_id: empresaId,
         dados_novos: {
           status: novoStatus,
           etapa: proximaEtapa,
@@ -254,7 +198,7 @@ export const rescisaoService = {
     }
   },
 
-  async assinarDigitalmente(id: string, tipo: 'empresa' | 'colaborador', empresaId?: string): Promise<boolean> {
+  async assinarDigitalmente(id: string, tipo: 'empresa' | 'colaborador', _empresaId?: string): Promise<any> {
     try {
       // Delegado à RPC assinar_desligamento (SECURITY DEFINER):
       // - hash SHA-256 é calculado server-side (trigger bloqueia escrita direta);
@@ -271,7 +215,6 @@ export const rescisaoService = {
         tabela: 'desligamentos',
         registro_id: id,
         acao: 'SIGN',
-        empresa_id: empresaId,
         dados_novos: { tipo_assinatura: tipo },
       });
 
@@ -282,27 +225,20 @@ export const rescisaoService = {
     }
   },
 
-  // `comprovanteUrl` nunca foi persistido pela versão anterior desta função
-  // (parâmetro aceito e nunca lido); preservado assim deliberadamente — não é
-  // escopo desta limpeza de tipos decidir se isso é um bug.
-  async processarPagamento(id: string, empresaId: string, comprovanteUrl?: string): Promise<Tables<'desligamentos'>> {
-    void comprovanteUrl;
+
+  async processarPagamento(id: string, empresaId: string, comprovanteUrl?: string): Promise<any> {
     if (!empresaId) throw new Error('empresa_id é obrigatório');
     try {
       const { data: d, error: fetchError } = await supabase
         .from('desligamentos')
-        .select(
-          'colaborador_id, data_desligamento, valor_liquido, assinado_empresa, assinado_colaborador, checklist_homologacao'
-        )
+        .select('colaborador_id, data_desligamento, valor_liquido, assinado_empresa, assinado_colaborador, checklist_homologacao')
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .single();
 
       if (fetchError) throw fetchError;
       if (!d.assinado_empresa || !d.assinado_colaborador) {
-        throw new Error(
-          'Pagamento bloqueado: rescisão deve ser assinada pela empresa e pelo colaborador antes do pagamento.'
-        );
+        throw new Error('Pagamento bloqueado: rescisão deve ser assinada pela empresa e pelo colaborador antes do pagamento.');
       }
       if (!d.checklist_homologacao) {
         throw new Error('Pagamento bloqueado: homologação não foi concluída.');
@@ -310,18 +246,12 @@ export const rescisaoService = {
 
       const { data, error } = await supabase
         .from('desligamentos')
-        .update(
-          validateTablePayload(
-            'desligamentos',
-            {
-              status: 'pago',
-              etapa: 'finalizado',
-              checklist_pagamento: true,
-              data_pagamento: new Date().toISOString(),
-            },
-            'rescisaoService:desligamentos'
-          )
-        )
+        .update({
+          status: 'pago',
+          etapa: 'finalizado',
+          checklist_pagamento: true,
+          data_pagamento: new Date().toISOString()
+        } as any)
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .select()
@@ -331,31 +261,24 @@ export const rescisaoService = {
 
       const { error: colabError } = await supabase
         .from('colaboradores')
-        .update(
-          validateTablePayload(
-            'colaboradores',
-            {
-              status: 'desligado',
-              data_desligamento: d.data_desligamento,
-            },
-            'rescisaoService:colaboradores'
-          )
-        )
+        .update({
+          status: 'desligado',
+          data_desligamento: d.data_desligamento,
+        })
         .eq('id', d.colaborador_id)
         .eq('empresa_id', empresaId);
 
-      if (colabError)
-        loggerService.error(
-          'Erro ao desativar colaborador',
-          { colaboradorId: d.colaborador_id, desligamentoId: id },
-          colabError
-        );
+      if (colabError) loggerService.error('Erro ao desativar colaborador', { colaboradorId: d.colaborador_id, desligamentoId: id }, colabError);
+
+      // Fecha o vínculo em aberto (data_fim IS NULL) — fonte de verdade para
+      // contagem de passagens/recontratação (ver vinculoService). Best-effort,
+      // mesmo padrão de risco do update de `colaboradores` acima.
+      await vinculoService.fecharVinculoAberto(d.colaborador_id, d.data_desligamento);
 
       await auditLogger.log({
         tabela: 'desligamentos',
         registro_id: id,
         acao: 'UPDATE',
-        empresa_id: empresaId,
         dados_novos: { status: 'pago', etapa: 'concluido', colaborador_desativado: true },
       });
 

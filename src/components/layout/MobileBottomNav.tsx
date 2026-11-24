@@ -19,8 +19,8 @@ export function MobileBottomNav() {
   const location = useLocation();
   const { isAdmin } = useAuth();
   const [quickActionsOpen, setQuickActionsOpen] = useState(false);
-
-  const items = isAdmin ? mobileItems : mobileItems.filter((i) => i.path !== '/configuracoes');
+  
+  const items = isAdmin ? mobileItems : mobileItems.filter(i => i.path !== '/configuracoes');
 
   return (
     <>
@@ -28,7 +28,7 @@ export function MobileBottomNav() {
         <div className="glass border-t border-border/50 px-2 pb-[env(safe-area-inset-bottom)]">
           <div className="flex items-center justify-around h-16" role="list">
             {items.map((item) => {
-              const { path, label, icon: Icon, color, isSpecial } = item;
+              const { path, label, icon: Icon, color, isSpecial } = item as any;
               const isActive = location.pathname === path || location.pathname.startsWith(path + '/');
 
               if (isSpecial) {
@@ -41,7 +41,7 @@ export function MobileBottomNav() {
                     <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow shadow-glow-sm -mt-6 mb-1 text-primary-foreground transform active:scale-90 transition-transform">
                       <Icon className="h-6 w-6" aria-hidden="true" />
                     </div>
-                    <span className="text-[10px] font-body font-bold text-primary">{label}</span>
+                    <span className="text-[10px] font-body font-medium text-primary">{label}</span>
                   </button>
                 );
               }

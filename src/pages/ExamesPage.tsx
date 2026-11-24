@@ -11,7 +11,6 @@ import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Stethoscope } from 'lucide-react';
-import { validateTablePayload } from '@/schemas/validate';
 
 const tipoOptions = [
   { value: 'admissional', label: 'Admissional' },
@@ -53,30 +52,16 @@ export default function ExamesPage() {
   });
 
   const criar = useMutation({
-    mutationFn: async (d: {
-      colaborador_id: string;
-      tipo: string;
-      data_exame?: string;
-      data_validade?: string;
-      medico?: string;
-      crm?: string;
-      resultado?: string;
-    }) => {
-      const { error } = await supabase.from('exames').insert(
-        validateTablePayload(
-          'exames',
-          {
-            colaborador_id: d.colaborador_id,
-            tipo: d.tipo,
-            data_exame: d.data_exame || null,
-            data_validade: d.data_validade || null,
-            medico: d.medico || null,
-            crm: d.crm || null,
-            resultado: d.resultado || null,
-          },
-          'ExamesPage:exames'
-        )
-      );
+    mutationFn: async (d: any) => {
+      const { error } = await supabase.from('exames').insert({
+        colaborador_id: d.colaborador_id,
+        tipo: d.tipo,
+        data_exame: d.data_exame || null,
+        data_validade: d.data_validade || null,
+        medico: d.medico || null,
+        crm: d.crm || null,
+        resultado: d.resultado || null,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -97,75 +82,61 @@ export default function ExamesPage() {
     },
   });
 
-  const filtered = useMemo(
-    () =>
-      exames.filter((e) => {
-        if (tipoFilter && tipoFilter !== 'all' && e.tipo !== tipoFilter) return false;
-        if (resultadoFilter && resultadoFilter !== 'all' && e.resultado !== resultadoFilter) return false;
-        if (search) {
-          const nome = (e.colaborador?.nome_completo || '').toLowerCase();
-          const medico = (e.medico || '').toLowerCase();
-          const q = search.toLowerCase();
-          if (!nome.includes(q) && !medico.includes(q)) return false;
-        }
-        return true;
-      }),
-    [exames, tipoFilter, resultadoFilter, search]
-  );
+  const filtered = useMemo(() => exames.filter((e: any) => {
+    if (tipoFilter && tipoFilter !== 'all' && e.tipo !== tipoFilter) return false;
+    if (resultadoFilter && resultadoFilter !== 'all' && e.resultado !== resultadoFilter) return false;
+    if (search) {
+      const nome = (e.colaborador?.nome_completo || '').toLowerCase();
+      const medico = (e.medico || '').toLowerCase();
+      const q = search.toLowerCase();
+      if (!nome.includes(q) && !medico.includes(q)) return false;
+    }
+    return true;
+  }), [exames, tipoFilter, resultadoFilter, search]);
 
   return (
     <>
-      <PageTitle title="Exames / ASOs" description="Controle de exames ocupacionais" />
-      <PageLayout
-        title="Exames Ocupacionais"
-        description="Controle de exames médicos obrigatórios — NR-7 / PCMSO"
-        icon={<Stethoscope className="h-5 w-5 text-primary-foreground" />}
-        gradient="from-primary to-accent"
-      >
-        <ExameKPIs data={exames} />
+    <PageTitle title="Exames / ASOs" description="Controle de exames ocupacionais" />
+    <PageLayout
+      title="Exames Ocupacionais"
+      description="Controle de exames médicos obrigatórios — NR-7 / PCMSO"
+      icon={<Stethoscope className="h-5 w-5 text-primary-foreground" />}
+      gradient="from-primary to-accent"
+    >
+      <ExameKPIs data={exames} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-          <div className="lg:col-span-3 space-y-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <DataTableToolbar
-                search={search}
-                onSearchChange={setSearch}
-                searchPlaceholder="Buscar por colaborador ou médico..."
-                filters={[
-                  { key: 'tipo', label: 'Tipo', options: tipoOptions, value: tipoFilter, onChange: setTipoFilter },
-                  {
-                    key: 'resultado',
-                    label: 'Resultado',
-                    options: resultadoOptions,
-                    value: resultadoFilter,
-                    onChange: setResultadoFilter,
-                  },
-                ]}
-                onClearFilters={() => {
-                  setSearch('');
-                  setTipoFilter('');
-                  setResultadoFilter('');
-                }}
-              />
-              <ExameFormDialog
-                colaboradores={colaboradores}
-                onSubmit={(form) => criar.mutate(form)}
-                isPending={criar.isPending}
-              />
-            </div>
-
-            {isLoading ? (
-              <TableSkeleton rows={5} columns={7} />
-            ) : (
-              <ExameTable data={filtered} onExcluir={(id) => excluir.mutate(id)} />
-            )}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <div className="lg:col-span-3 space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <DataTableToolbar
+              search={search}
+              onSearchChange={setSearch}
+              searchPlaceholder="Buscar por colaborador ou médico..."
+              filters={[
+                { key: 'tipo', label: 'Tipo', options: tipoOptions, value: tipoFilter, onChange: setTipoFilter },
+                { key: 'resultado', label: 'Resultado', options: resultadoOptions, value: resultadoFilter, onChange: setResultadoFilter },
+              ]}
+              onClearFilters={() => { setSearch(''); setTipoFilter(''); setResultadoFilter(''); }}
+            />
+            <ExameFormDialog
+              colaboradores={colaboradores}
+              onSubmit={(form) => criar.mutate(form)}
+              isPending={criar.isPending}
+            />
           </div>
 
-          <div>
-            <ExameTipoChart data={exames} />
-          </div>
+          {isLoading ? (
+            <TableSkeleton rows={5} columns={7} />
+          ) : (
+            <ExameTable data={filtered} onExcluir={(id) => excluir.mutate(id)} />
+          )}
         </div>
-      </PageLayout>
+
+        <div>
+          <ExameTipoChart data={exames} />
+        </div>
+      </div>
+    </PageLayout>
     </>
   );
 }

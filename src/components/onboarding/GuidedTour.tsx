@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, memo } from 'react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { BARRA_PROGRESSO_DURACAO_S } from '@/components/ui/progressMotion';
 import { Button } from '@/components/ui/button';
 import { X, ChevronRight, ChevronLeft, Sparkles, CheckCircle2 } from 'lucide-react';
 
@@ -115,7 +116,7 @@ export const GuidedTour = memo(function GuidedTour() {
                 >
                   <CheckCircle2 className="h-10 w-10 text-success" />
                 </motion.div>
-                <h3 className="text-h1 font-display font-bold mb-2">Tour Concluído! 🎉</h3>
+                <h3 className="text-h1 font-display font-medium mb-2">Tour Concluído! 🎉</h3>
                 <p className="text-body text-muted-foreground font-body">
                   Você está pronto para usar o sistema. Explore cada módulo no seu ritmo!
                 </p>
@@ -141,7 +142,7 @@ export const GuidedTour = memo(function GuidedTour() {
                     className="h-full bg-gradient-to-r from-primary to-primary-glow"
                     initial={{ width: '0%' }}
                     animate={{ width: `${((currentStep + 1) / tourSteps.length) * 100}%` }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: BARRA_PROGRESSO_DURACAO_S, ease: 'easeOut' }}
                   />
                 </div>
 
@@ -153,7 +154,7 @@ export const GuidedTour = memo(function GuidedTour() {
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.2 }}
+                      transition={{ duration: 0.25 }}
                       className="text-center"
                     >
                       <motion.span
@@ -164,7 +165,7 @@ export const GuidedTour = memo(function GuidedTour() {
                       >
                         {step.emoji}
                       </motion.span>
-                      <h3 className="text-h2 font-display font-bold mb-2">{step.title}</h3>
+                      <h3 className="text-h2 font-display font-medium mb-2">{step.title}</h3>
                       <p className="text-body text-muted-foreground font-body leading-relaxed">
                         {step.description}
                       </p>
@@ -192,7 +193,7 @@ export const GuidedTour = memo(function GuidedTour() {
                         key={i}
                         onClick={() => setCurrentStep(i)}
                         className={cn(
-                          'h-2 rounded-full transition-all duration-300',
+                          'h-2 rounded-full transition-all duration-slow',
                           i === currentStep
                             ? 'w-6 bg-primary'
                             : i < currentStep

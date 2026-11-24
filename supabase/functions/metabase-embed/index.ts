@@ -7,7 +7,7 @@
  *   1. Escopo por empresa_id (RLS-like — cada tenant vê só seus dashboards)
  *   2. TTL curto: 3 horas (token longo = risco de vazamento)
  *   3. Cache em memória: tokens reuse por 3h sem re-gerar
- *   4. Metabase offline → estado explícito de indisponibilidade, sem números fictícios
+ *   4. Metabase em offline → fallback flag para frontend usar gráficos recharts
  *
  * Cenários de falha simulados:
  *   1. Metabase offline → healthcheck falha → retorna { metabaseOk: false }
@@ -20,11 +20,8 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/contract.ts';
-import { log } from '../_shared/logger.ts';
+import { logger } from '../_shared/logger.ts';
 import { safeFetch } from '../_shared/safe-fetch.ts';
-import { metabaseUnavailablePayload } from './availability.ts';
-import { isConfiguredDashboard } from './dashboardAccess.ts';
-import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 
 const METABASE_URL   = Deno.env.get('METABASE_URL')          ?? '';
 const METABASE_SECRET = Deno.env.get('METABASE_SECRET_KEY')   ?? '';
@@ -40,19 +37,8 @@ interface CachedToken {
 }
 const tokenCache = new Map<string, CachedToken>();
 
-function stableStringify(v: unknown): string {
-  if (v === null || typeof v !== 'object') return JSON.stringify(v);
-  if (Array.isArray(v)) return '[' + v.map(stableStringify).join(',') + ']';
-  const o = v as Record<string, unknown>;
-  return '{' + Object.keys(o).sort()
-    .map((k) => JSON.stringify(k) + ':' + stableStringify(o[k]))
-    .join(',') + '}';
-}
-
-function cacheKey(userId: string, empresaId: string, dashboardId: string, params: unknown) {
-  // params faz parte da chave: um token assinado com filtros amplos não pode
-  // ser replayado para um pedido com filtros diferentes.
-  return `${userId}|${empresaId}|${dashboardId}|${stableStringify(params)}`;
+function cacheKey(userId: string, empresaId: string, dashboardId: string) {
+  return `${userId}|${empresaId}|${dashboardId}`;
 }
 
 function getCachedToken(key: string): string | null {
@@ -114,6 +100,19 @@ function parseDashboardId(id: unknown): { valid: boolean; value: number | null }
   return { valid: false, value: null };
 }
 
+// ── Dashboard ACL: quais dashboards cada empresa pode ver ──────
+const DASHBOARD_ACL: Record<number, string[]> = {
+  // ID do dashboard no Metabase → roles que têm acesso
+  // Se array vazio → todos os usuários autenticados acessam
+  // Se roles listadas → apenas esses perfis têm acesso
+};
+const ALL_EMPRESAS_ACL: Record<number, boolean> = {
+  1: true,   // RH Overview — todos
+  2: true,   // Folha — todos
+  3: true,   // eSocial — admin + dp
+  4: true,   // Passivo — admin + dp
+};
+
 // ── Main handler ───────────────────────────────────────────────
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
@@ -145,18 +144,12 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // ── 2. Extrair empresa_id do JWT ───────────────────────────
-    // APENAS app_metadata: user_metadata é editável pelo próprio usuário
-    // (updateUser) — aceitar o fallback reabre escalonamento de tenant.
-    const empresaId = user.app_metadata?.empresa_id as string | undefined;
+    const empresaId = (user.app_metadata?.empresa_id ?? user.user_metadata?.empresa_id) as string | undefined;
     if (!empresaId) {
       return new Response(JSON.stringify({ error: 'Empresa nao encontrada no token' }), {
         status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
-    // Throttle por usuário — cada request gera/renova um JWT assinado.
-    const rl = await checkRateLimit(supabase as never, { key: `metabase-embed:${user.id}`, limit: 20, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // ── 3. Parse body ──────────────────────────────────────────
     let body: { dashboardId?: unknown; params?: Record<string, string | string[]>; forceRefresh?: boolean };
@@ -180,11 +173,9 @@ serve(async (req: Request): Promise<Response> => {
     }
     const dashId = parsed.value!;
 
-    // ── 5. Allowlist de dashboards ─────────────────────────────
-    // Um ID desconhecido nunca recebe token assinado, ainda que o caller seja
-    // autenticado. A autorização fina por tenant continua no payload do JWT.
-    if (!isConfiguredDashboard(dashId)) {
-      return new Response(JSON.stringify({ error: 'Acesso negado ao dashboard solicitado' }), {
+    // ── 5. Verificar ACL ───────────────────────────────────────
+    if (ALL_EMPRESAS_ACL[dashId] === false) {
+      return new Response(JSON.stringify({ error: 'Acesso negado a este dashboard' }), {
         status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
@@ -193,21 +184,26 @@ serve(async (req: Request): Promise<Response> => {
     const metabaseOk = await metabaseHealthCheck();
 
     if (!metabaseOk) {
-      log.warn('metabase_unavailable', {
+      // Metabase offline → retorna flag para frontend usar fallback recharts
+      logger.warn('[metabase-embed] Metabase indisponivel — retornando fallback', {
         userId: user.id, empresaId, dashboardId: dashId,
       });
-      return new Response(JSON.stringify(metabaseUnavailablePayload(dashId)), {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return new Response(JSON.stringify({
+        metabaseOk: false,
+        fallback: true,
+        message: 'Metabase indisponivel — usando gráficos nativos',
+        dashboardId: dashId,
+        // Params de filtro para o fallback recharts
+        filterParams: params,
+      }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     // ── 7. Verificar cache ─────────────────────────────────────
-    const ck = cacheKey(user.id, empresaId, String(dashId), params);
+    const ck = cacheKey(user.id, empresaId, String(dashId));
     if (!forceRefresh) {
       const cached = getCachedToken(ck);
       if (cached) {
-        log.info('metabase_token_cache_hit', { dashboardId: dashId, userId: user.id });
+        logger.info('[metabase-embed] Token cache hit', { dashboardId: dashId, userId: user.id });
         return new Response(JSON.stringify({
           metabaseOk: true,
           token: cached,
@@ -221,7 +217,7 @@ serve(async (req: Request): Promise<Response> => {
 
     // ── 8. Gerar JWT do Metabase ────────────────────────────────
     if (!METABASE_SECRET) {
-      log.error('metabase_secret_missing');
+      logger.error('[metabase-embed] METABASE_SECRET_KEY nao configurado');
       return new Response(JSON.stringify({
         error: 'Configuracao incompleta — contacte o administrador',
       }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
@@ -230,9 +226,8 @@ serve(async (req: Request): Promise<Response> => {
     const jwtPayload = {
       resource:   { dashboard: { id: dashId } },
       params: {
-        ...params,
-        // Pinned por último: o caller não pode sobrescrever o tenant assinado.
         empresa_id: empresaId,
+        ...params,
       },
       exp: Math.floor((Date.now() + TOKEN_TTL_MS) / 1000),
     };
@@ -251,7 +246,7 @@ serve(async (req: Request): Promise<Response> => {
       for (const [k] of oldest) tokenCache.delete(k);
     }
 
-    log.info('metabase_token_generated', {
+    logger.info('[metabase-embed] Token gerado', {
       userId: user.id, empresaId, dashboardId: dashId, ttlMs: TOKEN_TTL_MS,
     });
 
@@ -266,7 +261,7 @@ serve(async (req: Request): Promise<Response> => {
     }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (err) {
-    log.error('metabase_embed_failed', { error: String(err) });
+    logger.error('[metabase-embed] Erro interno', { error: String(err) });
     return new Response(JSON.stringify({
       error: 'Erro interno ao gerar token de embed',
     }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });

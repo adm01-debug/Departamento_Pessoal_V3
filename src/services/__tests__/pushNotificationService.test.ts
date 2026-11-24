@@ -98,7 +98,7 @@ describe('pushNotificationService.subscribeUser', () => {
       }),
     };
     mockSubscribe.mockResolvedValue(fakeSub);
-    Object.assign(Notification, { requestPermission: vi.fn().mockResolvedValue('granted') });
+    (Notification.requestPermission as any) = vi.fn().mockResolvedValue('granted');
 
     // Restore full navigator with PushManager
     Object.defineProperty(globalThis, 'navigator', {
@@ -123,7 +123,7 @@ describe('pushNotificationService.subscribeUser', () => {
   });
 
   it('throws when notification permission is denied', async () => {
-    Object.assign(Notification, { requestPermission: vi.fn().mockResolvedValue('denied') });
+    (Notification.requestPermission as any) = vi.fn().mockResolvedValue('denied');
 
     Object.defineProperty(globalThis, 'navigator', {
       value: {

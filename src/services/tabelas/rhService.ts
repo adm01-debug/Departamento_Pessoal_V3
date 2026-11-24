@@ -1,89 +1,48 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
-import { validateInput, validateTablePayload } from '@/schemas/validate';
-import {
-  configAfastamentoSchema,
-  feriasSolicitacaoSchema,
-  linhaTransporteSchema,
-  onboardingTemplateSchema,
-  onboardingTemplateTarefaSchema,
-  onboardingColaboradorSchema,
-} from '@/schemas/referencias';
-
-type ConfigAfastamentosRow = Tables<'config_afastamentos'>;
-type FeriasSolicitacaoRow = Tables<'ferias_solicitacoes'>;
-type HistoricoCargoRow = Tables<'historico_cargo'>;
-type HistoricoFeriasRow = Tables<'historico_ferias'>;
-type LinhaTransporteRow = Tables<'linhas_transporte'>;
-type OnboardingTemplateRow = Tables<'onboarding_templates'>;
-type OnboardingTemplateTarefaRow = Tables<'onboarding_template_tarefas'>;
-type OnboardingColaboradorRow = Tables<'onboarding_colaborador'>;
-type OnboardingTarefaRow = Tables<'onboarding_tarefas'>;
-type TreinamentoParticipanteRow = Tables<'treinamento_participantes'>;
 
 export const configAfastamentosService = {
-  obter: async (): Promise<ConfigAfastamentosRow | null> => {
-    // config_afastamentos é global (sem coluna empresa_id no schema)
-    const { data, error } = await supabase.from('config_afastamentos').select('*').maybeSingle();
+  obter: async (empresaId: string) => {
+    const { data, error } = await supabase.from('config_afastamentos' as any).select('*').eq('empresa_id', empresaId).maybeSingle();
     if (error) throw error;
     return data;
   },
-  salvar: async (d: TablesInsert<'config_afastamentos'>) => {
-    validateInput(configAfastamentoSchema, d, 'configAfastamentos.salvar');
-    const { error } = await supabase
-      .from('config_afastamentos')
-      .upsert(validateTablePayload('config_afastamentos', d, 'rhService:config_afastamentos'), { onConflict: 'tipo' });
+  salvar: async (d: any) => {
+    const { error } = await supabase.from('config_afastamentos').upsert(d, { onConflict: 'empresa_id' });
     if (error) throw error;
   },
 };
 
 export const feriasSolicitacoesService = {
-  listar: async (empresaId: string): Promise<FeriasSolicitacaoRow[]> => {
+  listar: async (empresaId: string) => {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await supabase
-      .from('ferias_solicitacoes')
-      .select('*, colaborador:colaboradores(nome_completo)')
-      .eq('empresa_id', empresaId)
-      .order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('ferias_solicitacoes').select('*, colaborador:colaboradores(nome_completo)').eq('empresa_id', empresaId).order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
   },
-  criar: async (d: TablesInsert<'ferias_solicitacoes'>) => {
-    validateInput(feriasSolicitacaoSchema, d, 'feriasSolicitacoes.criar');
-    const { error } = await supabase
-      .from('ferias_solicitacoes')
-      .insert(validateTablePayload('ferias_solicitacoes', d, 'rhService:ferias_solicitacoes'));
+  criar: async (d: any) => {
+    const { error } = await supabase.from('ferias_solicitacoes').insert(d);
     if (error) throw error;
   },
-  atualizar: async (id: string, d: TablesUpdate<'ferias_solicitacoes'>, empresaId: string) => {
+  atualizar: async (id: string, d: any, empresaId: string) => {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    validateInput(feriasSolicitacaoSchema, d, 'feriasSolicitacoes.atualizar');
-    const { error } = await supabase
-      .from('ferias_solicitacoes')
-      .update(validateTablePayload('ferias_solicitacoes', d, 'rhService:ferias_solicitacoes'))
-      .eq('id', id)
-      .eq('empresa_id', empresaId);
+    const { error } = await supabase.from('ferias_solicitacoes').update(d).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   },
 };
 
 export const historicoCargoService = {
-  listar: async (colaboradorId: string): Promise<HistoricoCargoRow[]> => {
-    const { data, error } = await supabase
-      .from('historico_cargo')
-      .select('*')
-      .eq('colaborador_id', colaboradorId)
-      .order('data_alteracao', { ascending: false });
+  listar: async (colaboradorId: string, empresaId: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await (supabase as any).from('historico_cargo').select('*').eq('colaborador_id', colaboradorId).eq('empresa_id', empresaId).order('data_inicio', { ascending: false });
     if (error) throw error;
     return data || [];
   },
 };
 
 export const historicoFeriasService = {
-  listar: async (colaboradorId: string, empresaId: string): Promise<HistoricoFeriasRow[]> => {
+  listar: async (colaboradorId: string, empresaId: string) => {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await supabase
-      .from('historico_ferias')
+    const { data, error } = await (supabase as any).from('historico_ferias')
       .select('*, ferias!inner(colaborador_id, empresa_id)')
       .eq('ferias.colaborador_id', colaboradorId)
       .eq('ferias.empresa_id', empresaId)
@@ -94,132 +53,85 @@ export const historicoFeriasService = {
 };
 
 export const linhasTransporteService = {
-  listar: async (): Promise<LinhaTransporteRow[]> => {
-    const { data, error } = await supabase.from('linhas_transporte').select('*').order('nome');
+  listar: async (empresaId?: string) => {
+    let q = supabase.from('linhas_transporte' as any).select('*').order('nome');
+    if (empresaId) q = q.eq('empresa_id', empresaId);
+    const { data, error } = await q;
     if (error) throw error;
     return data || [];
   },
-  criar: async (d: TablesInsert<'linhas_transporte'>) => {
-    validateInput(linhaTransporteSchema, d, 'linhasTransporte.criar');
-    const { error } = await supabase
-      .from('linhas_transporte')
-      .insert(validateTablePayload('linhas_transporte', d, 'rhService:linhas_transporte'));
+  criar: async (d: any) => {
+    const { error } = await supabase.from('linhas_transporte').insert(d);
     if (error) throw error;
   },
 };
 
 export const notificacoesAdmissaoService = {
-  listar: async (admissaoId: string): Promise<Tables<'notificacoes_admissao'>[]> => {
-    const { data, error } = await supabase
-      .from('notificacoes_admissao')
-      .select('*')
-      .eq('admissao_id', admissaoId)
-      .order('created_at', { ascending: false });
+  listar: async (admissaoId: string) => {
+    const { data, error } = await supabase.from('notificacoes_admissao').select('*').eq('admissao_id', admissaoId).order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
   },
 };
 
+/**
+ * ONBOARDING — MODELO B: **DEPRECATED**, somente LEITURA de compatibilidade.
+ *
+ * O domínio canônico do onboarding é a **Jornada de Onboarding** (modelo A:
+ * `admissoes` + `tarefas_onboarding`), operado por
+ * `services/onboardingJornadaService.ts`. Este objeto existe APENAS para o
+ * fallback de leitura descrito em `docs/ONBOARDING_MODELO_B_DEPRECATED.md`.
+ *
+ * As escritas e as leituras SEM consumidor foram removidas
+ * (`listarTemplates`, `criarTemplate`, `listarTemplateTarefas`,
+ * `criarTemplateTarefa`, `listarColaboradores`, `iniciarOnboarding`,
+ * `concluirTarefa` — nenhuma tinha chamador). Sobraram só as DUAS leituras que o
+ * fallback usa; ambas saem quando a conferência de dados do modelo B terminar.
+ */
 export const onboardingService = {
-  listarTemplates: async (empresaId?: string): Promise<OnboardingTemplateRow[]> => {
-    let q = supabase.from('onboarding_templates').select('*').order('created_at', { ascending: false });
-    if (empresaId) q = q.eq('empresa_id', empresaId);
-    const { data, error } = await q;
+  listarTarefas: async (onboardingId: string) => {
+    const { data, error } = await supabase.from('onboarding_tarefas').select('*').eq('onboarding_id', onboardingId).order('ordem');
     if (error) throw error;
     return data || [];
   },
-  criarTemplate: async (d: TablesInsert<'onboarding_templates'>): Promise<OnboardingTemplateRow | null> => {
-    validateInput(onboardingTemplateSchema, d, 'onboarding.criarTemplate');
-    const { data, error } = await supabase
-      .from('onboarding_templates')
-      .insert(validateTablePayload('onboarding_templates', d, 'rhService:onboarding_templates'))
-      .select()
-      .maybeSingle();
-    if (error) throw error;
-    return data;
-  },
-  listarTemplateTarefas: async (templateId: string): Promise<OnboardingTemplateTarefaRow[]> => {
-    const { data, error } = await supabase
-      .from('onboarding_template_tarefas')
-      .select('*')
-      .eq('template_id', templateId)
-      .order('ordem');
-    if (error) throw error;
-    return data || [];
-  },
-  criarTemplateTarefa: async (d: TablesInsert<'onboarding_template_tarefas'>) => {
-    validateInput(onboardingTemplateTarefaSchema, d, 'onboarding.criarTemplateTarefa');
-    const { error } = await supabase
-      .from('onboarding_template_tarefas')
-      .insert(validateTablePayload('onboarding_template_tarefas', d, 'rhService:onboarding_template_tarefas'));
-    if (error) throw error;
-  },
-  listarColaboradores: async (empresaId?: string): Promise<OnboardingColaboradorRow[]> => {
-    let q = supabase
-      .from('onboarding_colaborador')
-      .select('*, colaborador:colaboradores(nome_completo)')
-      .order('created_at', { ascending: false });
-    if (empresaId) q = q.eq('empresa_id', empresaId);
-    const { data, error } = await q;
-    if (error) throw error;
-    return data || [];
-  },
-  iniciarOnboarding: async (d: TablesInsert<'onboarding_colaborador'>): Promise<OnboardingColaboradorRow | null> => {
-    validateInput(onboardingColaboradorSchema, d, 'onboarding.iniciarOnboarding');
+  // PARTE G (Dossiê — Desenvolvimento): acha o onboarding_colaborador de UM
+  // colaborador, para depois buscar suas tarefas (onboarding_tarefas.onboarding_id).
+  buscarPorColaborador: async (colaboradorId: string, empresaId: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('onboarding_colaborador')
-      .insert(validateTablePayload('onboarding_colaborador', d, 'rhService:onboarding_colaborador'))
-      .select()
-      .maybeSingle();
-    if (error) throw error;
-    return data;
-  },
-  listarTarefas: async (onboardingId: string): Promise<OnboardingTarefaRow[]> => {
-    const { data, error } = await supabase
-      .from('onboarding_tarefas')
       .select('*')
-      .eq('onboarding_id', onboardingId)
-      .order('ordem');
+      .eq('colaborador_id', colaboradorId)
+      .eq('empresa_id', empresaId)
+      .order('created_at', { ascending: false })
+      .limit(1);
     if (error) throw error;
-    return data || [];
-  },
-  concluirTarefa: async (onboardingId: string, id: string) => {
-    if (!onboardingId) throw new Error('onboarding_id obrigatório para isolamento de tenant');
-    const { error } = await supabase
-      .from('onboarding_tarefas')
-      .update(
-        validateTablePayload(
-          'onboarding_tarefas',
-          { concluida: true, data_conclusao: new Date().toISOString() },
-          'rhService:onboarding_tarefas'
-        )
-      )
-      .eq('id', id)
-      .eq('onboarding_id', onboardingId);
-    if (error) throw error;
+    return data?.[0] ?? null;
   },
 };
 
 export const treinamentoParticipantesService = {
-  listar: async (treinamentoId?: string): Promise<TreinamentoParticipanteRow[]> => {
-    let q = supabase
-      .from('treinamento_participantes')
-      .select('*, colaborador:colaboradores(nome_completo)')
-      .order('created_at', { ascending: false });
-    if (treinamentoId) q = q.eq('treinamento_id', treinamentoId);
+  listar: async (inscricaoId?: string) => {
+    let q = supabase.from('treinamento_participantes' as any).select('*, colaborador:colaboradores(nome_completo)').order('created_at', { ascending: false });
+    if (inscricaoId) q = q.eq('inscricao_id', inscricaoId);
     const { data, error } = await q;
     if (error) throw error;
     return data || [];
   },
-  registrarPresenca: async (treinamentoId: string, id: string) => {
-    if (!treinamentoId) throw new Error('treinamento_id obrigatório para isolamento de tenant');
-    const { error } = await supabase
-      .from('treinamento_participantes')
-      .update(
-        validateTablePayload('treinamento_participantes', { presente: true }, 'rhService:treinamento_participantes')
-      )
-      .eq('id', id)
-      .eq('treinamento_id', treinamentoId);
+  registrarPresenca: async (inscricaoId: string, id: string) => {
+    if (!inscricaoId) throw new Error('inscricao_id obrigatório para isolamento de tenant');
+    const { error } = await (supabase as any).from('treinamento_participantes').update({ presente: true }).eq('id', id).eq('inscricao_id', inscricaoId);
     if (error) throw error;
+  },
+  // PARTE G (Dossiê — Desenvolvimento): treinamentos de UM colaborador —
+  // listar() acima só filtra por inscricao_id (turma), não por colaborador.
+  listarPorColaborador: async (colaboradorId: string) => {
+    const { data, error } = await supabase
+      .from('treinamento_participantes' as any)
+      .select('*, treinamento:treinamentos(nome, descricao, data, carga_horaria)')
+      .eq('colaborador_id', colaboradorId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
   },
 };

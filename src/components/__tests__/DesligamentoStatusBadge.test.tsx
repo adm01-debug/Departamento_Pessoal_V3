@@ -1,13 +1,12 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
+  Badge: ({ children }: any) => <span>{children}</span>,
 }));
 
 vi.mock('@/lib/utils', () => ({
-  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  cn: (...args: any[]) => args.filter(Boolean).join(' '),
 }));
 
 import { StatusBadge, TipoBadge } from '../desligamentos/DesligamentoStatusBadge';

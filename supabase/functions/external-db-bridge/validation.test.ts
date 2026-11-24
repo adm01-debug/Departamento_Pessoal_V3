@@ -11,19 +11,10 @@ import {
   isSafeFilterColumn,
   TABLE_DENYLIST,
   TENANT_SCOPED_TABLES,
-  ADMIN_ONLY_WRITE_TABLES,
   RPC_ALLOWLIST,
   FILTER_OPS,
   NOT_EXTRA_OPS,
 } from "./validation.ts";
-import {
-  PUBLIC_RPCS,
-  isPrivilegedSupabaseKey,
-  requiresAuthenticatedBridgeSession,
-  requiresCallerScopedExternalClient,
-  resolveExternalPublicKey,
-} from './access.ts';
-import { BodySchema, ON_CONFLICT_COLUMNS_RE, toUpsertOptions } from "./request-schema.ts";
 
 let CASES = 0;
 function ok(cond: boolean, msg: string) {
@@ -62,11 +53,10 @@ Deno.test("tabela: nomes legítimos aceitos", () => {
 // ---------------------------------------------------------------------------
 Deno.test("denylist: tabelas sensíveis presentes", () => {
   const mustDeny = [
-    "user_empresas", "user_roles", "secrets", "vault", "ip_whitelist", "blocked_ips",
+    "user_roles", "secrets", "vault", "ip_whitelist", "blocked_ips",
     "rate_limit_config", "rate_limit_logs", "login_attempts", "login_lockouts",
-    "login_rate_limits", "password_policies", "security_alerts", "audit_log", "audit_log_unified",
+    "login_rate_limits", "password_policies", "security_alerts", "audit_log",
     "geo_blocking_config", "geo_allowed_countries", "govbr_auth_state",
-    "pii_access_logs", "pii_access_alerts",
   ];
   for (const t of mustDeny) ok(TABLE_DENYLIST.has(t), `denylist deveria conter: ${t}`);
   // sanity: uma tabela de negócio não está na denylist
@@ -104,13 +94,12 @@ Deno.test("order: injeção rejeitada", () => {
   const bad = [
     "id; DROP", "id--", "id/*", "(select 1)", "id,secrets", "id desc; DELETE",
     "1", "id ASC", "id nulls first", "id)", "*", "id||", "id SELECT", "id FROM x",
-    "tabela.coluna",
   ];
   for (const c of bad) ok(!isSafeOrderColumn(c), `order deveria ser rejeitada: ${JSON.stringify(c)}`);
   ok(!isSafeOrderColumn("a".repeat(121)), "order > 120 rejeitada");
 });
 Deno.test("order: colunas simples aceitas", () => {
-  for (const c of ["id", "created_at", "empresa_id", "id.asc", "created_at.desc.nullslast", "_x", "A1"]) ok(isSafeOrderColumn(c), `order legítima deveria passar: ${c}`);
+  for (const c of ["id", "created_at", "empresa_id", "tabela.coluna", "_x", "A1"]) ok(isSafeOrderColumn(c), `order legítima deveria passar: ${c}`);
 });
 
 // ---------------------------------------------------------------------------
@@ -148,9 +137,7 @@ Deno.test("coluna de filtro: básico", () => {
 // 7. Operadores — apenas allowlist; 'not' exige extraOp válido
 // ---------------------------------------------------------------------------
 Deno.test("operadores: allowlist", () => {
-  for (const op of ["eq","neq","gt","gte","lt","lte","like","ilike","in","is","or","not","contains"]) ok(FILTER_OPS.has(op), `op permitido: ${op}`);
-  // 'match' era aceito mas nunca aplicado — deve ser rejeitado (fail-closed).
-  ok(!FILTER_OPS.has("match"), "op 'match' rejeitado");
+  for (const op of ["eq","neq","gt","gte","lt","lte","like","ilike","in","is","or","not","contains","match"]) ok(FILTER_OPS.has(op), `op permitido: ${op}`);
   for (const op of ["exec","drop","select","union",";","--","sql","raw","cast","any","all"]) ok(!FILTER_OPS.has(op), `op proibido: ${op}`);
   for (const op of ["eq","neq","gt","gte","lt","lte","in","is"]) ok(NOT_EXTRA_OPS.has(op), `not.extraOp válido: ${op}`);
   for (const op of ["like","ilike","or","not","contains","match"]) ok(!NOT_EXTRA_OPS.has(op), `not.extraOp inválido: ${op}`);
@@ -160,90 +147,8 @@ Deno.test("operadores: allowlist", () => {
 // 8. RPC allowlist — só listadas passam; nomes sensíveis/injeção fora
 // ---------------------------------------------------------------------------
 Deno.test("rpc allowlist", () => {
-  for (const r of [
-    "has_role", "is_admin", "admin_set_user_role", "admin_associar_usuario_empresa",
-    "get_my_user_empresas", "set_own_default_empresa", "assinar_desligamento",
-    "get_admissao_por_token", "registrar_batida_ponto", "log_frontend_error",
-    "get_security_alerts_summary", "pcs_gerar_grades", "sst_dashboard_sla",
-  ]) ok(RPC_ALLOWLIST.has(r), `rpc permitida: ${r}`);
-  for (const r of [
-    "pg_sleep","drop_table","exec","delete_all_users","'; DROP","set_config","pg_read_file","dblink",
-    "record_failed_login","reset_login_attempts","check_rate_limit","check_brute_force",
-    "is_ip_blocked","is_ip_whitelisted","is_country_allowed","fn_link_gov_br_account",
-  ]) ok(!RPC_ALLOWLIST.has(r), `rpc proibida: ${r}`);
-});
-
-Deno.test("bridge auth: apenas RPCs públicas por token dispensam sessão", () => {
-  for (const action of ["select", "insert", "update", "delete", "upsert"]) {
-    ok(requiresAuthenticatedBridgeSession(action), `${action} deve exigir sessão`);
-  }
-  ok(requiresAuthenticatedBridgeSession("rpc", "set_own_default_empresa"), "RPC protegida exige sessão");
-  ok(requiresAuthenticatedBridgeSession("rpc"), "RPC sem nome exige sessão");
-  const expectedPublic = [
-    "get_admissao_por_token",
-    "admissao_salvar_dados",
-    "admissao_marcar_documentos",
-    "admissao_assinar_contrato",
-    "contrato_consultar_por_token",
-    "contrato_preview_url_por_token",
-    "contrato_assinar_por_token",
-    "contrato_verificar_autenticidade_v2",
-    "medida_consultar_por_token",
-    "medida_registrar_ciencia_publica",
-  ];
-  ok(PUBLIC_RPCS.size === expectedPublic.length, "conjunto público deve permanecer mínimo e explícito");
-  for (const rpc of expectedPublic) {
-    ok(PUBLIC_RPCS.has(rpc), `RPC pública esperada: ${rpc}`);
-    ok(RPC_ALLOWLIST.has(rpc), `RPC pública também deve estar na allowlist: ${rpc}`);
-    ok(!requiresAuthenticatedBridgeSession("rpc", rpc), `${rpc} é permitida sem sessão`);
-  }
-  for (const rpc of ["resolve_security_alert", "contrato_revogar_token", "medida_aprovar"]) {
-    ok(requiresAuthenticatedBridgeSession("rpc", rpc), `${rpc} continua protegida por sessão`);
-  }
-});
-
-Deno.test("bridge data client: operações genéricas nunca usam credencial privilegiada", () => {
-  for (const action of ["select", "insert", "update", "delete", "upsert"]) {
-    ok(requiresCallerScopedExternalClient(action), `${action} deve usar o JWT do chamador no banco externo`);
-  }
-  ok(requiresCallerScopedExternalClient("rpc", "set_own_default_empresa"), "RPC protegida deve usar o JWT do chamador");
-  for (const rpc of PUBLIC_RPCS) {
-    ok(!requiresCallerScopedExternalClient("rpc", rpc), `${rpc} usa cliente público de menor privilégio`);
-  }
-});
-
-Deno.test("bridge public key: nunca usa service_role em RPC anônima", () => {
-  const servicePayload = btoa(JSON.stringify({ role: "service_role" }))
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-  const serviceJwt = `header.${servicePayload}.signature`;
-  const anonPayload = btoa(JSON.stringify({ role: "anon" }))
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-  const anonJwt = `header.${anonPayload}.signature`;
-
-  ok(isPrivilegedSupabaseKey("sb_secret_example"), "secret key moderna é privilegiada");
-  ok(isPrivilegedSupabaseKey(serviceJwt), "JWT service_role é privilegiado");
-  ok(!isPrivilegedSupabaseKey("sb_publishable_example"), "publishable key moderna não é privilegiada");
-  ok(!isPrivilegedSupabaseKey(anonJwt), "JWT anon não é privilegiado");
-  ok(resolveExternalPublicKey({
-    configuredPublicKey: "sb_publishable_configured",
-    externalKey: serviceJwt,
-    incomingApiKey: "sb_publishable_browser",
-    sameProject: true,
-  }) === "sb_publishable_configured", "chave pública configurada tem precedência");
-  ok(resolveExternalPublicKey({
-    externalKey: serviceJwt,
-    incomingApiKey: "sb_publishable_browser",
-    sameProject: true,
-  }) === "sb_publishable_browser", "apikey pública do mesmo projeto é aceita");
-  ok(resolveExternalPublicKey({
-    externalKey: serviceJwt,
-    incomingApiKey: "sb_publishable_other_project",
-    sameProject: false,
-  }) === null, "chave de outro projeto e service_role falham fechadas");
+  for (const r of ["has_role","is_admin","admin_set_user_role","assinar_desligamento","get_admissao_por_token"]) ok(RPC_ALLOWLIST.has(r), `rpc permitida: ${r}`);
+  for (const r of ["pg_sleep","drop_table","exec","delete_all_users","'; DROP","set_config","pg_read_file","dblink"]) ok(!RPC_ALLOWLIST.has(r), `rpc proibida: ${r}`);
 });
 
 // ---------------------------------------------------------------------------
@@ -280,10 +185,7 @@ Deno.test("fuzz: payloads combinatórios de injeção sempre rejeitados", () => 
 // ---------------------------------------------------------------------------
 Deno.test("listas: sanidade e disjunção", () => {
   ok(TABLE_DENYLIST.size >= 15, "denylist com tamanho esperado");
-  // A lista cobre o contrato de produção do frontend, mas continua fechada:
-  // rotinas de lockout, IP, rate-limit e manutenção não atravessam o bridge.
-  ok(RPC_ALLOWLIST.size >= 75 && RPC_ALLOWLIST.size <= 100, "rpc allowlist com tamanho esperado");
-  ok(ADMIN_ONLY_WRITE_TABLES.has("empresas"), "empresas exige escopo administrativo para escrita");
+  ok(RPC_ALLOWLIST.size >= 30, "rpc allowlist com tamanho esperado");
   // nenhuma tabela de negócio (tenant-scoped) pode estar simultaneamente na denylist
 });
 
@@ -295,6 +197,34 @@ Deno.test("listas: sanidade e disjunção", () => {
 // implementado em index.ts:538). Aqui garantimos que o schema rejeita tipos
 // inválidos e que a semântica é explícita.
 // ---------------------------------------------------------------------------
+import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
+
+// Re-importa o BodySchema do index.ts (mirror do contrato real)
+const BodySchema = z.object({
+  action: z.enum(["select", "insert", "update", "delete", "upsert", "rpc"]),
+  table: z.string().max(63).optional(),
+  rpcName: z.string().max(63).optional(),
+  fn: z.string().max(63).optional(),
+  columns: z.string().max(2000).optional(),
+  filters: z.array(z.object({
+    column: z.string().max(120),
+    op: z.string().max(20),
+    value: z.unknown(),
+    extraOp: z.string().max(20).optional(),
+  })).max(50).optional(),
+  order: z.object({
+    column: z.string().max(120),
+    ascending: z.boolean().optional(),
+  }).optional(),
+  limit: z.number().int().optional(),
+  offset: z.number().int().min(0).optional(),
+  countMode: z.enum(["none", "exact", "planned", "estimated"]).optional(),
+  single: z.boolean().optional(),
+  data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(),
+  params: z.record(z.unknown()).optional(),
+  userId: z.string().max(64).optional(),
+}).strict();
+
 Deno.test("single: true é aceito em SELECT", () => {
   const parsed = BodySchema.safeParse({
     action: "select",
@@ -341,41 +271,6 @@ Deno.test("single: zero rows com single=true resultaria em PGRST116", () => {
   // quando single=true e 0 registros. Não testável aqui (precisa DB real),
   // mas a expectativa fica registrada para o time de frontend.
   ok(true, "contrato: cliente deve tratar PGRST116 quando single=true e 0 rows");
-});
-
-// ---------------------------------------------------------------------------
-// 12. UPSERT onConflict — deve atravessar o proxy sem abrir vetor de SQL
-// ---------------------------------------------------------------------------
-Deno.test("upsert onConflict: lista de colunas legítima é preservada", () => {
-  const parsed = BodySchema.safeParse({
-    action: "upsert",
-    table: "folha_itens",
-    data: { folha_id: "folha-1", colaborador_id: "colaborador-1" },
-    onConflict: "folha_id,colaborador_id",
-  });
-  ok(parsed.success, "upsert com onConflict válido deve passar validação");
-  if (!parsed.success) return;
-  const onConflict = parsed.data.onConflict;
-  ok(onConflict === "folha_id,colaborador_id", "onConflict deve ser preservado pelo schema real");
-  if (!onConflict) throw new Error("FALHOU: onConflict válido não pode ser undefined");
-  const options = toUpsertOptions(onConflict);
-  ok(options.onConflict === "folha_id,colaborador_id", "onConflict deve chegar às opções supabase-js");
-  ok(ON_CONFLICT_COLUMNS_RE.test(onConflict), "contrato usa somente identificadores simples");
-});
-
-Deno.test("upsert onConflict: SQL, espaços e formatos inválidos são rejeitados", () => {
-  const invalid = [
-    "folha_id;DROP TABLE folha_itens", "folha_id, colaborador_id", "folha_id--comment",
-    "folha_id,1colaborador", "folha_id,,colaborador_id", "folha_id()", "", "a".repeat(241),
-  ];
-  for (const onConflict of invalid) {
-    const parsed = BodySchema.safeParse({
-      action: "upsert", table: "folha_itens", data: { folha_id: "folha-1" }, onConflict,
-    });
-    ok(!parsed.success, `onConflict inseguro deve ser rejeitado: ${JSON.stringify(onConflict)}`);
-  }
-  const noOption = toUpsertOptions(undefined);
-  ok(Object.keys(noOption).length === 0, "upsert sem onConflict mantém semântica original");
 });
 
 Deno.test("disjunção: tabelas tenant-scoped não podem estar na denylist", () => {

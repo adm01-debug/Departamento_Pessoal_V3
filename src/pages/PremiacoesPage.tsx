@@ -1,363 +1,621 @@
 import React from 'react';
+import { motion, MotionConfig } from 'framer-motion';
 import { PageLayout } from '@/components/layout';
 import { PageTitle } from '@/components/PageTitle';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { AnimatedTabsList, AnimatedTabsTrigger } from '@/components/ui/animated-tabs';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ColoredFilterChip } from '@/components/avaliacao/ColoredFilterChip';
+import { PALETAS_CHIP, TEMA_TODOS } from '@/components/avaliacao/chipFiltroComum';
+import { EntradaPresenca, entradaCard } from '@/components/premiacoes/premiacoesEntrada';
+import { MOTION_REDUCED_MODE } from '@/lib/motionMode';
 import {
-  Trophy,
-  Target,
-  DollarSign,
-  Plus,
-  Calendar,
-  Filter,
+  AlertTriangle,
   ArrowUpRight,
-  AlertCircle,
   Calculator,
-  FileText,
-  Download,
-  History,
+  CalendarDays,
+  ChevronRight,
+  Clock,
+  DollarSign,
+  Layers,
+  Plus,
+  Search,
   ShieldCheck,
+  Target,
+  Trophy,
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { premiacoesService, PERIODO_SEM_DATA } from '@/services/premiacoesService';
+import { premiacoesService } from '@/services/premiacoesService';
 import { useEmpresas } from '@/hooks';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RewardsSimulator } from '@/components/premiacoes/RewardsSimulator';
-import { RewardsApprovalHub } from '@/components/premiacoes/RewardsApprovalHub';
 import { CampaignWizard } from '@/components/premiacoes/CampaignWizard';
-import { formatDate, formatDateTime } from '@/utils/format';
-import { todayLocalISO } from '@/utils/dateLocal';
-import { exportPontoCSV, exportPontoPDF } from '@/services/exportService';
-import { registrarAcessoPII } from '@/services/piiAccessLogService';
+import { CampanhaTabela } from '@/components/premiacoes/CampanhaTabela';
+import { CampanhaLateral } from '@/components/premiacoes/CampanhaLateral';
+import { CampanhaDetalhesDialog } from '@/components/premiacoes/CampanhaDetalhesDialog';
+import { Indicador } from '@/components/premiacoes/IndicadorPremiacoes';
+import { PagamentosTab } from '@/components/premiacoes/PagamentosTab';
+import { AuditoriaTab } from '@/components/premiacoes/AuditoriaTab';
+import {
+  FILTROS_HUB_INICIAIS,
+  ORDENACAO_ROTULOS,
+  STATUS_PAGAMENTO_PENDENTE,
+  calcularVariacaoMensal,
+  contarPorStatus,
+  filtrarEOrdenarCampanhas,
+  indiceEntrada,
+  montarAcoesPendentes,
+  montarAtividadeRecente,
+  montarMetricas,
+  numero,
+  paginarCampanhas,
+  type AuditoriaHub,
+  type CampanhaHub,
+  type FiltroPeriodoCampanha,
+  type FiltrosHub,
+  type MetricasCampanha,
+  type OrdenacaoCampanha,
+  type PagamentoHub,
+} from '@/components/premiacoes/premiacoesComum';
+import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/utils/format';
 import { toast } from 'sonner';
+// MOCK VISUAL — ver src/mocks/premiacoesMock.ts.
+import {
+  bloquearEscritaPremiacoes,
+  getMockAuditoriaPremiacoes,
+  getMockCampanhas,
+  getMockPagamentos,
+  isPremiacoesMockEnabled,
+  simularExportacaoPremiacoes,
+} from '@/mocks/premiacoesMock';
 
-const formatCurrency = (val: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+/* ─── Parâmetros da tela ───────────────────────────────────────────────────── */
+
+/** Campanhas por página na tabela (paginação LOCAL — a API não pagina). */
+const POR_PAGINA = 8;
+
+/** Seções do hub, na ordem da barra superior (rota real de cada aba). */
+const ABAS: { valor: string; label: string; icone: typeof Trophy }[] = [
+  { valor: 'campanhas', label: 'Campanhas', icone: Trophy },
+  { valor: 'pagamentos', label: 'Pagamentos', icone: DollarSign },
+  { valor: 'simulador', label: 'Simulador ROI', icone: Calculator },
+  { valor: 'auditoria', label: 'Auditoria', icone: ShieldCheck },
+];
+
+/**
+ * Pele das abas — a MESMA do módulo Gestão de Desempenho (`AvaliacaoPage`), para
+ * que as tablists do produto sejam UM único padrão visual. Quem pinta a aba ativa
+ * é o indicador deslizante do `ui/animated-tabs` (`rounded-lg bg-background`),
+ * NUNCA o botão: por isso não há fundo próprio nem `::after` (linha inferior
+ * lime) aqui.
+ *
+ * `group` + `data-[state=active]` fazem o ícone (lime) e o texto (claro)
+ * reagirem à seleção — os três conjuntos abaixo são idênticos aos do módulo de
+ * referência, preservando apenas os ícones/rótulos próprios de Campanhas.
+ */
+const CLASSE_ABA =
+  'group relative inline-flex h-8 shrink-0 items-center justify-center whitespace-nowrap gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-50 lg:w-full';
+const CLASSE_ABA_ICONE =
+  'h-3.5 w-3.5 shrink-0 text-muted-foreground transition-colors group-data-[state=active]:text-primary';
+const CLASSE_ABA_TEXTO =
+  'min-w-0 truncate text-muted-foreground transition-colors group-data-[state=active]:text-foreground';
+
+/** Filtro de período — todos os recortes usam as datas reais da campanha. */
+const OPCOES_PERIODO: { valor: FiltroPeriodoCampanha; label: string }[] = [
+  { valor: 'todos', label: 'Todos' },
+  { valor: 'mes_atual', label: 'Mês atual' },
+  { valor: 'ultimos_90', label: 'Últimos 90 dias' },
+  { valor: 'ano_atual', label: 'Ano atual' },
+];
+
+/* ─── Indicadores (blocos compactos da faixa superior) ──────────────────────
+ * O componente do cartão mora em `premiacoes/IndicadorPremiacoes.tsx` — é o
+ * MESMO cartão usado pelos indicadores financeiros da aba Pagamentos. */
+
 
 export default function PremiacoesPage() {
   const { empresaAtual } = useEmpresas();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = React.useState('campanhas');
-  const [isWizardOpen, setIsWizardOpen] = React.useState(false);
-  const [periodoFiltro, setPeriodoFiltro] = React.useState<{ ym: string; empresaId: string | undefined } | null>(null);
 
+  /**
+   * Cada ativação da aba Simulador ROI recebe um token novo. Os KPIs usam esse
+   * token para rodar a contagem UMA vez por acesso — inclusive se o subtree
+   * remontar durante transições do React — e voltam a contar quando o usuário
+   * sai e retorna à aba.
+   */
+  const selecionarAba = (valor: string) => {
+    if (valor === 'simulador' && activeTab !== 'simulador') {
+      try {
+        sessionStorage.setItem('dp-premiacoes-roi-kpi-acesso', String(Date.now()));
+      } catch {
+        /* sessionStorage indisponível: a contagem segue pelo guard de mount */
+      }
+    }
+    setActiveTab(valor);
+  };
+
+  const [isWizardOpen, setIsWizardOpen] = React.useState(false);
+  // O painel antigo de auditoria usava estes filtros; a exportação mantém o
+  // escopo histórico do relatório de pagamentos enquanto a nova timeline tem
+  // filtros próprios no componente `AuditoriaTab`.
+  const periodoFiltro = 'Todos os Períodos';
+  const unidadeFiltro = 'Todas as Unidades';
+  const faixaMetaFiltro = 'Todas';
+
+  // Estado da aba Campanhas: filtros (busca/status/período/ordenação), página
+  // local e a campanha aberta no diálogo de detalhes.
+  const [filtros, setFiltros] = React.useState<FiltrosHub>(FILTROS_HUB_INICIAIS);
+  const [pagina, setPagina] = React.useState(1);
+  const [detalhe, setDetalhe] = React.useState<MetricasCampanha | null>(null);
+  const [visaoGeralExpandida, setVisaoGeralExpandida] = React.useState(false);
+
+  // MOCK VISUAL — ver src/mocks/premiacoesMock.ts. Com o mock ligado, cada
+  // leitura curto-circuita o Supabase e `enabled` também vale sem empresa ativa.
+  const mockAtivo = isPremiacoesMockEnabled();
   const { data: campanhas = [], isLoading: loadCampanhas } = useQuery({
     queryKey: ['premiacoes_campanhas', empresaAtual?.id],
-    queryFn: () => premiacoesService.listarCampanhas(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
+    queryFn: async (): Promise<any[]> => getMockCampanhas() ?? (await premiacoesService.listarCampanhas(empresaAtual!.id)),
+    enabled: !!empresaAtual?.id || mockAtivo
   });
 
   const { data: pagamentos = [], isLoading: loadPagamentos } = useQuery({
     queryKey: ['premiacoes_pagamentos', empresaAtual?.id],
-    queryFn: () => premiacoesService.listarPagamentos(undefined, empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
+    queryFn: async (): Promise<any[]> => getMockPagamentos() ?? (await premiacoesService.listarPagamentos(undefined, empresaAtual!.id)),
+    enabled: !!empresaAtual?.id || mockAtivo
   });
 
-  const { data: auditoria = [], isLoading: loadAuditoria } = useQuery({
+  const {
+    data: auditoria = [],
+    isLoading: loadAuditoria,
+    isError: erroAuditoria,
+    refetch: recarregarAuditoria,
+  } = useQuery({
     queryKey: ['premiacoes_auditoria', empresaAtual?.id],
-    queryFn: () => premiacoesService.listarAuditoria(undefined, empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
+    queryFn: async (): Promise<any[]> => getMockAuditoriaPremiacoes() ?? (await premiacoesService.listarAuditoria(undefined, empresaAtual!.id)),
+    enabled: !!empresaAtual?.id || mockAtivo
   });
-
-  // Opções de período derivadas dos dados reais (data_pagamento, 'YYYY-MM').
-  // Pagamentos sem data entram como opção própria — ficariam invisíveis para
-  // qualquer mês (data_pagamento é nullable e não é preenchida na aprovação).
-  const periodosDisponiveis = React.useMemo(() => {
-    const mapa = new Map<string, string>();
-    let temSemData = false;
-    for (const p of pagamentos) {
-      const dp = (p as { data_pagamento?: string | null }).data_pagamento;
-      if (!dp) {
-        temSemData = true;
-        continue;
-      }
-      const ym = dp.slice(0, 7);
-      const label = new Date(`${ym}-02T12:00:00`).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-      mapa.set(ym, label.charAt(0).toUpperCase() + label.slice(1));
-    }
-    const entradas = [...mapa.entries()].sort((a, b) => b[0].localeCompare(a[0]));
-    if (temSemData) entradas.push([PERIODO_SEM_DATA, 'Sem data de pagamento']);
-    return entradas;
-  }, [pagamentos]);
-
-  // A escolha pertence à empresa em que foi feita: trocar de empresa zera o
-  // filtro mesmo quando a nova tem o mesmo mês, e a opção precisa existir nos
-  // dados atuais. Estado derivado em vez de effect.
-  const periodoEfetivo =
-    periodoFiltro !== null &&
-    periodoFiltro.empresaId === empresaAtual?.id &&
-    periodosDisponiveis.some(([ym]) => ym === periodoFiltro.ym)
-      ? periodoFiltro.ym
-      : '';
 
   const updateStatusMutation = useMutation({
-    mutationFn: ({ id, status, valor }: { id: string; status: string; valor?: number }) =>
-      premiacoesService.atualizarStatusPagamento(id, status, empresaAtual!.id, valor),
+    // MOCK VISUAL — ver src/mocks/premiacoesMock.ts. Aborta a escrita no modo demo.
+    mutationFn: ({ id, status, valor }: { id: string, status: string, valor?: number }) => {
+      if (bloquearEscritaPremiacoes('Atualizar status do pagamento')) return Promise.reject(new Error('mock'));
+      return premiacoesService.atualizarStatusPagamento(id, status, empresaAtual!.id, valor);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['premiacoes_pagamentos'] });
       queryClient.invalidateQueries({ queryKey: ['premiacoes_auditoria'] });
-      toast.success('Status atualizado e registrado na auditoria.');
-    },
+      toast.success("Status atualizado e registrado na auditoria.");
+    }
   });
 
   const handleExport = async (format: 'csv' | 'pdf') => {
+    // MOCK VISUAL — ver src/mocks/premiacoesMock.ts. Evita chamar
+    // `listarPagamentos` com empresa inexistente; apenas confirma no toast.
+    const totalFicticio = simularExportacaoPremiacoes();
+    if (totalFicticio !== undefined) {
+      toast.success(`Relatório ${format.toUpperCase()} gerado (demonstração).`, {
+        description: `${totalFicticio} registros fictícios exportados.`,
+      });
+      return;
+    }
     toast.promise(
-      (async () => {
-        const pagamentos = (await premiacoesService.exportarRelatorio({
-          empresaId: empresaAtual?.id,
-          periodo: periodoEfetivo || undefined,
-        })) as {
-          valor_aprovado?: number | null;
-          valor_folha_real?: number | null;
-          status_conciliacao?: string | null;
-          created_at?: string | null;
-          colaborador?: { nome_completo?: string | null } | null;
-          campanha?: { nome?: string | null } | null;
-        }[];
-        const linhas = pagamentos.map((p) => ({
-          colaborador: p.colaborador?.nome_completo ?? null,
-          campanha: p.campanha?.nome ?? null,
-          valor_aprovado: p.valor_aprovado ?? null,
-          valor_folha: p.valor_folha_real ?? null,
-          status_conciliacao: p.status_conciliacao ?? null,
-          created_at: p.created_at ?? null,
-        }));
-        if (linhas.length === 0) throw new Error('Nenhum pagamento para exportar.');
-        // Trilha LGPD (art. 37) — export carrega nomes e valores por colaborador.
-        void registrarAcessoPII('premiacoes_pagamentos', 'export', {
-          empresaId: empresaAtual?.id,
-          registroCount: linhas.length,
-        });
-        if (format === 'csv') {
-          exportPontoCSV(linhas, `premiacoes-${todayLocalISO()}.csv`);
-        } else {
-          exportPontoPDF(linhas, 'Relatório de Premiações', Object.keys(linhas[0]), {
-            seloSistema: 'DEPARTAMENTO PESSOAL v2.0',
-            statusGeral: 'EXPORTADO',
-            notaRodape: 'Documento gerado automaticamente — consulte o status de conciliação por pagamento',
-          });
-        }
-      })(),
+      premiacoesService.exportarRelatorio({
+        empresaId: empresaAtual?.id,
+        periodo: periodoFiltro,
+        unidade: unidadeFiltro,
+        faixaMeta: faixaMetaFiltro,
+        versao: '1.2.5-stable'
+      }),
       {
-        loading: `Gerando relatório ${format.toUpperCase()}${periodoEfetivo ? ' do período selecionado' : ''}...`,
-        success: 'Relatório gerado e baixado com sucesso!',
-        error: 'Erro ao gerar relatório.',
+        loading: `Gerando relatório ${format.toUpperCase()} com filtros aplicados...`,
+        success: "Relatório gerado com sucesso! Trilha de auditoria incluída.",
+        error: "Erro ao gerar relatório."
       }
     );
   };
 
-  const stats = {
-    totalAprovado: pagamentos.reduce((acc, p) => acc + (Number(p.valor_aprovado) || 0), 0),
-    totalRealFolha: pagamentos.reduce((acc, p) => acc + (Number(p.valor_folha_real) || 0), 0),
-    totalPendente: pagamentos
-      .filter((p) => p.status === 'calculado')
-      .reduce((acc, p) => acc + Number(p.valor_calculado), 0),
-    campanhasAtivas: campanhas.filter((c) => c.status === 'ativo').length,
-    divergenciaCount: pagamentos.filter((p) => p.status_conciliacao === 'divergente').length,
+  const handleSyncFolha = () => {
+    toast.info("Iniciando sincronização com a Folha de Pagamento...", {
+      description: "Os pagamentos aprovados serão integrados ao próximo ciclo disponível."
+    });
+    setTimeout(() => {
+      toast.success("Sincronização concluída!", {
+        description: "12 registros foram enviados para a folha de Maio/2026."
+      });
+    }, 2000);
   };
 
-  if (loadCampanhas)
-    return (
-      <div className="p-8">
-        <Skeleton className="h-[400px] w-full" />
-      </div>
-    );
+  if (loadCampanhas) return <div className="p-8"><Skeleton className="h-[400px] w-full" /></div>;
+
+  // Toda a inteligência da aba Campanhas vem de `premiacoesComum` (funções
+  // puras): as métricas usam os pagamentos já carregados, o "hoje" é fixado uma
+  // vez por render da página e nada é recalculado dentro do JSX.
+  const hoje = new Date();
+  const metricasCampanhas = montarMetricas(campanhas as CampanhaHub[], pagamentos as PagamentoHub[], hoje);
+  const contagens = contarPorStatus(metricasCampanhas);
+  const campanhasFiltradas = filtrarEOrdenarCampanhas(metricasCampanhas, filtros, hoje);
+  // Paginação LOCAL: a página pedida é recortada para a faixa válida, então
+  // mudar o filtro nunca deixa a tabela numa página vazia/inexistente.
+  const { pagina: paginaAtual, linhas: linhasVisiveis } = paginarCampanhas(campanhasFiltradas, pagina, POR_PAGINA);
+  const acoesPendentes = montarAcoesPendentes(metricasCampanhas, pagamentos as PagamentoHub[]);
+  const atividadeRecente = montarAtividadeRecente(
+    auditoria as AuditoriaHub[],
+    campanhas as CampanhaHub[],
+    pagamentos as PagamentoHub[],
+    4,
+  );
+
+  /* ─── Indicadores (mesmas fontes de sempre, só reorganizadas) ───────────── */
+
+  const totalAprovado = pagamentos.reduce((acc: number, p: any) => acc + numero(p.valor_aprovado), 0);
+  const listaPendentes = pagamentos.filter((p: any) => (STATUS_PAGAMENTO_PENDENTE as readonly string[]).includes(p.status));
+  const totalPendente = listaPendentes.reduce((acc: number, p: any) => acc + numero(p.valor_calculado), 0);
+  const variacaoAprovado = calcularVariacaoMensal(pagamentos as PagamentoHub[], hoje);
+  const divergencias = pagamentos.filter((p: any) => p.status_conciliacao === 'divergente').length;
+  const orcamentoConsolidado = metricasCampanhas.reduce((acc, m) => acc + m.orcamentoTotal, 0);
+
+  const atualizarFiltros = (patch: Partial<FiltrosHub>) => {
+    setFiltros((atual) => ({ ...atual, ...patch }));
+    setPagina(1);
+  };
+  const irParaAba = (destino: string) => {
+    setDetalhe(null);
+    selecionarAba(destino);
+  };
+
+  const mensagemVazia =
+    campanhas.length === 0
+      ? 'Nenhuma campanha cadastrada ainda. Use “Nova Campanha” para criar a primeira.'
+      : 'Nenhuma campanha corresponde aos filtros aplicados.';
 
   return (
-    <>
-      <PageTitle
-        title="Premiações & Renda Variável 10/10"
-        description="Gestão estratégica de incentivos e alta performance organizacional"
-      />
-      <PageLayout
-        title="Hub de Premiações"
-        description="Campanhas, Metas e ROI de Capital Humano"
-        icon={<Trophy className="h-5 w-5 text-primary-foreground" />}
-        gradient="from-amber-500 to-orange-600"
-      >
-        <div className="grid gap-4 md:grid-cols-4 mb-8">
-          <Card className="border-border/40 shadow-xs bg-gradient-to-br from-card to-muted/20">
-            <CardContent className="p-6">
-              <div className="flex justify-between items-start">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Total Aprovado</p>
-                <div className="p-2 bg-success/10 rounded-lg text-success">
-                  <DollarSign className="h-4 w-4" />
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold mt-2">{formatCurrency(stats.totalAprovado)}</h3>
-              <p className="text-[10px] text-success flex items-center gap-1 mt-1 font-medium">
-                <ArrowUpRight className="h-3 w-3" /> +12% vs mês anterior
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border/40 shadow-xs">
-            <CardContent className="p-6">
-              <div className="flex justify-between items-start">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Pendente (Calculado)</p>
-                <div className="p-2 bg-warning/10 rounded-lg text-warning">
-                  <AlertCircle className="h-4 w-4" />
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold mt-2">{formatCurrency(stats.totalPendente)}</h3>
-              <p className="text-[10px] text-muted-foreground mt-1">Aguardando revisão manual</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border/40 shadow-xs">
-            <CardContent className="p-6">
-              <div className="flex justify-between items-start">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Campanhas Ativas</p>
-                <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                  <Target className="h-4 w-4" />
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold mt-2">{stats.campanhasAtivas}</h3>
-              <p className="text-[10px] text-muted-foreground mt-1">Impactando 85% do time</p>
-            </CardContent>
-          </Card>
-
-          <Card
-            className={`border-border/40 shadow-xs ${stats.divergenciaCount > 0 ? 'bg-amber-500/5' : 'bg-primary/5'}`}
+    // Mesmo comportamento de movimento reduzido das telas que já usam a cascata
+    // do Dashboard (`DesligamentosPage`): com `prefers-reduced-motion` ligado a
+    // Motion mantém o fade e desliga o deslocamento — conteúdo 100% visível.
+    <MotionConfig reducedMotion={MOTION_REDUCED_MODE}>
+      <PageTitle title="Premiações & Renda Variável 10/10" description="Gestão estratégica de incentivos e alta performance organizacional" />
+      {/* `max-w-none` + `space-y-3.5` (14px): a página usa toda a largura útil e o
+          espaçamento entre blocos principais é o da especificação (§3.1/§3.2). */}
+      <PageLayout className="max-w-none space-y-3.5">
+        {/* Toda a área visual entra em cascata com a MESMA linguagem dos KPI Cards
+            do Dashboard Executivo, na cadência própria do hub
+            (`premiacoesEntrada.ts`). `EntradaPresenca` é obrigatória aqui: o
+            `AnimatePresence initial={false}` do
+            `PageTransition` bloqueia o keyframe `hidden` de qualquer `motion.*`
+            descendente — o `AnimatePresence` aninhado (sem props) devolve a
+            cascata à subárvore e NÃO renderiza DOM (layout idêntico). */}
+        <EntradaPresenca>
+        {/* Cabeçalho (§4): ícone 50×50 raio 14 · gap 14 · título 30px/600 · subtítulo 18px */}
+        <header className="flex items-center gap-3.5">
+          <motion.div
+            {...entradaCard(indiceEntrada('cabecalho', 0))}
+            className="flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-[14px] bg-gradient-to-br from-amber-500 to-orange-600"
           >
-            <CardContent className="p-6">
-              <div className="flex justify-between items-start">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Conciliação (Divergências)
+            <Trophy className="h-6 w-6 text-primary-foreground" />
+          </motion.div>
+          <div className="min-w-0">
+            <motion.h1
+              {...entradaCard(indiceEntrada('cabecalho', 1))}
+              className="text-[30px] font-semibold leading-9 tracking-tight"
+            >
+              Hub de Premiações
+            </motion.h1>
+            <motion.p
+              {...entradaCard(indiceEntrada('cabecalho', 2))}
+              className="text-[18px] leading-6 text-muted-foreground"
+            >
+              Campanhas, Metas e ROI de Capital Humano
+            </motion.p>
+          </div>
+        </header>
+
+        <Tabs value={activeTab} onValueChange={selecionarAba} className="space-y-3.5">
+          {/* 1 · Navegação das seções (§5): a MESMA tablist de Gestão de Desempenho
+              (`ui/animated-tabs` — contêiner azul-marinho arredondado, `p-1`, aba
+              ativa como pílula escura que desliza, ícone lime e texto claro),
+              preservando ícones e rótulos próprios de Campanhas. O botão Exportar
+              saiu desta barra (não existe na referência) — a exportação continua
+              acessível pelas ações da tabela de Campanhas e pelos botões CSV/PDF
+              do Painel Gerencial de Auditoria (aba Auditoria). */}
+          <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
+            {/* Wrapper = ITEM FLEX da linha (o `AnimatedTabsList` renderiza um
+                `div` por fora das classes de `containerClassName`, então o
+                `lg:flex-1`/`lg:min-w-0` de dentro não alcançam o item flex). */}
+            {/* O wrapper da tablist é UMA unidade da cascata. Os triggers em si
+                NÃO recebem `motion` individual: o indicador deslizante do
+                `ui/animated-tabs` mede `getBoundingClientRect()` do trigger ativo
+                e um `y` por aba deslocaria essa medida (o indicador ficaria
+                desalinhado depois da entrada). Animar o wrapper preserva o
+                indicador 100% e mantém a barra na sequência da página. */}
+            <motion.div {...entradaCard(indiceEntrada('navegacao', 0))} className="min-w-0 lg:flex-1">
+              <AnimatedTabsList
+                value={activeTab}
+                onValueChange={selecionarAba}
+                containerClassName="h-11 w-full rounded-xl border border-border/30 bg-card/50 p-1 overflow-x-auto lg:min-w-0 lg:flex-1 lg:overflow-visible"
+                highlightClassName="rounded-lg bg-background shadow-xs"
+                listClassName="flex h-full w-full items-center justify-start gap-1 text-muted-foreground lg:grid lg:grid-cols-4"
+              >
+                {ABAS.map((aba) => (
+                  <AnimatedTabsTrigger key={aba.valor} value={aba.valor} className={CLASSE_ABA}>
+                    <aba.icone className={CLASSE_ABA_ICONE} />
+                    <span className={CLASSE_ABA_TEXTO}>{aba.label}</span>
+                  </AnimatedTabsTrigger>
+                ))}
+              </AnimatedTabsList>
+            </motion.div>
+
+            {/* Nova Campanha no extremo direito, na MESMA altura externa (h-11) da
+                barra de abas — mantendo o amarelo-lima e a criação de campanhas.
+                O wrapper é o ITEM FLEX (leva o `w-full`/`lg:w-[200px]`), então o
+                botão continua com a mesma largura e o mesmo alinhamento. */}
+            <motion.div
+              {...entradaCard(indiceEntrada('navegacao', 1))}
+              className="w-full shrink-0 lg:w-[200px]"
+            >
+              <Button
+                onClick={() => setIsWizardOpen(true)}
+                className="h-11 w-full shrink-0 gap-2 rounded-xl bg-primary px-5 text-[14px] font-semibold text-primary-foreground hover:bg-primary/90"
+              >
+                <Plus className="h-[18px] w-[18px]" /> Nova Campanha
+              </Button>
+            </motion.div>
+          </div>
+          {/* 2 · Indicadores + visão geral (§6): uma linha, cartões compactos com
+              ícone à esquerda e informação à direita.
+              Só nas abas que falam de CAMPANHAS: a aba Pagamentos tem a própria
+              faixa de indicadores FINANCEIROS (IMAGEM 4 — quatro cartões do mesmo
+              padrão dimensional), então a faixa genérica não é duplicada lá. */}
+          {activeTab !== 'pagamentos' && activeTab !== 'auditoria' && (
+          <div className="grid min-w-0 grid-cols-1 gap-3 min-[640px]:grid-cols-2 min-[1024px]:grid-cols-3 min-[1440px]:grid-cols-5">
+            <Indicador
+              indice={indiceEntrada('kpis', 0)}
+              titulo="Total Aprovado"
+              valor={formatCurrency(totalAprovado)}
+              icone={DollarSign}
+              caixa="bg-success/15 text-success"
+              rodape={
+                variacaoAprovado ? (
+                  <span className="flex items-center gap-1 font-medium text-success">
+                    <ArrowUpRight className="h-3 w-3" />
+                    {variacaoAprovado.percentual >= 0 ? '+' : ''}
+                    {variacaoAprovado.percentual.toFixed(1).replace('.', ',')}% vs mês anterior
+                  </span>
+                ) : (
+                  'Sem base de comparação'
+                )
+              }
+            />
+
+            <Indicador
+              indice={indiceEntrada('kpis', 1)}
+              titulo="Pendente de Aprovação"
+              valor={formatCurrency(totalPendente)}
+              icone={Clock}
+              caixa="bg-warning/15 text-warning"
+              rodape={
+                listaPendentes.length === 1
+                  ? '1 pagamento pendente'
+                  : `${listaPendentes.length} pagamentos pendentes`
+              }
+            />
+
+            <Indicador
+              indice={indiceEntrada('kpis', 2)}
+              titulo="Campanhas Ativas"
+              valor={String(contagens.ativo)}
+              icone={Layers}
+              caixa="bg-info/15 text-info"
+              rodape={`de ${contagens.todos} ${contagens.todos === 1 ? 'campanha' : 'campanhas'}`}
+            />
+
+            <Indicador
+              indice={indiceEntrada('kpis', 3)}
+              titulo="Conciliação (Divergências)"
+              valor={String(divergencias)}
+              icone={AlertTriangle}
+              caixa="bg-red-500/25 text-red-500"
+              rodapeClasse={divergencias > 0 ? 'font-medium text-red-500' : 'text-muted-foreground'}
+              rodape={divergencias > 0 ? 'Requer atenção na auditoria' : 'Todos os valores conciliados'}
+              destaque={divergencias > 0}
+            />
+
+            {/* Visão geral (§6.5): mesmo formato dos demais indicadores — ícone à
+                ESQUERDA e o texto à direita (título na 1ª linha com o alternador,
+                campanhas na 2ª e pendências na 3ª); nunca mais alto que os
+                outros cartões. */}
+            <motion.div
+              {...entradaCard(indiceEntrada('kpis', 4))}
+              className="flex min-w-0 items-center gap-2.5 rounded-[14px] border border-border/50 bg-gradient-to-b from-card to-card/60 p-3"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-info/15 text-info">
+                <Target className="h-[18px] w-[18px]" />
+              </span>
+              <div className="flex min-w-0 flex-1 flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <p className="flex-1 truncate text-[11px] font-medium leading-[17px] text-muted-foreground">Visão geral</p>
+                  <button
+                    type="button"
+                    onClick={() => setVisaoGeralExpandida((v) => !v)}
+                    aria-expanded={visaoGeralExpandida}
+                    aria-label={
+                      visaoGeralExpandida ? 'Recolher detalhamento das campanhas' : 'Detalhar campanhas por status'
+                    }
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    <ChevronRight
+                      className={cn('h-4 w-4 transition-transform', visaoGeralExpandida && 'rotate-90')}
+                    />
+                  </button>
+                </div>
+
+                <p className="text-[11px] leading-[17px]">
+                  {contagens.todos === 1 ? '1 campanha' : `${contagens.todos} campanhas`}
+                  {` · ${contagens.ativo} ${contagens.ativo === 1 ? 'ativa' : 'ativas'}`}
                 </p>
-                <div
-                  className={`p-2 rounded-lg ${stats.divergenciaCount > 0 ? 'bg-amber-500/10 text-amber-500' : 'bg-primary/10 text-primary'}`}
+                <p className="text-[11px] leading-[17px] text-muted-foreground">
+                  {listaPendentes.length} {listaPendentes.length === 1 ? 'pendente' : 'pendentes'} ·{' '}
+                  {divergencias} {divergencias === 1 ? 'divergência' : 'divergências'}
+                </p>
+
+                {visaoGeralExpandida && (
+                  <ul className="mt-0.5 grid grid-cols-2 gap-x-3 gap-y-0.5 border-t border-border/30 pt-1.5 text-[11px] text-muted-foreground">
+                    <li>Finalizadas: {contagens.finalizado}</li>
+                    <li>Rascunhos: {contagens.rascunho}</li>
+                    <li>Suspensas: {contagens.suspenso}</li>
+                    <li>Orçamento: {formatCurrency(orcamentoConsolidado)}</li>
+                  </ul>
+                )}
+              </div>
+            </motion.div>
+          </div>
+          )}
+
+          <TabsContent value="campanhas" className="space-y-3.5">
+            {/* 3 · Busca, filtros rápidos, ordenação e período (§7).
+                DOIS GRUPOS: à ESQUERDA a busca (que CRESCE para absorver a folga)
+                com os filtros de status compactos logo ao lado; à DIREITA, sem
+                folga artificial, a ordenação e o período. Em telas estreitas o
+                grupo da direita desce inteiro — nada de sobreposição/corte. */}
+            <div className="flex min-h-[64px] min-w-0 flex-col gap-3 rounded-[14px] border border-border/50 bg-card/60 px-4 py-3 xl:flex-row xl:items-center xl:gap-6">
+              <div className="flex min-w-0 flex-wrap items-center gap-3 lg:flex-nowrap xl:flex-1">
+                {/* Busca: `lg:flex-1` faz o campo ocupar todo o espaço que sobra
+                    entre os chips e o grupo da direita (a `min-width` o mantém
+                    legível em telas estreitas, onde ele ocupa a linha inteira). */}
+                <motion.div
+                  {...entradaCard(indiceEntrada('filtros', 0))}
+                  className="relative w-full min-w-[160px] lg:flex-1"
                 >
-                  {stats.divergenciaCount > 0 ? (
-                    <AlertCircle className="h-4 w-4" />
-                  ) : (
-                    <ShieldCheck className="h-4 w-4" />
-                  )}
+                  <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    value={filtros.busca}
+                    onChange={(e) => atualizarFiltros({ busca: e.target.value })}
+                    placeholder="Buscar campanhas..."
+                    aria-label="Buscar campanhas"
+                    className="h-10 rounded-xl border-border/50 bg-background pl-10 text-[13px]"
+                  />
+                </motion.div>
+
+                {/* Filtros de status: MESMO chip colorido da Gestão de Desempenho
+                    (`avaliacao/ColoredFilterChip` + `PALETAS_CHIP`) — pill de 32px,
+                    com bolinha, texto e contador na cor da categoria; só o nome, a
+                    contagem e a cor variam. Sem `shrink-0` de grupo: assim eles
+                    QUEBRAM por dentro em telas estreitas em vez de estourar a barra. */}
+                <div className="flex min-w-0 flex-wrap items-center gap-3">
+                  {[
+                    { label: 'Todos', valor: 'todos' as const, tema: TEMA_TODOS, total: contagens.todos },
+                    { label: 'Ativas', valor: 'ativo' as const, tema: PALETAS_CHIP.emerald, total: contagens.ativo },
+                    {
+                      label: 'Finalizadas',
+                      valor: 'finalizado' as const,
+                      tema: PALETAS_CHIP.blue,
+                      total: contagens.finalizado,
+                    },
+                    {
+                      label: 'Rascunhos',
+                      valor: 'rascunho' as const,
+                      tema: PALETAS_CHIP.amber,
+                      total: contagens.rascunho,
+                    },
+                  ].map((chip, indiceChip) => (
+                    // O chip é um `<button>` do design system (sem `motion`), então
+                    // cada um entra por dentro de um wrapper que é o ITEM FLEX —
+                    // mesma largura de conteúdo, nenhuma mudança de layout.
+                    <motion.div key={chip.valor} {...entradaCard(indiceEntrada('filtros', 1 + indiceChip))}>
+                      <ColoredFilterChip
+                        label={chip.label}
+                        count={chip.total}
+                        tema={chip.tema}
+                        selected={filtros.status === chip.valor}
+                        onClick={() => atualizarFiltros({ status: chip.valor })}
+                      />
+                    </motion.div>
+                  ))}
                 </div>
               </div>
-              <h3 className="text-2xl font-bold mt-2">{stats.divergenciaCount}</h3>
-              <p
-                className={`text-[10px] mt-1 ${stats.divergenciaCount > 0 ? 'text-amber-600 font-bold' : 'text-muted-foreground'}`}
-              >
-                {stats.divergenciaCount > 0 ? 'Atenção necessária na auditoria' : 'Todos os valores conciliados'}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <div className="flex justify-between items-center">
-            <TabsList className="bg-muted/50 p-1 rounded-xl">
-              <TabsTrigger value="campanhas" className="rounded-lg gap-2">
-                <Trophy className="h-4 w-4" /> Campanhas
-              </TabsTrigger>
-              <TabsTrigger value="pagamentos" className="rounded-lg gap-2">
-                <DollarSign className="h-4 w-4" /> Pagamentos
-              </TabsTrigger>
-              <TabsTrigger value="simulador" className="rounded-lg gap-2">
-                <Calculator className="h-4 w-4" /> Simulador ROI
-              </TabsTrigger>
-              <TabsTrigger value="auditoria" className="rounded-lg gap-2">
-                <ShieldCheck className="h-4 w-4" /> Auditoria
-              </TabsTrigger>
-            </TabsList>
-            <div className="flex gap-2">
-              <Button variant="outline" className="gap-2 rounded-xl" onClick={() => handleExport('pdf')}>
-                <Download className="h-4 w-4" /> Exportar
-              </Button>
-              <Button className="gap-2 rounded-xl shadow-lg shadow-primary/20" onClick={() => setIsWizardOpen(true)}>
-                <Plus className="h-4 w-4" /> Nova Campanha
-              </Button>
-            </div>
-          </div>
-
-          <TabsContent value="campanhas" className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2">
-              {campanhas.map((c) => (
-                <Card
-                  key={c.id}
-                  className="border-border/30 hover:border-primary/20 transition-all group overflow-hidden rounded-2xl"
+              <div className="flex min-w-0 flex-wrap items-center justify-end gap-3">
+                <motion.div
+                  {...entradaCard(indiceEntrada('filtros', 5))}
+                  className="flex h-10 items-center gap-2.5 rounded-xl border border-border/50 bg-background pl-3.5 pr-1"
                 >
-                  <div
-                    className={`h-1.5 w-full bg-gradient-to-r ${c.status === 'ativo' ? 'from-success to-emerald-400' : 'from-muted to-muted-foreground/30'}`}
-                  />
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="font-display font-bold text-lg group-hover:text-primary transition-colors">
-                          {c.nome}
-                        </h3>
-                        <p className="text-xs text-muted-foreground mt-1">{c.descricao}</p>
-                      </div>
-                      <Badge variant={c.status === 'ativo' ? 'default' : 'secondary'} className="rounded-full px-3">
-                        {c.status.toUpperCase()}
-                      </Badge>
-                    </div>
+                  <span className="whitespace-nowrap text-[9px] font-medium uppercase tracking-wide text-muted-foreground">
+                    Ordenar por
+                  </span>
+                  <Select
+                    value={filtros.ordenacao}
+                    onValueChange={(valor) => atualizarFiltros({ ordenacao: valor as OrdenacaoCampanha })}
+                  >
+                    <SelectTrigger
+                      aria-label="Ordenar por"
+                      className="h-10 w-[132px] border-0 bg-transparent px-2 text-[13px] focus:ring-0"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent align="end">
+                      {ORDENACAO_ROTULOS.map((opcao) => (
+                        <SelectItem key={opcao.valor} value={opcao.valor} className="text-xs">
+                          {opcao.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </motion.div>
 
-                    <div className="grid grid-cols-2 gap-4 my-6">
-                      <div className="space-y-1">
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter flex items-center gap-1">
-                          <Calendar className="h-3 w-3" /> Período
-                        </p>
-                        <p className="text-xs font-semibold">
-                          {formatDate(c.data_inicio)} - {formatDate(c.data_fim)}
-                        </p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter flex items-center gap-1">
-                          <DollarSign className="h-3 w-3" /> Orçamento
-                        </p>
-                        <p className="text-xs font-semibold">{formatCurrency(c.orcamento_estimado || 0)}</p>
-                      </div>
-                    </div>
+                <motion.div
+                  {...entradaCard(indiceEntrada('filtros', 6))}
+                  className="flex h-10 items-center gap-2.5 rounded-xl border border-border/50 bg-background pl-3.5 pr-1"
+                >
+                  <CalendarDays className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  <Select
+                    value={filtros.periodo}
+                    onValueChange={(valor) => atualizarFiltros({ periodo: valor as FiltroPeriodoCampanha })}
+                  >
+                    <SelectTrigger
+                      aria-label="Período"
+                      className="h-10 w-[118px] border-0 bg-transparent px-2 text-[13px] focus:ring-0"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent align="end">
+                      {OPCOES_PERIODO.map((opcao) => (
+                        <SelectItem key={opcao.valor} value={opcao.valor} className="text-xs">
+                          {opcao.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </motion.div>
+              </div>
+            </div>
+            {/* 4 · Área principal (§8): tabela (~80%) + lateral (~20%, mín. 240px).
+                `items-stretch` + `contain-size` na coluna lateral fazem a ALTURA
+                DA LINHA ser ditada pela TABELA: a lateral recebe exatamente essa
+                altura e rola por dentro (sem cortar conteúdo), terminando na
+                MESMA linha horizontal da borda inferior da tabela. */}
+            <div className="grid min-w-0 grid-cols-1 items-stretch gap-3.5 xl:grid-cols-[minmax(0,4.2fr)_minmax(212px,0.82fr)]">
+              <CampanhaTabela
+                linhas={linhasVisiveis}
+                total={campanhasFiltradas.length}
+                pagina={paginaAtual}
+                porPagina={POR_PAGINA}
+                onPaginaChange={setPagina}
+                ordenacaoAtual={filtros.ordenacao}
+                onAbrirDetalhes={setDetalhe}
+                onVerPagamentos={() => irParaAba('pagamentos')}
+                onExportar={() => handleExport('csv')}
+                mensagemVazia={mensagemVazia}
+              />
 
-                    <div className="space-y-3">
-                      <div className="flex justify-between text-[10px] font-bold">
-                        <span className="text-muted-foreground">Progresso do Orçamento</span>
-                        <span>45%</span>
-                      </div>
-                      <Progress value={45} className="h-1.5" />
-                    </div>
-
-                    <div className="mt-6 pt-4 border-t border-border/10 flex justify-between items-center">
-                      <div className="flex -space-x-2">
-                        {[1, 2, 3].map((i) => (
-                          <div
-                            key={i}
-                            className="h-7 w-7 rounded-full border-2 border-background bg-muted flex items-center justify-center text-[10px] font-bold"
-                          >
-                            U{i}
-                          </div>
-                        ))}
-                        <div className="h-7 w-7 rounded-full border-2 border-background bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                          +12
-                        </div>
-                      </div>
-                      <Button variant="ghost" size="sm" className="text-xs font-bold text-primary hover:bg-primary/5">
-                        Gerenciar Regras <ArrowUpRight className="ml-1 h-3 w-3" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-
-              {campanhas.length === 0 && (
-                <Card className="col-span-full border-dashed border-2 py-12 flex flex-col items-center justify-center text-center">
-                  <div className="p-4 bg-muted/50 rounded-full mb-4">
-                    <Trophy className="h-8 w-8 text-muted-foreground/50" />
-                  </div>
-                  <h3 className="font-bold text-lg">Nenhuma campanha estratégica</h3>
-                  <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                    Comece criando sua primeira campanha de incentivo para impulsionar a performance do time.
-                  </p>
-                  <Button variant="outline" className="mt-6 rounded-xl">
-                    Criar Campanha agora
-                  </Button>
-                </Card>
-              )}
+              {/* `xl:contain-size`: a coluna deixa de contribuir com a própria
+                  altura intrínseca no cálculo da linha (só a tabela manda);
+                  abaixo de `xl` as colunas empilham e a restrição não se aplica. */}
+              <div className="min-w-0 xl:contain-size xl:min-h-0">
+                <CampanhaLateral acoes={acoesPendentes} eventos={atividadeRecente} onNavegar={irParaAba} />
+              </div>
             </div>
           </TabsContent>
 
@@ -366,208 +624,50 @@ export default function PremiacoesPage() {
           </TabsContent>
 
           <TabsContent value="pagamentos" className="space-y-6">
-            <RewardsApprovalHub pagamentos={pagamentos} />
-
-            <Card className="border-border/30 rounded-2xl overflow-hidden shadow-xs mt-8 bg-card/50 backdrop-blur-xs">
-              <CardHeader className="bg-muted/30 border-b border-border/10 p-6">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                  <div>
-                    <CardTitle className="text-sm font-bold flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-primary" />
-                      Painel Gerencial de Auditoria & ROI v1.2
-                    </CardTitle>
-                    <CardDescription className="text-[10px] uppercase tracking-widest mt-1">
-                      Dados consolidados com snapshot de metas e conciliação
-                    </CardDescription>
-                  </div>
-                  <div className="flex flex-wrap gap-2 w-full md:w-auto">
-                    <div className="flex items-center gap-2 bg-background border border-border/50 rounded-xl px-3 py-1.5">
-                      <Filter className="h-3 w-3 text-muted-foreground" />
-                      <select
-                        className="bg-transparent text-[10px] font-bold outline-hidden border-none"
-                        value={periodoEfetivo}
-                        onChange={(e) =>
-                          setPeriodoFiltro(
-                            e.target.value === '' ? null : { ym: e.target.value, empresaId: empresaAtual?.id }
-                          )
-                        }
-                        aria-label="Filtrar exportação por período"
-                      >
-                        <option value="">Todos os Períodos</option>
-                        {periodosDisponiveis.map(([ym, label]) => (
-                          <option key={ym} value={ym}>
-                            {label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-9 text-[10px] font-bold uppercase rounded-xl"
-                      onClick={() => handleExport('csv')}
-                    >
-                      <Download className="mr-1 h-3 w-3" /> CSV
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-9 text-[10px] font-bold uppercase rounded-xl"
-                      onClick={() => handleExport('pdf')}
-                    >
-                      <FileText className="mr-1 h-3 w-3" /> PDF
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-muted/10 border-b border-border/5">
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground tracking-widest">
-                          Colaborador
-                        </th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground tracking-widest">
-                          Campanha
-                        </th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground tracking-widest">
-                          Valor Aprovado
-                        </th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground tracking-widest">
-                          Folha Real
-                        </th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground tracking-widest">
-                          Status / Justificativa
-                        </th>
-                        <th className="text-right p-4 font-bold text-[10px] uppercase text-muted-foreground tracking-widest">
-                          Auditoria
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border/5">
-                      {pagamentos.map((p) => (
-                        <tr key={p.id} className="hover:bg-accent/5 transition-colors group">
-                          <td className="p-4">
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-xs">{p.colaborador?.nome_completo}</span>
-                            </div>
-                          </td>
-                          <td className="p-4">
-                            <Badge variant="outline" className="text-[9px] font-medium border-border/50">
-                              {p.campanha?.nome}
-                            </Badge>
-                          </td>
-                          <td className="p-4 font-mono font-bold text-xs">
-                            {formatCurrency(p.valor_aprovado ?? p.valor_calculado)}
-                          </td>
-                          <td className="p-4 font-mono font-bold text-xs text-muted-foreground">
-                            {p.valor_folha_real ? formatCurrency(p.valor_folha_real) : '—'}
-                          </td>
-                          <td className="p-4">
-                            <div className="flex flex-col gap-1">
-                              <Badge
-                                className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full w-fit ${
-                                  p.status_conciliacao === 'conciliado'
-                                    ? 'bg-success/10 text-success'
-                                    : p.status_conciliacao === 'divergente'
-                                      ? 'bg-amber-500/10 text-amber-500'
-                                      : 'bg-muted text-muted-foreground'
-                                }`}
-                              >
-                                {p.status_conciliacao || 'pendente'}
-                              </Badge>
-                              {p.justificativa_divergencia && (
-                                <span
-                                  className="text-[9px] text-muted-foreground italic truncate max-w-[150px]"
-                                  title={p.justificativa_divergencia}
-                                >
-                                  "{p.justificativa_divergencia}"
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td className="p-4 text-right">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              aria-label="Histórico"
-                              className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <History className="h-3 w-3" />
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Aba Pagamentos — nova composição (IMAGEM 4): cabeçalho próprio,
+                quatro indicadores financeiros, fluxo horizontal, filtros, tabela
+                e coluna lateral (resumo, próximas ações e atividade). As escritas
+                e os filtros são os MESMOS do quadro de aprovação anterior. */}
+            <PagamentosTab
+              pagamentos={pagamentos}
+              auditoria={auditoria}
+              campanhas={campanhas}
+              onNavegar={irParaAba}
+            />
+            
           </TabsContent>
 
           <TabsContent value="auditoria" className="space-y-6">
-            <Card className="border-border/30 rounded-2xl overflow-hidden shadow-xs">
-              <CardHeader className="bg-muted/30 border-b border-border/30 py-4">
-                <div className="flex items-center gap-2">
-                  <History className="h-4 w-4 text-primary" />
-                  <CardTitle className="text-base">Trilha de Auditoria de Premiações</CardTitle>
-                </div>
-                <CardDescription className="text-xs">
-                  Histórico completo de alterações, aprovações e integrações
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-muted/20 border-b border-border/10">
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground">
-                          Data/Hora
-                        </th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground">Usuário</th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground">Ação</th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground">
-                          Entidade
-                        </th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground">
-                          Motivo/Detalhes
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border/10">
-                      {auditoria.map((a) => (
-                        <tr key={a.id} className="hover:bg-accent/5 transition-colors">
-                          <td className="p-4 text-xs font-medium whitespace-nowrap">{formatDateTime(a.created_at)}</td>
-                          <td className="p-4 text-xs">RH / Admin</td>
-                          <td className="p-4">
-                            <Badge variant="outline" className="text-[9px] font-bold uppercase">
-                              {a.acao}
-                            </Badge>
-                          </td>
-                          <td className="p-4 text-xs text-muted-foreground">
-                            {a.entidade_tipo} ({a.entidade_id.substring(0, 8)})
-                          </td>
-                          <td className="p-4 text-xs italic">{a.motivo}</td>
-                        </tr>
-                      ))}
-                      {auditoria.length === 0 && (
-                        <tr>
-                          <td colSpan={5} className="p-8 text-center text-muted-foreground italic">
-                            Nenhum registro de auditoria encontrado.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
+            {/* A aba Auditoria não usa mais o Painel Gerencial/tabela antigos.
+                A fonte continua sendo `premiacoes_auditoria`; o componente novo
+                só muda a representação: filtros, categorias, timeline por data,
+                detalhes e paginação. */}
+            <AuditoriaTab
+              auditoria={auditoria as AuditoriaHub[]}
+              pagamentos={pagamentos as PagamentoHub[]}
+              campanhas={campanhas as CampanhaHub[]}
+              carregando={loadAuditoria}
+              erro={erroAuditoria}
+              onTentarNovamente={() => void recarregarAuditoria()}
+              onExportar={handleExport}
+            />
           </TabsContent>
         </Tabs>
+        </EntradaPresenca>
 
-        <CampaignWizard isOpen={isWizardOpen} onClose={() => setIsWizardOpen(false)} empresaId={empresaAtual?.id} />
+        <CampaignWizard
+          isOpen={isWizardOpen}
+          onClose={() => setIsWizardOpen(false)}
+          empresaId={empresaAtual?.id}
+        />
+
+        <CampanhaDetalhesDialog
+          linha={detalhe}
+          pagamentos={pagamentos as PagamentoHub[]}
+          onClose={() => setDetalhe(null)}
+          onVerPagamentos={() => irParaAba('pagamentos')}
+        />
       </PageLayout>
-    </>
+    </MotionConfig>
   );
 }

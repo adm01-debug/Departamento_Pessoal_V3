@@ -2,7 +2,7 @@
  * FolhaCompliancePage — Painel de auditoria não-repudiável da folha (Fase 5)
  *
  * Consome `vw_folha_compliance` (security_invoker=true → herda RLS de audit_log).
- * Mostra timeline de eventos PAYROLL_CALC / PAYROLL_CLOSE / PAYROLL_REOPEN por competência, com:
+ * Mostra timeline de eventos PAYROLL_CALC / CLOSE / REOPEN por competência, com:
  *  - filtro por competência, ação e busca livre (autor/motivo/hash)
  *  - validação client-side do `integrity_hash` (badge de conformidade)
  *  - exportação CSV para arquivamento contábil
@@ -13,8 +13,6 @@ import { PageLayout } from '@/components/layout';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { usePiiMask } from '@/hooks/usePiiMask';
-import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -48,9 +46,9 @@ type ComplianceRow = {
 };
 
 const ACAO_LABEL: Record<string, { label: string; color: string }> = {
-  PAYROLL_CALC: { label: 'Cálculo', color: 'bg-primary/15 text-primary border-primary/30' },
-  PAYROLL_CLOSE: { label: 'Fechamento', color: 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30' },
-  PAYROLL_REOPEN: { label: 'Reabertura', color: 'bg-amber-500/15 text-amber-500 border-amber-500/30' },
+  PAYROLL_CALC: { label: 'Cálculo',    color: 'bg-primary/15 text-primary border-primary/30' },
+  CLOSE:        { label: 'Fechamento', color: 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30' },
+  REOPEN:       { label: 'Reabertura', color: 'bg-amber-500/15 text-amber-500 border-amber-500/30' },
 };
 
 const fmtDate = (iso: string | null) =>
@@ -61,24 +59,10 @@ const fmtMoney = (n: number | null | undefined) =>
 
 function toCSV(rows: ComplianceRow[]): string {
   const header = [
-    'audit_id',
-    'event_at',
-    'acao',
-    'folha_id',
-    'empresa_id',
-    'competencia',
-    'version_anterior',
-    'version_nova',
-    'integrity_hash',
-    'total_proventos',
-    'total_descontos',
-    'total_liquido',
-    'total_fgts',
-    'holerites_count',
-    'itens_count',
-    'motivo',
-    'override_esocial',
-    'user_email',
+    'audit_id','event_at','acao','folha_id','empresa_id','competencia',
+    'version_anterior','version_nova','integrity_hash','total_proventos',
+    'total_descontos','total_liquido','total_fgts','holerites_count',
+    'itens_count','motivo','override_esocial','user_email',
   ];
   const escape = (v: unknown) => {
     if (v === null || v === undefined) return '';
@@ -91,7 +75,6 @@ function toCSV(rows: ComplianceRow[]): string {
 
 export default function FolhaCompliancePage() {
   const { empresaAtualId } = useEmpresas();
-  const pii = usePiiMask();
   const [competencia, setCompetencia] = useState<string>('all');
   const [acao, setAcao] = useState<string>('all');
   const [q, setQ] = useState('');
@@ -124,9 +107,8 @@ export default function FolhaCompliancePage() {
       if (competencia !== 'all' && r.competencia !== competencia) return false;
       if (acao !== 'all' && r.acao !== acao) return false;
       if (!term) return true;
-      return [r.user_email, r.motivo, r.integrity_hash, r.folha_id].some((v) =>
-        (v ?? '').toString().toLowerCase().includes(term)
-      );
+      return [r.user_email, r.motivo, r.integrity_hash, r.folha_id]
+        .some((v) => (v ?? '').toString().toLowerCase().includes(term));
     });
   }, [data, competencia, acao, q]);
 
@@ -135,12 +117,7 @@ export default function FolhaCompliancePage() {
       toast.warning('Nenhum evento para exportar');
       return;
     }
-    void registrarAcessoPII('folha_auditoria', 'export', {
-      empresaId: empresaAtualId,
-      registroCount: filtered.length,
-    });
-    const masked = filtered.map((r) => ({ ...r, user_email: r.user_email ? pii.email(r.user_email) : r.user_email }));
-    const blob = new Blob([toCSV(masked)], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([toCSV(filtered)], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -161,14 +138,14 @@ export default function FolhaCompliancePage() {
         <MetricasFolhaDashboard />
       </div>
 
+
+
       <Card>
         <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-primary" />
             <CardTitle className="text-base">Eventos auditados</CardTitle>
-            <Badge variant="outline" className="ml-2">
-              {filtered.length}
-            </Badge>
+            <Badge variant="outline" className="ml-2">{filtered.length}</Badge>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Input
@@ -178,27 +155,19 @@ export default function FolhaCompliancePage() {
               className="w-full md:w-64"
             />
             <Select value={competencia} onValueChange={setCompetencia}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Competência" />
-              </SelectTrigger>
+              <SelectTrigger className="w-40"><SelectValue placeholder="Competência" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas competências</SelectItem>
-                {competencias.map((c) => (
-                  <SelectItem key={c} value={c}>
-                    {c}
-                  </SelectItem>
-                ))}
+                {competencias.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
               </SelectContent>
             </Select>
             <Select value={acao} onValueChange={setAcao}>
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Ação" />
-              </SelectTrigger>
+              <SelectTrigger className="w-36"><SelectValue placeholder="Ação" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas ações</SelectItem>
                 <SelectItem value="PAYROLL_CALC">Cálculo</SelectItem>
-                <SelectItem value="PAYROLL_CLOSE">Fechamento</SelectItem>
-                <SelectItem value="PAYROLL_REOPEN">Reabertura</SelectItem>
+                <SelectItem value="CLOSE">Fechamento</SelectItem>
+                <SelectItem value="REOPEN">Reabertura</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isRefetching}>
@@ -238,50 +207,46 @@ export default function FolhaCompliancePage() {
                         <Badge variant="outline" className={cn('font-medium', meta.color)}>
                           {meta.label}
                         </Badge>
-                        <span className="text-sm font-medium">{r.competencia ?? '—'}</span>
+                        <span className="text-sm font-medium">
+                          {r.competencia ?? '—'}
+                        </span>
                         {r.version_anterior != null && r.version_nova != null && (
                           <span className="text-xs text-muted-foreground">
                             v{r.version_anterior} → v{r.version_nova}
                           </span>
                         )}
                         {r.override_esocial && (
-                          <Badge variant="destructive" className="text-[10px]">
-                            override eSocial
-                          </Badge>
+                          <Badge variant="destructive" className="text-[10px]">override eSocial</Badge>
                         )}
                       </div>
                       <span className="text-xs text-muted-foreground">{fmtDate(r.event_at)}</span>
                     </div>
 
                     <div className="mt-3 grid grid-cols-2 gap-2 text-xs md:grid-cols-4">
-                      <div>
-                        <span className="text-muted-foreground">Proventos:</span> {fmtMoney(r.total_proventos)}
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Descontos:</span> {fmtMoney(r.total_descontos)}
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">Líquido:</span> {fmtMoney(r.total_liquido)}
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">FGTS:</span> {fmtMoney(r.total_fgts)}
-                      </div>
+                      <div><span className="text-muted-foreground">Proventos:</span> {fmtMoney(r.total_proventos)}</div>
+                      <div><span className="text-muted-foreground">Descontos:</span> {fmtMoney(r.total_descontos)}</div>
+                      <div><span className="text-muted-foreground">Líquido:</span> {fmtMoney(r.total_liquido)}</div>
+                      <div><span className="text-muted-foreground">FGTS:</span> {fmtMoney(r.total_fgts)}</div>
                     </div>
 
                     <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                       {r.holerites_count != null && <span>{r.holerites_count} holerite(s)</span>}
                       {r.itens_count != null && <span>{r.itens_count} item(ns)</span>}
-                      {r.user_email && <span>por {pii.email(r.user_email)}</span>}
+                      {r.user_email && <span>por {r.user_email}</span>}
                     </div>
 
                     {r.motivo && (
-                      <p className="mt-2 rounded bg-muted/50 p-2 text-xs italic text-foreground/80">“{r.motivo}”</p>
+                      <p className="mt-2 rounded bg-muted/50 p-2 text-xs italic text-foreground/80">
+                        “{r.motivo}”
+                      </p>
                     )}
 
                     {r.integrity_hash && (
                       <div className="mt-2 flex items-center gap-2 text-[10px]">
                         <ShieldCheck className="h-3 w-3 text-emerald-500" />
-                        <code className="break-all font-mono text-muted-foreground">{r.integrity_hash}</code>
+                        <code className="break-all font-mono text-muted-foreground">
+                          {r.integrity_hash}
+                        </code>
                       </div>
                     )}
                   </div>

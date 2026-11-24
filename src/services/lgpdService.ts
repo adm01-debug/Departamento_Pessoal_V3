@@ -1,98 +1,59 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
-import { validateTablePayload } from '@/schemas/validate';
-
-export type LgpdConsentimentoComColaborador = Tables<'lgpd_consentimentos'> & {
-  colaborador: { nome_completo: string } | null;
-};
-export type LgpdSolicitacaoComColaborador = Tables<'lgpd_solicitacoes'> & {
-  colaborador: { nome_completo: string } | null;
-};
-
 export const lgpdService = {
-  async listarConsentimentos(empresaId: string): Promise<LgpdConsentimentoComColaborador[]> {
+  // colaboradorId opcional (PARTE I — Dossiê): filtra os consentimentos de
+  // UM colaborador; sem ele, mantém o comportamento existente (empresa toda).
+  async listarConsentimentos(empresaId: string, colaboradorId?: string): Promise<any[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
-    let q = supabase
-      .from('lgpd_consentimentos')
-      .select('*, colaborador:colaboradores(nome_completo)')
-      .order('created_at', { ascending: false });
+    let q = supabase.from('lgpd_consentimentos').select('*, colaborador:colaboradores(nome_completo)').order('created_at', { ascending: false });
     q = q.eq('empresa_id', empresaId);
+    if (colaboradorId) q = q.eq('colaborador_id', colaboradorId);
     const { data, error } = await q;
     if (error) throw error;
-    return (data as LgpdConsentimentoComColaborador[] | null) || [];
+    return data || [];
+
   },
 
-  async criarConsentimento(d: Insertable<'lgpd_consentimentos'>): Promise<Tables<'lgpd_consentimentos'>> {
-    const { data, error } = await supabase
-      .from('lgpd_consentimentos')
-      .insert(validateTablePayload('lgpd_consentimentos', d, 'lgpdService:lgpd_consentimentos'))
-      .select()
-      .maybeSingle();
+  async criarConsentimento(d: any): Promise<any> {
+    const { data, error } = await supabase.from('lgpd_consentimentos').insert(d).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de consentimento foi retornado.');
     return data;
   },
-
-  async revogarConsentimento(id: string, empresaId: string): Promise<Tables<'lgpd_consentimentos'>> {
+  
+  async revogarConsentimento(id: string, empresaId: string): Promise<any> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await supabase
-      .from('lgpd_consentimentos')
-      .update(
-        validateTablePayload(
-          'lgpd_consentimentos',
-          { aceito: false, revogado_em: new Date().toISOString() },
-          'lgpdService:lgpd_consentimentos'
-        )
-      )
-      .eq('id', id)
-      .eq('empresa_id', empresaId)
-      .select()
-      .maybeSingle();
+    const { data, error } = await supabase.from('lgpd_consentimentos').update({ aceito: false, revogado_em: new Date().toISOString() }).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de consentimento foi retornado.');
     return data;
-  },
 
-  async listarSolicitacoes(empresaId: string): Promise<LgpdSolicitacaoComColaborador[]> {
+  },
+  
+  async listarSolicitacoes(empresaId: string): Promise<any[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
-    let q = supabase
-      .from('lgpd_solicitacoes')
-      .select('*, colaborador:colaboradores(nome_completo)')
-      .order('created_at', { ascending: false });
+    let q = supabase.from('lgpd_solicitacoes').select('*, colaborador:colaboradores(nome_completo)').order('created_at', { ascending: false });
     q = q.eq('empresa_id', empresaId);
     const { data, error } = await q;
     if (error) throw error;
-    return (data as LgpdSolicitacaoComColaborador[] | null) || [];
+    return data || [];
+
   },
 
-  async criarSolicitacao(d: Insertable<'lgpd_solicitacoes'>): Promise<Tables<'lgpd_solicitacoes'>> {
-    const { data, error } = await supabase
-      .from('lgpd_solicitacoes')
-      .insert(validateTablePayload('lgpd_solicitacoes', d, 'lgpdService:lgpd_solicitacoes'))
-      .select()
-      .maybeSingle();
+  async criarSolicitacao(d: any): Promise<any> {
+    const { data, error } = await supabase.from('lgpd_solicitacoes').insert(d).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de solicitação LGPD foi retornado.');
     return data;
   },
-
-  async atualizarSolicitacao(
-    id: string,
-    d: Updatable<'lgpd_solicitacoes'>,
-    empresaId: string
-  ): Promise<Tables<'lgpd_solicitacoes'>> {
+  
+  async atualizarSolicitacao(id: string, d: any, empresaId: string): Promise<any> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await supabase
-      .from('lgpd_solicitacoes')
-      .update(validateTablePayload('lgpd_solicitacoes', d, 'lgpdService:lgpd_solicitacoes'))
-      .eq('id', id)
-      .eq('empresa_id', empresaId)
-      .select()
-      .maybeSingle();
+    const { data, error } = await supabase.from('lgpd_solicitacoes').update(d).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de solicitação LGPD foi retornado.');
     return data;
+
   },
 };

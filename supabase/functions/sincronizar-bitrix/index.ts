@@ -5,7 +5,6 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { safeFetch } from '../_shared/safe-fetch.ts';
-import { assertPublicHttpsUrl, UnsafeUrlError } from '../_shared/ssrf-guard.ts';
 
 const BodySchema = z.object({
   action: z.enum(['sync_departamentos', 'sync_colaboradores', 'sync_cargos', 'sync_all', 'status']),
@@ -50,9 +49,10 @@ serve(async (req: Request): Promise<Response> => {
     if (!isAdm) return jsonResponse({ success: false, error: 'Apenas admins podem sincronizar Bitrix24' }, 403);
 
     // 3) Validação Zod
+    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    const raw = _pb;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return jsonResponse({ success: false, error: 'Payload inválido', details: parsed.error.flatten() }, 400);
@@ -69,7 +69,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `bitrix:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     // 5) Buscar config Bitrix
     let cfgQuery = admin.from('bitrix24_config').select('*').limit(1);
@@ -82,16 +82,6 @@ serve(async (req: Request): Promise<Response> => {
     }
     if (!config.webhook_url) {
       return jsonResponse({ success: false, error: 'URL do webhook Bitrix24 não configurada' }, 400);
-    }
-    // E50-37: revalida no consumo, não só na gravação — a config pode ter
-    // sido escrita antes deste guard existir, ou editada fora do app.
-    try {
-      await assertPublicHttpsUrl(config.webhook_url);
-    } catch (e) {
-      if (e instanceof UnsafeUrlError) {
-        return jsonResponse({ success: false, error: 'URL do webhook Bitrix24 aponta para um destino não permitido' }, 400);
-      }
-      throw e;
     }
 
     if (action === 'status') {
@@ -122,25 +112,16 @@ serve(async (req: Request): Promise<Response> => {
         const bitrixData = await resp.json();
         const departments = bitrixData.result || [];
         for (const dept of departments) {
-          // E50-34/35: onConflict alinhado ao índice único real (empresa_id,
-          // nome) — 'nome' sozinho não tinha constraint nenhuma, então o
-          // upsert original falhava sempre em runtime. `empresa_id` também
-          // faltava no payload: sem ele o departamento não era vinculado a
-          // nenhum tenant.
           const { error } = await admin.from('departamentos').upsert({
-            nome: dept.NAME, ativo: dept.ACTIVE === 'Y', empresa_id: config.empresa_id,
-          }, { onConflict: 'empresa_id,nome' });
+            nome: dept.NAME, ativo: dept.ACTIVE === 'Y',
+          }, { onConflict: 'nome' });
           if (error) totalErrors++; else totalSuccess++;
           totalProcessed++;
         }
         results.departamentos = { processed: departments.length };
       } catch (e: unknown) {
         results.departamentos = { error: e instanceof Error ? e.message : 'unknown' };
-        // Conta como processado-e-falho: sem isso, uma falha antes do loop de
-        // itens (ex. webhook fora do ar) deixava totalProcessed em 0 e o
-        // status final saía 207 (falha parcial) para um caso de falha total.
         totalErrors++;
-        totalProcessed++;
       }
     }
 
@@ -161,7 +142,7 @@ serve(async (req: Request): Promise<Response> => {
             status: 'Ativo',
             matricula: `BX-${user.ID}`,
             departamento: user.UF_DEPARTMENT ? 'Bitrix Sync' : 'Geral',
-          }, { onConflict: 'empresa_id,email' });
+          }, { onConflict: 'email' });
           if (error) totalErrors++; else totalSuccess++;
           totalProcessed++;
         }
@@ -169,7 +150,6 @@ serve(async (req: Request): Promise<Response> => {
       } catch (e: unknown) {
         results.colaboradores = { error: e instanceof Error ? e.message : 'unknown' };
         totalErrors++;
-        totalProcessed++;
       }
     }
 
@@ -188,28 +168,19 @@ serve(async (req: Request): Promise<Response> => {
     });
 
     await admin.from('audit_log').insert({
-      tabela: 'bitrix24_sync_logs', registro_id: 'sync', acao: 'SYSTEM_ACTION',
+      tabela: 'bitrix24_sync_logs', registro_id: 'sync', acao: 'SYNC',
       user_id: userId,
-      dados_novos: { evento: 'SYNC', action, totals: { totalProcessed, totalSuccess, totalErrors }, empresa_id: empresaId ?? null },
+      dados_novos: { action, totals: { totalProcessed, totalSuccess, totalErrors }, empresa_id: empresaId ?? null },
     });
 
     await admin.from('bitrix24_config').update({
       ultima_execucao: new Date().toISOString(),
     }).eq('id', config.id);
 
-    // E50-36: `success:true` mentia quando havia falha parcial — a UI
-    // mostrava "Sincronização concluída" mesmo com registros não gravados.
-    // 207 = sucesso parcial (RFC 4918), mantém o corpo estável para os
-    // callers que já leem `data.totals`.
-    const allFailed = totalProcessed > 0 && totalSuccess === 0;
-    const partialFailure = totalErrors > 0;
-    return jsonResponse(
-      {
-        success: !partialFailure,
-        data: { ...results, totals: { processed: totalProcessed, success: totalSuccess, errors: totalErrors } },
-      },
-      allFailed ? 502 : partialFailure ? 207 : 200,
-    );
+    return jsonResponse({
+      success: true,
+      data: { ...results, totals: { processed: totalProcessed, success: totalSuccess, errors: totalErrors } },
+    });
   } catch (error: unknown) {
     captureException(error, { fn: 'sincronizar-bitrix' });
     const message = error instanceof Error ? error.message : 'Unknown error';

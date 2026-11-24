@@ -14,8 +14,8 @@ vi.mock('@/integrations/supabase/client', () => ({
 
 import { useExecutiveKPIs, useStrategicFinancials } from '../useExecutiveDashboard';
 
-function makeChain(result: unknown) {
-  const chain: Record<string, unknown> = {};
+function makeChain(result: any) {
+  const chain: any = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.in = vi.fn().mockReturnValue(chain);
@@ -24,9 +24,9 @@ function makeChain(result: unknown) {
   chain.gt = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.limit = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(result).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(result).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(result).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(result).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(result).finally(fn);
   return chain;
 }
 

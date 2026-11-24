@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from './useEmpresas';
+import { isMockEmpresaId } from '@/mocks/colaboradoresMock';
 
 export function useSystemHealth() {
   const [latency, setLatency] = useState<number | null>(null);
@@ -25,10 +26,12 @@ export function useSystemHealth() {
         setLatency(duration);
 
         // 2. Advanced Metrics from Edge Function
-        // Only attempt if authenticated AND has empresaAtual (empresaId required by metricas)
+        // Only attempt if authenticated AND has empresaAtual (empresaId required by metricas).
+        // O id da empresa-mock (fallback sem vínculo real — ver colaboradoresMock.ts)
+        // não é um UUID válido: a edge function rejeitaria com 422.
         const { data: { session } } = await supabase.auth.getSession();
 
-        if (session && empresaAtual?.id) {
+        if (session && empresaAtual?.id && !isMockEmpresaId(empresaAtual.id)) {
           try {
             const { data, error: metricsError } = await supabase.functions.invoke('metricas', {
               body: { empresaId: empresaAtual.id }

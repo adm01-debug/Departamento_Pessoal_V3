@@ -19,22 +19,22 @@ vi.mock('../pontoAuditService', () => ({
 }));
 
 // select → eq → order×2 → optional gte/lte → await (thenable)
-function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupListChain(data: any[], error: any = null) {
   const response = { data, error };
-  const chain: Record<string, unknown> = {};
+  const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.gte = vi.fn().mockReturnValue(chain);
   chain.lte = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
 }
 
-function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupInsertChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -45,9 +45,7 @@ function setupInsertChain(data: unknown, error: { message: string; code?: string
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('batidasPontoService.listar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns batidas for colaborador', async () => {
     const records = [{ id: 'b1', colaborador_id: 'c1', data: '2026-07-24' }];
@@ -57,7 +55,7 @@ describe('batidasPontoService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     const result = await batidasPontoService.listar('c1', EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -96,9 +94,7 @@ describe('batidasPontoService.listar', () => {
 // ─── listarPorData ────────────────────────────────────────────────────────────
 
 describe('batidasPontoService.listarPorData', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns batidas for given date', async () => {
     const records = [{ id: 'b1', data: '2026-07-24' }];
@@ -108,7 +104,7 @@ describe('batidasPontoService.listarPorData', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     const result = await batidasPontoService.listarPorData('2026-07-24', EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -128,7 +124,9 @@ describe('batidasPontoService.listarPorData', () => {
   it('includes colaborador join in select', async () => {
     const { selectFn } = setupListChain([]);
     await batidasPontoService.listarPorData('2026-07-24', EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
+    expect(selectFn).toHaveBeenCalledWith(
+      expect.stringContaining('colaborador:colaboradores')
+    );
   });
 
   it('throws on DB error', async () => {
@@ -140,37 +138,31 @@ describe('batidasPontoService.listarPorData', () => {
 // ─── registrar ────────────────────────────────────────────────────────────────
 
 describe('batidasPontoService.registrar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  const batidaInsert = { colaborador_id: 'c1', data: '2026-01-01', hora: '08:00', ordem: 1, tipo: 'entrada' };
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns new batida', async () => {
-    const created = { id: 'b-new', ...batidaInsert };
+    const created = { id: 'b-new', hora: '08:00', tipo: 'entrada' };
     const { insertFn } = setupInsertChain(created);
-    const result = await batidasPontoService.registrar(batidaInsert);
-    expect(insertFn).toHaveBeenCalledWith(batidaInsert);
+    const result = await batidasPontoService.registrar({ hora: '08:00', tipo: 'entrada' });
+    expect(insertFn).toHaveBeenCalledWith({ hora: '08:00', tipo: 'entrada' });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(batidasPontoService.registrar(batidaInsert)).rejects.toThrow();
+    await expect(batidasPontoService.registrar({})).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(batidasPontoService.registrar(batidaInsert)).rejects.toBeDefined();
+    await expect(batidasPontoService.registrar({})).rejects.toBeDefined();
   });
 });
 
 // ─── ajustar ──────────────────────────────────────────────────────────────────
 
 describe('batidasPontoService.ajustar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates batida with ajustado=true and logs adjustment', async () => {
     const anterior = { id: 'b1', hora: '07:50' };
@@ -187,7 +179,9 @@ describe('batidasPontoService.ajustar', () => {
     const eqUpdate = vi.fn().mockReturnValue({ select: selectFn2 });
     const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
 
-    mockFrom.mockReturnValueOnce({ select: selectFn1 }).mockReturnValueOnce({ update: updateFn });
+    mockFrom
+      .mockReturnValueOnce({ select: selectFn1 })
+      .mockReturnValueOnce({ update: updateFn });
 
     const result = await batidasPontoService.ajustar('b1', { hora: '08:00' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ hora: '08:00', ajustado: true });
@@ -205,18 +199,20 @@ describe('batidasPontoService.ajustar', () => {
     const eqUpdate = vi.fn().mockReturnValue({ select: selectFn2 });
     const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
 
-    mockFrom.mockReturnValueOnce({ select: selectFn1 }).mockReturnValueOnce({ update: updateFn });
+    mockFrom
+      .mockReturnValueOnce({ select: selectFn1 })
+      .mockReturnValueOnce({ update: updateFn });
 
-    await expect(batidasPontoService.ajustar('b1', {}, EMPRESA_ID)).rejects.toThrow('Falha ao ajustar batida de ponto');
+    await expect(batidasPontoService.ajustar('b1', {}, EMPRESA_ID)).rejects.toThrow(
+      'Falha ao ajustar batida de ponto'
+    );
   });
 });
 
 // ─── fecharPeriodo ────────────────────────────────────────────────────────────
 
 describe('batidasPontoService.fecharPeriodo', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts a fechado period and returns the record', async () => {
     const periodo = { id: 'p1', status: 'fechado' };
@@ -227,25 +223,11 @@ describe('batidasPontoService.fecharPeriodo', () => {
 
     const result = await batidasPontoService.fecharPeriodo('emp-1', '2026-07-01', '2026-07-31');
     const insertArg = insertFn.mock.calls[0][0];
-    expect(insertArg.competencia).toBe('2026-07');
+    expect(insertArg.empresa_id).toBe('emp-1');
     expect(insertArg.data_inicio).toBe('2026-07-01');
     expect(insertArg.data_fim).toBe('2026-07-31');
     expect(insertArg.status).toBe('fechado');
     expect(result).toEqual(periodo);
-  });
-
-  it('expands a partial range to the full competencia month', async () => {
-    const periodo = { id: 'p1', status: 'fechado' };
-    const singleFn = vi.fn().mockResolvedValue({ data: periodo, error: null });
-    const selectFn = vi.fn().mockReturnValue({ single: singleFn });
-    const insertFn = vi.fn().mockReturnValue({ select: selectFn });
-    mockFrom.mockReturnValue({ insert: insertFn });
-
-    await batidasPontoService.fecharPeriodo('emp-1', '2026-07-15', '2026-07-15');
-    const insertArg = insertFn.mock.calls[0][0];
-    expect(insertArg.competencia).toBe('2026-07');
-    expect(insertArg.data_inicio).toBe('2026-07-01');
-    expect(insertArg.data_fim).toBe('2026-07-31');
   });
 
   it('throws on DB error', async () => {
@@ -254,6 +236,8 @@ describe('batidasPontoService.fecharPeriodo', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    await expect(batidasPontoService.fecharPeriodo('emp-1', '2026-07-01', '2026-07-31')).rejects.toBeDefined();
+    await expect(
+      batidasPontoService.fecharPeriodo('emp-1', '2026-07-01', '2026-07-31')
+    ).rejects.toBeDefined();
   });
 });

@@ -1,91 +1,50 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
-import { validateInput, validateTablePayload } from '@/schemas/validate';
-import {
-  dependenteSchema,
-  contatoEmergenciaSchema,
-  historicoSalarialSchema,
-  asoSchema,
-  formacaoSchema,
-  dadosEstrangeiroSchema,
-  deficienciaSchema,
-  periodoExperienciaSchema,
-  anotacaoSchema,
-  timeSchema,
-  webhookConfigSchema,
-  feriasColetivaSchema,
-  campoCustomizadoSchema,
-} from '@/schemas/colaboradorDetalhes';
+
+// Tipos locais para este módulo
+type DadosInsert = any;
+type DadosUpdate = any;
 
 // =============================================
 // Dependentes
 // =============================================
-// BUG corrigido (E51-026): `dependentes` não tem coluna `empresa_id` (só
-// `colaborador_id`) — o isolamento de tenant é feito via join com
-// `colaboradores.empresa_id`. O `.eq('empresa_id', ...)` direto fazia o
-// PostgREST rejeitar SELECT/UPDATE/DELETE inteiros por coluna desconhecida:
-// listar, editar e excluir dependentes sempre falhava (só criar funcionava,
-// já que o insert nunca tocava `empresa_id`).
-async function verificarDependenteDaEmpresa(id: string, empresaId: string): Promise<void> {
-  const { data, error } = await supabase
-    .from('dependentes')
-    .select('id, colaborador:colaboradores!inner(empresa_id)')
-    .eq('id', id)
-    .eq('colaborador.empresa_id', empresaId)
-    .maybeSingle();
-  if (error) throw error;
-  if (!data) throw new Error('Dependente não encontrado ou sem permissão');
-}
-
-export async function listarDependentes(colaboradorId: string, empresaId: string): Promise<Tables<'dependentes'>[]> {
+export async function listarDependentes(colaboradorId: string, empresaId: string) {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('dependentes')
-    .select('*, colaborador:colaboradores!inner(empresa_id)')
+    .select('*')
     .eq('colaborador_id', colaboradorId)
-    .eq('colaborador.empresa_id', empresaId)
+    .eq('empresa_id', empresaId)
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return (data as Tables<'dependentes'>[]) || [];
+  return data || [];
 }
 
-export async function criarDependente(dependente: Insertable<'dependentes'>): Promise<Tables<'dependentes'> | null> {
-  validateInput(dependenteSchema, dependente, 'criarDependente');
+export async function criarDependente(dependente: DadosInsert) {
   const { data, error } = await supabase
     .from('dependentes')
-    .insert(validateTablePayload('dependentes', [dependente], 'colaboradorDetalhesService:dependentes'))
+    .insert([dependente])
     .select()
     .maybeSingle();
   if (error) throw error;
   return data;
 }
 
-export async function atualizarDependente(
-  id: string,
-  dados: Updatable<'dependentes'>,
-  empresaId: string
-): Promise<void> {
+export async function atualizarDependente(id: string, dados: DadosUpdate, empresaId: string) {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-  await verificarDependenteDaEmpresa(id, empresaId);
-  validateInput(dependenteSchema, dados, 'atualizarDependente');
-  const { error } = await supabase
-    .from('dependentes')
-    .update(validateTablePayload('dependentes', dados, 'colaboradorDetalhesService:dependentes'))
-    .eq('id', id);
+  const { error } = await (supabase as any).from('dependentes').update(dados).eq('id', id).eq('empresa_id', empresaId);
   if (error) throw error;
 }
 
-export async function excluirDependente(id: string, empresaId: string): Promise<void> {
+export async function excluirDependente(id: string, empresaId: string) {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-  await verificarDependenteDaEmpresa(id, empresaId);
-  const { error } = await supabase.from('dependentes').delete().eq('id', id);
+  const { error } = await (supabase as any).from('dependentes').delete().eq('id', id).eq('empresa_id', empresaId);
   if (error) throw error;
 }
 
 // =============================================
 // Contatos de Emergência
 // =============================================
-export async function listarContatosEmergencia(colaboradorId: string): Promise<Tables<'contatos_emergencia'>[]> {
+export async function listarContatosEmergencia(colaboradorId: string) {
   const { data, error } = await supabase
     .from('contatos_emergencia')
     .select('*')
@@ -95,35 +54,30 @@ export async function listarContatosEmergencia(colaboradorId: string): Promise<T
   return data || [];
 }
 
-export async function criarContatoEmergencia(
-  contato: Insertable<'contatos_emergencia'>
-): Promise<Tables<'contatos_emergencia'> | null> {
-  validateInput(contatoEmergenciaSchema, contato, 'criarContatoEmergencia');
+export async function criarContatoEmergencia(contato: DadosInsert) {
   const { data, error } = await supabase
     .from('contatos_emergencia')
-    .insert(validateTablePayload('contatos_emergencia', [contato], 'colaboradorDetalhesService:contatos_emergencia'))
+    .insert([contato])
     .select()
     .maybeSingle();
   if (error) throw error;
   return data;
 }
 
+export async function atualizarContatoEmergencia(id: string, dados: DadosUpdate, colaboradorId: string) {
+  const { error } = await supabase.from('contatos_emergencia').update(dados).eq('id', id).eq('colaborador_id', colaboradorId);
+  if (error) throw error;
+}
+
 export async function excluirContatoEmergencia(colaboradorId: string, id: string) {
-  const { error } = await supabase
-    .from('contatos_emergencia')
-    .delete()
-    .eq('id', id)
-    .eq('colaborador_id', colaboradorId);
+  const { error } = await supabase.from('contatos_emergencia').delete().eq('id', id).eq('colaborador_id', colaboradorId);
   if (error) throw error;
 }
 
 // =============================================
 // Histórico Salarial
 // =============================================
-export async function listarHistoricoSalarial(
-  colaboradorId: string,
-  empresaId: string
-): Promise<Tables<'historico_salarial'>[]> {
+export async function listarHistoricoSalarial(colaboradorId: string, empresaId: string) {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   const { data, error } = await supabase
     .from('historico_salarial')
@@ -135,13 +89,10 @@ export async function listarHistoricoSalarial(
   return data || [];
 }
 
-export async function criarRegistroSalarial(
-  registro: Insertable<'historico_salarial'>
-): Promise<Tables<'historico_salarial'> | null> {
-  validateInput(historicoSalarialSchema, registro, 'criarRegistroSalarial');
+export async function criarRegistroSalarial(registro: DadosInsert) {
   const { data, error } = await supabase
     .from('historico_salarial')
-    .insert(validateTablePayload('historico_salarial', [registro], 'colaboradorDetalhesService:historico_salarial'))
+    .insert([registro])
     .select()
     .maybeSingle();
   if (error) throw error;
@@ -151,7 +102,7 @@ export async function criarRegistroSalarial(
 // =============================================
 // ASOs
 // =============================================
-export async function listarASOs(colaboradorId: string, empresaId: string): Promise<Tables<'asos'>[]> {
+export async function listarASOs(colaboradorId: string, empresaId: string) {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   const { data, error } = await supabase
     .from('asos')
@@ -163,11 +114,10 @@ export async function listarASOs(colaboradorId: string, empresaId: string): Prom
   return data || [];
 }
 
-export async function criarASO(aso: Insertable<'asos'>): Promise<Tables<'asos'> | null> {
-  validateInput(asoSchema, aso, 'criarASO');
+export async function criarASO(aso: DadosInsert) {
   const { data, error } = await supabase
     .from('asos')
-    .insert(validateTablePayload('asos', [aso], 'colaboradorDetalhesService:asos'))
+    .insert([aso])
     .select()
     .maybeSingle();
   if (error) throw error;
@@ -177,7 +127,7 @@ export async function criarASO(aso: Insertable<'asos'>): Promise<Tables<'asos'> 
 // =============================================
 // Formações Acadêmicas
 // =============================================
-export async function listarFormacoes(colaboradorId: string): Promise<Tables<'formacoes_academicas'>[]> {
+export async function listarFormacoes(colaboradorId: string) {
   const { data, error } = await supabase
     .from('formacoes_academicas')
     .select('*')
@@ -187,13 +137,10 @@ export async function listarFormacoes(colaboradorId: string): Promise<Tables<'fo
   return data || [];
 }
 
-export async function criarFormacao(
-  formacao: Insertable<'formacoes_academicas'>
-): Promise<Tables<'formacoes_academicas'> | null> {
-  validateInput(formacaoSchema, formacao, 'criarFormacao');
+export async function criarFormacao(formacao: DadosInsert) {
   const { data, error } = await supabase
     .from('formacoes_academicas')
-    .insert(validateTablePayload('formacoes_academicas', [formacao], 'colaboradorDetalhesService:formacoes_academicas'))
+    .insert([formacao])
     .select()
     .maybeSingle();
   if (error) throw error;
@@ -201,18 +148,26 @@ export async function criarFormacao(
 }
 
 export async function excluirFormacao(colaboradorId: string, id: string) {
-  const { error } = await supabase
-    .from('formacoes_academicas')
-    .delete()
-    .eq('id', id)
-    .eq('colaborador_id', colaboradorId);
+  const { error } = await supabase.from('formacoes_academicas').delete().eq('id', id).eq('colaborador_id', colaboradorId);
   if (error) throw error;
+}
+
+export async function atualizarFormacao(colaboradorId: string, id: string, dados: any) {
+  const { data, error } = await supabase
+    .from('formacoes_academicas')
+    .update(dados)
+    .eq('id', id)
+    .eq('colaborador_id', colaboradorId)
+    .select()
+    .maybeSingle();
+  if (error) throw error;
+  return data;
 }
 
 // =============================================
 // Dados de Estrangeiro
 // =============================================
-export async function obterDadosEstrangeiro(colaboradorId: string): Promise<Tables<'dados_estrangeiro'> | null> {
+export async function obterDadosEstrangeiro(colaboradorId: string) {
   const { data, error } = await supabase
     .from('dados_estrangeiro')
     .select('*')
@@ -222,21 +177,10 @@ export async function obterDadosEstrangeiro(colaboradorId: string): Promise<Tabl
   return data;
 }
 
-export async function salvarDadosEstrangeiro(
-  colaboradorId: string,
-  dados: Updatable<'dados_estrangeiro'>
-): Promise<Tables<'dados_estrangeiro'> | null> {
-  validateInput(dadosEstrangeiroSchema, { ...dados, colaborador_id: colaboradorId }, 'salvarDadosEstrangeiro');
+export async function salvarDadosEstrangeiro(colaboradorId: string, dados: DadosUpdate) {
   const { data, error } = await supabase
     .from('dados_estrangeiro')
-    .upsert(
-      validateTablePayload(
-        'dados_estrangeiro',
-        { ...dados, colaborador_id: colaboradorId },
-        'colaboradorDetalhesService:dados_estrangeiro'
-      ),
-      { onConflict: 'colaborador_id' }
-    )
+    .upsert({ ...dados, colaborador_id: colaboradorId }, { onConflict: 'colaborador_id' })
     .select()
     .maybeSingle();
   if (error) throw error;
@@ -246,7 +190,7 @@ export async function salvarDadosEstrangeiro(
 // =============================================
 // Deficiências (PCD)
 // =============================================
-export async function obterDeficiencia(colaboradorId: string): Promise<Tables<'deficiencias'> | null> {
+export async function obterDeficiencia(colaboradorId: string) {
   const { data, error } = await supabase
     .from('deficiencias')
     .select('*')
@@ -256,21 +200,10 @@ export async function obterDeficiencia(colaboradorId: string): Promise<Tables<'d
   return data;
 }
 
-export async function salvarDeficiencia(
-  colaboradorId: string,
-  dados: Omit<Insertable<'deficiencias'>, 'colaborador_id'>
-): Promise<Tables<'deficiencias'> | null> {
-  validateInput(deficienciaSchema, { ...dados, colaborador_id: colaboradorId }, 'salvarDeficiencia');
+export async function salvarDeficiencia(colaboradorId: string, dados: DadosUpdate) {
   const { data, error } = await supabase
     .from('deficiencias')
-    .upsert(
-      validateTablePayload(
-        'deficiencias',
-        { ...dados, colaborador_id: colaboradorId },
-        'colaboradorDetalhesService:deficiencias'
-      ),
-      { onConflict: 'colaborador_id' }
-    )
+    .upsert({ ...dados, colaborador_id: colaboradorId }, { onConflict: 'colaborador_id' })
     .select()
     .maybeSingle();
   if (error) throw error;
@@ -280,7 +213,7 @@ export async function salvarDeficiencia(
 // =============================================
 // Período de Experiência
 // =============================================
-export async function obterPeriodoExperiencia(colaboradorId: string): Promise<Tables<'periodos_experiencia'> | null> {
+export async function obterPeriodoExperiencia(colaboradorId: string) {
   const { data, error } = await supabase
     .from('periodos_experiencia')
     .select('*')
@@ -290,17 +223,14 @@ export async function obterPeriodoExperiencia(colaboradorId: string): Promise<Ta
   return data;
 }
 
-export async function salvarPeriodoExperiencia(
-  colaboradorId: string,
-  dados: Omit<Insertable<'periodos_experiencia'>, 'colaborador_id'>
-): Promise<Tables<'periodos_experiencia'> | null> {
-  validateInput(periodoExperienciaSchema, { ...dados, colaborador_id: colaboradorId }, 'salvarPeriodoExperiencia');
+export async function salvarPeriodoExperiencia(colaboradorId: string, dados: DadosUpdate) {
   const existing = await obterPeriodoExperiencia(colaboradorId);
   if (existing) {
+    const existingRecord = existing as Record<string, unknown>;
     const { data, error } = await supabase
       .from('periodos_experiencia')
-      .update(validateTablePayload('periodos_experiencia', dados, 'colaboradorDetalhesService:periodos_experiencia'))
-      .eq('id', existing.id)
+      .update(dados)
+      .eq('id', String(existingRecord.id))
       .eq('colaborador_id', colaboradorId)
       .select()
       .maybeSingle();
@@ -309,13 +239,7 @@ export async function salvarPeriodoExperiencia(
   } else {
     const { data, error } = await supabase
       .from('periodos_experiencia')
-      .insert(
-        validateTablePayload(
-          'periodos_experiencia',
-          [{ ...dados, colaborador_id: colaboradorId }],
-          'colaboradorDetalhesService:periodos_experiencia'
-        )
-      )
+      .insert([{ ...dados, colaborador_id: colaboradorId }])
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -326,7 +250,7 @@ export async function salvarPeriodoExperiencia(
 // =============================================
 // Anotações
 // =============================================
-export async function listarAnotacoes(colaboradorId: string): Promise<Tables<'anotacoes_colaborador'>[]> {
+export async function listarAnotacoes(colaboradorId: string) {
   const { data, error } = await supabase
     .from('anotacoes_colaborador')
     .select('*')
@@ -336,15 +260,10 @@ export async function listarAnotacoes(colaboradorId: string): Promise<Tables<'an
   return data || [];
 }
 
-export async function criarAnotacao(
-  anotacao: Insertable<'anotacoes_colaborador'>
-): Promise<Tables<'anotacoes_colaborador'> | null> {
-  validateInput(anotacaoSchema, anotacao, 'criarAnotacao');
+export async function criarAnotacao(anotacao: DadosInsert) {
   const { data, error } = await supabase
     .from('anotacoes_colaborador')
-    .insert(
-      validateTablePayload('anotacoes_colaborador', [anotacao], 'colaboradorDetalhesService:anotacoes_colaborador')
-    )
+    .insert([anotacao])
     .select()
     .maybeSingle();
   if (error) throw error;
@@ -352,38 +271,99 @@ export async function criarAnotacao(
 }
 
 export async function excluirAnotacao(colaboradorId: string, id: string) {
-  const { error } = await supabase
-    .from('anotacoes_colaborador')
-    .delete()
-    .eq('id', id)
-    .eq('colaborador_id', colaboradorId);
+  const { error } = await supabase.from('anotacoes_colaborador').delete().eq('id', id).eq('colaborador_id', colaboradorId);
   if (error) throw error;
+}
+
+// =============================================
+// Lotações (PARTE C: Trabalho & Hierarquia — sem hook/service prévio)
+// =============================================
+export async function listarLotacoes(colaboradorId: string, empresaId: string) {
+  if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+  const { data, error } = await supabase
+    .from('lotacoes')
+    .select('*')
+    .eq('colaborador_id', colaboradorId)
+    .eq('empresa_id', empresaId)
+    .order('nome');
+  if (error) throw error;
+  return data || [];
+}
+
+// =============================================
+// Férias — resumo por colaborador (PARTE E)
+// =============================================
+// Diferente de feriasService.listSolicitacoes (lista a empresa toda, sem
+// filtro por colaborador): aqui buscamos o histórico completo (qualquer
+// status) de UM colaborador, para próxima férias programada + histórico.
+export async function listarFeriasColaborador(colaboradorId: string, empresaId: string) {
+  if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+  const { data, error } = await supabase
+    .from('ferias')
+    .select('id, data_inicio, data_fim, dias_gozo, status')
+    .eq('colaborador_id', colaboradorId)
+    .eq('empresa_id', empresaId)
+    .order('data_inicio', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+// =============================================
+// Holerites — resumo por colaborador (PARTE F)
+// =============================================
+// Mesmo padrão de query já usado em src/pages/PortalPage.tsx (usePortalCompleto)
+// para "Meus Holerites" — aqui generalizado para o Dossiê administrativo.
+// Não toca a geração do holerite (gerar-holerite/folhaPagamentoService).
+export async function listarHoleritesColaborador(colaboradorId: string, limite: number = 12) {
+  const { data, error } = await supabase
+    .from('holerites')
+    .select(`
+      id, liquido, total_proventos, total_descontos, assinado, created_at,
+      colaborador_nome, colaborador_cpf, colaborador_cargo,
+      salario_base, valor_inss, valor_irrf, valor_fgts,
+      folha:folhas_pagamento!holerites_folha_id_fkey(competencia)
+    `)
+    .eq('colaborador_id', colaboradorId)
+    .order('created_at', { ascending: false })
+    .limit(limite);
+  if (error) throw error;
+  return (data || []).map((h: any) => ({
+    id: h.id,
+    competencia: h.folha?.competencia ?? '—',
+    total_liquido: h.liquido,
+    total_proventos: h.total_proventos,
+    total_descontos: h.total_descontos,
+    assinado: h.assinado,
+    created_at: h.created_at,
+    colaborador_nome: h.colaborador_nome,
+    colaborador_cpf: h.colaborador_cpf,
+    colaborador_cargo: h.colaborador_cargo,
+    salario_base: h.salario_base,
+    valor_inss: h.valor_inss,
+    valor_irrf: h.valor_irrf,
+    valor_fgts: h.valor_fgts,
+  }));
 }
 
 // =============================================
 // Períodos Aquisitivos
 // =============================================
-// BUG corrigido (E51-026): mesmo caso de `dependentes` — `periodos_aquisitivos`
-// também não tem `empresa_id` (só `colaborador_id`); isolamento via join.
-export async function listarPeriodosAquisitivos(
-  colaboradorId: string,
-  empresaId: string
-): Promise<Tables<'periodos_aquisitivos'>[]> {
+export async function listarPeriodosAquisitivos(colaboradorId: string, empresaId: string) {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('periodos_aquisitivos')
-    .select('*, colaborador:colaboradores!inner(empresa_id)')
+    .select('*')
     .eq('colaborador_id', colaboradorId)
-    .eq('colaborador.empresa_id', empresaId)
+    .eq('empresa_id', empresaId)
     .order('data_inicio', { ascending: false });
   if (error) throw error;
-  return (data as Tables<'periodos_aquisitivos'>[]) || [];
+  return data || [];
 }
 
 // =============================================
 // Times
 // =============================================
-export async function listarTimes(empresaId: string): Promise<Tables<'times'>[]> {
+export async function listarTimes(empresaId: string) {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   let query = supabase.from('times').select('*').order('nome');
   query = query.eq('empresa_id', empresaId);
@@ -392,15 +372,14 @@ export async function listarTimes(empresaId: string): Promise<Tables<'times'>[]>
   return data || [];
 }
 
-export async function criarTime(time: Insertable<'times'>): Promise<Tables<'times'> | null> {
+export async function criarTime(time: DadosInsert) {
   // O banco agora recusa time sem tenant (NOT NULL), mas a checagem aqui
   // devolve uma mensagem util em vez do erro cru do Postgres — e espelha a
   // mesma exigencia que `listarTimes` ja faz.
   if (!time?.empresa_id) throw new Error('empresa_id obrigatório para isolamento de tenant');
-  validateInput(timeSchema, time, 'criarTime');
   const { data, error } = await supabase
     .from('times')
-    .insert(validateTablePayload('times', [time], 'colaboradorDetalhesService:times'))
+    .insert([time])
     .select()
     .maybeSingle();
   if (error) throw error;
@@ -410,25 +389,25 @@ export async function criarTime(time: Insertable<'times'>): Promise<Tables<'time
 // =============================================
 // Tabelas de referência
 // =============================================
-export async function listarEtnias(): Promise<Tables<'etnias'>[]> {
+export async function listarEtnias() {
   const { data, error } = await supabase.from('etnias').select('*').order('nome');
   if (error) throw error;
   return data || [];
 }
 
-export async function listarIdentidadesGenero(): Promise<Tables<'identidades_genero'>[]> {
+export async function listarIdentidadesGenero() {
   const { data, error } = await supabase.from('identidades_genero').select('*').order('nome');
   if (error) throw error;
   return data || [];
 }
 
-export async function listarTiposAdmissao(): Promise<Tables<'tipos_admissao'>[]> {
+export async function listarTiposAdmissao() {
   const { data, error } = await supabase.from('tipos_admissao').select('*').order('nome');
   if (error) throw error;
   return data || [];
 }
 
-export async function listarTiposEstabilidade(): Promise<Tables<'tipos_estabilidade'>[]> {
+export async function listarTiposEstabilidade() {
   const { data, error } = await supabase.from('tipos_estabilidade').select('*').order('nome');
   if (error) throw error;
   return data || [];
@@ -437,33 +416,28 @@ export async function listarTiposEstabilidade(): Promise<Tables<'tipos_estabilid
 // =============================================
 // Webhooks
 // =============================================
-// BUG corrigido (E51-026): o select pedia `nome`, que não existe em
-// `webhooks_config` (mesma tabela e mesmo achado de src/services/
-// integracaoService.ts:webhookService.listar) — o PostgREST rejeitava o
-// SELECT inteiro por coluna desconhecida.
-export async function listarWebhooks(empresaId: string): Promise<Tables<'webhooks_config'>[]> {
+export async function listarWebhooks(empresaId: string) {
   if (!empresaId) throw new Error('empresa_id obrigatório');
   const { data, error } = await supabase
     .from('webhooks_config')
-    .select('*')
+    .select('id, empresa_id, nome, url, eventos, ativo, created_at')
     .eq('empresa_id', empresaId)
     .order('created_at', { ascending: false });
   if (error) throw error;
   return data || [];
 }
 
-export async function criarWebhook(webhook: Insertable<'webhooks_config'>): Promise<Tables<'webhooks_config'> | null> {
-  validateInput(webhookConfigSchema, webhook, 'criarWebhook');
+export async function criarWebhook(webhook: DadosInsert) {
   const { data, error } = await supabase
     .from('webhooks_config')
-    .insert(validateTablePayload('webhooks_config', [webhook], 'colaboradorDetalhesService:webhooks_config'))
+    .insert([webhook])
     .select()
     .maybeSingle();
   if (error) throw error;
   return data;
 }
 
-export async function excluirWebhook(id: string, empresaId: string): Promise<void> {
+export async function excluirWebhook(id: string, empresaId: string) {
   if (!id) throw new Error('id obrigatório');
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   const { error } = await supabase.from('webhooks_config').delete().eq('id', id).eq('empresa_id', empresaId);
@@ -473,7 +447,7 @@ export async function excluirWebhook(id: string, empresaId: string): Promise<voi
 // =============================================
 // Férias Coletivas
 // =============================================
-export async function listarFeriasColetivas(empresaId: string): Promise<Tables<'ferias_coletivas'>[]> {
+export async function listarFeriasColetivas(empresaId: string) {
   const { data, error } = await supabase
     .from('ferias_coletivas')
     .select('*')
@@ -483,13 +457,10 @@ export async function listarFeriasColetivas(empresaId: string): Promise<Tables<'
   return data || [];
 }
 
-export async function criarFeriasColetivas(
-  ferias: Insertable<'ferias_coletivas'>
-): Promise<Tables<'ferias_coletivas'> | null> {
-  validateInput(feriasColetivaSchema, ferias, 'criarFeriasColetivas');
+export async function criarFeriasColetivas(ferias: DadosInsert) {
   const { data, error } = await supabase
     .from('ferias_coletivas')
-    .insert(validateTablePayload('ferias_coletivas', [ferias], 'colaboradorDetalhesService:ferias_coletivas'))
+    .insert([ferias])
     .select()
     .maybeSingle();
   if (error) throw error;
@@ -499,7 +470,7 @@ export async function criarFeriasColetivas(
 // =============================================
 // Campos Customizados
 // =============================================
-export async function listarCamposCustomizados(empresaId: string): Promise<Tables<'campos_customizados'>[]> {
+export async function listarCamposCustomizados(empresaId: string) {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   let query = supabase.from('campos_customizados').select('*').eq('ativo', true).order('ordem');
   query = query.eq('empresa_id', empresaId);
@@ -508,22 +479,17 @@ export async function listarCamposCustomizados(empresaId: string): Promise<Table
   return data || [];
 }
 
-export async function criarCampoCustomizado(
-  campo: Insertable<'campos_customizados'>
-): Promise<Tables<'campos_customizados'> | null> {
-  validateInput(campoCustomizadoSchema, campo, 'criarCampoCustomizado');
+export async function criarCampoCustomizado(campo: DadosInsert) {
   const { data, error } = await supabase
     .from('campos_customizados')
-    .insert(validateTablePayload('campos_customizados', [campo], 'colaboradorDetalhesService:campos_customizados'))
+    .insert([campo])
     .select()
     .maybeSingle();
   if (error) throw error;
   return data;
 }
 
-export async function obterValoresCamposCustomizados(
-  colaboradorId: string
-): Promise<Tables<'valores_campos_customizados'>[]> {
+export async function obterValoresCamposCustomizados(colaboradorId: string) {
   const { data, error } = await supabase
     .from('valores_campos_customizados')
     .select('*')
@@ -536,15 +502,11 @@ export async function salvarValorCampoCustomizado(
   campoId: string,
   colaboradorId: string,
   valor: string
-): Promise<Tables<'valores_campos_customizados'> | null> {
+) {
   const { data, error } = await supabase
     .from('valores_campos_customizados')
     .upsert(
-      validateTablePayload(
-        'valores_campos_customizados',
-        { campo_customizado_id: campoId, colaborador_id: colaboradorId, valor },
-        'colaboradorDetalhesService:valores_campos_customizados'
-      ),
+      { campo_customizado_id: campoId, colaborador_id: colaboradorId, valor },
       { onConflict: 'campo_customizado_id,colaborador_id' }
     )
     .select()

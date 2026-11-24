@@ -1,7 +1,5 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseBase } from '@/integrations/supabase/client';
 import { loggerService } from './loggerService';
-import { validateInput, validateTablePayload } from '@/schemas/validate';
-import { z } from 'zod';
 import type { LooseQueryBuilder } from '@/types/queryBuilder';
 
 export interface ListOptions {
@@ -13,6 +11,12 @@ export interface ListOptions {
   filters?: Record<string, unknown>;
   searchColumn?: string;
   empresaId?: string;
+  /**
+   * Lê SEMPRE do banco, ignorando o mock do módulo. Usado pelo fluxo REAL de
+   * gravação (Nine-Box): o formulário precisa de IDs REAIS (UUID), nunca os
+   * fictícios (`mock-*`), que a guarda de escrita recusa corretamente.
+   */
+  semMock?: boolean;
 }
 
 export interface ListResponse<T> {
@@ -20,37 +24,18 @@ export interface ListResponse<T> {
   total: number;
 }
 
-/**
- * Quando RequireEmpresa é true (padrão), `atualizar`/`buscarPorId` exigem o
- * argumento empresaId em tempo de compilação — não só em runtime. Serviços
- * de entidades sem coluna empresa_id (ex.: a própria tabela `empresas`)
- * passam `false` no 4º type param e no `options.requireEmpresaId`.
- */
-type EmpresaIdArg<RequireEmpresa extends boolean> = RequireEmpresa extends false
-  ? [empresaId?: string]
-  : [empresaId: string];
-
-export class BaseService<
-  T,
-  CreateDTO = Record<string, unknown>,
-  UpdateDTO = Record<string, unknown>,
-  RequireEmpresa extends boolean = true,
-> {
+export class BaseService<T, CreateDTO = Record<string, unknown>, UpdateDTO = Record<string, unknown>> {
   constructor(
-    readonly table: string,
+    protected table: string,
     protected options: {
       searchColumn?: string;
       defaultOrderBy?: string;
       useVersioning?: boolean;
-      requireEmpresaId?: RequireEmpresa;
-      /** Schema Zod de domínio — quando presente, criar/atualizar rodam
-       * validateInput (parcial: campos presentes validados) antes do check
-       * estrutural de colunas. */
-      schema?: z.ZodType;
+      requireEmpresaId?: boolean;
     } = {}
   ) {
     if (this.options.requireEmpresaId === undefined) {
-      this.options.requireEmpresaId = true as RequireEmpresa;
+      this.options.requireEmpresaId = true;
     }
   }
 
@@ -61,7 +46,11 @@ export class BaseService<
    * métodos e da resposta — só o mapeamento coluna→tipo fica de fora.
    */
   protected getQuery(): LooseQueryBuilder {
-    return supabase.from(this.table) as unknown as LooseQueryBuilder;
+    // P0-CORS: usa supabaseBase (cliente direto do PostgREST) ao invés do proxy
+    // `supabase` que roteia via edge function external-db-bridge. O gateway do
+    // Supabase Cloud está reescrevendo ACAO em respostas autenticadas, bloqueando
+    // toda query. PostgREST via REST direto não passa por esse rewrite.
+    return supabaseBase.from(this.table as never) as unknown as LooseQueryBuilder;
   }
 
   async listar(options: ListOptions = {}): Promise<ListResponse<T>> {
@@ -72,7 +61,7 @@ export class BaseService<
       orderBy = this.options.defaultOrderBy || 'nome',
       orderAscending = true,
       filters = {},
-      searchColumn = this.options.searchColumn || 'nome',
+      searchColumn = this.options.searchColumn || 'nome'
     } = options;
 
     const search = rawSearch?.slice(0, 200);
@@ -103,7 +92,9 @@ export class BaseService<
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
 
-      const { data, count, error } = await query.order(orderBy, { ascending: orderAscending }).range(from, to);
+      const { data, count, error } = await query
+        .order(orderBy, { ascending: orderAscending })
+        .range(from, to);
 
       if (error) throw error;
       return { data: (data as T[]) || [], total: count || 0 };
@@ -113,8 +104,7 @@ export class BaseService<
     }
   }
 
-  async buscarPorId(id: string, ...args: EmpresaIdArg<RequireEmpresa>): Promise<T | null> {
-    const [empresaId] = args;
+  async buscarPorId(id: string, empresaId?: string): Promise<T | null> {
     if (!id) throw new Error('ID é obrigatório');
     try {
       let query = this.getQuery().select('*').eq('id', id);
@@ -130,14 +120,11 @@ export class BaseService<
 
   async criar(payload: CreateDTO): Promise<T> {
     try {
-      if (this.options.schema) {
-        validateInput(this.options.schema, payload as object, `base.criar:${this.table}`);
-      }
       const { data, error } = await this.getQuery()
-        .insert(validateTablePayload(this.table, payload as CreateDTO, `base.criar:${this.table}`) as CreateDTO)
+        .insert(payload as CreateDTO)
         .select()
         .maybeSingle();
-
+      
       if (error) throw error;
       if (!data) throw new Error(`Nenhum registro de ${this.table} foi retornado após criação.`);
       return data as T;
@@ -147,22 +134,19 @@ export class BaseService<
     }
   }
 
-  async atualizar(id: string, payload: UpdateDTO, ...args: EmpresaIdArg<RequireEmpresa>): Promise<T> {
-    const [empresaId] = args;
+  async atualizar(id: string, payload: UpdateDTO, empresaId?: string): Promise<T> {
     try {
       if (this.options.requireEmpresaId && !empresaId) {
         throw new Error(`empresa_id obrigatório para atualizar ${this.table} (isolamento de tenant)`);
       }
-      if (this.options.schema) {
-        validateInput(this.options.schema, payload as object, `base.atualizar:${this.table}`);
-      }
-      let query = this.getQuery()
-        .update(validateTablePayload(this.table, payload as Record<string, unknown>, `base.atualizar:${this.table}`))
-        .eq('id', id);
+      let query = this.getQuery().update(payload as Record<string, unknown>).eq('id', id);
       if (empresaId) query = query.eq('empresa_id', empresaId);
 
       if (this.options.useVersioning) {
-        const { data: current, error: currentError } = await this.getQuery().select('version').eq('id', id).single();
+        const { data: current, error: currentError } = await this.getQuery()
+          .select('version')
+          .eq('id', id)
+          .single();
 
         if (currentError) throw currentError;
         query = query.eq('version', (current as { version: number } | null)?.version || 1);
@@ -197,3 +181,5 @@ export class BaseService<
     }
   }
 }
+
+

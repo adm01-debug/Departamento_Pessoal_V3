@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { todayLocalISO } from '@/utils/dateLocal';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { usePiiMask } from '@/hooks/usePiiMask';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,10 +12,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
-import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { Loader2, FileText, ShieldCheck, Users, CheckCircle2, Plus, Send, Bell, UserX, Download } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { validateTablePayload } from '@/schemas/validate';
 
 type Documento = {
   id: string;
@@ -49,7 +46,6 @@ type Pendente = {
 
 const AdminRegimentoInternoPage = () => {
   const { empresaAtual } = useEmpresas();
-  const pii = usePiiMask();
   const [showNew, setShowNew] = useState(false);
   const [novoTitulo, setNovoTitulo] = useState('');
   const [novoConteudo, setNovoConteudo] = useState('');
@@ -98,14 +94,14 @@ const AdminRegimentoInternoPage = () => {
   const pendentes = regimentoQuery.data?.pendentes ?? EMPTY_PEND;
   const loading = regimentoQuery.isPending && !!empresaId;
 
-  const carregar = () => {
-    void regimentoQuery.refetch();
-  };
+  const carregar = () => { void regimentoQuery.refetch(); };
 
   const proximaVersao = useMemo(
     () => (documentos.length ? Math.max(...documentos.map((d) => d.versao)) + 1 : 1),
     [documentos]
   );
+
+
 
   const criarDocumento = async () => {
     if (!empresaAtual?.id) return;
@@ -115,19 +111,13 @@ const AdminRegimentoInternoPage = () => {
     }
     setSaving(true);
     try {
-      const { error } = await supabase.from('sst_regimento_documentos').insert(
-        validateTablePayload(
-          'sst_regimento_documentos',
-          {
-            empresa_id: empresaAtual.id,
-            titulo: novoTitulo.trim(),
-            conteudo_html: novoConteudo,
-            versao: proximaVersao,
-            status: 'RASCUNHO',
-          },
-          'AdminRegimentoInternoPage:sst_regimento_documentos'
-        )
-      );
+      const { error } = await supabase.from('sst_regimento_documentos').insert({
+        empresa_id: empresaAtual.id,
+        titulo: novoTitulo.trim(),
+        conteudo_html: novoConteudo,
+        versao: proximaVersao,
+        status: 'RASCUNHO',
+      });
       if (error) throw error;
       toast.success('Rascunho criado');
       setShowNew(false);
@@ -135,11 +125,7 @@ const AdminRegimentoInternoPage = () => {
       setNovoConteudo('');
       carregar();
     } catch (err) {
-      loggerService.error(
-        'Falha ao criar documento',
-        { empresaId: empresaAtual?.id },
-        err instanceof Error ? err : new Error(String(err))
-      );
+      loggerService.error('Falha ao criar documento', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
       toast.error('Falha ao criar documento');
     } finally {
       setSaving(false);
@@ -153,11 +139,7 @@ const AdminRegimentoInternoPage = () => {
       toast.success('Documento publicado e vigente');
       carregar();
     } catch (err) {
-      loggerService.error(
-        'Falha ao publicar documento',
-        { documentoId: id },
-        err instanceof Error ? err : new Error(String(err))
-      );
+      loggerService.error('Falha ao publicar documento', { documentoId: id }, err instanceof Error ? err : new Error(String(err)));
       toast.error('Falha ao publicar');
     }
   };
@@ -169,7 +151,7 @@ const AdminRegimentoInternoPage = () => {
         p_empresa_id: empresaAtual.id,
       });
       if (error) throw error;
-      const row = Array.isArray(data) ? data[0] : data;
+      const row = Array.isArray(data) ? data[0] : (data as any);
       const notif = row?.notificados ?? 0;
       const semUser = row?.sem_user ?? 0;
       if (notif === 0) {
@@ -178,11 +160,7 @@ const AdminRegimentoInternoPage = () => {
         toast.success(`${notif} colaborador(es) notificado(s)${semUser ? ` · ${semUser} sem usuário` : ''}`);
       }
     } catch (err) {
-      loggerService.error(
-        'Falha ao notificar pendentes',
-        { empresaId: empresaAtual?.id },
-        err instanceof Error ? err : new Error(String(err))
-      );
+      loggerService.error('Falha ao notificar pendentes', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
       toast.error(safeErrorMessage(err, 'Falha ao notificar pendentes.'));
     } finally {
       setNotificando(false);
@@ -190,10 +168,10 @@ const AdminRegimentoInternoPage = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="py-6 space-y-6">
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
+          <h1 className="text-2xl font-medium flex items-center gap-2">
             <ShieldCheck className="h-6 w-6 text-primary" /> Regimento Interno de SST
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -250,7 +228,7 @@ const AdminRegimentoInternoPage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{dash?.total_colaboradores ?? 0}</div>
+            <div className="text-3xl font-medium">{dash?.total_colaboradores ?? 0}</div>
           </CardContent>
         </Card>
         <Card>
@@ -260,7 +238,7 @@ const AdminRegimentoInternoPage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{dash?.assinados ?? 0}</div>
+            <div className="text-3xl font-medium">{dash?.assinados ?? 0}</div>
           </CardContent>
         </Card>
         <Card>
@@ -268,7 +246,7 @@ const AdminRegimentoInternoPage = () => {
             <CardTitle className="text-sm text-muted-foreground">Adesão</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="text-3xl font-bold">{dash?.adesao_pct ?? 0}%</div>
+            <div className="text-3xl font-medium">{dash?.adesao_pct ?? 0}%</div>
             <Button
               size="sm"
               variant="outline"
@@ -314,11 +292,6 @@ const AdminRegimentoInternoPage = () => {
               a.download = `regimento-pendentes-${todayLocalISO()}.csv`;
               a.click();
               URL.revokeObjectURL(url);
-              // Trilha LGPD — o CSV carrega nome/e-mail dos colaboradores.
-              void registrarAcessoPII('regimento_pendentes', 'export', {
-                empresaId,
-                registroCount: pendentes.length || 1,
-              });
             }}
           >
             <Download className="h-3 w-3" /> Exportar CSV
@@ -346,7 +319,7 @@ const AdminRegimentoInternoPage = () => {
                     <TableRow key={p.colaborador_id}>
                       <TableCell>
                         <div className="font-medium">{p.nome}</div>
-                        <div className="text-xs text-muted-foreground">{p.email ? pii.email(p.email) : '—'}</div>
+                        <div className="text-xs text-muted-foreground">{p.email ?? '—'}</div>
                       </TableCell>
                       <TableCell className="text-sm">{p.cargo ?? '—'}</TableCell>
                       <TableCell className="text-sm">{p.departamento ?? '—'}</TableCell>

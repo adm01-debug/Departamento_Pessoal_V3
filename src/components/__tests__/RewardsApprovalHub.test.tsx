@@ -1,14 +1,13 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogContent: ({ children }: { children?: ReactNode }) => <div role="dialog">{children}</div>,
-  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
-  DialogDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
-  DialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  Dialog: ({ children }: any) => <div>{children}</div>,
+  DialogContent: ({ children }: any) => <div role="dialog">{children}</div>,
+  DialogHeader: ({ children }: any) => <div>{children}</div>,
+  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
+  DialogDescription: ({ children }: any) => <p>{children}</p>,
+  DialogFooter: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('@tanstack/react-query', () => ({
@@ -31,11 +30,10 @@ vi.mock('sonner', () => ({
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: unknown) => String(e)),
+  safeErrorMessage: vi.fn((e: any) => String(e)),
 }));
 
 import { RewardsApprovalHub } from '../premiacoes/RewardsApprovalHub';
-import type { PagamentoComColaborador } from '../premiacoes/RewardsApprovalHub';
 
 const MOCK_PAGAMENTOS = [
   {
@@ -52,7 +50,7 @@ const MOCK_PAGAMENTOS = [
     valor_aprovado: 2000,
     colaborador: { nome_completo: 'Maria Souza' },
   },
-] as unknown as PagamentoComColaborador[];
+];
 
 describe('RewardsApprovalHub', () => {
   it('renders Aguardando Gestor stage', () => {

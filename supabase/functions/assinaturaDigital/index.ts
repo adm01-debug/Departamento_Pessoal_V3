@@ -2,7 +2,6 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
-import { getClientIp } from '../_shared/clientIp.ts';
 import { getCorsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { captureException } from '../_shared/sentry.ts';
 
@@ -36,9 +35,10 @@ serve(async (req: Request): Promise<Response> => {
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
+    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    const raw = _pb;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ success: false, error: 'Payload inválido', details: parsed.error.flatten() }, 400);
@@ -51,10 +51,12 @@ serve(async (req: Request): Promise<Response> => {
 
     // Rate limit por IP — endpoints públicos (assinar/verificar) precisam de proteção
     // contra brute force de tokens: 20 req / min / IP
-    const ip = getClientIp(req);
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || req.headers.get('x-real-ip')
+      || 'anon';
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `assinatura:${body.action}:${ip}`, limit: 20, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
 
 
     // 'assinar' é público — protegido pelo token de admissão (UUID + expiração + one-shot).
@@ -103,9 +105,13 @@ serve(async (req: Request): Promise<Response> => {
       const hashHex = Array.from(new Uint8Array(hashBuffer))
         .map((b) => b.toString(16).padStart(2, '0')).join('');
 
-      // IP real do cliente: último elemento de XFF (anexado pelo gateway).
-      // body.ipAddress é auto-reportado e forjável — nunca entra como evidência.
-      const clientIp = getClientIp(req);
+      // IP real do cliente (não confiar em body.ipAddress puro — usar como fallback)
+      const clientIp =
+        req.headers.get('cf-connecting-ip') ??
+        req.headers.get('x-real-ip') ??
+        req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+        body.ipAddress ??
+        'unknown';
 
       const { data: updated, error: updateErr } = await supabase
         .from('admissao_tokens')
@@ -126,8 +132,8 @@ serve(async (req: Request): Promise<Response> => {
       const { error: auditErr } = await supabase.from('audit_log').insert({
         tabela: 'admissao_tokens',
         registro_id: body.tokenId,
-        acao: 'SIGN',
-        dados_novos: { evento: 'ASSINATURA_DIGITAL', hash: hashHex, ip: clientIp, timestamp: nowIso },
+        acao: 'ASSINATURA_DIGITAL',
+        dados_novos: { hash: hashHex, ip: clientIp, timestamp: nowIso },
       });
       if (auditErr) throw auditErr;
 

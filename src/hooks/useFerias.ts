@@ -3,7 +3,6 @@ import { feriasService } from '@/services';
 import { useEmpresas } from './useEmpresas';
 import { auditLogger } from '@/utils/auditLogger';
 import { toast } from 'sonner';
-import type { Insertable, Updatable } from '@/integrations/supabase/database.types';
 import { safeErrorMessage } from '@/utils/safeError';
 
 export function useFerias(params?: { page?: number; limit?: number; search?: string; status?: string }) {
@@ -21,61 +20,56 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
   });
 
   const createMutation = useMutation({
-    mutationFn: async (data: Insertable<'ferias'>) => {
+    mutationFn: async (data: any) => {
       return await feriasService.criar({ ...data, empresa_id: empresaId });
     },
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos'] });
-      void auditLogger.log({
+      auditLogger.log({
         tabela: 'ferias',
         registro_id: data.id,
         acao: 'INSERT',
-        empresa_id: empresaId,
-        dados_novos: data,
+        dados_novos: data
       });
       toast.success('Solicitação de férias criada com sucesso');
     },
-    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao criar solicitação de férias.')),
+    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao criar solicitação de férias.')),
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Updatable<'ferias'> }) => {
-      if (!empresaId) throw new Error('empresa_id obrigatório para atualizar ferias (isolamento de tenant)');
-      return await feriasService.atualizar(id, data, empresaId);
+    mutationFn: async ({ id, data }: { id: string; data: any }) => {
+      return await feriasService.atualizar(id, data);
     },
     onSuccess: (_, variables) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos'] });
-      void auditLogger.log({
+      auditLogger.log({
         tabela: 'ferias',
         registro_id: variables.id,
         acao: 'UPDATE',
-        empresa_id: empresaId,
-        dados_novos: variables.data,
+        dados_novos: variables.data
       });
       toast.success('Solicitação de férias atualizada');
     },
-    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao atualizar férias.')),
+    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao atualizar férias.')),
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      if (!empresaId) throw new Error('empresa_id obrigatório para excluir ferias (isolamento de tenant)');
-      return await feriasService.excluir(id, empresaId);
+      return await feriasService.excluir(id);
     },
     onSuccess: (_, id) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos'] });
-      void auditLogger.log({
+      auditLogger.log({
         tabela: 'ferias',
         registro_id: id,
-        acao: 'DELETE',
-        empresa_id: empresaId,
+        acao: 'DELETE'
       });
       toast.success('Solicitação de férias excluída');
     },
-    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao excluir férias.')),
+    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao excluir férias.')),
   });
 
   const aprovarGestorMutation = useMutation({
@@ -86,7 +80,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
       toast.success('Férias aprovadas pelo gestor');
     },
-    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
+    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
   });
 
   const aprovarRHMutation = useMutation({
@@ -97,14 +91,13 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
       toast.success('Férias aprovadas pelo RH e finalizadas');
     },
-    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
+    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
   });
 
   return {
     ferias: query.data?.data || [],
     totalCount: query.data?.count || 0,
     isLoading: query.isLoading,
-    isFetching: query.isFetching,
     error: query.error,
     refetch: query.refetch,
     create: createMutation.mutateAsync,
@@ -117,3 +110,4 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
     isDeleting: deleteMutation.isPending,
   };
 }
+

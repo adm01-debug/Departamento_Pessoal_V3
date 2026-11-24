@@ -1,18 +1,14 @@
 // Gera AEJ (Arquivo Eletrônico de Jornada) conforme Portaria MTP 671/2021 - Anexo I.
 // Layout MVP: Registro 1 (cabeçalho), 5 (colaboradores/vínculos), 3 (marcações), 9 (trailer).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
-import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { getCorsHeaders } from '../_shared/contract.ts';
 import { parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
-import { getClientIp } from '../_shared/clientIp.ts';
 
 const TZ = "America/Sao_Paulo";
 const CRLF = "\r\n";
-// Paginação defensiva: 1000 ≤ max-rows padrão do PostgREST. Um lote maior que
-// o limite da instância retornaria página curta e o loop `length < LOTE`
-// terminaria cedo, omitindo marcações do AEJ.
-const LOTE_BATIDAS = 1000;
+const LOTE_BATIDAS = 5000;
 
 function pad(v: string | number, len: number, char = "0", left = true): string {
   const s = String(v ?? "");
@@ -51,7 +47,7 @@ async function sha256Hex(text: string): Promise<string> {
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
 
   try {
     const csrf = await verifyCsrf(req.clone());
@@ -60,7 +56,7 @@ Deno.serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -74,17 +70,16 @@ Deno.serve(async (req) => {
     const userId = userRes?.user?.id;
     if (!userId) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
     const rlAdmin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false, autoRefreshToken: false } });
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(rlAdmin, { key: `gerar-aej:${userId}`, limit: 5, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
 
-    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
-    if (_pe) return _pe;
+    const { body: _pb } = await parseJsonBody(req);
     const body = (_pb ?? {}) as Record<string, unknown>;
     const empresa_id: string | undefined = body.empresa_id as string | undefined;
     const periodo_inicio: string | undefined = body.periodo_inicio as string | undefined;
@@ -92,31 +87,24 @@ Deno.serve(async (req) => {
 
     if (!empresa_id || !periodo_inicio || !periodo_fim) {
       return new Response(JSON.stringify({ error: "empresa_id, periodo_inicio, periodo_fim são obrigatórios" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
-    // AEJ contém PIS/jornada de TODOS os colaboradores da empresa — requer
-    // papel RH/admin NAQUELA empresa (pode_gerir_rh_para, a mesma regra das
-    // outras edges). O gate anterior aceitava 'rh' global de user_roles +
-    // vínculo simples — um rh de qualquer contexto baixava o AEJ da empresa.
+    // Autorização
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-    const { requireRh } = await import('../_shared/authz.ts');
-    const authz = await requireRh(admin, userId, empresa_id, req);
-    if (authz.denied) return authz.denied;
-
-    // Trilha LGPD — export massivo de PIS/jornada deve ficar registrado.
-    // Best-effort: falha no log não bloqueia a geração.
-    const { error: piiLogErr } = await admin.from("pii_access_logs").insert({
-      user_id: userId,
-      empresa_id,
-      tabela: "aej_jornada",
-      acao: "export",
-      registro_count: 1,
-      ip: getClientIp(req),
-      user_agent: req.headers.get("user-agent"),
-    });
-    if (piiLogErr) console.warn("[gerar-aej] pii_access_logs insert falhou:", piiLogErr.message);
+    const { data: role } = await admin.rpc("has_role", { _user_id: userId, _role: "admin" });
+    let authorized = role === true;
+    if (!authorized) {
+      const { data: ue } = await admin
+        .from("user_empresas").select("empresa_id").eq("user_id", userId).eq("empresa_id", empresa_id).maybeSingle();
+      authorized = !!ue;
+    }
+    if (!authorized) {
+      return new Response(JSON.stringify({ error: "forbidden" }), {
+        status: 403, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
 
     // Empresa
     const { data: empresa, error: eEmp } = await admin
@@ -172,24 +160,19 @@ Deno.serve(async (req) => {
     let totalMarcacoes = 0;
     if (colabValidos.length > 0) {
       const colabIds = colabValidos.map(c => c.id);
+      const startISO = `${periodo_inicio}T00:00:00-03:00`;
+      const endISO = `${periodo_fim}T23:59:59-03:00`;
 
-      // batidas_ponto usa colunas data+hora (não existe data_hora).
-      const diasComBatida = new Set<string>(); // 'colab|data'
       let offset = 0;
       while (true) {
         const { data: batch, error } = await admin
           .from("batidas_ponto")
-          .select("colaborador_id,data,hora")
+          .select("colaborador_id,data_hora")
           .eq("empresa_id", empresa_id)
           .in("colaborador_id", colabIds)
-          .gte("data", periodo_inicio)
-          .lte("data", periodo_fim)
-          // Paginação por OFFSET exige ORDER BY total — sem o desempate por
-          // id, empates em (data,hora) na fronteira de página podiam omitir
-          // ou duplicar marcações no AEJ.
-          .order("data", { ascending: true })
-          .order("hora", { ascending: true })
-          .order("id", { ascending: true })
+          .gte("data_hora", startISO)
+          .lte("data_hora", endISO)
+          .order("data_hora", { ascending: true })
           .range(offset, offset + LOTE_BATIDAS - 1);
         if (error) throw error;
         if (!batch || batch.length === 0) break;
@@ -197,8 +180,7 @@ Deno.serve(async (req) => {
         for (const b of batch) {
           const c = colabById.get((b as any).colaborador_id);
           if (!c) continue;
-          diasComBatida.add(`${(b as any).colaborador_id}|${(b as any).data}`);
-          const iso = `${(b as any).data}T${String((b as any).hora).slice(0, 5)}:00-03:00`;
+          const iso = (b as any).data_hora;
           lines.push(
             pad(nsr++, 9) + "3" + fmtDate(iso) + fmtTime(iso) + pad(onlyDigits(c.pis_pasep), 12)
           );
@@ -206,42 +188,6 @@ Deno.serve(async (req) => {
         }
         if (batch.length < LOTE_BATIDAS) break;
         offset += LOTE_BATIDAS;
-      }
-
-      // Ponte G-049 por DIA: um colaborador pode ter batidas num dia e só o
-      // timesheet (registros_ponto) noutro — exclui-se por (colab, data), não
-      // por colaborador inteiro. Paginado como as batidas.
-      let offReg = 0;
-      while (true) {
-        const { data: regs, error: rErr } = await admin
-          .from("registros_ponto")
-          .select("colaborador_id,data,entrada_1,saida_1,entrada_2,saida_2,entrada_3,saida_3")
-          .eq("empresa_id", empresa_id)
-          .in("colaborador_id", colabIds)
-          .gte("data", periodo_inicio)
-          .lte("data", periodo_fim)
-          .order("data", { ascending: true })
-          .order("id", { ascending: true }) // desempate p/ OFFSET determinístico
-          .range(offReg, offReg + LOTE_BATIDAS - 1);
-        if (rErr) throw rErr;
-        if (!regs || regs.length === 0) break;
-        for (const reg of regs) {
-          const key = `${(reg as any).colaborador_id}|${(reg as any).data}`;
-          if (diasComBatida.has(key)) continue; // dia já coberto por batidas reais
-          const c = colabById.get((reg as any).colaborador_id);
-          if (!c) continue;
-          for (const k of ["entrada_1", "saida_1", "entrada_2", "saida_2", "entrada_3", "saida_3"] as const) {
-            const hora = (reg as any)[k];
-            if (!hora) continue;
-            const iso = `${(reg as any).data}T${String(hora).slice(0, 5)}:00-03:00`;
-            lines.push(
-              pad(nsr++, 9) + "3" + fmtDate(iso) + fmtTime(iso) + pad(onlyDigits(c.pis_pasep), 12)
-            );
-            totalMarcacoes++;
-          }
-        }
-        if (regs.length < LOTE_BATIDAS) break;
-        offReg += LOTE_BATIDAS;
       }
     }
 
@@ -280,11 +226,11 @@ Deno.serve(async (req) => {
       total_colaboradores: colabValidos.length,
       colaboradores_sem_pis: semPis,
       conteudo, // TXT completo (base64 opcional em versões futuras)
-    }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   } catch (e) {
     captureException(e, { fn: 'gerar-aej' });
     return new Response(JSON.stringify({ error: 'Erro interno' }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 });

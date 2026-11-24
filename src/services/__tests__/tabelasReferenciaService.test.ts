@@ -33,7 +33,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // select → order → resolvedValue  (reference tables via listarReferencia)
-function setupReferenceChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupReferenceChain(data: any[], error: any = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ order: orderFn });
   mockFrom.mockReturnValue({ select: selectFn });
@@ -41,21 +41,21 @@ function setupReferenceChain(data: unknown, error: { message: string; code?: str
 }
 
 // Thenable chain with optional eq (listarCentrosCusto)
-function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupListChain(data: any[], error: any = null) {
   const response = { data, error };
-  const chain: Record<string, unknown> = {};
+  const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
 }
 
 // select → eq → order → resolvedValue
-function setupEqOrderChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupEqOrderChain(data: any[], error: any = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ order: orderFn });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -64,7 +64,7 @@ function setupEqOrderChain(data: unknown, error: { message: string; code?: strin
 }
 
 // select → eq → resolvedValue  (listarDependentesBeneficios)
-function setupEqResolveChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupEqResolveChain(data: any[], error: any = null) {
   const eqFn = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ select: selectFn });
@@ -72,7 +72,7 @@ function setupEqResolveChain(data: unknown, error: { message: string; code?: str
 }
 
 // select → eq → maybeSingle  (obterDadosEstagiario)
-function setupEqMaybeSingleChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupEqMaybeSingleChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ maybeSingle });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -81,7 +81,7 @@ function setupEqMaybeSingleChain(data: unknown, error: { message: string; code?:
 }
 
 // insert([...]).select().maybeSingle()
-function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupInsertChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -90,7 +90,7 @@ function setupInsertChain(data: unknown, error: { message: string; code?: string
 }
 
 // upsert([...], opts).select().maybeSingle()
-function setupUpsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupUpsertChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const upsertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -99,7 +99,7 @@ function setupUpsertChain(data: unknown, error: { message: string; code?: string
 }
 
 // update(dados).eq('id', id) → resolvedValue
-function setupUpdateEqChain(error: { message: string; code?: string } | null = null) {
+function setupUpdateEqChain(error: any = null) {
   const eqFn = vi.fn().mockResolvedValue({ error });
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
@@ -107,7 +107,7 @@ function setupUpdateEqChain(error: { message: string; code?: string } | null = n
 }
 
 // update(dados).eq('id', id).eq('...', ...) → resolvedValue
-function setupUpdateDoubleEqChain(error: { message: string; code?: string } | null = null) {
+function setupUpdateDoubleEqChain(error: any = null) {
   const eq2Fn = vi.fn().mockResolvedValue({ error });
   const eq1Fn = vi.fn().mockReturnValue({ eq: eq2Fn });
   const updateFn = vi.fn().mockReturnValue({ eq: eq1Fn });
@@ -116,7 +116,7 @@ function setupUpdateDoubleEqChain(error: { message: string; code?: string } | nu
 }
 
 // delete().eq('id', id) → resolvedValue
-function setupDeleteEqChain(error: { message: string; code?: string } | null = null) {
+function setupDeleteEqChain(error: any = null) {
   const eqFn = vi.fn().mockResolvedValue({ error });
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -124,7 +124,7 @@ function setupDeleteEqChain(error: { message: string; code?: string } | null = n
 }
 
 // delete().eq(...).eq(...) → resolvedValue
-function setupDeleteDoubleEqChain(error: { message: string; code?: string } | null = null) {
+function setupDeleteDoubleEqChain(error: any = null) {
   const eq2Fn = vi.fn().mockResolvedValue({ error });
   const eq1Fn = vi.fn().mockReturnValue({ eq: eq2Fn });
   const deleteFn = vi.fn().mockReturnValue({ eq: eq1Fn });
@@ -133,7 +133,7 @@ function setupDeleteDoubleEqChain(error: { message: string; code?: string } | nu
 }
 
 // select → eq1 → eq2 → order → resolve (for functions filtering by two fields)
-function setupDoubleEqOrderChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupDoubleEqOrderChain(data: any[], error: any = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const eq2Fn = vi.fn().mockReturnValue({ order: orderFn });
   const eq1Fn = vi.fn().mockReturnValue({ eq: eq2Fn, order: orderFn });
@@ -145,9 +145,7 @@ function setupDoubleEqOrderChain(data: unknown, error: { message: string; code?:
 // ─── Reference Tables ─────────────────────────────────────────────────────────
 
 describe('listarNacionalidades', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns records', async () => {
     const records = [{ id: 'n1', nome: 'Brasileira' }];
@@ -162,7 +160,7 @@ describe('listarNacionalidades', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupReferenceChain(null as never);
+    setupReferenceChain(null as any);
     expect(await listarNacionalidades()).toEqual([]);
   });
 
@@ -173,9 +171,7 @@ describe('listarNacionalidades', () => {
 });
 
 describe('listarTiposDesligamento', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('queries tipos_desligamento table', async () => {
     setupReferenceChain([]);
@@ -193,9 +189,7 @@ describe('listarTiposDesligamento', () => {
 // ─── Centros de Custo ─────────────────────────────────────────────────────────
 
 describe('listarCentrosCusto', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns centros with empresa filter', async () => {
     const records = [{ id: 'cc1', nome: 'TI' }];
@@ -204,7 +198,7 @@ describe('listarCentrosCusto', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     expect(await listarCentrosCusto('emp-1')).toEqual([]);
   });
 
@@ -227,9 +221,7 @@ describe('listarCentrosCusto', () => {
 });
 
 describe('criarCentroCusto', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts wrapped in array and returns new centro', async () => {
     const created = { id: 'cc-new', nome: 'Financeiro' };
@@ -241,21 +233,17 @@ describe('criarCentroCusto', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(criarCentroCusto({ nome: 'Financeiro' })).rejects.toThrow(
-      'Nenhum registro de centro de custo foi retornado.'
-    );
+    await expect(criarCentroCusto({})).rejects.toThrow('Nenhum registro de centro de custo foi retornado.');
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(criarCentroCusto({ nome: 'Financeiro' })).rejects.toBeDefined();
+    await expect(criarCentroCusto({})).rejects.toBeDefined();
   });
 });
 
 describe('atualizarCentroCusto', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates centro by id and empresa_id', async () => {
     const { updateFn, eq1Fn } = setupUpdateDoubleEqChain();
@@ -271,9 +259,7 @@ describe('atualizarCentroCusto', () => {
 });
 
 describe('excluirCentroCusto', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('deletes centro by id and empresa_id', async () => {
     const { deleteFn, eq1Fn } = setupDeleteDoubleEqChain();
@@ -291,65 +277,133 @@ describe('excluirCentroCusto', () => {
 // ─── Contas Bancárias ─────────────────────────────────────────────────────────
 
 describe('listarContasBancarias', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns contas for colaborador', async () => {
-    const records = [{ id: 'cb1', colaborador_id: '00000000-0000-4000-8000-000000000002' }];
+    const records = [{ id: 'cb1', colaborador_id: 'c1' }];
     const { eq1Fn } = setupDoubleEqOrderChain(records);
-    const result = await listarContasBancarias('00000000-0000-4000-8000-000000000002', 'emp-1');
+    const result = await listarContasBancarias('c1', 'emp-1');
     expect(result).toEqual(records);
-    expect(eq1Fn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
+    expect(eq1Fn).toHaveBeenCalledWith('colaborador_id', 'c1');
   });
 
   it('orders by principal descending', async () => {
     const { orderFn } = setupDoubleEqOrderChain([]);
-    await listarContasBancarias('00000000-0000-4000-8000-000000000002', 'emp-1');
+    await listarContasBancarias('c1', 'emp-1');
     expect(orderFn).toHaveBeenCalledWith('principal', { ascending: false });
   });
 
   it('returns empty array when data is null', async () => {
-    setupDoubleEqOrderChain(null as never);
-    expect(await listarContasBancarias('00000000-0000-4000-8000-000000000002', 'emp-1')).toEqual([]);
+    setupDoubleEqOrderChain(null as any);
+    expect(await listarContasBancarias('c1', 'emp-1')).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     setupDoubleEqOrderChain([], { message: 'fail' });
-    await expect(listarContasBancarias('00000000-0000-4000-8000-000000000002', 'emp-1')).rejects.toBeDefined();
+    await expect(listarContasBancarias('c1', 'emp-1')).rejects.toBeDefined();
   });
 });
 
-describe('criarContaBancaria', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+// PARTE 4B: criarContaBancaria agora exige empresaId explicitamente (mesmo
+// padrão de atualizarContaBancaria/excluirContaBancaria), confirma que o
+// colaborador pertence à empresa informada antes de inserir, e bloqueia uma
+// segunda conta "principal" para o mesmo colaborador sem desmarcar a antiga.
+describe('criarContaBancaria (PARTE 4B — tenant + principal)', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  function mockColaborador(empresaId: string | null) {
+    const maybeSingle = vi.fn().mockResolvedValue({
+      data: empresaId === null ? null : { id: 'c1', empresa_id: empresaId },
+      error: null,
+    });
+    const eqFn = vi.fn().mockReturnValue({ maybeSingle });
+    const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
+    mockFrom.mockReturnValueOnce({ select: selectFn });
+    return { selectFn, eqFn, maybeSingle };
+  }
+
+  function mockPrincipalCount(count: number) {
+    const response = { count, error: null };
+    const chain: any = {};
+    chain.eq = vi.fn().mockReturnValue(chain);
+    chain.then = (fn: any) => Promise.resolve(response).then(fn);
+    const selectFn = vi.fn().mockReturnValue(chain);
+    mockFrom.mockReturnValueOnce({ select: selectFn });
+    return { selectFn, chain };
+  }
+
+  function mockInsert(data: any, error: any = null) {
+    const maybeSingle = vi.fn().mockResolvedValue({ data, error });
+    const selectFn = vi.fn().mockReturnValue({ maybeSingle });
+    const insertFn = vi.fn().mockReturnValue({ select: selectFn });
+    mockFrom.mockReturnValueOnce({ insert: insertFn });
+    return { insertFn, selectFn, maybeSingle };
+  }
+
+  it('rejeita quando empresaId não é informado', async () => {
+    await expect(criarContaBancaria({ colaborador_id: 'c1' }, '')).rejects.toThrow('empresa_id obrigatório');
   });
 
-  it('inserts wrapped in array and returns new conta', async () => {
-    const created = { id: 'cb-new', colaborador_id: '00000000-0000-4000-8000-000000000002', banco_nome: 'Bradesco' };
-    const { insertFn } = setupInsertChain(created);
-    const result = await criarContaBancaria({
-      colaborador_id: '00000000-0000-4000-8000-000000000002',
-      banco_nome: 'Bradesco',
-    });
-    expect(insertFn).toHaveBeenCalledWith([
-      { colaborador_id: '00000000-0000-4000-8000-000000000002', banco_nome: 'Bradesco' },
-    ]);
-    expect(result).toEqual(created);
+  it('rejeita quando colaborador_id não é informado', async () => {
+    await expect(criarContaBancaria({}, 'emp-1')).rejects.toThrow('colaborador_id obrigatório');
+  });
+
+  it('rejeita quando o colaborador não existe', async () => {
+    mockColaborador(null);
+    await expect(criarContaBancaria({ colaborador_id: 'c1' }, 'emp-1')).rejects.toThrow('isolamento de tenant');
+  });
+
+  it('rejeita quando o colaborador pertence a outra empresa', async () => {
+    mockColaborador('emp-OUTRA');
+    await expect(criarContaBancaria({ colaborador_id: 'c1' }, 'emp-1')).rejects.toThrow('isolamento de tenant');
+  });
+
+  it('injeta empresa_id no insert e ignora qualquer empresa_id vindo do chamador', async () => {
+    mockColaborador('emp-1');
+    const { insertFn } = mockInsert({ id: 'cb-new', empresa_id: 'emp-1' });
+    await criarContaBancaria({ colaborador_id: 'c1', banco_nome: 'X', empresa_id: 'emp-FORJADA' }, 'emp-1');
+    expect(insertFn).toHaveBeenCalledWith([{ colaborador_id: 'c1', banco_nome: 'X', empresa_id: 'emp-1' }]);
+  });
+
+  it('permite criar a primeira conta principal quando nenhuma existe', async () => {
+    mockColaborador('emp-1');
+    mockPrincipalCount(0);
+    const { insertFn } = mockInsert({ id: 'cb-new' });
+    await criarContaBancaria({ colaborador_id: 'c1', principal: true }, 'emp-1');
+    expect(insertFn).toHaveBeenCalled();
+  });
+
+  it('bloqueia a criação de uma segunda conta principal para o mesmo colaborador', async () => {
+    mockColaborador('emp-1');
+    mockPrincipalCount(1);
+    await expect(criarContaBancaria({ colaborador_id: 'c1', principal: true }, 'emp-1'))
+      .rejects.toThrow('Este colaborador já possui uma conta bancária principal.');
+  });
+
+  it('não realiza insert nem qualquer alteração na conta principal existente ao bloquear', async () => {
+    mockColaborador('emp-1');
+    mockPrincipalCount(1);
+    await expect(criarContaBancaria({ colaborador_id: 'c1', principal: true }, 'emp-1')).rejects.toThrow();
+    // Só as duas checagens (colaborador + contagem de principal) ocorreram — nenhum insert/update.
+    expect(mockFrom).toHaveBeenCalledTimes(2);
+  });
+
+  it('permite criar uma conta não-principal mesmo já existindo uma principal (não faz a checagem de contagem)', async () => {
+    mockColaborador('emp-1');
+    const { insertFn } = mockInsert({ id: 'cb-new' });
+    await criarContaBancaria({ colaborador_id: 'c1', principal: false }, 'emp-1');
+    expect(insertFn).toHaveBeenCalled();
   });
 
   it('throws when data is null', async () => {
-    setupInsertChain(null);
-    await expect(criarContaBancaria({ colaborador_id: '00000000-0000-4000-8000-000000000002' })).rejects.toThrow(
-      'Nenhum registro de conta bancária foi retornado.'
-    );
+    mockColaborador('emp-1');
+    mockInsert(null);
+    await expect(criarContaBancaria({ colaborador_id: 'c1' }, 'emp-1')).rejects.toThrow('Nenhum registro de conta bancária foi retornado.');
   });
 });
 
 describe('atualizarContaBancaria', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates conta by id and empresa_id', async () => {
     const { updateFn, eq1Fn } = setupUpdateDoubleEqChain();
@@ -365,9 +419,7 @@ describe('atualizarContaBancaria', () => {
 });
 
 describe('excluirContaBancaria', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('deletes conta by id and empresa_id', async () => {
     const { deleteFn, eq1Fn } = setupDeleteDoubleEqChain();
@@ -385,36 +437,32 @@ describe('excluirContaBancaria', () => {
 // ─── Dados de Estagiário ──────────────────────────────────────────────────────
 
 describe('obterDadosEstagiario', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns dados for colaborador', async () => {
-    const data = { id: 'de1', colaborador_id: '00000000-0000-4000-8000-000000000002' };
+    const data = { id: 'de1', colaborador_id: 'c1' };
     const { eqFn } = setupEqMaybeSingleChain(data);
-    const result = await obterDadosEstagiario('00000000-0000-4000-8000-000000000002');
+    const result = await obterDadosEstagiario('c1');
     expect(result).toEqual(data);
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
   });
 
   it('returns null when not found', async () => {
     setupEqMaybeSingleChain(null);
-    expect(await obterDadosEstagiario('00000000-0000-4000-8000-000000000002')).toBeNull();
+    expect(await obterDadosEstagiario('c1')).toBeNull();
   });
 
   it('throws on DB error', async () => {
     setupEqMaybeSingleChain(null, { message: 'fail' });
-    await expect(obterDadosEstagiario('00000000-0000-4000-8000-000000000002')).rejects.toBeDefined();
+    await expect(obterDadosEstagiario('c1')).rejects.toBeDefined();
   });
 });
 
 describe('salvarDadosEstagiario — insert when no existing record', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts with colaborador_id injected when not found', async () => {
-    const inserted = { id: 'de-new', colaborador_id: '00000000-0000-4000-8000-000000000002', nivel: 'superior' };
+    const inserted = { id: 'de-new', colaborador_id: 'c1', nivel: 'superior' };
     // First call: obterDadosEstagiario → null
     const maybeSingle1 = vi.fn().mockResolvedValue({ data: null, error: null });
     const eq1Fn = vi.fn().mockReturnValue({ maybeSingle: maybeSingle1 });
@@ -426,21 +474,17 @@ describe('salvarDadosEstagiario — insert when no existing record', () => {
     const insertFn = vi.fn().mockReturnValue({ select: select2Fn });
     mockFrom.mockReturnValueOnce({ insert: insertFn });
 
-    const result = await salvarDadosEstagiario('00000000-0000-4000-8000-000000000002', { nivel: 'superior' });
-    expect(insertFn).toHaveBeenCalledWith([
-      { nivel: 'superior', colaborador_id: '00000000-0000-4000-8000-000000000002' },
-    ]);
+    const result = await salvarDadosEstagiario('c1', { nivel: 'superior' });
+    expect(insertFn).toHaveBeenCalledWith([{ nivel: 'superior', colaborador_id: 'c1' }]);
     expect(result).toEqual(inserted);
   });
 });
 
 describe('salvarDadosEstagiario — update when existing record found', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates using existing.id', async () => {
-    const existing = { id: 'de1', colaborador_id: '00000000-0000-4000-8000-000000000002' };
+    const existing = { id: 'de1', colaborador_id: 'c1' };
     const updated = { ...existing, nivel: 'superior' };
     // First call: obterDadosEstagiario → existing
     const maybeSingle1 = vi.fn().mockResolvedValue({ data: existing, error: null });
@@ -454,7 +498,7 @@ describe('salvarDadosEstagiario — update when existing record found', () => {
     const updateFn = vi.fn().mockReturnValue({ eq: updateEqFn });
     mockFrom.mockReturnValueOnce({ update: updateFn });
 
-    const result = await salvarDadosEstagiario('00000000-0000-4000-8000-000000000002', { nivel: 'superior' });
+    const result = await salvarDadosEstagiario('c1', { nivel: 'superior' });
     expect(updateFn).toHaveBeenCalledWith({ nivel: 'superior' });
     expect(updateEqFn).toHaveBeenCalledWith('id', 'de1');
     expect(result).toEqual(updated);
@@ -466,74 +510,59 @@ describe('salvarDadosEstagiario — update when existing record found', () => {
     const select1Fn = vi.fn().mockReturnValue({ eq: eq1Fn });
     mockFrom.mockReturnValueOnce({ select: select1Fn });
 
-    await expect(salvarDadosEstagiario('00000000-0000-4000-8000-000000000002', {})).rejects.toThrow(
-      'Falha ao salvar dados de estagiário'
-    );
+    await expect(salvarDadosEstagiario('c1', {})).rejects.toThrow('Falha ao salvar dados de estagiário');
   });
 });
 
 // ─── Documentos Pessoais ──────────────────────────────────────────────────────
 
 describe('listarDocumentosPessoais', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns documentos for colaborador', async () => {
-    const records = [{ id: 'dp1', colaborador_id: '00000000-0000-4000-8000-000000000002' }];
+    const records = [{ id: 'dp1', colaborador_id: 'c1' }];
     const { eqFn } = setupEqOrderChain(records);
-    const result = await listarDocumentosPessoais('00000000-0000-4000-8000-000000000002');
+    const result = await listarDocumentosPessoais('c1');
     expect(result).toEqual(records);
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
   });
 
   it('orders by created_at descending', async () => {
     const { orderFn } = setupEqOrderChain([]);
-    await listarDocumentosPessoais('00000000-0000-4000-8000-000000000002');
+    await listarDocumentosPessoais('c1');
     expect(orderFn).toHaveBeenCalledWith('created_at', { ascending: false });
   });
 
   it('returns empty array when data is null', async () => {
-    setupEqOrderChain(null as never);
-    expect(await listarDocumentosPessoais('00000000-0000-4000-8000-000000000002')).toEqual([]);
+    setupEqOrderChain(null as any);
+    expect(await listarDocumentosPessoais('c1')).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     setupEqOrderChain([], { message: 'fail' });
-    await expect(listarDocumentosPessoais('00000000-0000-4000-8000-000000000002')).rejects.toBeDefined();
+    await expect(listarDocumentosPessoais('c1')).rejects.toBeDefined();
   });
 });
 
 describe('criarDocumentoPessoal', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts wrapped in array and returns new documento', async () => {
-    const created = { id: 'dp-new', colaborador_id: '00000000-0000-4000-8000-000000000002', tipo_documento: 'CPF' };
+    const created = { id: 'dp-new', tipo: 'CPF' };
     const { insertFn } = setupInsertChain(created);
-    const result = await criarDocumentoPessoal({
-      colaborador_id: '00000000-0000-4000-8000-000000000002',
-      tipo_documento: 'CPF',
-    });
-    expect(insertFn).toHaveBeenCalledWith([
-      { colaborador_id: '00000000-0000-4000-8000-000000000002', tipo_documento: 'CPF' },
-    ]);
+    const result = await criarDocumentoPessoal({ tipo: 'CPF' });
+    expect(insertFn).toHaveBeenCalledWith([{ tipo: 'CPF' }]);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(
-      criarDocumentoPessoal({ colaborador_id: '00000000-0000-4000-8000-000000000002', tipo_documento: 'CPF' })
-    ).rejects.toThrow('Nenhum registro de documento pessoal foi retornado.');
+    await expect(criarDocumentoPessoal({})).rejects.toThrow('Nenhum registro de documento pessoal foi retornado.');
   });
 });
 
 describe('excluirDocumentoPessoal', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('deletes documento by colaborador and id', async () => {
     const { deleteFn, eq1Fn } = setupDeleteDoubleEqChain();
@@ -551,144 +580,117 @@ describe('excluirDocumentoPessoal', () => {
 // ─── Férias Aprovações ────────────────────────────────────────────────────────
 
 describe('listarFeriasAprovacoes', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns aprovacoes for ferias_id', async () => {
-    const records = [{ id: 'fa1', ferias_id: '00000000-0000-4000-8000-000000000003' }];
+    const records = [{ id: 'fa1', ferias_id: 'f1' }];
     const { eqFn } = setupEqOrderChain(records);
-    const result = await listarFeriasAprovacoes('00000000-0000-4000-8000-000000000003');
+    const result = await listarFeriasAprovacoes('f1');
     expect(result).toEqual(records);
-    expect(eqFn).toHaveBeenCalledWith('ferias_id', '00000000-0000-4000-8000-000000000003');
+    expect(eqFn).toHaveBeenCalledWith('ferias_id', 'f1');
   });
 
   it('orders by created_at ascending', async () => {
     const { orderFn } = setupEqOrderChain([]);
-    await listarFeriasAprovacoes('00000000-0000-4000-8000-000000000003');
+    await listarFeriasAprovacoes('f1');
     expect(orderFn).toHaveBeenCalledWith('created_at');
   });
 
   it('returns empty array when data is null', async () => {
-    setupEqOrderChain(null as never);
-    expect(await listarFeriasAprovacoes('00000000-0000-4000-8000-000000000003')).toEqual([]);
+    setupEqOrderChain(null as any);
+    expect(await listarFeriasAprovacoes('f1')).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     setupEqOrderChain([], { message: 'fail' });
-    await expect(listarFeriasAprovacoes('00000000-0000-4000-8000-000000000003')).rejects.toBeDefined();
+    await expect(listarFeriasAprovacoes('f1')).rejects.toBeDefined();
   });
 });
 
 describe('criarFeriasAprovacao', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts wrapped in array and returns new aprovacao', async () => {
-    const created = {
-      id: 'fa-new',
-      ferias_id: '00000000-0000-4000-8000-000000000003',
-      tipo: 'aprovacao',
-      status: 'aprovado',
-    };
+    const created = { id: 'fa-new', status: 'aprovado' };
     const { insertFn } = setupInsertChain(created);
-    const result = await criarFeriasAprovacao({
-      ferias_id: '00000000-0000-4000-8000-000000000003',
-      tipo: 'aprovacao',
-      status: 'aprovado',
-    });
-    expect(insertFn).toHaveBeenCalledWith([
-      { ferias_id: '00000000-0000-4000-8000-000000000003', tipo: 'aprovacao', status: 'aprovado' },
-    ]);
+    const result = await criarFeriasAprovacao({ status: 'aprovado' });
+    expect(insertFn).toHaveBeenCalledWith([{ status: 'aprovado' }]);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(
-      criarFeriasAprovacao({ ferias_id: '00000000-0000-4000-8000-000000000003', tipo: 'aprovacao' })
-    ).rejects.toThrow('Nenhum registro de aprovação de férias foi retornado.');
+    await expect(criarFeriasAprovacao({})).rejects.toThrow('Nenhum registro de aprovação de férias foi retornado.');
   });
 });
 
 describe('atualizarFeriasAprovacao', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates aprovacao by id and ferias_id', async () => {
     const { updateFn, eq1Fn } = setupUpdateDoubleEqChain();
-    await atualizarFeriasAprovacao('00000000-0000-4000-8000-000000000003', 'fa1', { status: 'rejeitado' });
+    await atualizarFeriasAprovacao('f1', 'fa1', { status: 'rejeitado' });
     expect(updateFn).toHaveBeenCalledWith({ status: 'rejeitado' });
     expect(eq1Fn).toHaveBeenCalledWith('id', 'fa1');
   });
 
   it('throws on DB error', async () => {
     setupUpdateDoubleEqChain({ message: 'fail' });
-    await expect(atualizarFeriasAprovacao('00000000-0000-4000-8000-000000000003', 'fa1', {})).rejects.toBeDefined();
+    await expect(atualizarFeriasAprovacao('f1', 'fa1', {})).rejects.toBeDefined();
   });
 });
 
 // ─── Férias Arquivos ──────────────────────────────────────────────────────────
 
 describe('listarFeriasArquivos', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns arquivos for ferias_id', async () => {
-    const records = [{ id: 'ar1', ferias_id: '00000000-0000-4000-8000-000000000003' }];
+    const records = [{ id: 'ar1', ferias_id: 'f1' }];
     const { eqFn } = setupEqOrderChain(records);
-    const result = await listarFeriasArquivos('00000000-0000-4000-8000-000000000003');
+    const result = await listarFeriasArquivos('f1');
     expect(result).toEqual(records);
-    expect(eqFn).toHaveBeenCalledWith('ferias_id', '00000000-0000-4000-8000-000000000003');
+    expect(eqFn).toHaveBeenCalledWith('ferias_id', 'f1');
   });
 
   it('orders by created_at', async () => {
     const { orderFn } = setupEqOrderChain([]);
-    await listarFeriasArquivos('00000000-0000-4000-8000-000000000003');
+    await listarFeriasArquivos('f1');
     expect(orderFn).toHaveBeenCalledWith('created_at');
   });
 
   it('returns empty array when data is null', async () => {
-    setupEqOrderChain(null as never);
-    expect(await listarFeriasArquivos('00000000-0000-4000-8000-000000000003')).toEqual([]);
+    setupEqOrderChain(null as any);
+    expect(await listarFeriasArquivos('f1')).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     setupEqOrderChain([], { message: 'fail' });
-    await expect(listarFeriasArquivos('00000000-0000-4000-8000-000000000003')).rejects.toBeDefined();
+    await expect(listarFeriasArquivos('f1')).rejects.toBeDefined();
   });
 });
 
 describe('criarFeriasArquivo', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts wrapped in array and returns new arquivo', async () => {
-    const created = { id: 'ar-new', ferias_id: '00000000-0000-4000-8000-000000000003', nome: 'recibo.pdf' };
+    const created = { id: 'ar-new', nome: 'recibo.pdf' };
     const { insertFn } = setupInsertChain(created);
-    const result = await criarFeriasArquivo({ ferias_id: '00000000-0000-4000-8000-000000000003', nome: 'recibo.pdf' });
-    expect(insertFn).toHaveBeenCalledWith([{ ferias_id: '00000000-0000-4000-8000-000000000003', nome: 'recibo.pdf' }]);
+    const result = await criarFeriasArquivo({ nome: 'recibo.pdf' });
+    expect(insertFn).toHaveBeenCalledWith([{ nome: 'recibo.pdf' }]);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(
-      criarFeriasArquivo({ ferias_id: '00000000-0000-4000-8000-000000000003', nome: 'recibo.pdf' })
-    ).rejects.toThrow('Nenhum registro de arquivo de férias foi retornado.');
+    await expect(criarFeriasArquivo({})).rejects.toThrow('Nenhum registro de arquivo de férias foi retornado.');
   });
 });
 
 // ─── Dependentes Benefícios ───────────────────────────────────────────────────
 
 describe('listarDependentesBeneficios', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns beneficios for dependente', async () => {
     const records = [{ id: 'db1', dependente_id: 'd1' }];
@@ -699,7 +701,7 @@ describe('listarDependentesBeneficios', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupEqResolveChain(null as never);
+    setupEqResolveChain(null as any);
     expect(await listarDependentesBeneficios('d1')).toEqual([]);
   });
 
@@ -710,37 +712,32 @@ describe('listarDependentesBeneficios', () => {
 });
 
 describe('vincularDependenteBeneficio', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('upserts with onConflict and returns vinculo', async () => {
     const created = { id: 'v-new', dependente_id: 'd1', beneficio_id: 'b1' };
     const { upsertFn } = setupUpsertChain(created);
     const result = await vincularDependenteBeneficio({ dependente_id: 'd1', beneficio_id: 'b1' });
-    expect(upsertFn).toHaveBeenCalledWith([{ dependente_id: 'd1', beneficio_id: 'b1' }], {
-      onConflict: 'dependente_id,beneficio_id',
-    });
+    expect(upsertFn).toHaveBeenCalledWith(
+      [{ dependente_id: 'd1', beneficio_id: 'b1' }],
+      { onConflict: 'dependente_id,beneficio_id' }
+    );
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupUpsertChain(null);
-    await expect(vincularDependenteBeneficio({ dependente_id: 'd1', beneficio_id: 'b1' })).rejects.toThrow(
-      'Falha ao vincular dependente ao benefício.'
-    );
+    await expect(vincularDependenteBeneficio({})).rejects.toThrow('Falha ao vincular dependente ao benefício.');
   });
 
   it('throws on DB error', async () => {
     setupUpsertChain(null, { message: 'fail' });
-    await expect(vincularDependenteBeneficio({ dependente_id: 'd1', beneficio_id: 'b1' })).rejects.toBeDefined();
+    await expect(vincularDependenteBeneficio({})).rejects.toBeDefined();
   });
 });
 
 describe('desvincularDependenteBeneficio', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('deletes vinculo by dependente_id and beneficio_id', async () => {
     const { deleteFn, eq1Fn, eq2Fn } = setupDeleteDoubleEqChain();

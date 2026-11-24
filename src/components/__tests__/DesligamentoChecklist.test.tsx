@@ -1,19 +1,21 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
-    button: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => (
-      <button {...rest}>{children}</button>
-    ),
+    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    button: ({ children, ...rest }: any) => <button {...rest}>{children}</button>,
+    // `motion.create(Card)` e `AnimatePresence` entram via
+    // `desligamentos/entradaCards` (a entrada de referência do Dashboard):
+    // o mock precisa cobrir a API real que o módulo usa.
+    create: (c: any) => c,
   },
+  AnimatePresence: ({ children }: any) => <>{children}</>,
+  useReducedMotion: () => false,
 }));
 
 import { DesligamentoChecklist } from '../desligamentos/DesligamentoChecklist';
-import type { Tables } from '@/integrations/supabase/types';
 
 const ALL_UNCHECKED = {
   checklist_comunicacao: false,
@@ -26,21 +28,23 @@ const ALL_UNCHECKED = {
   checklist_pagamento: false,
 };
 
-const ALL_CHECKED = Object.fromEntries(Object.keys(ALL_UNCHECKED).map((k) => [k, true]));
+const ALL_CHECKED = Object.fromEntries(
+  Object.keys(ALL_UNCHECKED).map((k) => [k, true])
+);
 
 describe('DesligamentoChecklist', () => {
   it('renders progress counter 0/8 when all unchecked', () => {
-    render(<DesligamentoChecklist desligamento={ALL_UNCHECKED as unknown as Tables<'desligamentos'>} />);
+    render(<DesligamentoChecklist desligamento={ALL_UNCHECKED} />);
     expect(screen.getByText('0/8')).toBeInTheDocument();
   });
 
   it('renders progress counter 8/8 when all checked', () => {
-    render(<DesligamentoChecklist desligamento={ALL_CHECKED as unknown as Tables<'desligamentos'>} />);
+    render(<DesligamentoChecklist desligamento={ALL_CHECKED} />);
     expect(screen.getByText('8/8')).toBeInTheDocument();
   });
 
   it('renders all 8 checklist items', () => {
-    render(<DesligamentoChecklist desligamento={ALL_UNCHECKED as unknown as Tables<'desligamentos'>} />);
+    render(<DesligamentoChecklist desligamento={ALL_UNCHECKED} />);
     expect(screen.getByText('Comunicação ao colaborador')).toBeInTheDocument();
     expect(screen.getByText('Documentação preparada')).toBeInTheDocument();
     expect(screen.getByText('Envio eSocial (S-2299)')).toBeInTheDocument();
@@ -51,7 +55,10 @@ describe('DesligamentoChecklist', () => {
     const user = userEvent.setup();
     const onToggle = vi.fn();
     render(
-      <DesligamentoChecklist desligamento={ALL_UNCHECKED as unknown as Tables<'desligamentos'>} onToggle={onToggle} />
+      <DesligamentoChecklist
+        desligamento={ALL_UNCHECKED}
+        onToggle={onToggle}
+      />
     );
     await user.click(screen.getByText('Comunicação ao colaborador'));
     expect(onToggle).toHaveBeenCalledWith('checklist_comunicacao', true);
@@ -62,7 +69,7 @@ describe('DesligamentoChecklist', () => {
     const onToggle = vi.fn();
     render(
       <DesligamentoChecklist
-        desligamento={ALL_UNCHECKED as unknown as Tables<'desligamentos'>}
+        desligamento={ALL_UNCHECKED}
         onToggle={onToggle}
         readOnly
       />
@@ -72,17 +79,7 @@ describe('DesligamentoChecklist', () => {
   });
 
   it('shows progress text', () => {
-    render(
-      <DesligamentoChecklist
-        desligamento={
-          {
-            ...ALL_UNCHECKED,
-            checklist_comunicacao: true,
-            checklist_pagamento: true,
-          } as unknown as Tables<'desligamentos'>
-        }
-      />
-    );
+    render(<DesligamentoChecklist desligamento={{ ...ALL_UNCHECKED, checklist_comunicacao: true, checklist_pagamento: true }} />);
     expect(screen.getByText('2/8')).toBeInTheDocument();
   });
 });

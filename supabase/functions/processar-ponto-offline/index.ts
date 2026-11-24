@@ -1,5 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { integrityHash, sha256Hex } from '../_shared/integrityHash.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
@@ -7,13 +7,12 @@ import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 
 async function computeExpectedHash(payload: {
   colaborador_id: string;
-  empresa_id: string;
   timestamp: string;
   tipo: string;
   dispositivoId: string;
 }): Promise<string> {
   const secret = Deno.env.get('PONTO_HASH_SECRET') ?? '';
-  const canonical = `${payload.empresa_id}|${payload.colaborador_id}|${payload.timestamp}|${payload.tipo}|${payload.dispositivoId}`;
+  const canonical = `${payload.colaborador_id}|${payload.timestamp}|${payload.tipo}|${payload.dispositivoId}`;
   if (!secret) return sha256Hex(canonical);
   const key = await crypto.subtle.importKey(
     'raw',
@@ -74,9 +73,10 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
+    let rawBody: any;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    const rawBody = _pb as any;
+    rawBody = _pb;
 
     const { registros } = rawBody ?? {};
     if (!registros || !Array.isArray(registros) || registros.length === 0) {
@@ -92,9 +92,23 @@ serve(async (req: Request): Promise<Response> => {
       });
     }
 
+    // Tenant scope: validate that user belongs to the empresas referenced
+    const empresaIds = [...new Set(registros.map((r: any) => r.empresa_id).filter(Boolean))];
+    for (const empId of empresaIds) {
+      const [{ data: belongs }, { data: isAdm }] = await Promise.all([
+        supabase.rpc('user_belongs_to_empresa', { _user_id: userId, _empresa_id: empId }),
+        supabase.rpc('is_admin', { _user_id: userId }),
+      ]);
+      if (!belongs && !isAdm) {
+        return new Response(JSON.stringify({ error: 'Sem acesso a esta empresa', code: 'FORBIDDEN' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403,
+        });
+      }
+    }
+
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `ponto-offline:${userId}`, limit: 30, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     // Achado N7 da auditoria: o INSERT abaixo omitia `ordem` (NOT NULL, sem
     // default, parte de UNIQUE(colaborador_id, data, ordem)) — toda batida
@@ -121,38 +135,6 @@ serve(async (req: Request): Promise<Response> => {
       }
     }
 
-    // O tenant confiável é derivado do colaborador no servidor. O valor do
-    // cliente é obrigatório apenas como vínculo de integridade e deve casar.
-    const derivedEmpresaIds = [...new Set([...empresaPorColaborador.values()].filter(
-      (v): v is string => typeof v === 'string' && v.length > 0,
-    ))];
-    const { data: memberships } = derivedEmpresaIds.length > 0
-      ? await supabase
-          .from('user_empresas')
-          .select('empresa_id')
-          .eq('user_id', userId)
-          .in('empresa_id', derivedEmpresaIds)
-      : { data: [] };
-    const allowedEmpresas = new Set((memberships ?? []).map((m: any) => String(m.empresa_id)));
-    const { data: isGlobalAdmin } = await supabase.rpc('has_role', {
-      _user_id: userId,
-      _role: 'admin',
-    });
-
-    for (const reg of registros) {
-      const derivedEmpresa = empresaPorColaborador.get(reg?.colaborador_id);
-      if (!derivedEmpresa || reg?.empresa_id !== derivedEmpresa) {
-        return new Response(JSON.stringify({ error: 'Tenant do registro divergente', code: 'TENANT_MISMATCH' }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403,
-        });
-      }
-      if (!allowedEmpresas.has(derivedEmpresa) && !isGlobalAdmin) {
-        return new Response(JSON.stringify({ error: 'Sem acesso a esta empresa', code: 'FORBIDDEN' }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403,
-        });
-      }
-    }
-
     // Semente do contador de ordem = MAX(ordem) já existente por (colaborador_id, data)
     const ordemAtual = new Map<string, number>();
     if (colaboradorIds.length > 0 && datasEnvolvidas.length > 0) {
@@ -172,24 +154,23 @@ serve(async (req: Request): Promise<Response> => {
     const enforceHash = !!Deno.env.get('PONTO_HASH_SECRET');
 
     const results: {
-      success_count: number;
-      error_count: number;
+      success: number;
+      errors: number;
       rejected_invalid_hash: number;
       details: Array<{ id?: string; error: string; code?: string }>;
       batch_integrity_hash?: string;
-    } = { success_count: 0, error_count: 0, rejected_invalid_hash: 0, details: [] };
+    } = { success: 0, errors: 0, rejected_invalid_hash: 0, details: [] };
 
     const processedIds: string[] = [];
 
     for (const reg of registros) {
       try {
-        if (!reg?.empresa_id || !reg?.colaborador_id || !reg?.timestamp || !reg?.tipo || !reg?.dispositivoId) {
-          throw new Error('Campos obrigatórios ausentes (empresa_id, colaborador_id, timestamp, tipo, dispositivoId)');
+        if (!reg?.colaborador_id || !reg?.timestamp || !reg?.tipo || !reg?.dispositivoId) {
+          throw new Error('Campos obrigatórios ausentes (colaborador_id, timestamp, tipo, dispositivoId)');
         }
 
         const expected = await computeExpectedHash({
           colaborador_id: reg.colaborador_id,
-          empresa_id: reg.empresa_id,
           timestamp: reg.timestamp,
           tipo: reg.tipo,
           dispositivoId: reg.dispositivoId,
@@ -198,7 +179,7 @@ serve(async (req: Request): Promise<Response> => {
         if (enforceHash) {
           if (!reg.hash || !safeEqual(String(reg.hash), expected)) {
             results.rejected_invalid_hash++;
-            results.error_count++;
+            results.errors++;
             results.details.push({
               id: reg.id,
               error: 'Assinatura de integridade inválida',
@@ -223,7 +204,7 @@ serve(async (req: Request): Promise<Response> => {
           .maybeSingle();
 
         if (duplicate) {
-          results.success_count++;
+          results.success++;
           processedIds.push(String(duplicate.id));
           continue;
         }
@@ -240,7 +221,7 @@ serve(async (req: Request): Promise<Response> => {
         // Upload seguro de foto (opcional)
         let finalFotoUrl: string | null = null;
         if (reg.foto_base64 && reg.colaborador_id) {
-          const fileName = `${empresaId}/${reg.colaborador_id}/offline-${Date.now()}.jpg`;
+          const fileName = `${reg.colaborador_id}/offline-${Date.now()}.jpg`;
           const parts = String(reg.foto_base64).split(',');
           const b64 = parts.length > 1 ? parts[1] : parts[0];
           try {
@@ -248,7 +229,10 @@ serve(async (req: Request): Promise<Response> => {
             const { error: storageError } = await supabase.storage
               .from('ponto-biometria')
               .upload(fileName, binary, { contentType: 'image/jpeg' });
-            if (!storageError) finalFotoUrl = fileName;
+            if (!storageError) {
+              const { data: pub } = supabase.storage.from('ponto-biometria').getPublicUrl(fileName);
+              finalFotoUrl = pub.publicUrl;
+            }
           } catch {
             // foto inválida não bloqueia a batida
           }
@@ -294,18 +278,18 @@ serve(async (req: Request): Promise<Response> => {
 
         if (error) throw error;
         if (inserted?.id) processedIds.push(String(inserted.id));
-        results.success_count++;
+        results.success++;
       } catch (err) {
         console.error('[processar-ponto-offline] item error:', err instanceof Error ? err.message : err);
-        results.error_count++;
+        results.errors++;
         results.details.push({ id: reg?.id, error: 'Falha ao processar registro' });
       }
     }
 
     results.batch_integrity_hash = await integrityHash({
       total: registros.length,
-      success: results.success_count,
-      errors: results.error_count,
+      success: results.success,
+      errors: results.errors,
       rejected_invalid_hash: results.rejected_invalid_hash,
       processed_ids: processedIds.sort(),
       enforce_hash: enforceHash,
@@ -316,7 +300,7 @@ serve(async (req: Request): Promise<Response> => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    try { captureException(error, { function: 'processar-ponto-offline' }); } catch { /* noop */ }
+    try { captureException(error, { fn: 'processar-ponto-offline' }); } catch { /* noop */ }
     return new Response(JSON.stringify({ success: false, error: 'Erro interno no processamento offline', code: 'INTERNAL_SERVER_ERROR' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500,
     });

@@ -1,12 +1,11 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   },
-  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
 vi.mock('sonner', () => ({
@@ -60,10 +59,6 @@ vi.mock('@/hooks/useRealTimeSubscription', () => ({
   useRealTimeSubscription: vi.fn(),
 }));
 
-vi.mock('@/hooks/useEmpresas', () => ({
-  useEmpresas: vi.fn(() => ({ empresaAtual: null })),
-}));
-
 vi.mock('@/services/tabelasComplementaresService', () => ({
   viewsService: { listar: vi.fn() },
 }));
@@ -74,21 +69,11 @@ vi.mock('@/services/exportService', () => ({
 }));
 
 vi.mock('@/components/dashboard/analytics/widgets', () => ({
-  MotionCard: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
-    <div {...props}>{children}</div>
-  ),
+  MotionCard: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   donutColors: ['#000'],
-  IndicatorRow: ({ label, value }: { children?: ReactNode; label?: string; value?: string }) => (
-    <div>
-      {label}: {value}
-    </div>
-  ),
-  QuickStat: ({ label, value }: { children?: ReactNode; label?: string; value?: string }) => (
-    <div>
-      {label}: {value}
-    </div>
-  ),
-  PendenciaItem: ({ pendencia }: { pendencia: { titulo?: string } }) => <div>{pendencia.titulo}</div>,
+  IndicatorRow: ({ label, value }: any) => <div>{label}: {value}</div>,
+  QuickStat: ({ label, value }: any) => <div>{label}: {value}</div>,
+  PendenciaItem: ({ pendencia }: any) => <div>{pendencia.titulo}</div>,
   AlertasRHWidget: () => <div data-testid="alertas-rh" />,
   CadastroIncompletoWidget: () => <div data-testid="cadastro-incompleto" />,
   ESocialMonitorWidget: () => <div data-testid="esocial-monitor">Monitor eSocial</div>,
@@ -99,7 +84,7 @@ vi.mock('@/components/dashboard/MiniSparkline', () => ({
 }));
 
 vi.mock('@/components/dashboard/AnimatedNumber', () => ({
-  AnimatedNumber: ({ value }: { value?: string }) => <span>{value}</span>,
+  AnimatedNumber: ({ value }: any) => <span>{value}</span>,
 }));
 
 vi.mock('@/components/dashboard/BarChartWidget', () => ({
@@ -111,35 +96,34 @@ vi.mock('@/components/dashboard/DonutChart', () => ({
 }));
 
 vi.mock('@/components/ui/module-skeleton', () => ({
-  CardSkeleton: ({ className }: { className?: string }) => <div data-testid="card-skeleton" className={className} />,
+  CardSkeleton: ({ className }: any) => <div data-testid="card-skeleton" className={className} />,
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children, open }: { children?: ReactNode; open?: boolean }) =>
-    open ? <div role="dialog">{children}</div> : null,
-  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
-  DialogDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
-  DialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  Dialog: ({ children, open }: any) => open ? <div role="dialog">{children}</div> : null,
+  DialogContent: ({ children }: any) => <div>{children}</div>,
+  DialogHeader: ({ children }: any) => <div>{children}</div>,
+  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
+  DialogDescription: ({ children }: any) => <p>{children}</p>,
+  DialogFooter: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/dropdown-menu', () => ({
-  DropdownMenu: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DropdownMenuTrigger: ({ children }: { children?: ReactNode }) => children,
-  DropdownMenuContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  DropdownMenuItem: ({ children }: { children?: ReactNode }) => <div role="menuitem">{children}</div>,
+  DropdownMenu: ({ children }: any) => <div>{children}</div>,
+  DropdownMenuTrigger: ({ children }: any) => children,
+  DropdownMenuContent: ({ children }: any) => <div>{children}</div>,
+  DropdownMenuItem: ({ children }: any) => <div role="menuitem">{children}</div>,
 }));
 
 vi.mock('@/components/ui/tabs', () => ({
-  Tabs: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  TabsList: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  TabsTrigger: ({ children }: { children?: ReactNode }) => <button>{children}</button>,
-  TabsContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  Tabs: ({ children }: any) => <div>{children}</div>,
+  TabsList: ({ children }: any) => <div>{children}</div>,
+  TabsTrigger: ({ children }: any) => <button>{children}</button>,
+  TabsContent: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/scroll-area', () => ({
-  ScrollArea: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  ScrollArea: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/checkbox', () => ({

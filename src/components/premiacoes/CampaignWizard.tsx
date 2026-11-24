@@ -1,5 +1,8 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { motion } from 'framer-motion';
+import { DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { CascadeDialogFrame } from '@/components/ui/cascade-dialog';
+import { cascadeItemVariants } from '@/components/ui/cascade-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,6 +11,8 @@ import { Trophy, Plus, Trash2, Sparkles } from 'lucide-react';
 import { premiacoesService } from '@/services/premiacoesService';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+// MOCK VISUAL — ver src/mocks/premiacoesMock.ts.
+import { bloquearEscritaPremiacoes } from '@/mocks/premiacoesMock';
 
 interface CampaignWizardProps {
   isOpen: boolean;
@@ -29,15 +34,13 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
   });
 
   const [rules, setRules] = React.useState([
-    { titulo: 'Bônus de Batimento', tipo_calculo: 'valor_fixo', valor_base: 500, configuracao: { condicao_metrica: 'atingimento_meta' } }
+    { nome: 'Bônus de Batimento', tipo_calculo: 'valor_fixo', valor_base: 500, condicao_metrica: 'atingimento_meta' }
   ]);
 
   const handleSave = async () => {
+    // MOCK VISUAL — ver src/mocks/premiacoesMock.ts. Aborta a escrita no modo demo.
+    if (bloquearEscritaPremiacoes('Criar campanha')) return;
     try {
-      if (!empresaId) {
-        toast.error("Empresa não identificada.");
-        return;
-      }
       const campanha = await premiacoesService.criarCampanha({
         ...formData,
         empresa_id: empresaId
@@ -59,8 +62,17 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] rounded-2xl">
+    /* MESMA janela de "Pendências": a moldura `CascadeDialogFrame` é a fonte
+       única da coreografia (véu, caixa de dentro para fora, cascata dos blocos
+       e fechamento na ordem inversa). Só a largura e o conteúdo são deste
+       formulário — nenhuma animação nova. */
+    <CascadeDialogFrame
+      open={isOpen}
+      onOpenChange={(aberto) => !aberto && onClose()}
+      blocks={3}
+      className="sm:max-w-[600px]"
+    >
+      <motion.div variants={cascadeItemVariants}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-primary" />
@@ -70,8 +82,10 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
             Defina o período, orçamento e as regras de cálculo para este ciclo.
           </DialogDescription>
         </DialogHeader>
+      </motion.div>
 
-        <div className="grid gap-6 py-4">
+      <motion.div variants={cascadeItemVariants}>
+        <div className="grid gap-4 py-4">
           {step === 1 ? (
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-2">
@@ -98,13 +112,13 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
               <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 flex items-start gap-3">
                 <Sparkles className="h-5 w-5 text-primary mt-1" />
                 <div>
-                  <h4 className="text-sm font-bold text-primary">Inteligência de Incentivos</h4>
+                  <h4 className="text-sm font-medium text-primary">Inteligência de Incentivos</h4>
                   <p className="text-[10px] text-muted-foreground">Analise as metas atuais para sugerir as melhores regras de premiação.</p>
-                  <Button variant="link" className="p-0 h-auto text-[10px] font-bold text-primary" onClick={() => {
+                  <Button variant="link" className="p-0 h-auto text-[10px] font-medium text-primary" onClick={() => {
                     setRules([
                       ...rules,
-                      { titulo: 'Atingimento Meta Vendas', tipo_calculo: 'percentual_comissao', valor_base: 5, configuracao: { condicao_metrica: 'meta_vendas > 100%' } },
-                      { titulo: 'Superação de Meta (Kicker)', tipo_calculo: 'valor_fixo', valor_base: 1000, configuracao: { condicao_metrica: 'meta_vendas > 120%' } }
+                      { nome: 'Atingimento Meta Vendas', tipo_calculo: 'percentual_comissao', valor_base: 5, condicao_metrica: 'meta_vendas > 100%' },
+                      { nome: 'Superação de Meta (Kicker)', tipo_calculo: 'valor_fixo', valor_base: 1000, condicao_metrica: 'meta_vendas > 120%' }
                     ]);
                     toast.success("Regras sugeridas aplicadas!");
                   }}>
@@ -113,8 +127,8 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
                 </div>
               </div>
               <div className="flex justify-between items-center pt-2">
-                <Label className="text-sm font-bold">Regras de Premiação</Label>
-                <Button size="sm" variant="outline" className="h-8 text-[10px]" onClick={() => setRules([...rules, { titulo: '', tipo_calculo: 'valor_fixo', valor_base: 0, configuracao: { condicao_metrica: '' } }])}>
+                <Label className="text-sm font-medium">Regras de Premiação</Label>
+                <Button size="sm" variant="outline" className="h-8 text-[10px]" onClick={() => setRules([...rules, { nome: '', tipo_calculo: 'valor_fixo', valor_base: 0, condicao_metrica: '' }])}>
                   <Plus className="h-3 w-3 mr-1" /> Adicionar Regra
                 </Button>
               </div>
@@ -127,7 +141,7 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
                     <Trash2 className="h-3 w-3" />
                   </Button>
                   <div className="grid grid-cols-2 gap-3">
-                    <Input placeholder="Nome da Regra" value={rule.titulo} onChange={e => patch({ titulo: e.target.value })} />
+                    <Input placeholder="Nome da Regra" value={rule.nome} onChange={e => patch({ nome: e.target.value })} />
                     <Select value={rule.tipo_calculo} onValueChange={v => patch({ tipo_calculo: v })}>
                       <SelectTrigger><SelectValue placeholder="Tipo" /></SelectTrigger>
                       <SelectContent>
@@ -139,14 +153,16 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <Input type="number" placeholder="Valor/Base" value={rule.valor_base} onChange={e => patch({ valor_base: Number(e.target.value) })} />
-                    <Input placeholder="Critério (Ex: Meta > 100%)" value={rule.configuracao?.condicao_metrica ?? ''} onChange={e => patch({ configuracao: { condicao_metrica: e.target.value } })} />
+                    <Input placeholder="Critério (Ex: Meta > 100%)" value={rule.condicao_metrica} onChange={e => patch({ condicao_metrica: e.target.value })} />
                   </div>
                 </div>
               );})}
             </div>
           )}
         </div>
+      </motion.div>
 
+      <motion.div variants={cascadeItemVariants}>
         <DialogFooter>
           {step === 1 ? (
             <Button className="w-full" onClick={() => setStep(2)}>Próximo: Regras de Pagamento</Button>
@@ -164,7 +180,7 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
             </div>
           )}
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </motion.div>
+    </CascadeDialogFrame>
   );
 }

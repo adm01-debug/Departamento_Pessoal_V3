@@ -5,7 +5,7 @@ import type { Database } from '@/integrations/supabase/types';
  *
  * Fonte da verdade: os tipos gerados do banco (`Database['public']['Tables']`).
  * As variantes `...ComRelacoes` refletem exatamente os `select()` com joins
- * usados em `recrutamentoService`, evitando tipagem solta na camada de apresentação.
+ * usados em `recrutamentoService`, evitando `any` na camada de apresentação.
  */
 
 type Tables = Database['public']['Tables'];
@@ -18,6 +18,8 @@ export type CandidaturaRow = Tables['candidaturas']['Row'];
 export interface VagaResumo {
   titulo: string | null;
   departamento: string | null;
+  /** Requisitos reais da vaga — alimentam as tags de habilidades do card. */
+  requisitos?: string | null;
 }
 
 /**

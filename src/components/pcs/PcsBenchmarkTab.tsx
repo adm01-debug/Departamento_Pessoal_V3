@@ -8,7 +8,6 @@ import { Spinner } from '@/components/ui/spinner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Trash2 } from 'lucide-react';
 import { usePcsBenchmark } from '@/hooks/usePcs';
-import { todayLocalISO } from '@/utils/dateLocal';
 
 const brl = (v: number | null) => (v === null ? '—' : Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
 
@@ -16,7 +15,7 @@ const FORM_INICIAL = {
   cargo_referencia: '',
   fonte: '',
   regiao: '',
-  data_referencia: todayLocalISO(),
+  data_referencia: new Date().toISOString().slice(0, 10),
   p25: '',
   p50: '',
   p75: '',
@@ -88,7 +87,9 @@ export function PcsBenchmarkTab() {
                   {campo('p90', 'P90', 'number')}
                 </div>
                 {campo('amostra', 'Tamanho da amostra', 'number')}
-                <Button className="w-full" onClick={submit} disabled={criar.isPending}>Salvar referência</Button>
+                <div className="flex justify-end pt-1">
+                  <Button size="sm" className="rounded-lg px-4" onClick={submit} disabled={criar.isPending}>Salvar referência</Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
@@ -116,14 +117,14 @@ export function PcsBenchmarkTab() {
             <TableBody>
               {pesquisas.map((p) => (
                 <TableRow key={p.id} className="border-b border-border/10 last:border-0">
-                  <TableCell className="py-3 pl-6 text-sm font-bold">{p.cargo_referencia}</TableCell>
+                  <TableCell className="py-3 pl-6 text-sm font-medium">{p.cargo_referencia}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{p.fonte}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{p.regiao || '—'}</TableCell>
-                  <TableCell className="font-mono text-[11px]">
+                  <TableCell className="text-numeric text-[11px]">
                     {new Date(`${p.data_referencia}T00:00:00`).toLocaleDateString('pt-BR')}
                   </TableCell>
                   <TableCell className="text-right text-sm">{brl(p.p25)}</TableCell>
-                  <TableCell className="text-right text-sm font-bold">{brl(p.p50)}</TableCell>
+                  <TableCell className="text-right text-sm font-medium">{brl(p.p50)}</TableCell>
                   <TableCell className="text-right text-sm">{brl(p.p75)}</TableCell>
                   <TableCell className="text-right text-sm">{brl(p.p90)}</TableCell>
                   <TableCell className="pr-4 text-right">

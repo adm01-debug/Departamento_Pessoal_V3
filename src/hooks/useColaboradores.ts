@@ -19,22 +19,29 @@ export function useColaboradores() {
     enabled: !!empresaId,
   });
 
+  // Opções dos dropdowns de filtro — ver colaboradorService.listarOpcoesFiltro.
+  const { data: opcoesFiltro } = useQuery({
+    queryKey: ['colaboradores-opcoes-filtro', empresaId],
+    queryFn: () => colaboradorService.listarOpcoesFiltro(empresaId!),
+    enabled: !!empresaId,
+  });
+
   const crud = useGenericCrud<Colaborador>({
     queryKey: 'colaboradores',
     service: colaboradorService,
     initialPageSize: 25,
-    empresaId,
+    enabled: !!empresaId,
     filters: {
       empresaId,
       status,
       departamento,
-      cargo,
+      cargo
     },
     successMessages: {
       create: 'Colaborador criado com sucesso',
       update: 'Colaborador atualizado',
-      delete: 'Colaborador excluído',
-    },
+      delete: 'Colaborador excluído'
+    }
   });
 
   return {
@@ -48,6 +55,8 @@ export function useColaboradores() {
     setCargo,
     summary,
     isLoadingSummary,
-    criar: (data: Record<string, unknown>) => crud.criar({ ...data, empresa_id: empresaId }),
+    departamentosDisponiveis: opcoesFiltro?.departamentos || [],
+    cargosDisponiveis: opcoesFiltro?.cargos || [],
+    criar: (data: any) => crud.criar({ ...data, empresa_id: empresaId }),
   };
 }

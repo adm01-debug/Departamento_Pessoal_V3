@@ -1,17 +1,16 @@
 import { supabase } from '@/integrations/supabase/client';
 import { BaseService, ListOptions, ListResponse } from './baseService';
-import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
 
-class WebhookService extends BaseService<Tables<'webhooks'>, Insertable<'webhooks'>, Updatable<'webhooks'>> {
+class WebhookService extends BaseService<any> {
   constructor() {
-    super('webhooks', {
-      defaultOrderBy: 'nome',
+    super('webhooks', { 
+      defaultOrderBy: 'nome' 
     });
   }
 
-  async listar(options: ListOptions = {}): Promise<ListResponse<Tables<'webhooks'>>> {
+  async listar(options: ListOptions = {}): Promise<ListResponse<any>> {
     const { filters, search } = options;
-    const empresaId = filters?.empresa_id as string | undefined;
+    const empresaId = (filters as any)?.empresa_id;
 
     let query = this.getQuery().select('*', { count: 'exact' });
     if (empresaId) query = query.eq('empresa_id', empresaId);
@@ -22,10 +21,10 @@ class WebhookService extends BaseService<Tables<'webhooks'>, Insertable<'webhook
 
     const { data, count, error } = await query.order('nome');
     if (error) throw error;
-    return { data: (data as Tables<'webhooks'>[]) || [], total: count || 0 };
+    return { data: (data as any[]) || [], total: count || 0 };
   }
 
-  async listarLogs(webhookId: string): Promise<Tables<'webhook_logs'>[]> {
+  async listarLogs(webhookId: string): Promise<any[]> {
     // BUG corrigido: o builder do PostgREST não expõe `.from()`; a chamada
     // antiga (`this.getQuery().from(...)`) lançava TypeError em runtime.
     const { data, error } = await supabase
@@ -34,7 +33,7 @@ class WebhookService extends BaseService<Tables<'webhooks'>, Insertable<'webhook
       .eq('webhook_id', webhookId)
       .order('created_at', { ascending: false })
       .limit(50);
-
+    
     if (error) throw error;
     return data || [];
   }

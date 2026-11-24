@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { contratoService } from '../contratoService';
-import type { Insertable } from '@/integrations/supabase/database.types';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -14,21 +13,21 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Thenable list chain (select → order → optional eq → await)
-function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupListChain(data: any[], error: any = null) {
   const response = { data, error };
-  const chain: Record<string, unknown> = {};
+  const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: any) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
 }
 
 // Insert chain
-function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupInsertChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -37,7 +36,7 @@ function setupInsertChain(data: unknown, error: { message: string; code?: string
 }
 
 // Update chain
-function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();
@@ -51,9 +50,7 @@ function setupUpdateChain(data: unknown, error: { message: string; code?: string
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('contratoService.listar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns all contratos without empresa filter', async () => {
     const records = [{ id: 'c1', tipo: 'clt' }];
@@ -63,7 +60,7 @@ describe('contratoService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     const result = await contratoService.listar(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -83,7 +80,9 @@ describe('contratoService.listar', () => {
   it('selects with colaborador join', async () => {
     const { selectFn } = setupListChain([]);
     await contratoService.listar(EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
+    expect(selectFn).toHaveBeenCalledWith(
+      expect.stringContaining('colaborador:colaboradores')
+    );
   });
 
   it('throws on DB error', async () => {
@@ -95,9 +94,7 @@ describe('contratoService.listar', () => {
 // ─── buscarPorId ──────────────────────────────────────────────────────────────
 
 describe('contratoService.buscarPorId', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns contrato for given id', async () => {
     const contrato = { id: 'c1', tipo: 'clt' };
@@ -134,9 +131,7 @@ describe('contratoService.buscarPorId', () => {
 // ─── buscarPorColaborador ─────────────────────────────────────────────────────
 
 describe('contratoService.buscarPorColaborador', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('returns contratos for given colaboradorId', async () => {
     const records = [{ id: 'c1', colaborador_id: 'col-1' }];
@@ -147,7 +142,7 @@ describe('contratoService.buscarPorColaborador', () => {
   });
 
   it('returns empty array when no contratos', async () => {
-    setupListChain(null as never);
+    setupListChain(null as any);
     const result = await contratoService.buscarPorColaborador('col-x', EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -156,36 +151,31 @@ describe('contratoService.buscarPorColaborador', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('contratoService.criar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns the new contrato', async () => {
     const created = { id: 'c-new', tipo: 'clt' };
     const { insertFn } = setupInsertChain(created);
-    const payload = { tipo: 'clt', data_inicio: '2026-01-01' };
-    const result = await contratoService.criar(payload);
-    expect(insertFn).toHaveBeenCalledWith(payload);
+    const result = await contratoService.criar({ tipo: 'clt' });
+    expect(insertFn).toHaveBeenCalledWith({ tipo: 'clt' });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null (no record returned)', async () => {
     setupInsertChain(null);
-    await expect(contratoService.criar({} as Insertable<'contratos'>)).rejects.toThrow();
+    await expect(contratoService.criar({})).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(contratoService.criar({} as Insertable<'contratos'>)).rejects.toBeDefined();
+    await expect(contratoService.criar({})).rejects.toBeDefined();
   });
 });
 
 // ─── atualizar ────────────────────────────────────────────────────────────────
 
 describe('contratoService.atualizar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates and returns the updated contrato', async () => {
     const updated = { id: 'c1', status: 'ativo' };
@@ -205,14 +195,12 @@ describe('contratoService.atualizar', () => {
 // ─── encerrar ─────────────────────────────────────────────────────────────────
 
 describe('contratoService.encerrar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls atualizar with status=encerrado and motivo as observacoes', async () => {
     const { updateFn } = setupUpdateChain({ id: 'c1', status: 'encerrado' });
     await contratoService.encerrar('c1', 'Demissão sem justa causa', EMPRESA_ID);
-    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
+    const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.status).toBe('encerrado');
     expect(updateArgs.observacoes).toBe('Demissão sem justa causa');
   });
@@ -221,14 +209,12 @@ describe('contratoService.encerrar', () => {
 // ─── renovar ──────────────────────────────────────────────────────────────────
 
 describe('contratoService.renovar', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls atualizar with new data_fim and status=ativo', async () => {
     const { updateFn, eqFn } = setupUpdateChain({ id: 'c1', status: 'ativo' });
     await contratoService.renovar('c1', '2027-12-31', EMPRESA_ID);
-    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
+    const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.data_fim).toBe('2027-12-31');
     expect(updateArgs.status).toBe('ativo');
     expect(eqFn).toHaveBeenCalledWith('id', 'c1');

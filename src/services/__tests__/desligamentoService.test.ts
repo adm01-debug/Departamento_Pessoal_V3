@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { desligamentoService } from '../desligamentoService';
-import type { Insertable } from '@/integrations/supabase/database.types';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -14,16 +13,20 @@ const mockOrder = vi.fn();
 const mockLimit = vi.fn();
 const mockMaybeSingle = vi.fn();
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: {
+// `baseService` importa `supabaseBase` (cliente direto do PostgREST), e o
+// `loggerService` também — por isso o mock precisa exportar OS DOIS nomes com o
+// mesmo objeto (o client real faz `export const supabase = supabaseBase`).
+vi.mock('@/integrations/supabase/client', () => {
+  const client = {
     from: vi.fn(() => ({
       select: mockSelect,
       insert: mockInsert,
       update: mockUpdate,
       delete: mockDelete,
     })),
-  },
-}));
+  };
+  return { supabase: client, supabaseBase: client };
+});
 
 describe('desligamentoService', () => {
   beforeEach(() => {
@@ -45,10 +48,7 @@ describe('desligamentoService', () => {
     it('should call select with colaborador join', () => {
       mockEq.mockResolvedValue({ data: [], error: null });
       desligamentoService.listar({ filters: { empresa_id: EMPRESA_ID } });
-      expect(mockSelect).toHaveBeenCalledWith(
-        '*, colaborador:colaboradores(nome_completo, cpf, cargo, data_admissao)',
-        { count: 'exact' }
-      );
+      expect(mockSelect).toHaveBeenCalledWith('*, colaborador:colaboradores(nome_completo, cargo, departamento)', { count: 'exact' });
     });
 
     it('should apply limit of 500', () => {
@@ -83,51 +83,41 @@ describe('desligamentoService', () => {
 
   describe('criar — validation', () => {
     it('should throw if colaborador_id is missing', async () => {
-      await expect(
-        desligamentoService.criar({
-          data_desligamento: '2026-01-01',
-          tipo: 'sem_justa_causa',
-          empresa_id: '123',
-        } as Insertable<'desligamentos'>)
-      ).rejects.toThrow('Colaborador é obrigatório');
+      await expect(desligamentoService.criar({
+        data_desligamento: '2026-01-01',
+        tipo: 'sem_justa_causa',
+        empresa_id: '123',
+      })).rejects.toThrow('Colaborador é obrigatório');
     });
 
     it('should throw if data_desligamento is missing', async () => {
-      await expect(
-        desligamentoService.criar({
-          colaborador_id: '123',
-          tipo: 'sem_justa_causa',
-          empresa_id: '123',
-        } as Insertable<'desligamentos'>)
-      ).rejects.toThrow('Data de desligamento é obrigatória');
+      await expect(desligamentoService.criar({
+        colaborador_id: '123',
+        tipo: 'sem_justa_causa',
+        empresa_id: '123',
+      })).rejects.toThrow('Data de desligamento é obrigatória');
     });
 
     it('should throw if tipo is missing', async () => {
-      await expect(
-        desligamentoService.criar({
-          colaborador_id: '123',
-          data_desligamento: '2026-01-01',
-          empresa_id: '123',
-        } as Insertable<'desligamentos'>)
-      ).rejects.toThrow('Tipo de rescisão é obrigatório');
+      await expect(desligamentoService.criar({
+        colaborador_id: '123',
+        data_desligamento: '2026-01-01',
+        empresa_id: '123',
+      })).rejects.toThrow('Tipo de rescisão é obrigatório');
     });
 
     it('should throw if empresa_id is missing', async () => {
-      await expect(
-        desligamentoService.criar({
-          colaborador_id: '123',
-          data_desligamento: '2026-01-01',
-          tipo: 'sem_justa_causa',
-        } as Insertable<'desligamentos'>)
-      ).rejects.toThrow('Empresa é obrigatória');
+      await expect(desligamentoService.criar({
+        colaborador_id: '123',
+        data_desligamento: '2026-01-01',
+        tipo: 'sem_justa_causa',
+      })).rejects.toThrow('Empresa é obrigatória');
     });
 
     it('should sanitize motivo (trim + limit 1000 chars)', async () => {
       const longMotivo = 'A'.repeat(2000);
-      mockInsert.mockReturnValue({
-        select: () => ({ maybeSingle: () => Promise.resolve({ data: { id: '1' }, error: null }) }),
-      });
-
+      mockInsert.mockReturnValue({ select: () => ({ maybeSingle: () => Promise.resolve({ data: { id: '1' }, error: null }) }) });
+      
       await desligamentoService.criar({
         colaborador_id: '123',
         data_desligamento: '2026-01-01',
@@ -144,7 +134,7 @@ describe('desligamentoService', () => {
 
   describe('buscarPorId — validation', () => {
     it('should throw if id is empty', async () => {
-      await expect(desligamentoService.buscarPorId('', EMPRESA_ID)).rejects.toThrow('ID é obrigatório');
+      await expect(desligamentoService.buscarPorId('')).rejects.toThrow('ID é obrigatório');
     });
   });
 

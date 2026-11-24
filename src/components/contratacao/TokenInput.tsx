@@ -46,14 +46,14 @@ export function TokenInput({ onValidToken }: { onValidToken: (token: string) => 
             <div className="mx-auto w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center mb-6 shadow-inner">
               <ShieldCheck className="w-10 h-10 text-primary" />
             </div>
-            <CardTitle className="text-3xl font-display font-bold">Portal do Candidato</CardTitle>
+            <CardTitle className="text-3xl font-display font-medium">Portal do Candidato</CardTitle>
             <CardDescription className="text-base px-4">
               Use o código de acesso enviado pelo RH para iniciar seu processo de admissão digital.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6 px-8 pb-8">
             <div className="space-y-3">
-              <Label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+              <Label className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                 Código de Acesso
               </Label>
               <Input
@@ -74,7 +74,7 @@ export function TokenInput({ onValidToken }: { onValidToken: (token: string) => 
               )}
             </div>
             <Button
-              className="w-full h-14 rounded-2xl text-lg font-bold shadow-glow hover:scale-[1.02] transition-all"
+              className="w-full h-14 rounded-2xl text-lg font-medium shadow-glow hover:scale-[1.02] transition-all"
               onClick={handleSubmit}
               disabled={!token || loading}
             >
@@ -89,7 +89,7 @@ export function TokenInput({ onValidToken }: { onValidToken: (token: string) => 
                 className="h-6 opacity-50 grayscale hover:grayscale-0 transition-all cursor-not-allowed"
                 title="Em breve: Acesso via Gov.br"
               />
-              <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">
+              <span className="text-[10px] text-muted-foreground uppercase font-medium tracking-wide">
                 Powered by Lovable Cloud
               </span>
             </div>

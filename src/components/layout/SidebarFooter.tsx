@@ -18,7 +18,7 @@ export function SidebarFooter({ collapsed, user, userInitials, onSignOut }: Side
         <div className="space-y-2">
           <div className="flex items-center gap-3 px-2 py-2">
             <Avatar className="h-9 w-9 ring-2 ring-border/30">
-              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-xs font-bold">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-xs font-medium">
                 {userInitials}
               </AvatarFallback>
             </Avatar>

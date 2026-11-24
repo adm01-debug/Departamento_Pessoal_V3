@@ -24,7 +24,7 @@ export function PontoStreakCard() {
       if (!colab) return [];
       const d = new Date();
       d.setDate(d.getDate() - 30);
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('registros_ponto')
         .select('data, atraso_minutos, horas_trabalhadas, entrada_1')
         .eq('colaborador_id', colab.id)
@@ -43,12 +43,12 @@ export function PontoStreakCard() {
       bestStreak = 0,
       tempStreak = 0;
 
-    const sorted = [...registros30d].sort((a, b) => a.data.localeCompare(b.data));
-    sorted.forEach((r) => {
+    const sorted = [...registros30d].sort((a: any, b: any) => a.data.localeCompare(b.data));
+    sorted.forEach((r: any) => {
       if (!r.entrada_1) {
         ausente++;
         tempStreak = 0;
-      } else if ((r.atraso_minutos ?? 0) > 0) {
+      } else if (r.atraso_minutos > 0) {
         atrasado++;
         tempStreak = 0;
       } else {
@@ -73,7 +73,6 @@ export function PontoStreakCard() {
       {/* Streak Card */}
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
         <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
-          <div className="h-[2px] bg-gradient-to-r from-warning to-streak" />
           <CardHeader>
             <CardTitle className="font-display flex items-center gap-2">
               <Flame className="h-4 w-4 text-warning" /> Streak de Pontualidade
@@ -83,10 +82,10 @@ export function PontoStreakCard() {
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <div className="p-2 bg-primary/10 rounded-lg">
-                  <span className="text-xl font-display font-bold text-primary">Lvl {stats.level}</span>
+                  <span className="text-xl font-display font-medium text-primary">Lvl {stats.level}</span>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase font-bold text-muted-foreground">Progresso do Nível</p>
+                  <p className="text-[10px] uppercase font-medium text-muted-foreground">Progresso do Nível</p>
                   <p className="text-[9px] text-muted-foreground">{stats.xp}% para o próximo nível</p>
                 </div>
               </div>
@@ -104,17 +103,17 @@ export function PontoStreakCard() {
               >
                 <Flame className="h-12 w-12 text-warning fill-warning" />
               </motion.div>
-              <p className="text-5xl font-display font-bold text-warning">{stats.currentStreak}</p>
+              <p className="text-5xl font-display font-medium text-warning">{stats.currentStreak}</p>
               <p className="text-sm text-muted-foreground font-body mt-1">dias consecutivos</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/20">
               <div className="text-center">
-                <p className="text-2xl font-display font-bold">{stats.bestStreak}</p>
+                <p className="text-2xl font-display font-medium">{stats.bestStreak}</p>
                 <p className="text-xs text-muted-foreground font-body">Melhor streak</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-display font-bold">{stats.pontual}</p>
+                <p className="text-2xl font-display font-medium">{stats.pontual}</p>
                 <p className="text-xs text-muted-foreground font-body">Dias pontuais</p>
               </div>
             </div>
@@ -152,7 +151,7 @@ export function PontoStreakCard() {
                     <Icon className={`h-4 w-4 ${color}`} />
                   </div>
                   <div>
-                    <p className="text-xl font-display font-bold tracking-tight">{value}</p>
+                    <p className="text-xl font-display font-medium tracking-tight">{value}</p>
                     <p className="text-[10px] text-muted-foreground font-body">{label}</p>
                   </div>
                 </div>

@@ -6,7 +6,7 @@
 // - Cap 10.000 itens / R$ 50 mi por lote
 // - Auditoria bloqueante + hash SHA-256 do payload
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
@@ -76,12 +76,13 @@ Deno.serve(async (req) => {
     }
     const userId = claims.user.id;
 
+    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req, 512 * 1024);
     if (_pe) return _pe;
-    const raw = _pb;
+    raw = _pb;
 
     const parsed = bodySchema.safeParse(raw);
-    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error);
     const { empresa_id, banco_codigo, itens } = parsed.data;
 
     // Tenant scope
@@ -89,26 +90,15 @@ Deno.serve(async (req) => {
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(service, userId, empresa_id, req);
+      const authz = await requireRh(service, userId, empresa_id);
       if (authz.denied) return authz.denied;
     }
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(service, { key: `cnab-remessa:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
 
-    // Cap financeiro
-    const totalCentavos = itens.reduce((acc, i) => acc + BigInt(i.valor_centavos), 0n);
-    if (totalCentavos > MAX_TOTAL_CENTAVOS) {
-      return createErrorResponse(
-        `Total do lote excede R$ ${Number(MAX_TOTAL_CENTAVOS) / 100}`,
-        422, 'AMOUNT_ABOVE_LIMIT',
-        undefined, req,
-      );
-    }
-
-    // Persist only after authentication and all deterministic validation. A
-    // rejected request must not leave an in_progress key behind.
+    // Idempotência transacional (shared helper)
     const idemKey = extractIdempotencyKey(req, parsed.data);
     const idem = await beginIdempotency(service, {
       endpoint: 'cnab-remessa',
@@ -116,23 +106,30 @@ Deno.serve(async (req) => {
       requestBody: { empresa_id, banco_codigo, itens },
       empresaId: empresa_id,
       userId,
-      request: req,
     });
     if (idem.replay) return idem.replay;
     if (idem.conflict) return idem.conflict;
 
-    // Sequencial via contador atômico (cnab_sequencias): o MAX+1 anterior
-    // lia sem reservar — duas gerações concorrentes pegavam o mesmo número
-    // e dois arquivos saíam com o mesmo sequencial para o banco.
-    const { data: seqData, error: seqError } = await service.rpc('next_cnab_sequencial', {
-      p_empresa_id: empresa_id,
-      p_banco_codigo: banco_codigo,
-    });
-    if (seqError || seqData == null) {
+    // Cap financeiro
+    const totalCentavos = itens.reduce((acc, i) => acc + BigInt(i.valor_centavos), 0n);
+    if (totalCentavos > MAX_TOTAL_CENTAVOS) {
       await failIdempotency(service, idem.id);
-      throw seqError ?? new Error('Falha ao alocar sequencial CNAB');
+      return createErrorResponse(
+        `Total do lote excede R$ ${Number(MAX_TOTAL_CENTAVOS) / 100}`,
+        422, 'AMOUNT_ABOVE_LIMIT',
+      );
     }
-    const sequencial = seqData as number;
+
+    // Sequencial atômico: MAX + 1 por (empresa, banco)
+    const { data: maxRow } = await service
+      .from('cnab_remessas')
+      .select('sequencial_arquivo')
+      .eq('empresa_id', empresa_id)
+      .eq('banco_codigo', banco_codigo)
+      .order('sequencial_arquivo', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    const sequencial = (maxRow?.sequencial_arquivo ?? 0) + 1;
 
     // Cria remessa (header)
     const { data: remessa, error: remErr } = await service
@@ -209,3 +206,4 @@ Deno.serve(async (req) => {
     return createErrorResponse('Erro ao gerar remessa CNAB', 500, 'INTERNAL_ERROR');
   }
 });
+

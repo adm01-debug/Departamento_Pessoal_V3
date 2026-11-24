@@ -11,9 +11,7 @@ export const COLUMNS_RE = /^[a-zA-Z0-9_,.\s*!():"-]+$/;
 // subquery/DML que não aparecem em tokens legítimos do PostgREST (colunas,
 // embeds `tabela(col)`, casts `col::tipo`, JSON `->`). Fecha o buraco de aceitar
 // algo como "(select senha from secrets)" na expressão de colunas.
-// Sincronizado com OR_DANGEROUS (auditoria round-6): adicionados AND, AS, CAST, CASE, JOIN, HAVING
-// para cobrir expressões de alias/subquery que passavam no regex de charset.
-export const DANGEROUS_TOKENS = /(;|--|\/\*|\*\/|\bDROP\b|\bTRUNCATE\b|\bALTER\b|\bGRANT\b|\bSELECT\b|\bUNION\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bEXEC(UTE)?\b|\bMERGE\b|\bCOPY\b|\bFROM\b|\bWHERE\b|\bAND\b|\bAS\b|\bCAST\b|\bCASE\b|\bJOIN\b|\bHAVING\b)/i;
+export const DANGEROUS_TOKENS = /(;|--|\/\*|\*\/|\bDROP\b|\bTRUNCATE\b|\bALTER\b|\bGRANT\b|\bSELECT\b|\bUNION\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bEXEC(UTE)?\b|\bMERGE\b|\bCOPY\b|\bFROM\b|\bWHERE\b)/i;
 
 export function isSafeTableName(t: unknown): t is string {
   return typeof t === "string" && t.length > 0 && t.length <= 63 && IDENTIFIER_RE.test(t);
@@ -37,7 +35,7 @@ export function isSafeOrderColumn(c: unknown): c is string {
 // -------------------- Keyset cursor (P1-020) --------------------
 // Cursor base64-encoded: "<column>:<value>". Validamos column com
 // isSafeOrderColumn e value como string|number (tamanho limitado).
-const CURSOR_VALUE_RE = /^[A-Za-z0-9_.:@-]{1,128}$/;
+const CURSOR_VALUE_RE = /^[A-Za-z0-9_.:@\-]{1,128}$/;
 export interface ParsedCursor {
   column: string;
   value: string | number;
@@ -64,9 +62,6 @@ export function parseCursor(c: unknown): ParsedCursor | null {
 // Estas tabelas nunca podem ser acessadas via bridge (nem leitura). Contêm
 // dados de segurança/roles que devem ser gerenciados apenas server-side.
 export const TABLE_DENYLIST = new Set<string>([
-  // Membership is authorization data. Generic bridge mutations use a service
-  // client, so this table must be exposed only through narrowly-scoped RPCs.
-  "user_empresas",
   "user_roles",
   "secrets",
   "vault",
@@ -80,24 +75,9 @@ export const TABLE_DENYLIST = new Set<string>([
   "password_policies",
   "security_alerts",
   "audit_log",
-  "audit_log_unified",
-  "pii_access_logs",
-  "pii_access_alerts",
-  // PINs de quiosque de ponto — mutação só via RPCs dedicadas.
-  "colaboradores_pin",
   "geo_blocking_config",
   "geo_allowed_countries",
   "govbr_auth_state",
-  // Tabela interna do Supabase CLI — defesa em profundidade (PostgREST expõe
-  // apenas schema public, mas bloquear explicitamente elimina o risco residual).
-  "supabase_migrations",
-  // Catálogo do PostgreSQL — defesa em profundidade caso db-schemas seja
-  // expandido acidentalmente para pg_catalog (pg_shadow contém hashes de senhas).
-  "pg_shadow",
-  "pg_authid",
-  "pg_user",
-  "pg_stat_activity",
-  "pg_roles",
 ]);
 
 // Tabelas em que writes são permitidos apenas com auth+tenant válido.
@@ -110,68 +90,28 @@ export const TENANT_SCOPED_TABLES = new Set<string>([
   "auditoria_logs", "ferias_audit_log", "esocial_eventos", "guias_impostos",
 ]);
 
-// Tenant membership alone never permits global company administration.
-export const ADMIN_ONLY_WRITE_TABLES = new Set<string>([
-  "empresas",
-]);
-
 // -------------------- Allowlist de RPCs --------------------
 // Somente RPCs explicitamente listadas são invocáveis via bridge.
 export const RPC_ALLOWLIST = new Set<string>([
+  // segurança / login
+  "check_login_lock", "record_failed_login", "reset_login_attempts",
+  "check_account_lockout", "record_login_attempt", "reset_account_lockout",
+  "check_brute_force", "check_rate_limit", "is_ip_blocked", "is_ip_whitelisted",
+  "is_country_allowed",
   // roles / tenant
   "has_role", "is_admin", "get_user_roles", "get_user_empresas",
   "get_user_default_empresa", "get_user_scope_empresas", "user_belongs_to_empresa",
-  "get_auth_empresa_id", "get_my_user_empresas", "set_own_default_empresa",
+  "get_auth_empresa_id",
   // gestão de papéis — único caminho de leitura/escrita para user_roles (a
   // tabela está na TABLE_DENYLIST); as funções verificam is_admin(auth.uid())
   // por dentro. Ver 20260718230000_admin_role_management_rpc.sql (achado R1).
-  "admin_set_user_role", "admin_list_user_roles", "admin_associar_usuario_empresa",
-  "admin_list_profiles",
-  // membership privilegiado da empresa para notificações críticas (user_empresas
-  // e user_roles são denylisted; autorização fina dentro da SECURITY DEFINER)
-  "get_empresa_admin_ids",
-  // observabilidade / auditoria — todas fazem a autorização fina no banco
-  "get_dlq_stats", "folha_conflict_stats", "get_query_telemetry",
-  "get_idempotency_health", "get_cron_jobs_health",
-  "get_security_alerts_summary", "resolve_security_alert",
-  "get_audit_trail", "listar_auditoria", "registrar_auditoria", "search_audit_unified",
-  "log_frontend_error", "record_pii_access", "sec_audit_policies",
-  "claim_admission_esocial_event", "complete_admission_esocial_event", "fail_admission_esocial_event",
-  // folha / financeiro
-  "get_personnel_cost_projection", "aprovar_despesa", "rejeitar_despesa",
-  "next_cnab_sequencial", "processar_ajuste_aprovado",
-  // férias
+  "admin_set_user_role", "admin_list_user_roles",
+  // negócio
+  "get_personnel_cost_projection", "get_colaborador_banco_horas",
   "calcular_dias_ferias", "fn_calculate_periodo_aquisitivo",
-  "assinar_aviso_ferias", "registrar_comunicado_ferias_coletivas",
-  "registrar_pagamento_ferias", "solicitar_adiantamento_13_ferias",
-  "programacao_ferias_mover", "programacao_ferias_aprovar_gestor",
-  "programacao_ferias_aprovar_rh", "programacao_ferias_rejeitar",
-  "programacao_ferias_converter",
-  // ponto / AFDT / AEJ
-  "registrar_batida_ponto", "assinar_espelho_ponto", "verificar_espelho_ponto",
-  "reconciliar_afdt", "notificar_divergencias_afdt",
-  "resolver_divergencia_afdt", "criar_batida_da_divergencia_afdt",
-  "associar_pis_colaborador_afdt", "aplicar_medida_folha_ponto",
-  // contratos por token e gestão autenticada
-  "contrato_consultar_por_token", "contrato_preview_url_por_token",
-  "contrato_assinar_por_token", "contrato_verificar_autenticidade_v2",
-  "contrato_gerar_token_assinatura", "contrato_revogar_token",
-  "contrato_estender_expiracao",
-  // medidas disciplinares
-  "medida_consultar_por_token", "medida_registrar_ciencia_publica",
-  "medida_gerar_link_ciencia", "medida_enviar_aprovacao", "medida_aprovar",
-  "medida_rejeitar", "medida_arquivar", "medida_contestar",
-  "medida_responder_contestacao", "sugerir_proxima_medida",
-  // plano de cargos e salários
-  "pcs_gerar_grades", "pcs_grades_mercado", "pcs_enquadramento",
-  "pcs_simular_impacto",
-  // SST
-  "clinicas_proximas", "sst_cat_dashboard", "sst_dashboard_sla",
-  "sst_extintores_dashboard", "sst_regimento_assinar",
-  "sst_regimento_dashboard", "sst_regimento_notificar_pendentes",
-  "sst_regimento_pendentes_lista", "sst_regimento_publicar",
-  // demais jornadas autenticadas
-  "gerar_alertas_preditivos_ia", "vincular_colaborador_ao_usuario",
+  "fn_link_gov_br_account", "processar_ajuste_aprovado",
+  "gerar_alertas_preditivos_ia",
+  "run_rls_tests",
   // rescisão — bloqueio de pagamento sem homologação/assinatura (achado
   // N25); ambas verificam is_admin(auth.uid()) por dentro. Ver
   // 20260719000000_bloqueio_pagamento_rescisao_lgpd.sql.
@@ -179,32 +119,19 @@ export const RPC_ALLOWLIST = new Set<string>([
   // onboarding público (candidato) — lookup exato por token, ver
   // 20260718220000_rls_remediacao_auditoria.sql (achado L3 da auditoria)
   "get_admissao_por_token",
-  // escritas do portal público /contratacao — SECURITY DEFINER token-scoped,
-  // ver 20261002103000_p0_fix_audit_critical_gaps.sql; precisam estar em
-  // PUBLIC_RPCS (access.ts) porque o portal roda sem sessão
-  "admissao_salvar_dados", "admissao_marcar_documentos", "admissao_assinar_contrato",
-  // E50-33: segundo fator do quiosque de ponto — hash nunca sai do banco,
-  // as duas verificam permissão/lockout por dentro (ver
-  // 20260924160000_e50_33_pin_quiosque_ponto.sql)
-  "admin_definir_pin_quiosque", "verificar_pin_quiosque",
 ]);
 
 // -------------------- Allowlist de operadores --------------------
 export const FILTER_OPS = new Set([
   "eq", "neq", "gt", "gte", "lt", "lte",
-  "like", "ilike", "in", "is", "or", "not", "contains",
-  // "match" removido: era aceito aqui mas nunca aplicado no query builder —
-  // um filtro 'match' era silenciosamente ignorado, retornando conjunto mais
-  // amplo que o solicitado. Rejeitar é fail-closed.
+  "like", "ilike", "in", "is", "or", "not", "contains", "match",
 ]);
 export const NOT_EXTRA_OPS = new Set(["eq", "neq", "gt", "gte", "lt", "lte", "in", "is"]);
 
 // Validação de expressões .or() — permite apenas operadores seguros sobre colunas válidas
 // Formato PostgREST: "col.op.val,col.op.val" — bloqueia subqueries, parênteses aninhados, SQL keywords
 export const OR_SAFE_OPS = /^(eq|neq|gt|gte|lt|lte|like|ilike|is|in)\./;
-// Sincronizado com DANGEROUS_TOKENS (auditoria round-4 + round-6): adicionados TRUNCATE, ALTER, GRANT,
-// UNION, MERGE, COPY, FROM, WHERE, EXEC(UTE)?, AND, AS, CAST, CASE, JOIN, HAVING.
-export const OR_DANGEROUS = /(;|--|\/\*|\*\/|\bDROP\b|\bTRUNCATE\b|\bALTER\b|\bGRANT\b|\bSELECT\b|\bUNION\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bEXEC(UTE)?\b|\bMERGE\b|\bCOPY\b|\bFROM\b|\bWHERE\b|\bAND\b|\bAS\b|\bCAST\b|\bCASE\b|\bJOIN\b|\bHAVING\b)/i;
+export const OR_DANGEROUS = /(;|--|\/\*|\*\/|\bSELECT\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bDROP\b|\bEXEC\b)/i;
 export function isSafeOrExpression(expr: unknown): boolean {
   if (typeof expr !== "string" || expr.length === 0 || expr.length > 500) return false;
   if (OR_DANGEROUS.test(expr)) return false;
@@ -229,9 +156,6 @@ export function isSafeOrExpression(expr: unknown): boolean {
 // NB: a versão anterior usava /^[a-zA-Z0-9_.,()->\s"-]+$/ — o trecho `)->`
 // formava um RANGE acidental de `)`(0x29) a `>`(0x3E), aceitando `;`, `*`, `<`,
 // `=` etc. Aqui `-` fica no fim (literal) e `>` é literal: sem range indesejado.
-// `>` e `-` são permitidos intencionalmente para JSON path do PostgREST (data->>'key').
 export function isSafeFilterColumn(c: unknown): c is string {
-  if (typeof c !== "string") return false;
-  if (DANGEROUS_TOKENS.test(c)) return false;
-  return /^[A-Za-z0-9_.,"()>\s-]+$/.test(c);
+  return typeof c === "string" && /^[A-Za-z0-9_.,"()>\s-]+$/.test(c);
 }

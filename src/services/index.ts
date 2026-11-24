@@ -13,6 +13,7 @@ export { pontoAbertoService } from './pontoAbertoService';
 export { pesquisaService } from './pesquisaService';
 export { workflowService } from './workflowService';
 export { turnoService } from './turnoService';
+export { jornadaService } from './jornadaService';
 export { comunicacaoService } from './comunicacaoService';
 export { despesaService } from './despesaService';
 export { controleAcessoService } from './controleAcessoService';

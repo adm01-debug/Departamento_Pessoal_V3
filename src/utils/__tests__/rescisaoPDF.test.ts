@@ -1,25 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { MockJsPDF, mockSave, mockToastSuccess, mockListarTrilha } = vi.hoisted(() => {
+const { MockJsPDF, mockSave, mockToastSuccess } = vi.hoisted(() => {
   const mockSave = vi.fn();
   // Vitest 4 requires 'function' or 'class' (not arrow) for constructor mocks
-  const MockJsPDF = vi.fn().mockImplementation(function (this: Record<string, unknown>) {
-    this.setFontSize = vi.fn();
-    this.setTextColor = vi.fn();
-    this.setFont = vi.fn();
-    this.setFillColor = vi.fn();
-    this.rect = vi.fn();
-    this.text = vi.fn();
-    this.line = vi.fn();
-    this.save = mockSave;
-    this.splitTextToSize = vi.fn((t: string) => [t]);
+  const MockJsPDF = vi.fn().mockImplementation(function(this: any) {
+    this.setFontSize = vi.fn(); this.setTextColor = vi.fn(); this.setFont = vi.fn();
+    this.setFillColor = vi.fn(); this.rect = vi.fn(); this.text = vi.fn(); this.line = vi.fn();
+    this.save = mockSave; this.splitTextToSize = vi.fn((t: string) => [t]);
     this.internal = { pageSize: { getWidth: () => 210 } };
     this.lastAutoTable = { finalY: 100 };
-    this.autoTable = vi.fn().mockImplementation(function (this: Record<string, unknown>) {
-      this.lastAutoTable = { finalY: 100 };
-    });
+    this.autoTable = vi.fn().mockImplementation(function(this: any) { this.lastAutoTable = { finalY: 100 }; });
   });
-  return { MockJsPDF, mockSave, mockToastSuccess: vi.fn(), mockListarTrilha: vi.fn() };
+  return { MockJsPDF, mockSave, mockToastSuccess: vi.fn() };
 });
 
 vi.mock('jspdf', () => ({ default: MockJsPDF }));
@@ -27,21 +19,13 @@ vi.mock('jspdf-autotable', () => ({ default: vi.fn() }));
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: () => ({
-      select: () => ({
-        eq: () => ({
-          eq: () => ({ order: () => ({ limit: () => ({ maybeSingle: () => Promise.resolve({ data: null }) }) }) }),
-        }),
-      }),
+      select: () => ({ eq: () => ({ eq: () => ({ order: () => ({ limit: () => ({ maybeSingle: () => Promise.resolve({ data: null }) }) }) }) }) }),
     }),
   },
 }));
 vi.mock('sonner', () => ({ toast: { success: mockToastSuccess, error: vi.fn() } }));
-vi.mock('@/services/auditoriaService', () => ({
-  auditoriaService: { listarTrilha: mockListarTrilha },
-}));
 
 import { gerarPDFRescisao } from '../rescisaoPDF';
-import type { AuditoriaPdf } from '../rescisaoPDF';
 
 const sampleForm = {
   nomeColaborador: 'Maria Costa',
@@ -77,62 +61,34 @@ const sampleResult = {
 describe('gerarPDFRescisao', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockListarTrilha.mockResolvedValue([]);
-    MockJsPDF.mockImplementation(function (this: Record<string, unknown>) {
-      this.setFontSize = vi.fn();
-      this.setTextColor = vi.fn();
-      this.setFont = vi.fn();
-      this.setFillColor = vi.fn();
-      this.rect = vi.fn();
-      this.text = vi.fn();
-      this.line = vi.fn();
-      this.save = mockSave;
-      this.splitTextToSize = vi.fn((t: string) => [t]);
+    MockJsPDF.mockImplementation(function(this: any) {
+      this.setFontSize = vi.fn(); this.setTextColor = vi.fn(); this.setFont = vi.fn();
+      this.setFillColor = vi.fn(); this.rect = vi.fn(); this.text = vi.fn(); this.line = vi.fn();
+      this.save = mockSave; this.splitTextToSize = vi.fn((t: string) => [t]);
       this.internal = { pageSize: { getWidth: () => 210 } };
       this.lastAutoTable = { finalY: 100 };
-      this.autoTable = vi.fn().mockImplementation(function (this: Record<string, unknown>) {
-        this.lastAutoTable = { finalY: 100 };
-      });
+      this.autoTable = vi.fn().mockImplementation(function(this: any) { this.lastAutoTable = { finalY: 100 }; });
     });
   });
 
   it('creates a jsPDF instance and saves the PDF', async () => {
-    await gerarPDFRescisao(sampleForm, sampleResult as never);
+    await gerarPDFRescisao(sampleForm, sampleResult as any);
     expect(MockJsPDF).toHaveBeenCalledTimes(1);
     expect(mockSave).toHaveBeenCalledWith(expect.stringContaining('.pdf'));
   });
 
   it('works without an auditoria record', async () => {
-    await expect(gerarPDFRescisao(sampleForm, sampleResult as never)).resolves.toBeUndefined();
+    await expect(gerarPDFRescisao(sampleForm, sampleResult as any)).resolves.toBeUndefined();
   });
 
   it('works when auditoria is provided directly', async () => {
-    const auditoria = { id: 'audit-1', created_at: new Date().toISOString() } as unknown as AuditoriaPdf;
-    await expect(gerarPDFRescisao(sampleForm, sampleResult as never, auditoria)).resolves.toBeUndefined();
+    const auditoria = { id: 'audit-1', created_at: new Date().toISOString() };
+    await expect(gerarPDFRescisao(sampleForm, sampleResult as any, auditoria)).resolves.toBeUndefined();
     expect(mockSave).toHaveBeenCalled();
   });
 
   it('handles minimal form fields without throwing', async () => {
     const minimalForm = { nomeColaborador: 'Test', tipo: 'pedido_demissao' };
-    await expect(gerarPDFRescisao(minimalForm, sampleResult as never)).resolves.toBeUndefined();
-  });
-
-  it('queries the tenant-scoped audit RPC when record and company are available', async () => {
-    mockListarTrilha.mockResolvedValue([{ id: 'audit-rpc' }]);
-    await gerarPDFRescisao({ ...sampleForm, id: 'desl-1', empresa_id: 'empresa-1' }, sampleResult as never);
-    expect(mockListarTrilha).toHaveBeenCalledWith({
-      empresa_id: 'empresa-1',
-      tabela: 'desligamentos',
-      registro_id: 'desl-1',
-      limite: 1,
-    });
-  });
-
-  it('still generates an unsigned draft when audit enrichment is unavailable', async () => {
-    mockListarTrilha.mockRejectedValue(new Error('audit unavailable'));
-    await expect(
-      gerarPDFRescisao({ ...sampleForm, id: 'desl-1', empresa_id: 'empresa-1' }, sampleResult as never)
-    ).resolves.toBeUndefined();
-    expect(mockSave).toHaveBeenCalled();
+    await expect(gerarPDFRescisao(minimalForm, sampleResult as any)).resolves.toBeUndefined();
   });
 });

@@ -17,7 +17,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { metricasSchema } from '../_shared/schemas/common.ts';
-import { corsHeaders, createErrorResponse } from '../_shared/contract.ts';
+import { corsHeaders, createErrorResponse, getCorsHeaders } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { getOrCreateTraceId } from '../_shared/trace.ts';
@@ -25,26 +25,14 @@ import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 
 // ── Helpers ──────────────────────────────────────────────────
 
-type DynamicSupabaseClient = ReturnType<typeof createClient<any>>;
-
 async function safeQuery<T>(
-  query: () => PromiseLike<{ data: unknown; error: unknown }>
+  supabase: ReturnType<typeof createClient>,
+  query: () => Promise<{ data: T; error: unknown }>
 ): Promise<T | null> {
   try {
     const { data, error } = await query();
-    if (error || data === null) return null;
-    return data as T;
-  } catch {
-    return null;
-  }
-}
-
-async function safeCount(
-  query: () => PromiseLike<{ count: number | null; error: unknown }>,
-): Promise<number | null> {
-  try {
-    const { count, error } = await query();
-    return error ? null : count;
+    if (error) return null;
+    return data;
   } catch {
     return null;
   }
@@ -53,56 +41,59 @@ async function safeCount(
 // ── KPIs de Bridge via MV (P3-054) ──────────────────────────
 
 async function getBridgeKpis(
-  supabase: DynamicSupabaseClient,
+  supabase: ReturnType<typeof createClient>,
   empresaId: string
 ) {
   // Tenta MV primeiro (refresh noturno — rápido)
-  const mv = await safeQuery<{ p95_ms: number }[]>(
+  const mv = await safeQuery<{ p95_ms: number; avg_ms: number; errors_1h: number; slow_1h: number }[]>(
+    supabase,
     () => supabase
       .from('mv_telemetry_dashboard')
-      .select('p95_ms')
-      .eq('empresa_id', empresaId)
+      .select('p95_ms, avg_ms')
       .gte('hour', new Date(Date.now() - 3600_000).toISOString())
-      .order('p95_ms', { ascending: false })
       .limit(1)
   );
 
-  // A MV não possui uma contagem exata de queries >5s. As duas contagens
-  // operacionais vêm da fonte; falha de coleta permanece `null`, nunca zero.
-  const since = new Date(Date.now() - 3600_000).toISOString();
-  const [errResult, slowResult] = await Promise.all([
-    safeCount(() =>
-      supabase.from('query_telemetry')
-        .select('id', { count: 'exact', head: true })
-        .eq('empresa_id', empresaId)
-        .in('severity', ['error', 'fatal'])
-        .gte('created_at', since)
-    ),
-    safeCount(() =>
-      supabase.from('query_telemetry')
-        .select('id', { count: 'exact', head: true })
-        .eq('empresa_id', empresaId)
-        .gt('duration_ms', 5000)
-        .gte('created_at', since)
-    ),
-  ]);
+  // Fallback: query direta em query_telemetry
+  if (!mv || mv.length === 0) {
+    const [errResult, slowResult] = await Promise.all([
+      safeQuery(supabase, () =>
+        supabase.from('query_telemetry')
+          .select('id', { count: 'exact', head: true })
+          .eq('severity', 'error')
+          .gte('created_at', new Date(Date.now() - 3600_000).toISOString())
+      ),
+      safeQuery(supabase, () =>
+        supabase.from('query_telemetry')
+          .select('id', { count: 'exact', head: true })
+          .gt('duration_ms', 5000)
+          .gte('created_at', new Date(Date.now() - 3600_000).toISOString())
+      ),
+    ]);
+    return {
+      p95_latency_ms: null,
+      error_count_1h: errResult?.count ?? 0,
+      slow_query_count_1h: slowResult?.count ?? 0,
+      source: 'telemetry_direct' as const,
+    };
+  }
 
-  const p95s = (mv ?? []).map((r) => r.p95_ms).filter((value) => Number.isFinite(value));
+  const p95s = mv.map((r) => r.p95_ms).filter(Boolean);
+  const avgs = mv.map((r) => r.avg_ms).filter(Boolean);
   const p95 = p95s.length ? Math.max(...p95s) : null;
 
   return {
     p95_latency_ms: p95,
-    error_count_1h: errResult,
-    slow_query_count_1h: slowResult,
-    degraded: mv === null || errResult === null || slowResult === null,
-    source: mv && mv.length > 0 ? 'mv_telemetry_dashboard' as const : 'telemetry_direct' as const,
+    error_count_1h: mv[0]?.errors_1h ?? 0,
+    slow_query_count_1h: mv[0]?.slow_1h ?? 0,
+    source: 'mv_telemetry_dashboard' as const,
   };
 }
 
 // ── KPIs de folha via MV (P4-072) ───────────────────────────
 
 async function getFolhaKpis(
-  supabase: DynamicSupabaseClient,
+  supabase: ReturnType<typeof createClient>,
   empresaId: string
 ) {
   const mv = await safeQuery<{
@@ -114,6 +105,7 @@ async function getFolhaKpis(
     total_fgts: number;
     total_inss: number;
   }[]>(
+    supabase,
     () => supabase
       .from('mv_folha_summary')
       .select('competencia_month, total_bruto, total_liquido, total_descontos, headcount_folha, total_fgts, total_inss')
@@ -146,7 +138,7 @@ async function getFolhaKpis(
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: corsHeaders });
+    return new Response(null, { status: 204, headers: getCorsHeaders(req) });
   }
 
   const traceId = getOrCreateTraceId(req, null);
@@ -159,7 +151,7 @@ serve(async (req) => {
     // Auth
     const authHeader = req.headers.get('Authorization') ?? '';
     if (!authHeader.startsWith('Bearer ')) {
-      return createErrorResponse('Autenticação obrigatória', 401, 'UNAUTHORIZED');
+      return createErrorResponse('Autenticação obrigatória', 401, 'UNAUTHORIZED', undefined, req);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
@@ -167,7 +159,7 @@ serve(async (req) => {
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
     if (!supabaseUrl || !serviceKey) {
-      return createErrorResponse('Configuração incompleta', 500, 'INTERNAL_ERROR');
+      return createErrorResponse('Configuração incompleta', 500, 'INTERNAL_ERROR', undefined, req);
     }
 
     // User
@@ -177,7 +169,7 @@ serve(async (req) => {
     });
     const { data: userData, error: userErr } = await userClient.auth.getUser();
     if (userErr || !userData?.user) {
-      return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+      return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED', undefined, req);
     }
     const userId = userData.user.id;
 
@@ -185,15 +177,15 @@ serve(async (req) => {
     let empresaId: string | undefined;
     try {
       const body = await req.clone().json();
-      if (body?.empresaId) empresaId = body.empresaId;
+      if (!empresaId && body?.empresaId) empresaId = body.empresaId;
     } catch { /* ignore */ }
 
-    if (!empresaId) return createErrorResponse('empresaId é obrigatório', 422, 'VALIDATION_ERROR');
+    if (!empresaId) return createErrorResponse('empresaId é obrigatório', 422, 'VALIDATION_ERROR', undefined, req);
 
     // Validate with Zod
     const parsed = metricasSchema.safeParse({ empresaId });
     if (!parsed.success) {
-      return createErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid', 422, 'VALIDATION_ERROR');
+      return createErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid', 422, 'VALIDATION_ERROR', undefined, req);
     }
 
     // Tenant + admin check
@@ -202,11 +194,11 @@ serve(async (req) => {
       admin.rpc('user_belongs_to_empresa', { _user_id: userId, _empresa_id: empresaId }),
       admin.rpc('is_admin', { _user_id: userId }),
     ]);
-    if (!belongs && !isAdm) return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN');
+    if (!belongs && !isAdm) return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN', undefined, req);
 
     // Rate limit
     const rl = await checkRateLimit(admin, { key: `metricas:${userId}`, limit: 60, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     const userClient2 = createClient(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
@@ -292,7 +284,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify(response), {
       headers: {
-        ...corsHeaders,
+        ...getCorsHeaders(req),
         'Content-Type': 'application/json',
         // Cache 60s: polling-friendly sem sobrecarregar DB
         'Cache-Control': 'private, max-age=60, stale-while-revalidate=30',
@@ -302,6 +294,6 @@ serve(async (req) => {
 
   } catch (error: unknown) {
     captureException(error, { fn: 'metricas', trace_id: traceId });
-    return createErrorResponse('Erro interno ao obter métricas', 500, 'INTERNAL_SERVER_ERROR');
+    return createErrorResponse('Erro interno ao obter métricas', 500, 'INTERNAL_SERVER_ERROR', undefined, req);
   }
 });

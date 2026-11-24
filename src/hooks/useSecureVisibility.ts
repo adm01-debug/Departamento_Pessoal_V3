@@ -5,14 +5,12 @@ export function useSecureVisibility() {
   useEffect(() => {
     const handleVisibilityChange = async () => {
       if (document.visibilityState === 'visible') {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+        const { data: { session } } = await (supabase as any).auth.getSession();
         if (session) {
           const expiresAt = session.expires_at ?? 0;
           const now = Math.floor(Date.now() / 1000);
           if (expiresAt - now < 300) {
-            await supabase.auth.refreshSession();
+            await (supabase as any).auth.refreshSession();
           }
         }
       }

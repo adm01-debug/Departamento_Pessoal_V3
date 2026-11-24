@@ -1,6 +1,6 @@
-import '@testing-library/jest-dom/vitest';
-import { vi } from 'vitest';
-import { createSupabaseMock } from './test/supabaseMock';
+import "@testing-library/jest-dom";
+import { vi } from "vitest";
+import { createSupabaseMock } from "./test/supabaseMock";
 
 /**
  * Mock global do client Supabase.
@@ -10,15 +10,16 @@ import { createSupabaseMock } from './test/supabaseMock';
  * encadeamento. Este mock é totalmente encadeável e *thenable*.
  * Arquivos de teste que declaram o próprio `vi.mock` continuam prevalecendo.
  */
-vi.mock('@/integrations/supabase/client', async () => {
+vi.mock("@/integrations/supabase/client", async () => {
   const mock = createSupabaseMock();
   return { supabase: mock, default: mock };
 });
 
+
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation((query) => ({
+  value: vi.fn().mockImplementation(query => ({
     matches: false,
     media: query,
     onchange: null,
@@ -39,8 +40,24 @@ class ResizeObserver {
 
 window.ResizeObserver = ResizeObserver;
 
-// Mock URL.createObjectURL / revokeObjectURL for jsdom (used by Excel/PDF exports).
-// Always override: jsdom's own implementation (present since jsdom 30.1) expects its
-// internal Blob shape and throws on Blobs built from ExcelJS/PDF buffers in tests.
-(URL as unknown as { createObjectURL: () => string }).createObjectURL = vi.fn(() => 'blob:mock');
-(URL as unknown as { revokeObjectURL: () => void }).revokeObjectURL = vi.fn();
+// Mock IntersectionObserver — jsdom não implementa (usado por `useInView` do
+// framer-motion, ex.: ColaboradorTable.tsx). Sem isso, qualquer componente
+// que chame `useInView` derruba o teste com `ReferenceError`. `isIntersecting`
+// nunca dispara `true` aqui, o que é aceitável: os testes verificam conteúdo
+// renderizado, não o estado de animação de entrada.
+class IntersectionObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+  takeRecords() { return []; }
+}
+
+window.IntersectionObserver = IntersectionObserver as unknown as typeof window.IntersectionObserver;
+
+// Polyfill URL.createObjectURL / revokeObjectURL for jsdom (used by Excel/PDF exports).
+if (typeof URL.createObjectURL !== 'function') {
+  (URL as any).createObjectURL = vi.fn(() => 'blob:mock');
+}
+if (typeof URL.revokeObjectURL !== 'function') {
+  (URL as any).revokeObjectURL = vi.fn();
+}

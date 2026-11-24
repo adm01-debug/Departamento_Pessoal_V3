@@ -2,7 +2,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { bitrixBreaker, resendBreaker, genericBreaker } from '@/lib/circuitBreaker';
 import { retryWithIdempotency } from '@/lib/retry';
 import { loggerService } from '@/services/loggerService';
-import type { RescisaoResult } from '@/utils/rescisaoCalc';
 
 // NOTA: não enviamos headers customizados (ex.: 'x-request-id') nas invocações de
 // edge functions. O CORS das funções (supabase/functions/_shared/contract.ts) só
@@ -16,103 +15,32 @@ interface InvokeOptions {
   method?: string;
 }
 
-export class EdgeFunctionInvokeError extends Error {
-  readonly status?: number;
-  readonly code?: string;
-
-  constructor(message: string, options: { status?: number; code?: string; cause?: unknown } = {}) {
-    super(message, { cause: options.cause });
-    this.name = 'EdgeFunctionInvokeError';
-    this.status = options.status;
-    this.code = options.code;
-  }
-}
-
-export function isDefinitiveIdempotencyFailure(error: unknown): boolean {
-  if (!(error instanceof EdgeFunctionInvokeError)) return false;
-  if (error.code === 'IDEMPOTENCY_PREVIOUS_FAILURE') return true;
-  if (error.code === 'IDEMPOTENCY_IN_PROGRESS' || error.code === 'IDEMPOTENCY_STATE_INDETERMINATE') return false;
-  return (
-    error.status !== undefined && error.status >= 400 && error.status < 500 && ![408, 425, 429].includes(error.status)
-  );
-}
-
 const handleInvoke = async <T>(name: string, options: InvokeOptions, breaker = genericBreaker): Promise<T> => {
   try {
     return await breaker.execute(async () => {
-      const { data, error, response } = await supabase.functions.invoke(
-        name,
-        options as Parameters<typeof supabase.functions.invoke>[1]
-      );
+      const { data, error } = await supabase.functions.invoke(name, options as Parameters<typeof supabase.functions.invoke>[1]);
       if (error) {
-        let payload: unknown;
-        if (response) {
-          try {
-            payload = await response.clone().json();
-          } catch {
-            payload = undefined;
-          }
-        }
-        const record = typeof payload === 'object' && payload !== null ? (payload as Record<string, unknown>) : null;
-        throw new EdgeFunctionInvokeError(
-          (record && typeof record.error === 'string' && record.error) ||
-            error.message ||
-            `Erro ao chamar função ${name}`,
-          {
-            status: response?.status,
-            code: record && typeof record.code === 'string' ? record.code : undefined,
-            cause: error,
-          }
-        );
+        throw new Error(error.message || `Erro ao chamar função ${name}`);
       }
       return data as T;
     });
   } catch (e: unknown) {
-    if (e instanceof EdgeFunctionInvokeError) throw e;
     const msg = e instanceof Error ? e.message : `Falha crítica na comunicação com ${name}`;
     throw new Error(msg, { cause: e });
   }
 };
 
 export const edgeFunctionsService = {
-  /** Dispara alertas automáticos no tenant selecionado. */
-  dispararAlertasDP: async (empresaId: string) =>
-    handleInvoke<{
-      success: boolean;
-      email_delivery: 'accepted' | 'not_configured' | 'no_recipients' | 'rejected' | 'not_needed';
-      alertas_processados: number;
-    }>('alertas-dp', { body: { empresaId } }),
+  /** Dispara alertas automáticos de DP via email */
+  dispararAlertasDP: async () => handleInvoke('alertas-dp', { body: { trigger: 'manual' } }),
 
-  /**
-   * Envia um relatório compatível com o contrato canônico da Edge Function.
-   *
-   * A função deliberadamente aceita um único destinatário: o backend valida
-   * que ele pertence ao tenant, o que não é possível manter com uma lista de
-   * strings sem multiplicar as verificações de autorização.
-   */
+  /** Envia relatório por email via Resend */
   enviarRelatorioEmail: async (params: {
-    tipoRelatorio:
-      'lista_colaboradores' | 'folha_resumo' | 'ferias_proximas' | 'afastamentos_ativos' | 'indicadores_dp';
-    formato: 'csv' | 'json';
-    emailDestinatario: string;
+    tipo: string;
+    destinatarios: string[];
     empresaId: string;
     competencia?: string;
-  }) =>
-    handleInvoke(
-      'enviar-relatorio',
-      {
-        body: {
-          tipoRelatorio: params.tipoRelatorio,
-          formato: params.formato,
-          emailDestinatario: params.emailDestinatario,
-          parametros: {
-            empresaId: params.empresaId,
-            ...(params.competencia ? { competencia: params.competencia } : {}),
-          },
-        },
-      },
-      resendBreaker
-    ),
+  }) => handleInvoke('enviar-relatorio', { body: params }, resendBreaker),
 
   /** Gera guias DARF/GPS/FGTS via edge function — retry com idempotência. */
   gerarGuias: async (params: {
@@ -130,14 +58,9 @@ export const edgeFunctionsService = {
 
   /** Processa ponto do período — retry com idempotência. */
   processarPonto: async (params: { empresaId: string; dataInicio: string; dataFim: string }) => {
-    // Chave por CLIQUE: um novo processamento deliberado deve reapurar (novas
-    // batidas podem ter entrado); a chave estável só serve para deduplicar
-    // retries dentro desta mesma tentativa.
-    const idemKey = `processar-ponto:${params.empresaId}:${params.dataInicio}:${params.dataFim}:${crypto.randomUUID()}`;
+    const idemKey = `processar-ponto:${params.empresaId}:${params.dataInicio}:${params.dataFim}`;
     return retryWithIdempotency({
-      // A chave viaja no body — sem ela o beginIdempotency do edge não enxerga
-      // os retries desta tentativa (mesmo padrão de calcularFolha).
-      fn: () => handleInvoke('processar-ponto', { body: { ...params, idempotency_key: idemKey } }),
+      fn: () => handleInvoke('processar-ponto', { body: params }),
       idempotencyKey: idemKey,
     });
   },
@@ -179,13 +102,7 @@ export const edgeFunctionsService = {
     saldo_fgts: number;
     ferias_vencidas: boolean;
     dependentes_irrf: number;
-    dias_aviso_nao_cumpridos?: number;
-    data_fim_contrato?: string;
-    termino_iniciativa?: 'empregador' | 'empregado' | 'natural';
-    data_pagamento?: string;
-    /** Art. 480 CLT: perdas reais apuradas do empregador (teto = art. 479). */
-    indenizacao_art_480_prejuizo?: number;
-  }) => handleInvoke<{ resultado?: RescisaoResult }>('calcular-rescisao', { body: params }),
+  }) => handleInvoke('calcular-rescisao', { body: params }),
 
   /** Exportação server-side */
   exportarDados: async (params: { tabela: string; formato: 'csv' | 'json'; filtros?: Record<string, unknown> }) =>
@@ -197,33 +114,8 @@ export const edgeFunctionsService = {
   /** Limpeza de dados expirados */
   limpezaDados: async () => handleInvoke('limpeza', { body: {} }),
 
-  /**
-   * Backup server-side em arquivo (bucket `backups`, SHA-256 conferido). A edge
-   * `backup` só contava linhas e respondia "concluído". holerites e documentos
-   * ficam fora: no canônico não têm empresa_id, e a exportação é por empresa.
-   */
-  backupServidor: async (empresaId: string) =>
-    handleInvoke('backup-automatico', {
-      body: {
-        action: 'run',
-        empresaId,
-        tables: [
-          'colaboradores',
-          'folhas_pagamento',
-          'ferias',
-          'afastamentos',
-          'departamentos',
-          'cargos',
-          'admissoes',
-          'desligamentos',
-          'batidas_ponto',
-          'beneficios',
-          'esocial_eventos',
-          'guias_fgts',
-          'guias_inss',
-        ],
-      },
-    }),
+  /** Backup server-side */
+  backupServidor: async (empresaId?: string) => handleInvoke('backup', { body: { empresaId } }),
 
   /** OCR de documentos via AI (bucket restrito a documentos/documentos-admissao) */
   ocrDocumento: async (params: {

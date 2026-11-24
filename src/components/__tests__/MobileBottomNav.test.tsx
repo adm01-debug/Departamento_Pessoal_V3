@@ -1,19 +1,11 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
 const mockLocation = { pathname: '/dashboard' };
 vi.mock('react-router-dom', () => ({
   useLocation: () => mockLocation,
-  Link: ({
-    children,
-    to,
-    'aria-label': ariaLabel,
-    'aria-current': ariaCurrent,
-  }: React.ComponentProps<'a'> & { to?: string }) => (
-    <a href={to} aria-label={ariaLabel} aria-current={ariaCurrent}>
-      {children}
-    </a>
+  Link: ({ children, to, 'aria-label': ariaLabel, 'aria-current': ariaCurrent }: any) => (
+    <a href={to} aria-label={ariaLabel} aria-current={ariaCurrent}>{children}</a>
   ),
 }));
 
@@ -21,21 +13,17 @@ vi.mock('@/hooks/useAuth', () => ({
   useAuth: vi.fn(() => ({ isAdmin: true })),
 }));
 
-vi.mock('@/lib/utils', () => ({ cn: (...c: unknown[]) => c.filter(Boolean).join(' ') }));
+vi.mock('@/lib/utils', () => ({ cn: (...c: any[]) => c.filter(Boolean).join(' ') }));
 
 vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, className }: { children?: ReactNode; className?: string }) => (
-      <div className={className}>{children}</div>
-    ),
-  },
-  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  motion: { div: ({ children, className }: any) => <div className={className}>{children}</div> },
+  AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
 vi.mock('@/components/layout/MobileQuickActions', () => ({
-  MobileQuickActions: ({ open, onOpenChange }: { open?: boolean; onOpenChange?: (open: boolean) => void }) => (
+  MobileQuickActions: ({ open, onOpenChange }: any) => (
     <div data-testid="quick-actions" data-open={String(open)}>
-      <button onClick={() => onOpenChange?.(false)}>Close</button>
+      <button onClick={() => onOpenChange(false)}>Close</button>
     </div>
   ),
 }));
@@ -43,25 +31,11 @@ vi.mock('@/components/layout/MobileQuickActions', () => ({
 vi.mock('lucide-react', () => {
   const s = () => <span />;
   return {
-    Home: s,
-    Users: s,
-    FileText: s,
-    Calendar: s,
-    MoreHorizontal: s,
-    LayoutGrid: s,
-    Scale: s,
+    Home: s, Users: s, FileText: s, Calendar: s, MoreHorizontal: s,
+    LayoutGrid: s, Scale: s,
     // icons used transitively by MobileQuickActions
-    Zap: s,
-    UserPlus: s,
-    DollarSign: s,
-    Clock: s,
-    BarChart3: s,
-    X: s,
-    ChevronRight: s,
-    ClipboardList: s,
-    Calculator: s,
-    Settings: s,
-    Network: s,
+    Zap: s, UserPlus: s, DollarSign: s, Clock: s, BarChart3: s, X: s,
+    ChevronRight: s, ClipboardList: s, Calculator: s, Settings: s, Network: s,
   };
 });
 
@@ -106,7 +80,7 @@ describe('MobileBottomNav', () => {
   });
 
   it('hides Mais link when isAdmin=false', () => {
-    vi.mocked(useAuth).mockReturnValueOnce({ isAdmin: false } as ReturnType<typeof useAuth>);
+    (useAuth as any).mockReturnValueOnce({ isAdmin: false });
     render(<MobileBottomNav />);
     expect(screen.queryByLabelText('Mais')).toBeNull();
   });

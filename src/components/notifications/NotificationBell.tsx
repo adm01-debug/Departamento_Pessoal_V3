@@ -23,7 +23,7 @@ export function NotificationBell() {
         >
           <Bell className="h-5 w-5" />
           {naoLidas > 0 && (
-            <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
+            <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] font-medium w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
               {naoLidas > 9 ? "9+" : naoLidas}
             </span>
           )}

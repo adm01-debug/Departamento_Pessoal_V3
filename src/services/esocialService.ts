@@ -2,11 +2,8 @@ import { currentCompetenciaLocal, todayLocalISO } from '@/utils/dateLocal';
 import { supabase } from '@/integrations/supabase/client';
 import { validarEvento, getValidadoresDisponiveis, type ValidationResult } from '@/schemas/esocial';
 export type { ValidationResult } from '@/schemas/esocial';
-import type { ESocialData } from '@/schemas/esocial/helpers';
-import { gerarXmlESocial, type ESocialDados } from '@/utils/esocialXmlGenerator';
+import { gerarXmlESocial } from '@/utils/esocialXmlGenerator';
 import { loggerService } from './loggerService';
-import type { Json, Tables } from '@/integrations/supabase/database.types';
-import { validateTablePayload } from '@/schemas/validate';
 export interface ESocialEvento {
   id: string;
   empresa_id: string | null;
@@ -48,56 +45,51 @@ export function getEventoDescricao(tipo: string): string {
   return eventoDescricao[tipo] || tipo;
 }
 
-/** Narrows a Json RPC result to a plain object, excluding arrays/primitives/null. */
-function asJsonRecord(value: Json | null | undefined): Record<string, Json | undefined> | null {
-  return value !== null && value !== undefined && typeof value === 'object' && !Array.isArray(value) ? value : null;
-}
-
 export async function listarEventos(empresaId: string): Promise<ESocialEvento[]> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
-  let query = supabase.from('esocial_eventos').select('*').order('created_at', { ascending: false }).limit(50);
+  let query = supabase
+    .from('esocial_eventos')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(50);
 
   query = query.eq('empresa_id', empresaId);
 
   const { data, error } = await query;
   if (error) throw error;
   return (data || []) as ESocialEvento[];
+
 }
 
 export async function listarEventosPorCompetencia(empresaId: string, competencia: string): Promise<ESocialEvento[]> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
-  let query = supabase.from('esocial_eventos').select('*').eq('competencia', competencia);
+  let query = supabase
+    .from('esocial_eventos')
+    .select('*')
+    .eq('competencia', competencia);
 
   query = query.eq('empresa_id', empresaId);
 
   const { data, error } = await query;
   if (error) throw error;
   return (data || []) as ESocialEvento[];
+
 }
 
-export interface ESocialEstatisticas {
-  enviados: number;
-  pendentes: number;
-  erros: number;
-  conformidade: number | null;
-}
-
-export async function obterEstatisticas(empresaId: string): Promise<ESocialEstatisticas> {
+export async function obterEstatisticas(empresaId: string): Promise<any> {
   try {
     const res = await listarEventos(empresaId);
     const eventos = res;
 
-    const enviados = eventos.filter((e) => e.status === 'enviado').length;
-    const pendentes = eventos.filter((e) => e.status === 'pendente').length;
-    const erros = eventos.filter((e) => e.status === 'erro').length;
+    const enviados = eventos.filter(e => e.status === 'enviado').length;
+    const pendentes = eventos.filter(e => e.status === 'pendente').length;
+    const erros = eventos.filter(e => e.status === 'erro').length;
     const total = eventos.length;
-    // Indicador operacional: somente recibos persistidos como `enviado`
-    // contam. Eventos pendentes ou simulados jamais viram conformidade.
-    const conformidade = total > 0 ? Math.round((enviados / total) * 100) : null;
+    const conformidade = total > 0 ? Math.round(((total - erros) / total) * 100) : 100;
 
-    return { enviados, pendentes, erros, conformidade };
+    return ({ enviados, pendentes, erros, conformidade });
   } catch (e) {
     throw new Error('Falha ao processar estatísticas do eSocial', { cause: e });
   }
@@ -110,15 +102,15 @@ export async function criarEvento(evento: {
   dados?: Record<string, unknown>;
 }): Promise<ESocialEvento> {
   const { data: empresa } = await supabase.from('empresas').select('*').eq('id', evento.empresa_id).maybeSingle();
-
+  
   let xml = null;
   if (empresa) {
     try {
       xml = gerarXmlESocial({
         tipo: evento.tipo_evento,
-        dados: (evento.dados ?? {}) as ESocialDados,
+        dados: evento.dados,
         empresa,
-        ambiente: '2',
+        ambiente: '2'
       });
     } catch (e) {
       loggerService.warn('Erro ao gerar XML inicial', { tipo_evento: evento.tipo_evento });
@@ -127,97 +119,24 @@ export async function criarEvento(evento: {
 
   const { data, error } = await supabase
     .from('esocial_eventos')
-    .insert(
-      validateTablePayload(
-        'esocial_eventos',
-        [
-          {
-            empresa_id: evento.empresa_id,
-            tipo_evento: evento.tipo_evento,
-            competencia: evento.competencia || currentCompetenciaLocal(),
-            dados: (evento.dados || {}) as Json,
-            status: 'pendente',
-            xml: xml,
-          },
-        ],
-        'esocialService:esocial_eventos'
-      )
-    )
+    .insert([{
+      empresa_id: evento.empresa_id,
+      tipo_evento: evento.tipo_evento,
+      competencia: evento.competencia || currentCompetenciaLocal(),
+      dados: (evento.dados || {}) as any,
+      status: 'pendente',
+      xml: xml
+    }])
     .select()
     .maybeSingle();
 
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de evento foi retornado.');
   return data as ESocialEvento;
+  
 }
 
-export interface AdmissionESocialClaim {
-  eventoId: string;
-  claimToken: string | null;
-  alreadySent: boolean;
-}
-
-export async function claimEventoAdmissaoESocial(
-  admissaoId: string,
-  empresaId: string
-): Promise<AdmissionESocialClaim> {
-  const { data, error } = await supabase.rpc('claim_admission_esocial_event', {
-    p_admissao_id: admissaoId,
-    p_empresa_id: empresaId,
-  });
-  if (error) throw error;
-  const record = asJsonRecord(data);
-  const eventoId = typeof record?.evento_id === 'string' ? record.evento_id : null;
-  if (!eventoId) throw new Error('O banco não retornou a identidade do evento S-2200');
-  const alreadySent = record?.state === 'already_sent';
-  const claimToken = typeof record?.claim_token === 'string' ? record.claim_token : null;
-  if (!alreadySent && !claimToken) throw new Error('O banco não retornou a concessão exclusiva do evento S-2200');
-  return { eventoId, claimToken, alreadySent };
-}
-
-export async function completeEventoAdmissaoESocial(
-  admissaoId: string,
-  empresaId: string,
-  eventoId: string,
-  claimToken: string,
-  protocolo: string | null,
-  recibo: string | null
-): Promise<void> {
-  const { error } = await supabase.rpc('complete_admission_esocial_event', {
-    p_admissao_id: admissaoId,
-    p_empresa_id: empresaId,
-    p_evento_id: eventoId,
-    p_claim_token: claimToken,
-    p_protocolo: protocolo,
-    p_recibo: recibo,
-  });
-  if (error) throw error;
-}
-
-export async function failEventoAdmissaoESocial(
-  admissaoId: string,
-  empresaId: string,
-  eventoId: string,
-  claimToken: string
-): Promise<'failed' | 'already_sent' | 'not_recorded'> {
-  const { data, error } = await supabase.rpc('fail_admission_esocial_event', {
-    p_admissao_id: admissaoId,
-    p_empresa_id: empresaId,
-    p_evento_id: eventoId,
-    p_claim_token: claimToken,
-  });
-  if (error) throw error;
-  const state = asJsonRecord(data)?.state ?? null;
-  if (state !== 'failed' && state !== 'already_sent' && state !== 'not_recorded') {
-    throw new Error('Resultado inválido ao recuperar admissão eSocial');
-  }
-  return state;
-}
-
-export async function validarAnteDeEnviar(
-  tipoEvento: string,
-  dados: Record<string, unknown>
-): Promise<ValidationResult> {
+export async function validarAnteDeEnviar(tipoEvento: string, dados: Record<string, unknown>): Promise<ValidationResult> {
   return validarEvento(tipoEvento, dados);
 }
 
@@ -225,85 +144,50 @@ export function listarEventosValidaveis(): string[] {
   return getValidadoresDisponiveis();
 }
 
-export interface ESocialTransmissionResult {
-  success: true;
-  simulated?: boolean;
-  protocolo: string | null;
-  recibo?: string | null;
-  tentativas?: number;
-  integrity_hash?: string;
-}
-
-function transmissionFailureMessage(payload: unknown): string {
-  if (
-    typeof payload === 'object' &&
-    payload !== null &&
-    'error' in payload &&
-    typeof payload.error === 'string' &&
-    payload.error.trim()
-  ) {
-    return payload.error;
-  }
-  return 'A transmissão não foi confirmada pelo eSocial';
-}
-
-export async function enviarEvento(
-  eventoId: string,
-  empresaId: string,
-  claimToken?: string
-): Promise<ESocialTransmissionResult> {
+export async function enviarEvento(eventoId: string, empresaId: string): Promise<any> {
   try {
-    const { data: evento } = await supabase
-      .from('esocial_eventos')
-      .select('*')
-      .eq('id', eventoId)
-      .eq('empresa_id', empresaId)
-      .maybeSingle();
+    await supabase.from('esocial_eventos').update({ status: 'processando' }).eq('id', eventoId).eq('empresa_id', empresaId);
+
+    const { data: evento } = await supabase.from('esocial_eventos').select('*').eq('id', eventoId).eq('empresa_id', empresaId).maybeSingle();
 
     if (!evento) {
       throw new Error('Evento eSocial não encontrado ou acesso não autorizado para esta empresa.');
     }
 
     if (evento?.dados && evento?.tipo_evento) {
-      const validacao = validarEvento(evento.tipo_evento, evento.dados as unknown as ESocialData);
+      const validacao = validarEvento(evento.tipo_evento, evento.dados as Record<string, any>);
       if (!validacao.valid) {
+        await supabase.from('esocial_eventos').update({
+          status: 'erro',
+          erros: { validacao: validacao.errors } as any,
+        }).eq('id', eventoId).eq('empresa_id', empresaId);
         throw new Error('Falha na validação do evento');
       }
     }
 
     const { data, error } = await supabase.functions.invoke('enviar-esocial', {
-      body: { empresaId, eventoId, ...(claimToken ? { claimToken } : {}) },
+      body: { empresaId, eventoId },
     });
 
     if (error) {
+      await supabase.from('esocial_eventos').update({
+        status: 'erro',
+        erros: { mensagem: error.message },
+      }).eq('id', eventoId).eq('empresa_id', empresaId);
       throw error;
     }
 
-    if (!data || data.success !== true) {
-      const message = transmissionFailureMessage(data);
-      throw new Error(message);
-    }
-
-    return data as ESocialTransmissionResult;
+    return (data);
   } catch (e) {
     throw new Error('Falha na transmissão do evento eSocial', { cause: e });
   }
 }
 
-export async function reenviarEvento(eventoId: string, empresaId: string): Promise<ESocialTransmissionResult> {
+export async function reenviarEvento(eventoId: string, empresaId: string): Promise<any> {
   return enviarEvento(eventoId, empresaId);
 }
 
-export interface GerarEventosPeriodoResultado {
-  criados: number;
-  pulados: number;
-  erros: number;
-}
-
-export async function gerarEventosPeriodo(
-  empresaId: string,
-  competencia: string
-): Promise<GerarEventosPeriodoResultado> {
+export async function gerarEventosPeriodo(empresaId: string, competencia: string): Promise<any> {
   try {
     const { data: itens, error: iError } = await supabase
       .from('folha_itens')
@@ -315,7 +199,7 @@ export async function gerarEventosPeriodo(
 
     const resultados = { criados: 0, pulados: 0, erros: 0 };
 
-    for (const item of itens || []) {
+    for (const item of (itens || [])) {
       try {
         const colaborador = Array.isArray(item.colaboradores) ? item.colaboradores[0] : item.colaboradores;
         if (!colaborador) continue;
@@ -337,51 +221,45 @@ export async function gerarEventosPeriodo(
         const dadosS1200 = {
           cpfTrab: colaborador.cpf,
           perApur: competencia,
-          dmDev: [
-            {
-              ideDmDev: `DM${item.id.slice(0, 5)}`,
-              infoPerApur: {
-                ideEstabLot: [
-                  {
-                    tpInsc: 1,
-                    nrInsc: empresaId.replace(/-/g, '').slice(0, 14),
-                    detVerbas: [
-                      { codRubr: '1000', vrRubr: Number(item.salario_base || 0) },
-                      { codRubr: '9201', vrRubr: Number(item.inss_mes || 0) },
-                      { codRubr: '9202', vrRubr: Number(item.fgts_mes || 0) },
-                    ],
-                  },
-                ],
-              },
-            },
-          ],
+          dmDev: [{
+            ideDmDev: `DM${item.id.slice(0, 5)}`,
+            infoPerApur: {
+              ideEstabLot: [{
+                tpInsc: 1,
+                nrInsc: empresaId.replace(/-/g, '').slice(0, 14), 
+                detVerbas: [
+                  { codRubr: '1000', vrRubr: Number(item.salario_base || 0) },
+                  { codRubr: '9201', vrRubr: Number(item.inss_mes || 0) },
+                  { codRubr: '9202', vrRubr: Number(item.fgts_mes || 0) }
+                ]
+              }]
+            }
+          }]
         };
 
         await criarEvento({
           empresa_id: empresaId,
           tipo_evento: 'S-1200',
           competencia,
-          dados: dadosS1200,
+          dados: dadosS1200
         });
 
         if (item.status_pagamento === 'pago') {
           const dadosS1210 = {
             cpfTrab: colaborador.cpf,
             perApur: competencia,
-            infoPgto: [
-              {
-                dtPgto: todayLocalISO(),
-                tpPgto: 1,
-                vlrLiq: Number(item.total_liquido || 0),
-              },
-            ],
+            infoPgto: [{
+              dtPgto: todayLocalISO(),
+              tpPgto: 1,
+              vlrLiq: Number(item.total_liquido || 0)
+            }]
           };
 
           await criarEvento({
             empresa_id: empresaId,
             tipo_evento: 'S-1210',
             competencia,
-            dados: dadosS1210,
+            dados: dadosS1210
           });
         }
 
@@ -391,43 +269,42 @@ export async function gerarEventosPeriodo(
       }
     }
 
-    return resultados;
+    return (resultados);
   } catch (e) {
     throw new Error('Falha ao gerar eventos do período', { cause: e });
   }
 }
 
-export type ESocialConfig = Tables<'configuracoes_esocial'> & {
-  certificado: Tables<'certificados_digitais'> | null;
-};
-
-export async function getConfig(empresaId: string): Promise<ESocialConfig | null> {
+export async function getConfig(empresaId: string): Promise<any> {
+  
   const { data, error } = await supabase
     .from('configuracoes_esocial')
     .select('*, certificado:certificados_digitais(*)')
     .eq('empresa_id', empresaId)
     .maybeSingle();
   if (error) throw error;
-  return data as ESocialConfig | null;
+  return data;
+  
 }
 
-export async function salvarConfig(config: {
-  empresa_id: string;
-  ambiente: string;
-  certificado_id?: string;
-}): Promise<void> {
+export async function salvarConfig(config: { empresa_id: string; ambiente: string; certificado_id?: string }): Promise<void> {
+  
   const { error } = await supabase
     .from('configuracoes_esocial')
-    .upsert(validateTablePayload('configuracoes_esocial', config, 'esocialService:configuracoes_esocial'), {
-      onConflict: 'empresa_id',
-    });
+    .upsert(config, { onConflict: 'empresa_id' });
   if (error) throw error;
+  
 }
 
-export async function listarCertificados(empresaId: string): Promise<Tables<'certificados_digitais'>[]> {
-  const { data, error } = await supabase.from('certificados_digitais').select('*').eq('empresa_id', empresaId);
+export async function listarCertificados(empresaId: string): Promise<any[]> {
+  
+  const { data, error } = await supabase
+    .from('certificados_digitais')
+    .select('*')
+    .eq('empresa_id', empresaId);
   if (error) throw error;
   return data || [];
+  
 }
 
 export async function adicionarCertificado(cert: {
@@ -439,22 +316,20 @@ export async function adicionarCertificado(cert: {
   arquivo_base64: string;
   senha_encriptada: string;
   cnpj_cpf: string;
-}): Promise<Tables<'certificados_digitais'>> {
+}): Promise<any> {
+  
   const { data, error } = await supabase
     .from('certificados_digitais')
-    .insert(
-      validateTablePayload('certificados_digitais', [{ ...cert, ativo: true }], 'esocialService:certificados_digitais')
-    )
+    .insert([{ ...cert, ativo: true }])
     .select()
     .single();
   if (error) throw error;
   return data;
+  
 }
 
-export async function listarTransmissaoLogs(
-  empresaId: string,
-  eventoId?: string
-): Promise<Tables<'esocial_transmissao_logs'>[]> {
+export async function listarTransmissaoLogs(empresaId: string, eventoId?: string): Promise<any[]> {
+  
   let query = supabase
     .from('esocial_transmissao_logs')
     .select('*')
@@ -469,4 +344,6 @@ export async function listarTransmissaoLogs(
   const { data, error } = await query;
   if (error) throw error;
   return data || [];
+  
 }
+

@@ -1,6 +1,0 @@
-# terraform/outputs.tf
-# Auto-generated DevOps configuration
-# Departamento Pessoal - Infrastructure as Code
-
-# TODO: Customize for your environment
-# See docs/DEPLOY.md for details

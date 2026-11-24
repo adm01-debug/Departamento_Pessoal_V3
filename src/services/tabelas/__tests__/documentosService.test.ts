@@ -7,19 +7,14 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
-function makeChain(data: unknown = [], error: { message: string; code?: string } | null = null) {
+function makeChain(data: any = [], error: any = null) {
   const result = { data, error };
   const order = vi.fn().mockResolvedValue(result);
-  const eqResult: Record<string, unknown> = {
-    order,
-    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
-  };
+  const eqResult: any = { order, then: (fn: any) => Promise.resolve(result).then(fn) };
   const eq = vi.fn().mockReturnValue(eqResult);
   eqResult.eq = eq;
   const insert = vi.fn().mockResolvedValue(result);
-  const select = vi
-    .fn()
-    .mockReturnValue({ order, eq, then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) });
+  const select = vi.fn().mockReturnValue({ order, eq, then: (fn: any) => Promise.resolve(result).then(fn) });
   return { select, eq, order, insert };
 }
 
@@ -32,9 +27,7 @@ import {
 } from '../documentosService';
 
 describe('documentoTemplatesService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('listar queries documento_templates', async () => {
     const chain = makeChain([{ id: 't1' }]);
@@ -54,15 +47,13 @@ describe('documentoTemplatesService', () => {
   it('criar calls insert on documento_templates', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await documentoTemplatesService.criar({ nome: 'Template A', conteudo_html: '<p>Olá</p>', tipo: 'admissao' });
+    await documentoTemplatesService.criar({ nome: 'Template A' });
     expect(chain.insert).toHaveBeenCalled();
   });
 });
 
 describe('documentosAdmissaoService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('listar queries documentos_admissao by admissao_id', async () => {
     const chain = makeChain([{ id: 'da1' }]);
@@ -75,20 +66,13 @@ describe('documentosAdmissaoService', () => {
   it('criar calls insert on documentos_admissao', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await documentosAdmissaoService.criar({
-      admissao_id: 'adm-1',
-      nome_arquivo: 'rg.pdf',
-      tipo: 'rg',
-      url: 'https://example.com/rg.pdf',
-    });
+    await documentosAdmissaoService.criar({ admissao_id: 'adm-1' });
     expect(chain.insert).toHaveBeenCalled();
   });
 });
 
 describe('documentosAfastamentoService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('listar queries documentos_afastamento by afastamento_id', async () => {
     const chain = makeChain([{ id: 'af1' }]);
@@ -100,20 +84,13 @@ describe('documentosAfastamentoService', () => {
   it('criar calls insert on documentos_afastamento', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await documentosAfastamentoService.criar({
-      afastamento_id: 'a1',
-      nome_arquivo: 'atestado.pdf',
-      tipo: 'atestado',
-      url: 'https://example.com/atestado.pdf',
-    });
+    await documentosAfastamentoService.criar({ afastamento_id: 'a1' });
     expect(chain.insert).toHaveBeenCalled();
   });
 });
 
 describe('documentosAssinaturaService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('listar queries documentos_assinatura', async () => {
     const chain = makeChain([{ id: 'as1' }]);
@@ -126,19 +103,13 @@ describe('documentosAssinaturaService', () => {
   it('criar calls insert on documentos_assinatura', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await documentosAssinaturaService.criar({
-      colaborador_id: 'c1',
-      tipo_documento: 'contrato',
-      titulo: 'Contrato de Trabalho',
-    });
+    await documentosAssinaturaService.criar({ empresa_id: 'emp-1' });
     expect(chain.insert).toHaveBeenCalled();
   });
 });
 
 describe('documentosColaboradorService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => { vi.clearAllMocks(); });
 
   it('listar queries documentos_colaborador by colaborador_id', async () => {
     const chain = makeChain([{ id: 'dc1' }]);
@@ -158,12 +129,7 @@ describe('documentosColaboradorService', () => {
   it('criar calls insert on documentos_colaborador', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await documentosColaboradorService.criar({
-      colaborador_id: 'c1',
-      nome_arquivo: 'cpf.pdf',
-      tipo: 'cpf',
-      url: 'https://example.com/cpf.pdf',
-    });
+    await documentosColaboradorService.criar({ colaborador_id: 'c1', nome: 'CPF' });
     expect(chain.insert).toHaveBeenCalled();
   });
 });

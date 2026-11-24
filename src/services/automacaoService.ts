@@ -1,27 +1,20 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { Tables } from '@/integrations/supabase/types';
 import { whatsappService } from './whatsappService';
 import { criarNotificacao } from './notificacoesService';
 import { formatDateLocalISO } from '@/utils/dateLocal';
-
-type AsosComColaborador = Tables<'asos'> & {
-  colaborador: Pick<Tables<'colaboradores'>, 'id' | 'nome_completo' | 'telefone'> | null;
-};
-type PeriodoComColaborador = Tables<'periodos_experiencia'> & {
-  colaborador: Pick<Tables<'colaboradores'>, 'id' | 'nome_completo' | 'empresa_id'>;
-};
 
 export const automacaoService = {
   /**
    * Monitora eventos críticos e dispara automações (Notificações + WhatsApp)
    */
   async processarAutomacoes(empresaId: string) {
+    
     // 1. Notificar Aniversariantes do Dia
     await this.notificarAniversariantes(empresaId);
-
+    
     // 2. Notificar Exames Médicos (ASO) Vencendo
     await this.notificarASOVencendo(empresaId);
-
+    
     // 3. Notificar Término de Experiência
     await this.notificarTerminoExperiencia(empresaId);
   },
@@ -29,7 +22,7 @@ export const automacaoService = {
   async notificarAniversariantes(empresaId: string) {
     const hoje = new Date();
     const diaMes = `${String(hoje.getDate()).padStart(2, '0')}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
-
+    
     const { data: aniversariantes } = await supabase
       .from('colaboradores')
       .select('id, nome_completo, telefone, empresa_id')
@@ -41,7 +34,7 @@ export const automacaoService = {
 
     for (const colab of aniversariantes) {
       const mensagem = `Parabéns, ${colab.nome_completo}! 🎂 A equipe da empresa deseja a você um feliz aniversário e muito sucesso!`;
-
+      
       // Notificação no sistema
       await criarNotificacao({
         titulo: 'Aniversariante do Dia',
@@ -49,22 +42,12 @@ export const automacaoService = {
         tipo: 'info',
         empresa_id: empresaId,
         entidade_tipo: 'colaborador',
-        entidade_id: colab.id,
+        entidade_id: colab.id
       });
 
-      // WhatsApp (se configurado) — best-effort: falha no envio não aborta
-      // as demais notificações; a edge function já registra o erro no log.
+      // WhatsApp (se configurado)
       if (colab.telefone) {
-        try {
-          await whatsappService.sendMessage({
-            empresaId,
-            colaboradorId: colab.id,
-            phone: colab.telefone,
-            message: mensagem,
-          });
-        } catch {
-          /* WhatsApp indisponível/não configurado — notificação in-app já foi criada */
-        }
+        await whatsappService.sendMessage({ empresaId, colaboradorId: colab.id, phone: colab.telefone, message: mensagem });
       }
     }
   },
@@ -74,41 +57,31 @@ export const automacaoService = {
     dataAlerta.setDate(dataAlerta.getDate() + 30); // 30 dias de antecedência
     const dataFormatada = formatDateLocalISO(dataAlerta);
 
-    const { data: asos } = await supabase
+    const { data: asos } = await (supabase as any)
       .from('asos')
       .select('*, colaborador:colaboradores(id, nome_completo, telefone)')
       .eq('empresa_id', empresaId)
-      .eq('data_validade', dataFormatada)
-      .returns<AsosComColaborador[]>();
+      .eq('data_validade', dataFormatada);
 
     if (!asos) return;
 
     for (const aso of asos) {
-      const colab = aso.colaborador;
+      const colab = (aso as any).colaborador;
       if (!colab) continue;
-
+      
       const mensagem = `Olá ${colab.nome_completo}, seu exame médico (ASO) vence em 30 dias (${dataAlerta.toLocaleDateString('pt-BR')}). Favor agendar com o RH.`;
-
+      
       await criarNotificacao({
         titulo: 'ASO Vencendo',
         mensagem: `O exame médico de ${colab.nome_completo} vence em 30 dias.`,
         tipo: 'alerta',
         empresa_id: empresaId,
         entidade_tipo: 'colaborador',
-        entidade_id: colab.id,
+        entidade_id: colab.id
       });
 
       if (colab.telefone) {
-        try {
-          await whatsappService.sendMessage({
-            empresaId,
-            colaboradorId: colab.id,
-            phone: colab.telefone,
-            message: mensagem,
-          });
-        } catch {
-          /* WhatsApp indisponível/não configurado — notificação in-app já foi criada */
-        }
+        await whatsappService.sendMessage({ empresaId, colaboradorId: colab.id, phone: colab.telefone, message: mensagem });
       }
     }
   },
@@ -119,21 +92,21 @@ export const automacaoService = {
     dataAlerta.setDate(dataAlerta.getDate() + 7);
     const dataFormatada = formatDateLocalISO(dataAlerta);
 
-    const { data: periodos } = await supabase
+    const { data: periodos } = await (supabase as any)
       .from('periodos_experiencia')
       .select('*, colaborador:colaboradores!inner(id, nome_completo, empresa_id)')
-      .eq('colaborador.empresa_id', empresaId)
-      .or(`primeira_etapa_fim.eq.${dataFormatada},segunda_etapa_fim.eq.${dataFormatada}`)
-      .returns<PeriodoComColaborador[]>();
+      .eq('colaborador.empresa_id' as any, empresaId)
+      .or(`primeira_etapa_fim.eq.${dataFormatada},segunda_etapa_fim.eq.${dataFormatada}` as any);
 
     if (!periodos) return;
 
     for (const periodo of periodos) {
-      const colab = periodo.colaborador;
+      const colab = (periodo as any).colaborador;
       if (!colab) continue;
       // Defesa em profundidade: descarta qualquer registro que escape do escopo do tenant
       // (protege contra falha/alteração do filtro no join embedado do PostgREST).
       if (colab.empresa_id && colab.empresa_id !== empresaId) continue;
+
 
       await criarNotificacao({
         titulo: 'Término de Experiência Próximo',
@@ -141,8 +114,8 @@ export const automacaoService = {
         tipo: 'alerta',
         empresa_id: empresaId,
         entidade_tipo: 'colaborador',
-        entidade_id: colab.id,
+        entidade_id: colab.id
       });
     }
-  },
+  }
 };

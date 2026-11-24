@@ -2935,42 +2935,6 @@ export type Database = {
         }
         Relationships: []
       }
-      cbo: {
-        Row: {
-          codigo: string
-          descricao: string
-          grupo: string | null
-        }
-        Insert: {
-          codigo: string
-          descricao: string
-          grupo?: string | null
-        }
-        Update: {
-          codigo?: string
-          descricao?: string
-          grupo?: string | null
-        }
-        Relationships: []
-      }
-      cnae: {
-        Row: {
-          codigo: string
-          descricao: string
-          subclasse: string | null
-        }
-        Insert: {
-          codigo: string
-          descricao: string
-          subclasse?: string | null
-        }
-        Update: {
-          codigo?: string
-          descricao?: string
-          subclasse?: string | null
-        }
-        Relationships: []
-      }
       centros_custo: {
         Row: {
           ativo: boolean | null
@@ -3499,13 +3463,11 @@ export type Database = {
       }
       cnab_remessas: {
         Row: {
-          arquivo_remessa: string | null
           arquivo_url: string | null
           banco_codigo: string
           created_at: string | null
           data_geracao: string | null
           empresa_id: string
-          folha_id: string | null
           hash_integridade: string | null
           id: string
           sequencial_arquivo: number
@@ -3515,13 +3477,11 @@ export type Database = {
           valor_total: number | null
         }
         Insert: {
-          arquivo_remessa?: string | null
           arquivo_url?: string | null
           banco_codigo: string
           created_at?: string | null
           data_geracao?: string | null
           empresa_id: string
-          folha_id?: string | null
           hash_integridade?: string | null
           id?: string
           sequencial_arquivo: number
@@ -3531,13 +3491,11 @@ export type Database = {
           valor_total?: number | null
         }
         Update: {
-          arquivo_remessa?: string | null
           arquivo_url?: string | null
           banco_codigo?: string
           created_at?: string | null
           data_geracao?: string | null
           empresa_id?: string
-          folha_id?: string | null
           hash_integridade?: string | null
           id?: string
           sequencial_arquivo?: number
@@ -3552,13 +3510,6 @@ export type Database = {
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "cnab_remessas_folha_id_fkey"
-            columns: ["folha_id"]
-            isOneToOne: false
-            referencedRelation: "folhas_pagamento"
             referencedColumns: ["id"]
           },
         ]
@@ -6386,7 +6337,6 @@ export type Database = {
           data_pagamento: string | null
           data_remocao_acesso: string | null
           decimo_terceiro: number | null
-          detalhes_calculo: Json | null
           empresa_id: string | null
           etapa: string | null
           ferias_proporcionais: number | null
@@ -6437,7 +6387,6 @@ export type Database = {
           data_pagamento?: string | null
           data_remocao_acesso?: string | null
           decimo_terceiro?: number | null
-          detalhes_calculo?: Json | null
           empresa_id?: string | null
           etapa?: string | null
           ferias_proporcionais?: number | null
@@ -6488,7 +6437,6 @@ export type Database = {
           data_pagamento?: string | null
           data_remocao_acesso?: string | null
           decimo_terceiro?: number | null
-          detalhes_calculo?: Json | null
           empresa_id?: string | null
           etapa?: string | null
           ferias_proporcionais?: number | null
@@ -6774,7 +6722,6 @@ export type Database = {
           colaborador_id: string | null
           created_at: string
           data_validade: string | null
-          empresa_id: string | null
           id: string
           nome: string
           observacoes: string | null
@@ -6788,7 +6735,6 @@ export type Database = {
           colaborador_id?: string | null
           created_at?: string
           data_validade?: string | null
-          empresa_id?: string | null
           id?: string
           nome: string
           observacoes?: string | null
@@ -6802,7 +6748,6 @@ export type Database = {
           colaborador_id?: string | null
           created_at?: string
           data_validade?: string | null
-          empresa_id?: string | null
           id?: string
           nome?: string
           observacoes?: string | null
@@ -7230,7 +7175,6 @@ export type Database = {
       }
       empresas: {
         Row: {
-          aliquota_encargos_folha: number | null
           aliquota_simples: number | null
           ativa: boolean | null
           bairro: string | null
@@ -7241,7 +7185,6 @@ export type Database = {
           cor_identificacao: string | null
           created_at: string
           email: string | null
-          exigir_pin_quiosque: boolean
           fap: number | null
           id: string
           inscricao_estadual: string | null
@@ -7254,7 +7197,6 @@ export type Database = {
           rat: number | null
           razao_social: string
           regime_tributario: Database["public"]["Enums"]["regime_tributario"]
-          simples_anexo: string | null
           telefone: string | null
           terceiros: number | null
           uf: string | null
@@ -7271,8 +7213,6 @@ export type Database = {
           cor_identificacao?: string | null
           created_at?: string
           email?: string | null
-          aliquota_encargos_folha?: number | null
-          exigir_pin_quiosque?: boolean
           fap?: number | null
           id?: string
           inscricao_estadual?: string | null
@@ -7285,7 +7225,6 @@ export type Database = {
           rat?: number | null
           razao_social: string
           regime_tributario?: Database["public"]["Enums"]["regime_tributario"]
-          simples_anexo?: string | null
           telefone?: string | null
           terceiros?: number | null
           uf?: string | null
@@ -7302,8 +7241,6 @@ export type Database = {
           cor_identificacao?: string | null
           created_at?: string
           email?: string | null
-          aliquota_encargos_folha?: number | null
-          exigir_pin_quiosque?: boolean
           fap?: number | null
           id?: string
           inscricao_estadual?: string | null
@@ -7316,7 +7253,6 @@ export type Database = {
           rat?: number | null
           razao_social?: string
           regime_tributario?: Database["public"]["Enums"]["regime_tributario"]
-          simples_anexo?: string | null
           telefone?: string | null
           terceiros?: number | null
           uf?: string | null
@@ -7882,7 +7818,6 @@ export type Database = {
       }
       esocial_eventos: {
         Row: {
-          admissao_id: string | null
           assinatura_xml: string | null
           competencia: string | null
           created_at: string
@@ -7901,15 +7836,12 @@ export type Database = {
           status: string | null
           tentativas_envio: number | null
           tipo_evento: string
-          transmission_claim_token: string | null
-          transmission_claimed_at: string | null
           updated_at: string
           xml: string | null
           xml_envio: string | null
           xml_retorno: string | null
         }
         Insert: {
-          admissao_id?: string | null
           assinatura_xml?: string | null
           competencia?: string | null
           created_at?: string
@@ -7928,15 +7860,12 @@ export type Database = {
           status?: string | null
           tentativas_envio?: number | null
           tipo_evento: string
-          transmission_claim_token?: string | null
-          transmission_claimed_at?: string | null
           updated_at?: string
           xml?: string | null
           xml_envio?: string | null
           xml_retorno?: string | null
         }
         Update: {
-          admissao_id?: string | null
           assinatura_xml?: string | null
           competencia?: string | null
           created_at?: string
@@ -7955,21 +7884,12 @@ export type Database = {
           status?: string | null
           tentativas_envio?: number | null
           tipo_evento?: string
-          transmission_claim_token?: string | null
-          transmission_claimed_at?: string | null
           updated_at?: string
           xml?: string | null
           xml_envio?: string | null
           xml_retorno?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "esocial_eventos_admissao_id_fkey"
-            columns: ["admissao_id"]
-            isOneToOne: false
-            referencedRelation: "admissoes"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "esocial_eventos_empresa_id_fkey"
             columns: ["empresa_id"]
@@ -8585,48 +8505,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      faixas_inss: {
-        Row: {
-          aliquota: number
-          faixa: string
-          id: number
-          teto: number | null
-        }
-        Insert: {
-          aliquota: number
-          faixa: string
-          id?: never
-          teto?: number | null
-        }
-        Update: {
-          aliquota?: number
-          faixa?: string
-          id?: number
-          teto?: number | null
-        }
-        Relationships: []
-      }
-      faixas_irrf: {
-        Row: {
-          aliquota: number
-          deducao: number | null
-          faixa: string
-          id: number
-        }
-        Insert: {
-          aliquota: number
-          deducao?: number | null
-          faixa: string
-          id?: never
-        }
-        Update: {
-          aliquota?: number
-          deducao?: number | null
-          faixa?: string
-          id?: number
-        }
-        Relationships: []
       }
       feriados: {
         Row: {
@@ -10375,27 +10253,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      health_checks: {
-        Row: {
-          created_at: string
-          detalhes: Json | null
-          id: string
-          status: string | null
-        }
-        Insert: {
-          created_at?: string
-          detalhes?: Json | null
-          id?: string
-          status?: string | null
-        }
-        Update: {
-          created_at?: string
-          detalhes?: Json | null
-          id?: string
-          status?: string | null
-        }
-        Relationships: []
       }
       historico_alertas: {
         Row: {
@@ -12342,6 +12199,58 @@ export type Database = {
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      colaborador_lotacoes: {
+        Row: {
+          colaborador_id: string
+          created_at: string
+          empresa_id: string
+          id: string
+          lotacao_id: string
+          principal: boolean
+          updated_at: string
+        }
+        Insert: {
+          colaborador_id: string
+          created_at?: string
+          empresa_id: string
+          id?: string
+          lotacao_id: string
+          principal?: boolean
+          updated_at?: string
+        }
+        Update: {
+          colaborador_id?: string
+          created_at?: string
+          empresa_id?: string
+          id?: string
+          lotacao_id?: string
+          principal?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "colaborador_lotacoes_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "colaborador_lotacoes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "colaborador_lotacoes_lotacao_id_fkey"
+            columns: ["lotacao_id"]
+            isOneToOne: false
+            referencedRelation: "lotacoes"
             referencedColumns: ["id"]
           },
         ]
@@ -16049,7 +15958,6 @@ export type Database = {
           id: string
           valor_13_salario: number | null
           valor_ferias: number | null
-          valor_total: number
         }
         Insert: {
           colaborador_id: string
@@ -16060,7 +15968,6 @@ export type Database = {
           id?: string
           valor_13_salario?: number | null
           valor_ferias?: number | null
-          valor_total?: number
         }
         Update: {
           colaborador_id?: string
@@ -16071,7 +15978,6 @@ export type Database = {
           id?: string
           valor_13_salario?: number | null
           valor_ferias?: number | null
-          valor_total?: number
         }
         Relationships: [
           {
@@ -16235,7 +16141,6 @@ export type Database = {
           created_at: string
           duration_ms: number
           error_message: string | null
-          empresa_id: string | null
           id: string
           operation: string
           query_limit: number | null
@@ -16244,7 +16149,6 @@ export type Database = {
           rpc_name: string | null
           severity: string
           table_name: string | null
-          trace_id: string | null
           user_id: string | null
         }
         Insert: {
@@ -16252,7 +16156,6 @@ export type Database = {
           created_at?: string
           duration_ms?: number
           error_message?: string | null
-          empresa_id?: string | null
           id?: string
           operation: string
           query_limit?: number | null
@@ -16261,7 +16164,6 @@ export type Database = {
           rpc_name?: string | null
           severity?: string
           table_name?: string | null
-          trace_id?: string | null
           user_id?: string | null
         }
         Update: {
@@ -16269,7 +16171,6 @@ export type Database = {
           created_at?: string
           duration_ms?: number
           error_message?: string | null
-          empresa_id?: string | null
           id?: string
           operation?: string
           query_limit?: number | null
@@ -16278,7 +16179,6 @@ export type Database = {
           rpc_name?: string | null
           severity?: string
           table_name?: string | null
-          trace_id?: string | null
           user_id?: string | null
         }
         Relationships: []
@@ -16630,69 +16530,6 @@ export type Database = {
           },
         ]
       }
-      recibos_ferias: {
-        Row: {
-          ativo: boolean | null
-          colaborador_id: string | null
-          created_at: string | null
-          created_by: string | null
-          data_fim: string | null
-          data_inicio: string | null
-          descricao: string | null
-          empresa_id: string | null
-          id: string
-          observacoes: string | null
-          updated_at: string | null
-          updated_by: string | null
-          valor: number | null
-        }
-        Insert: {
-          ativo?: boolean | null
-          colaborador_id?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          data_fim?: string | null
-          data_inicio?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
-          id?: string
-          observacoes?: string | null
-          updated_at?: string | null
-          updated_by?: string | null
-          valor?: number | null
-        }
-        Update: {
-          ativo?: boolean | null
-          colaborador_id?: string | null
-          created_at?: string | null
-          created_by?: string | null
-          data_fim?: string | null
-          data_inicio?: string | null
-          descricao?: string | null
-          empresa_id?: string | null
-          id?: string
-          observacoes?: string | null
-          updated_at?: string | null
-          updated_by?: string | null
-          valor?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "recibos_ferias_colaborador_id_fkey"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "recibos_ferias_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       registros_ponto: {
         Row: {
           aprovado: boolean | null
@@ -16714,12 +16551,8 @@ export type Database = {
           entrada_esperada: string | null
           hash_digital: string | null
           hash_integridade: string | null
-          he_banco_horas: string | null
           horas_extras: string | null
-          horas_extras_100: string | null
-          horas_extras_50: string | null
           horas_falta: string | null
-          horas_noturnas: string | null
           horas_trabalhadas: string | null
           id: string
           is_offline: boolean | null
@@ -16763,12 +16596,8 @@ export type Database = {
           entrada_esperada?: string | null
           hash_digital?: string | null
           hash_integridade?: string | null
-          he_banco_horas?: string | null
           horas_extras?: string | null
-          horas_extras_100?: string | null
-          horas_extras_50?: string | null
           horas_falta?: string | null
-          horas_noturnas?: string | null
           horas_trabalhadas?: string | null
           id?: string
           is_offline?: boolean | null
@@ -16812,7 +16641,6 @@ export type Database = {
           entrada_esperada?: string | null
           hash_digital?: string | null
           hash_integridade?: string | null
-          he_banco_horas?: string | null
           horas_extras?: string | null
           horas_falta?: string | null
           horas_trabalhadas?: string | null
@@ -16918,81 +16746,11 @@ export type Database = {
         }
         Relationships: []
       }
-      report_dispatch_attempts: {
-        Row: {
-          accepted_at: string | null
-          agendamento_id: string
-          content_sha256: string
-          created_at: string
-          dispatch_key_hash: string
-          empresa_id: string
-          html: string
-          id: string
-          provider_message_id: string | null
-          request_hash: string
-          signed_url: string
-          signed_url_expires_at: string
-          status: string
-          storage_path: string
-          subject: string
-          total_registros: number
-          updated_at: string
-        }
-        Insert: {
-          accepted_at?: string | null
-          agendamento_id: string
-          content_sha256: string
-          created_at?: string
-          dispatch_key_hash: string
-          empresa_id: string
-          html: string
-          id?: string
-          provider_message_id?: string | null
-          request_hash: string
-          signed_url: string
-          signed_url_expires_at: string
-          status?: string
-          storage_path: string
-          subject: string
-          total_registros: number
-          updated_at?: string
-        }
-        Update: {
-          accepted_at?: string | null
-          agendamento_id?: string
-          content_sha256?: string
-          created_at?: string
-          dispatch_key_hash?: string
-          empresa_id?: string
-          html?: string
-          id?: string
-          provider_message_id?: string | null
-          request_hash?: string
-          signed_url?: string
-          signed_url_expires_at?: string
-          status?: string
-          storage_path?: string
-          subject?: string
-          total_registros?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "report_dispatch_attempts_agendamento_id_fkey"
-            columns: ["agendamento_id"]
-            isOneToOne: false
-            referencedRelation: "relatorios_agendados"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       relatorios_agendados: {
         Row: {
           ativo: boolean | null
           created_at: string
           created_by: string | null
-          dispatch_claim_token: string | null
-          dispatch_claimed_at: string | null
           dia_mes: number | null
           dia_semana: number | null
           email_destinatario: string
@@ -17012,8 +16770,6 @@ export type Database = {
           ativo?: boolean | null
           created_at?: string
           created_by?: string | null
-          dispatch_claim_token?: string | null
-          dispatch_claimed_at?: string | null
           dia_mes?: number | null
           dia_semana?: number | null
           email_destinatario: string
@@ -17033,8 +16789,6 @@ export type Database = {
           ativo?: boolean | null
           created_at?: string
           created_by?: string | null
-          dispatch_claim_token?: string | null
-          dispatch_claimed_at?: string | null
           dia_mes?: number | null
           dia_semana?: number | null
           email_destinatario?: string
@@ -21154,7 +20908,6 @@ export type Database = {
           log_execucao: Json | null
           metadata: Json | null
           metadata_automacao: Json | null
-          sla_iniciado_em: string | null
           solicitante_id: string | null
           status: string | null
           updated_at: string | null
@@ -21171,7 +20924,6 @@ export type Database = {
           log_execucao?: Json | null
           metadata?: Json | null
           metadata_automacao?: Json | null
-          sla_iniciado_em?: string | null
           solicitante_id?: string | null
           status?: string | null
           updated_at?: string | null
@@ -21188,7 +20940,6 @@ export type Database = {
           log_execucao?: Json | null
           metadata?: Json | null
           metadata_automacao?: Json | null
-          sla_iniciado_em?: string | null
           solicitante_id?: string | null
           status?: string | null
           updated_at?: string | null
@@ -21303,26 +21054,6 @@ export type Database = {
             referencedColumns: ["colaborador_id"]
           },
         ]
-      }
-      mv_telemetry_dashboard: {
-        Row: {
-          avg_ms: number | null
-          empresa_id: string | null
-          error_count: number | null
-          hour: string | null
-          max_ms: number | null
-          min_ms: number | null
-          operation: string | null
-          p50_ms: number | null
-          p75_ms: number | null
-          p90_ms: number | null
-          p95_ms: number | null
-          p99_ms: number | null
-          query_count: number | null
-          severity: string | null
-          table_name: string | null
-        }
-        Relationships: []
       }
       pontos_abertos: {
         Row: {
@@ -21912,32 +21643,6 @@ export type Database = {
           snapshot_at: string | null
           tables_total: number | null
           tables_with_rls: number | null
-        }
-        Relationships: []
-      }
-      v_telemetry_last_hour: {
-        Row: {
-          avg_ms: number | null
-          empresa_id: string | null
-          error_count: number | null
-          max_ms: number | null
-          operation: string | null
-          query_count: number | null
-          severity: string | null
-          table_name: string | null
-        }
-        Relationships: []
-      }
-      v_telemetry_slow_queries: {
-        Row: {
-          created_at: string | null
-          duration_ms: number | null
-          empresa_id: string | null
-          id: string | null
-          operation: string | null
-          severity: string | null
-          table_name: string | null
-          user_id: string | null
         }
         Relationships: []
       }
@@ -22721,21 +22426,6 @@ export type Database = {
       _is_admin_bypass: { Args: never; Returns: boolean }
       _purge_audit_log_internal: { Args: { _dias?: number }; Returns: number }
       _scan_status_anomalies_global: { Args: never; Returns: number }
-      admin_list_profiles: {
-        Args: never
-        Returns: {
-          avatar_url: string | null
-          cargo: string | null
-          created_at: string
-          departamento: string | null
-          id: string
-          nome: string
-          role_display: string | null
-          telefone: string | null
-          updated_at: string
-          user_id: string
-        }[]
-      }
       admin_list_security_definer_rpcs: {
         Args: never
         Returns: {
@@ -22874,29 +22564,6 @@ export type Database = {
           is_locked: boolean
           remaining_seconds: number
         }[]
-      }
-      claim_due_report_schedules: {
-        Args: { p_limit?: number; p_now: string }
-        Returns: Database["public"]["Tables"]["relatorios_agendados"]["Row"][]
-      }
-      claim_admission_esocial_event: {
-        Args: { p_admissao_id: string; p_empresa_id: string }
-        Returns: Json
-      }
-      complete_admission_esocial_event: {
-        Args: {
-          p_admissao_id: string
-          p_empresa_id: string
-          p_evento_id: string
-          p_claim_token: string
-          p_protocolo: string
-          p_recibo?: string
-        }
-        Returns: undefined
-      }
-      fail_admission_esocial_event: {
-        Args: { p_admissao_id: string; p_empresa_id: string; p_evento_id: string; p_claim_token: string }
-        Returns: Json
       }
       check_rate_limit: {
         Args: {
@@ -23047,10 +22714,6 @@ export type Database = {
         }
         Returns: Json
       }
-      finish_report_schedule_claim: {
-        Args: { p_claim_token: string; p_next?: string; p_schedule_id: string }
-        Returns: boolean
-      }
       eh_dia_valido_inicio_ferias: {
         Args: { p_data: string; p_empresa_id: string }
         Returns: {
@@ -23116,33 +22779,6 @@ export type Database = {
           user_id: string
         }[]
       }
-      get_audit_trail: {
-        Args: {
-          p_before?: string
-          p_before_id?: string
-          p_empresa_id?: string
-          p_limit?: number
-          p_registro_id?: string
-          p_tabela?: string
-          p_tabelas?: string[]
-        }
-        Returns: {
-          acao: string
-          campos_alterados: string[] | null
-          created_at: string
-          dados_anteriores: Json | null
-          dados_novos: Json | null
-          empresa_id: string | null
-          id: string
-          registro_id: string
-          status_anterior: string | null
-          status_novo: string | null
-          tabela: string
-          user_email: string | null
-          user_id: string | null
-          user_nome: string | null
-        }[]
-      }
       get_audit_trail_by_user: {
         Args: { _limit?: number; _user_id: string }
         Returns: {
@@ -23174,10 +22810,6 @@ export type Database = {
           schedule: string
         }[]
       }
-      get_company_rh_recipient_emails: {
-        Args: { p_empresa_id: string; p_limit?: number }
-        Returns: { email: string; user_id: string }[]
-      }
       get_dlq_stats: {
         Args: never
         Returns: {
@@ -23186,10 +22818,6 @@ export type Database = {
           total_dlq: number
           ultimo_erro_sample: string
         }[]
-      }
-      get_empresa_admin_ids: {
-        Args: { p_empresa_id: string }
-        Returns: { user_id: string }[]
       }
       get_idempotency_health: {
         Args: never
@@ -23237,16 +22865,6 @@ export type Database = {
       }
       get_user_default_empresa: { Args: { _user_id: string }; Returns: string }
       get_user_empresas: { Args: { _user_id: string }; Returns: string[] }
-      get_my_user_empresas: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          created_at: string
-          empresa_id: string
-          id: string
-          is_default: boolean
-          user_id: string
-        }[]
-      }
       get_user_roles: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"][]
@@ -23266,17 +22884,6 @@ export type Database = {
       }
       is_ip_blocked: { Args: { check_ip: string }; Returns: boolean }
       is_ip_whitelisted: { Args: { check_ip: string }; Returns: boolean }
-      set_own_default_empresa: { Args: { p_empresa_id: string }; Returns: undefined }
-      admin_associar_usuario_empresa: {
-        Args: { p_empresa_id: string; p_is_default?: boolean; p_user_id: string }
-        Returns: {
-          created_at: string
-          empresa_id: string
-          id: string
-          is_default: boolean
-          user_id: string
-        }[]
-      }
       limpar_govbr_states_expirados: { Args: never; Returns: undefined }
       listar_auditoria: {
         Args: {
@@ -23527,7 +23134,6 @@ export type Database = {
           data_pagamento: string | null
           data_remocao_acesso: string | null
           decimo_terceiro: number | null
-          detalhes_calculo: Json | null
           empresa_id: string | null
           etapa: string | null
           ferias_proporcionais: number | null
@@ -23639,20 +23245,6 @@ export type Database = {
         Returns: boolean
       }
       process_lgpd_cleanup_queue: { Args: never; Returns: number }
-      replace_monthly_provisions: {
-        Args: {
-          p_audit_data: Json
-          p_competencia: string
-          p_empresa_id: string
-          p_rows: Json
-          p_user_id: string
-        }
-        Returns: number
-      }
-      report_destination_is_allowed: {
-        Args: { p_email: string; p_empresa_id: string }
-        Returns: boolean
-      }
       processar_ajuste_aprovado: {
         Args: { p_solicitacao_id: string }
         Returns: undefined
@@ -23878,16 +23470,6 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
-      }
-      record_pii_access: {
-        Args: {
-          p_acao?: string
-          p_empresa_id: string
-          p_registro_count?: number
-          p_registro_id?: string | null
-          p_tabela: string
-        }
-        Returns: string
       }
       record_failed_login: {
         Args: { p_identifier: string; p_identifier_type?: string }
@@ -24350,8 +23932,6 @@ export type Database = {
         | "contrato"
         | "assinatura"
         | "esocial"
-        | "concluida"
-        | "cancelada"
       programacao_ferias_status:
         | "rascunho"
         | "sugerido_gestor"
@@ -24418,12 +23998,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends (DefaultSchemaTableNameOrOptions extends {
+  TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never) = never,
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -24447,11 +24027,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends (DefaultSchemaTableNameOrOptions extends {
+  TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never) = never,
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -24472,11 +24052,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends (DefaultSchemaTableNameOrOptions extends {
+  TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never) = never,
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -24497,11 +24077,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never) = never,
+    : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -24514,11 +24094,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never) = never,
+    : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -24559,8 +24139,6 @@ export const Constants = {
         "contrato",
         "assinatura",
         "esocial",
-        "concluida",
-        "cancelada",
       ],
       programacao_ferias_status: [
         "rascunho",

@@ -24,28 +24,11 @@
  *   });
  */
 
-import { assertPublicHttpsUrl, UnsafeUrlError } from './ssrf-guard.ts';
-
 export interface SafeFetchOptions extends RequestInit {
   timeoutMs?: number;
   /** Tags para logging (ex: 'openai', 'govbr', 'whatsapp') */
   tag?: string;
 }
-
-/**
- * E50-37: tags cujo destino vem de configuração gravada por um admin (não
- * hardcoded no código) — precisam do guard de SSRF a cada request, inclusive
- * revalidando cada redirect, porque o host pode ter sido trocado por
- * qualquer coisa depois da última checagem.
- */
-const SSRF_GUARDED_TAGS = new Set(['webhook', 'whatsapp']);
-const MAX_REDIRECTS = 5;
-
-// Headers de credencial nunca cruzam para outra origem num redirect — um
-// endpoint configurado que redireciona para host externo não pode capturar
-// a api_key da empresa (mesmo modelo do fetch spec, que só retém headers
-// same-origin).
-const CREDENTIAL_HEADERS = ['authorization', 'proxy-authorization', 'apikey', 'x-api-key', 'cookie'];
 
 export class FetchTimeoutError extends Error {
   readonly url: string;
@@ -64,7 +47,7 @@ export class FetchTimeoutError extends Error {
 export class FetchNetworkError extends Error {
   readonly url: string;
   readonly tag?: string;
-  override readonly cause: unknown;
+  readonly cause: unknown;
 
   constructor(url: string, tag: string | undefined, cause: unknown) {
     super(`Network error for ${url}: ${String(cause)}`);
@@ -111,52 +94,13 @@ export async function safeFetch(
     controller.abort();
   }, effectiveTimeout);
 
-  // Consome o body DENTRO do try: o fetch resolve com os headers, então um
-  // body devagar ficaria fora do timeout se devolvêssemos a resposta crua —
-  // e abortar o signal no finally matava o res.text()/json() do caller.
-  const bufferBody = async (res: Response): Promise<Response> => {
-    const body = await res.arrayBuffer();
-    // 204/205/304 proíbem body — Response() rejeita se passarmos o buffer.
-    return new Response([204, 205, 304].includes(res.status) ? null : body, {
-      status: res.status,
-      statusText: res.statusText,
-      headers: res.headers,
-    });
-  };
-
   try {
-    if (tag && SSRF_GUARDED_TAGS.has(tag)) {
-      // E50-37: destino vem de configuração gravada por admin — valida o
-      // host (bloqueia IP privado/loopback/link-local) antes de CADA hop,
-      // porque `redirect: 'follow'` padrão nunca revalida um redirect.
-      let currentUrl = url;
-      let currentOrigin = new URL(url).origin;
-      for (let i = 0; i <= MAX_REDIRECTS; i++) {
-        await assertPublicHttpsUrl(currentUrl);
-        const res = await fetch(currentUrl, { ...fetchOptions, redirect: 'manual', signal: controller.signal });
-        if (res.status >= 300 && res.status < 400 && res.headers.get('location')) {
-          const nextUrl = new URL(res.headers.get('location')!, currentUrl).toString();
-          const nextOrigin = new URL(nextUrl).origin;
-          if (nextOrigin !== currentOrigin) {
-            const headers = new Headers(fetchOptions.headers);
-            for (const h of CREDENTIAL_HEADERS) headers.delete(h);
-            fetchOptions.headers = headers;
-            currentOrigin = nextOrigin;
-          }
-          currentUrl = nextUrl;
-          continue;
-        }
-        return await bufferBody(res);
-      }
-      throw new UnsafeUrlError(url, 'excesso de redirects');
-    }
     const res = await fetch(url, {
       ...fetchOptions,
       signal: controller.signal,
     });
-    return await bufferBody(res);
+    return res;
   } catch (err) {
-    if (err instanceof UnsafeUrlError) throw err;
     if (err instanceof Error && err.name === 'AbortError') {
       // AbortError pode vir de timeout OU de cancelamento explícito.
       // Distinguimos pelo timer: se timer ainda está ativo, foi cancelamento.
@@ -167,6 +111,8 @@ export async function safeFetch(
     throw new FetchNetworkError(url, tag, err);
   } finally {
     clearTimeout(timer);
+    // Garante que o signal está limpio para não vazar estado
+    controller.abort();
   }
 }
 

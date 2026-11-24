@@ -138,10 +138,10 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
           </div>
 
           <div className="flex flex-col items-center gap-3 text-center">
-            <h2 className="text-h3 font-display font-bold tracking-tight">Sessão Segura</h2>
+            <h2 className="text-h3 font-display font-medium tracking-tight">Sessão Segura</h2>
             <div className="flex items-center gap-2">
               <Loader2 className="w-3 h-3 animate-spin text-primary" />
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground animate-pulse">
+              <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground animate-pulse">
                 Validando credenciais...
               </p>
             </div>
@@ -171,7 +171,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-10 h-10 animate-spin text-primary opacity-20" />
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground animate-pulse">
+          <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground animate-pulse">
             Verificando autenticação de dois fatores...
           </p>
         </div>

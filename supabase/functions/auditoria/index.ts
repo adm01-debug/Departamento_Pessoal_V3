@@ -12,7 +12,6 @@ import { z } from 'https://esm.sh/zod@3.23.8';
 import { corsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';
-import { getClientIp } from '../_shared/clientIp.ts';
 import { captureException } from '../_shared/sentry.ts';
 
 const NO_STORE = { 'Cache-Control': 'no-store' };
@@ -52,6 +51,15 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
+function clientIp(req: Request): string {
+  return (
+    req.headers.get('cf-connecting-ip') ??
+    req.headers.get('x-real-ip') ??
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    'unknown'
+  );
+}
+
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   if (req.method !== 'POST') return createErrorResponse('Method not allowed', 405, 'METHOD_NOT_ALLOWED');
@@ -80,9 +88,10 @@ serve(async (req: Request): Promise<Response> => {
     const userId = claims.user.id;
     const userEmail = (claims.user.email as string | undefined) ?? null;
 
+    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    const raw = _pb;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return createErrorResponse('Payload inválido', 422, 'VALIDATION_ERROR');
@@ -95,14 +104,14 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `auditoria:${userId}`, limit: 30, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     // Tenant scope obrigatório
     // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(supabase, userId, body.empresaId, req);
+      const authz = await requireRh(supabase, userId, body.empresaId);
       if (authz.denied) return authz.denied;
     }
 
@@ -119,19 +128,14 @@ serve(async (req: Request): Promise<Response> => {
         descricao: d.descricao ?? null,
         dados_anteriores: d.dados_anteriores ?? null,
         dados_novos: d.dados_novos ?? null,
-        ip_address: getClientIp(req),
+        ip_address: clientIp(req),
       });
       if (error) throw error;
       return json({ success: true });
     }
 
     if (body.action === 'listar') {
-      const f: {
-        entidade?: string;
-        data_inicio?: string;
-        data_fim?: string;
-        limit?: number;
-      } = body.data ?? {};
+      const f = body.data ?? {};
       let q = supabase.from('auditoria')
         .select('id, created_at, acao, entidade, entidade_id, usuario_nome, descricao')
         .eq('empresa_id', body.empresaId)

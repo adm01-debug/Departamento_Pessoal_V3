@@ -12,6 +12,10 @@ interface CEPInputProps {
   onAddressFound?: (address: Address) => void;
   className?: string;
   disabled?: boolean;
+  /** Rótulo textual do botão de busca (ex.: "Buscar CEP"). Quando omitido, o
+   * botão mantém o formato compacto (apenas ícone) já usado nas demais telas
+   * que consomem este componente. */
+  buttonLabel?: string;
 }
 
 export interface Address {
@@ -29,7 +33,7 @@ const formatCEP = (value: string): string => {
   return cleaned.replace(/(\d{5})(\d)/, '$1-$2');
 };
 
-export function CEPInput({ value: controlledValue, onChange, onAddressFound, className, disabled }: CEPInputProps) {
+export function CEPInput({ value: controlledValue, onChange, onAddressFound, className, disabled, buttonLabel }: CEPInputProps) {
   const [displayValue, setDisplayValue] = useState(controlledValue ? formatCEP(controlledValue) : '');
   const [lastControlled, setLastControlled] = useState(controlledValue);
   const [loading, setLoading] = useState(false);
@@ -91,8 +95,17 @@ export function CEPInput({ value: controlledValue, onChange, onAddressFound, cla
   return (
     <div className="flex gap-2">
       <Input value={displayValue} onChange={handleChange} onKeyDown={handleKeyDown} placeholder="00000-000" className={cn(found && 'border-green-500', className)} disabled={disabled} maxLength={9} />
-      <Button type="button" variant="outline" size="icon" onClick={searchCEP} disabled={disabled || loading || displayValue.replace(/\D/g, '').length !== 8} aria-label="Buscar CEP">
+      <Button
+        type="button"
+        variant={buttonLabel ? 'default' : 'outline'}
+        size={buttonLabel ? 'default' : 'icon'}
+        onClick={searchCEP}
+        disabled={disabled || loading || displayValue.replace(/\D/g, '').length !== 8}
+        aria-label="Buscar CEP"
+        className={cn(buttonLabel && 'gap-1.5 shrink-0')}
+      >
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : found ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Search className="h-4 w-4" />}
+        {buttonLabel && <span>{buttonLabel}</span>}
       </Button>
     </div>
   );

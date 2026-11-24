@@ -1,5 +1,4 @@
 import type { MedidaDisciplinarInsert } from '@/types/medidasDisciplinares';
-import type { TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEmpresas } from './useEmpresas';
 import { batidasPontoService } from '@/services/batidasPontoService';
@@ -8,8 +7,15 @@ import { medidasDisciplinaresService } from '@/services/medidasDisciplinaresServ
 import { episService, episEntregasService } from '@/services/episService';
 import { jornadaHorariosService } from '@/services/jornadaHorariosService';
 import { bancoHorasConfigService } from '@/services/bancoHorasConfigService';
+import { bancoHorasService } from '@/services/bancoHorasService';
+import { pontoService } from '@/services/pontoService';
+import { turnoService } from '@/services/turnoService';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import {
+  mockOr, getMockFaltas, getMockMedidasDisciplinares, getMockEpisEntregas,
+  getMockSaldoBancoHoras, getMockRegistrosPontoSemana, getMockEscalaAtual,
+} from '@/mocks/colaboradoresMock';
 
 type DataRecord = Record<string, unknown>;
 
@@ -35,11 +41,8 @@ export function useBatidasPontoDia(data: string) {
 export function useRegistrarBatida() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (d: TablesInsert<'batidas_ponto'>) => batidasPontoService.registrar(d),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['batidas-ponto'] });
-      toast.success('Batida registrada');
-    },
+    mutationFn: (d: DataRecord) => batidasPontoService.registrar(d),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['batidas-ponto'] }); toast.success('Batida registrada'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -58,7 +61,7 @@ export function useFaltasColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
     queryKey: ['faltas-colaborador', colaboradorId, empresaAtual?.id],
-    queryFn: () => faltasService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
+    queryFn: async () => mockOr(getMockFaltas(colaboradorId)) ?? faltasService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
@@ -66,11 +69,8 @@ export function useFaltasColaborador(colaboradorId: string) {
 export function useCriarFalta() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (d: DataRecord) => faltasService.criar(d as TablesInsert<'faltas'>),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['faltas'] });
-      toast.success('Falta registrada');
-    },
+    mutationFn: (d: DataRecord) => faltasService.criar(d),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta registrada'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -79,12 +79,8 @@ export function useAtualizarFalta() {
   const qc = useQueryClient();
   const { empresaAtual } = useEmpresas();
   return useMutation({
-    mutationFn: ({ id, ...d }: { id: string } & DataRecord) =>
-      faltasService.atualizar(id, d as TablesUpdate<'faltas'>, empresaAtual!.id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['faltas'] });
-      toast.success('Falta atualizada');
-    },
+    mutationFn: ({ id, ...d }: { id: string } & DataRecord) => faltasService.atualizar(id, d, empresaAtual!.id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta atualizada'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -94,10 +90,7 @@ export function useExcluirFalta() {
   const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: (id: string) => faltasService.excluir(id, empresaAtual!.id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['faltas'] });
-      toast.success('Falta excluída');
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta excluída'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -116,7 +109,7 @@ export function useMedidasDisciplinaresColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
     queryKey: ['medidas-disciplinares-colaborador', colaboradorId, empresaAtual?.id],
-    queryFn: () => medidasDisciplinaresService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
+    queryFn: async () => mockOr(getMockMedidasDisciplinares(colaboradorId)) ?? medidasDisciplinaresService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
@@ -125,10 +118,7 @@ export function useCriarMedidaDisciplinar() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (d: MedidaDisciplinarInsert) => medidasDisciplinaresService.criar(d),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['medidas-disciplinares'] });
-      toast.success('Medida disciplinar registrada');
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['medidas-disciplinares'] }); toast.success('Medida disciplinar registrada'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -137,12 +127,8 @@ export function useAtualizarMedidaDisciplinar() {
   const qc = useQueryClient();
   const { empresaAtual } = useEmpresas();
   return useMutation({
-    mutationFn: ({ id, ...d }: { id: string } & DataRecord) =>
-      medidasDisciplinaresService.atualizar(id, d, empresaAtual!.id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['medidas-disciplinares'] });
-      toast.success('Medida atualizada');
-    },
+    mutationFn: ({ id, ...d }: { id: string } & DataRecord) => medidasDisciplinaresService.atualizar(id, d, empresaAtual!.id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['medidas-disciplinares'] }); toast.success('Medida atualizada'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -160,11 +146,8 @@ export function useEpis() {
 export function useCriarEpi() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (d: DataRecord) => episService.criar(d as TablesInsert<'epis'>),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['epis'] });
-      toast.success('EPI cadastrado');
-    },
+    mutationFn: (d: DataRecord) => episService.criar(d),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis'] }); toast.success('EPI cadastrado'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -174,10 +157,7 @@ export function useAtualizarEpi() {
   const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: ({ id, ...d }: { id: string } & DataRecord) => episService.atualizar(id, d, empresaAtual!.id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['epis'] });
-      toast.success('EPI atualizado');
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis'] }); toast.success('EPI atualizado'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -187,10 +167,7 @@ export function useExcluirEpi() {
   const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: (id: string) => episService.excluir(id, empresaAtual!.id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['epis'] });
-      toast.success('EPI excluído');
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis'] }); toast.success('EPI excluído'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -209,7 +186,7 @@ export function useEpisEntregasColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
     queryKey: ['epis-entregas-colaborador', colaboradorId, empresaAtual?.id],
-    queryFn: () => episEntregasService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
+    queryFn: async () => mockOr(getMockEpisEntregas(colaboradorId)) ?? episEntregasService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
@@ -217,11 +194,8 @@ export function useEpisEntregasColaborador(colaboradorId: string) {
 export function useCriarEpiEntrega() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (d: DataRecord) => episEntregasService.criar(d as TablesInsert<'epis_entregas'>),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['epis-entregas'] });
-      toast.success('Entrega de EPI registrada');
-    },
+    mutationFn: (d: DataRecord) => episEntregasService.criar(d),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis-entregas'] }); toast.success('Entrega de EPI registrada'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -230,12 +204,8 @@ export function useDevolverEpi() {
   const qc = useQueryClient();
   const { empresaAtual } = useEmpresas();
   return useMutation({
-    mutationFn: ({ id, dataDevolucao }: { id: string; dataDevolucao: string }) =>
-      episEntregasService.registrarDevolucao(id, dataDevolucao, empresaAtual!.id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['epis-entregas'] });
-      toast.success('Devolução registrada');
-    },
+    mutationFn: ({ id, dataDevolucao }: { id: string; dataDevolucao: string }) => episEntregasService.registrarDevolucao(id, dataDevolucao, empresaAtual!.id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis-entregas'] }); toast.success('Devolução registrada'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -252,12 +222,8 @@ export function useJornadaHorarios(jornadaId: string) {
 export function useSalvarGradeHorarios() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ jornadaId, horarios }: { jornadaId: string; horarios: TablesInsert<'jornadas_horarios'>[] }) =>
-      jornadaHorariosService.salvarGrade(jornadaId, horarios),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['jornada-horarios'] });
-      toast.success('Grade horária salva');
-    },
+    mutationFn: ({ jornadaId, horarios }: { jornadaId: string; horarios: any[] }) => jornadaHorariosService.salvarGrade(jornadaId, horarios),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['jornada-horarios'] }); toast.success('Grade horária salva'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -276,10 +242,36 @@ export function useSalvarBancoHorasConfig() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (d: DataRecord) => bancoHorasConfigService.salvar(d),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['banco-horas-config'] });
-      toast.success('Configuração salva');
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['banco-horas-config'] }); toast.success('Configuração salva'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
+  });
+}
+
+// === BANCO DE HORAS (saldo por colaborador — PARTE D) ===
+export function useSaldoBancoHoras(colaboradorId: string) {
+  const { empresaAtual } = useEmpresas();
+  return useQuery({
+    queryKey: ['saldo-banco-horas', colaboradorId, empresaAtual?.id],
+    queryFn: async () => mockOr(getMockSaldoBancoHoras(colaboradorId)) ?? bancoHorasService.getSaldo(colaboradorId, empresaAtual!.id),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
+  });
+}
+
+// === REGISTROS DE PONTO DA SEMANA (resumo — PARTE D) ===
+export function useRegistrosPontoSemana(colaboradorId: string) {
+  return useQuery({
+    queryKey: ['registros-ponto-semana', colaboradorId],
+    queryFn: async () => mockOr(getMockRegistrosPontoSemana(colaboradorId)) ?? pontoService.buscarRegistrosSemana(colaboradorId),
+    enabled: !!colaboradorId,
+  });
+}
+
+// === ESCALA ATUAL (PARTE D) ===
+export function useEscalaAtual(colaboradorId: string) {
+  const { empresaAtual } = useEmpresas();
+  return useQuery({
+    queryKey: ['escala-atual', colaboradorId, empresaAtual?.id],
+    queryFn: async () => mockOr(getMockEscalaAtual(colaboradorId)) ?? turnoService.buscarEscalaAtual(colaboradorId, empresaAtual!.id),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }

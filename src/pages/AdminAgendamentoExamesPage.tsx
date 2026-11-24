@@ -15,7 +15,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CalendarClock, MapPin, Navigation, Plus, Stethoscope, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { validateTablePayload } from '@/schemas/validate';
 
 type Agend = {
   id: string;
@@ -31,15 +30,9 @@ type Agend = {
 };
 
 type ClinicaProxima = {
-  id: string;
-  razao_social: string;
-  nome_fantasia: string | null;
-  cidade: string | null;
-  uf: string | null;
-  telefone: string | null;
-  sla_medio_min: number | null;
-  tipos_exame: string[];
-  distancia_km: number;
+  id: string; razao_social: string; nome_fantasia: string | null;
+  cidade: string | null; uf: string | null; telefone: string | null;
+  sla_medio_min: number | null; tipos_exame: string[]; distancia_km: number;
 };
 
 const TIPOS_EXAME = [
@@ -71,14 +64,14 @@ export default function AdminAgendamentoExamesPage() {
     enabled: !!empresaId,
     staleTime: 30_000,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('exames_agendamentos')
         .select('*, clinicas_partners(razao_social,cidade,uf), colaboradores(nome_completo,matricula)')
-        .eq('empresa_id', empresaId!)
+        .eq('empresa_id', empresaId)
         .order('data_agendada', { ascending: false })
         .limit(500);
       if (error) throw error;
-      return (data ?? []) as unknown as Agend[];
+      return (data ?? []) as Agend[];
     },
   });
 
@@ -106,11 +99,11 @@ export default function AdminAgendamentoExamesPage() {
     setBuscando(true);
     setClinicaEscolhida(null);
     try {
-      const { data, error } = await supabase.rpc('clinicas_proximas', {
+      const { data, error } = await (supabase as any).rpc('clinicas_proximas', {
         p_empresa_id: empresaId,
         p_lat: Number(lat),
         p_lng: Number(lng),
-        p_tipo_exame: tipoExame || undefined,
+        p_tipo_exame: tipoExame || null,
         p_raio_km: raio,
         p_limit: 15,
       });
@@ -127,11 +120,8 @@ export default function AdminAgendamentoExamesPage() {
   const usarLocalizacaoAtual = () => {
     if (!navigator.geolocation) return toast.error('Geolocalização indisponível no navegador');
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setLat(String(pos.coords.latitude));
-        setLng(String(pos.coords.longitude));
-      },
-      () => toast.error('Não foi possível obter localização')
+      (pos) => { setLat(String(pos.coords.latitude)); setLng(String(pos.coords.longitude)); },
+      () => toast.error('Não foi possível obter localização'),
     );
   };
 
@@ -141,56 +131,44 @@ export default function AdminAgendamentoExamesPage() {
         throw new Error('Preencha colaborador, clínica e data.');
       }
       const { data: userRes } = await supabase.auth.getUser();
-      const { error } = await supabase.from('exames_agendamentos').insert(
-        validateTablePayload(
-          'exames_agendamentos',
-          {
-            empresa_id: empresaId,
-            colaborador_id: colaboradorId,
-            clinica_id: clinicaEscolhida.id,
-            tipo_exame: tipoExame,
-            data_agendada: dataAgendada,
-            distancia_km: clinicaEscolhida.distancia_km,
-            colaborador_lat: Number(lat),
-            colaborador_lng: Number(lng),
-            observacoes: obs || null,
-            criado_por: userRes.user?.id,
-          },
-          'AdminAgendamentoExamesPage:exames_agendamentos'
-        )
-      );
+      const { error } = await (supabase as any).from('exames_agendamentos').insert({
+        empresa_id: empresaId,
+        colaborador_id: colaboradorId,
+        clinica_id: clinicaEscolhida.id,
+        tipo_exame: tipoExame,
+        data_agendada: dataAgendada,
+        distancia_km: clinicaEscolhida.distancia_km,
+        colaborador_lat: Number(lat),
+        colaborador_lng: Number(lng),
+        observacoes: obs || null,
+        criado_por: userRes.user?.id,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success('Exame agendado com sucesso');
       qc.invalidateQueries({ queryKey: ['exames-agendamentos'] });
       setDialogOpen(false);
-      setColaboradorId('');
-      setDataAgendada('');
-      setLat('');
-      setLng('');
-      setClinicaEscolhida(null);
-      setClinicasProximas([]);
-      setObs('');
+      setColaboradorId(''); setDataAgendada(''); setLat(''); setLng('');
+      setClinicaEscolhida(null); setClinicasProximas([]); setObs('');
     },
-    onError: (e) => toast.error(safeErrorMessage(e, 'Falha ao agendar exame.')),
+    onError: (e: any) => toast.error(safeErrorMessage(e, 'Falha ao agendar exame.')),
   });
 
   const kpis = useMemo(() => {
     const total = agendamentos?.length ?? 0;
     const agendados = agendamentos?.filter((a) => a.status === 'agendado').length ?? 0;
     const realizados = agendamentos?.filter((a) => a.status === 'realizado').length ?? 0;
-    const proximos7d =
-      agendamentos?.filter((a) => {
-        const d = new Date(a.data_agendada);
-        // eslint-disable-next-line react-hooks/purity
-        const now = Date.now();
-        return d.getTime() >= now && d.getTime() <= now + 7 * 24 * 3600 * 1000;
-      }).length ?? 0;
+    const proximos7d = agendamentos?.filter((a) => {
+      const d = new Date(a.data_agendada);
+      // eslint-disable-next-line react-hooks/purity
+      const now = Date.now();
+      return d.getTime() >= now && d.getTime() <= now + 7 * 24 * 3600 * 1000;
+    }).length ?? 0;
     return { total, agendados, realizados, proximos7d };
   }, [agendamentos]);
 
-  const statusColor = (s: string): 'default' | 'destructive' | 'secondary' =>
+  const statusColor = (s: string) =>
     s === 'realizado' ? 'default' : s === 'cancelado' || s === 'faltou' ? 'destructive' : 'secondary';
 
   return (
@@ -203,68 +181,28 @@ export default function AdminAgendamentoExamesPage() {
         gradient="from-primary to-success"
       >
         <div className="grid gap-4 md:grid-cols-4 mb-6">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">Total</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{kpis.total}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">Agendados</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-primary">{kpis.agendados}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">Próximos 7 dias</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-warning">{kpis.proximos7d}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">Realizados</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-success">{kpis.realizados}</p>
-            </CardContent>
-          </Card>
+          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Total</CardTitle></CardHeader><CardContent><p className="text-3xl font-medium">{kpis.total}</p></CardContent></Card>
+          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Agendados</CardTitle></CardHeader><CardContent><p className="text-3xl font-medium text-primary">{kpis.agendados}</p></CardContent></Card>
+          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Próximos 7 dias</CardTitle></CardHeader><CardContent><p className="text-3xl font-medium text-warning">{kpis.proximos7d}</p></CardContent></Card>
+          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Realizados</CardTitle></CardHeader><CardContent><p className="text-3xl font-medium text-success">{kpis.realizados}</p></CardContent></Card>
         </div>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <CalendarClock className="h-5 w-5" />
-              Agendamentos
-            </CardTitle>
+            <CardTitle className="flex items-center gap-2"><CalendarClock className="h-5 w-5" />Agendamentos</CardTitle>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" /> Novo agendamento
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Novo agendamento por geolocalização</DialogTitle>
-                </DialogHeader>
+              <DialogTrigger asChild><Button><Plus className="mr-2 h-4 w-4" /> Novo agendamento</Button></DialogTrigger>
+              <DialogContent className="max-w-[640px] max-h-[92vh] overflow-y-auto">
+                <DialogHeader><DialogTitle>Novo agendamento por geolocalização</DialogTitle></DialogHeader>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
                     <Label>Colaborador *</Label>
                     <Select value={colaboradorId} onValueChange={setColaboradorId}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione..." />
-                      </SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
                       <SelectContent className="max-h-72">
-                        {colaboradores?.map((c) => (
+                        {colaboradores?.map((c: any) => (
                           <SelectItem key={c.id} value={c.id}>
-                            {c.nome_completo}
-                            {c.matricula ? ` — ${c.matricula}` : ''}
+                            {c.nome_completo}{c.matricula ? ` — ${c.matricula}` : ''}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -273,35 +211,19 @@ export default function AdminAgendamentoExamesPage() {
                   <div>
                     <Label>Tipo de exame *</Label>
                     <Select value={tipoExame} onValueChange={setTipoExame}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        {TIPOS_EXAME.map((t) => (
-                          <SelectItem key={t.v} value={t.v}>
-                            {t.l}
-                          </SelectItem>
-                        ))}
+                        {TIPOS_EXAME.map((t) => <SelectItem key={t.v} value={t.v}>{t.l}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
                     <Label>Data / hora *</Label>
-                    <Input
-                      type="datetime-local"
-                      value={dataAgendada}
-                      onChange={(e) => setDataAgendada(e.target.value)}
-                    />
+                    <Input type="datetime-local" value={dataAgendada} onChange={(e) => setDataAgendada(e.target.value)} />
                   </div>
                   <div>
                     <Label>Raio de busca (km)</Label>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={500}
-                      value={raio}
-                      onChange={(e) => setRaio(Number(e.target.value))}
-                    />
+                    <Input type="number" min={1} max={500} value={raio} onChange={(e) => setRaio(Number(e.target.value))} />
                   </div>
                   <div>
                     <Label>Latitude *</Label>
@@ -316,11 +238,7 @@ export default function AdminAgendamentoExamesPage() {
                       <Navigation className="mr-2 h-4 w-4" /> Usar minha localização
                     </Button>
                     <Button type="button" onClick={buscarClinicas} disabled={buscando || !lat || !lng}>
-                      {buscando ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <MapPin className="mr-2 h-4 w-4" />
-                      )}
+                      {buscando ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <MapPin className="mr-2 h-4 w-4" />}
                       Buscar clínicas próximas
                     </Button>
                   </div>
@@ -329,12 +247,12 @@ export default function AdminAgendamentoExamesPage() {
                     <div className="md:col-span-2 border rounded-md">
                       <Table>
                         <TableHeader>
-                          <TableRow>
-                            <TableHead className="w-8"></TableHead>
-                            <TableHead>Clínica</TableHead>
-                            <TableHead>Cidade/UF</TableHead>
-                            <TableHead>SLA</TableHead>
-                            <TableHead className="text-right">Distância</TableHead>
+                          <TableRow className="hover:bg-transparent">
+                            <TableHead className="h-6 w-8 px-2"></TableHead>
+                            <TableHead className="h-6 px-2 text-[11px] font-medium">Clínica</TableHead>
+                            <TableHead className="h-6 px-2 text-[11px] font-medium">Cidade/UF</TableHead>
+                            <TableHead className="h-6 px-2 text-[11px] font-medium">SLA</TableHead>
+                            <TableHead className="h-6 px-2 text-[11px] font-medium text-right">Distância</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -344,24 +262,14 @@ export default function AdminAgendamentoExamesPage() {
                               className={`cursor-pointer ${clinicaEscolhida?.id === c.id ? 'bg-primary/10' : ''}`}
                               onClick={() => setClinicaEscolhida(c)}
                             >
-                              <TableCell>
-                                <input
-                                  type="radio"
-                                  checked={clinicaEscolhida?.id === c.id}
-                                  onChange={() => setClinicaEscolhida(c)}
-                                />
-                              </TableCell>
-                              <TableCell>
+                              <TableCell className="px-2 py-1.5"><input type="radio" checked={clinicaEscolhida?.id === c.id} onChange={() => setClinicaEscolhida(c)} /></TableCell>
+                              <TableCell className="px-2 py-1.5 text-[12.5px]">
                                 <div className="font-medium">{c.razao_social}</div>
-                                {c.nome_fantasia && (
-                                  <div className="text-xs text-muted-foreground">{c.nome_fantasia}</div>
-                                )}
+                                {c.nome_fantasia && <div className="text-[10px] text-muted-foreground">{c.nome_fantasia}</div>}
                               </TableCell>
-                              <TableCell>
-                                {c.cidade}/{c.uf}
-                              </TableCell>
-                              <TableCell>{c.sla_medio_min ? `${c.sla_medio_min} min` : '—'}</TableCell>
-                              <TableCell className="text-right font-mono">{c.distancia_km} km</TableCell>
+                              <TableCell className="px-2 py-1.5 text-[12.5px]">{c.cidade}/{c.uf}</TableCell>
+                              <TableCell className="px-2 py-1.5 text-[12.5px]">{c.sla_medio_min ? `${c.sla_medio_min} min` : '—'}</TableCell>
+                              <TableCell className="text-numeric px-2 py-1.5 text-[12.5px] text-right">{c.distancia_km} km</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
@@ -375,9 +283,7 @@ export default function AdminAgendamentoExamesPage() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                    Cancelar
-                  </Button>
+                  <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
                   <Button
                     onClick={() => agendar.mutate()}
                     disabled={agendar.isPending || !colaboradorId || !clinicaEscolhida || !dataAgendada}
@@ -410,26 +316,16 @@ export default function AdminAgendamentoExamesPage() {
                     <TableRow key={a.id}>
                       <TableCell>
                         <div className="font-medium">{a.colaboradores?.nome_completo ?? '—'}</div>
-                        {a.colaboradores?.matricula && (
-                          <div className="text-xs text-muted-foreground">{a.colaboradores.matricula}</div>
-                        )}
+                        {a.colaboradores?.matricula && <div className="text-xs text-muted-foreground">{a.colaboradores.matricula}</div>}
                       </TableCell>
                       <TableCell>
                         <div className="font-medium">{a.clinicas_partners?.razao_social ?? '—'}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {a.clinicas_partners?.cidade}/{a.clinicas_partners?.uf}
-                        </div>
+                        <div className="text-xs text-muted-foreground">{a.clinicas_partners?.cidade}/{a.clinicas_partners?.uf}</div>
                       </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">
-                          {TIPOS_EXAME.find((t) => t.v === a.tipo_exame)?.l ?? a.tipo_exame}
-                        </Badge>
-                      </TableCell>
+                      <TableCell><Badge variant="outline">{TIPOS_EXAME.find(t => t.v === a.tipo_exame)?.l ?? a.tipo_exame}</Badge></TableCell>
                       <TableCell>{new Date(a.data_agendada).toLocaleString('pt-BR')}</TableCell>
-                      <TableCell className="font-mono">{a.distancia_km ? `${a.distancia_km} km` : '—'}</TableCell>
-                      <TableCell>
-                        <Badge variant={statusColor(a.status)}>{a.status}</Badge>
-                      </TableCell>
+                      <TableCell className="text-numeric">{a.distancia_km ? `${a.distancia_km} km` : '—'}</TableCell>
+                      <TableCell><Badge variant={statusColor(a.status) as any}>{a.status}</Badge></TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

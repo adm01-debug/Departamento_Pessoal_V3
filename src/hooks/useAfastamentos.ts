@@ -6,7 +6,7 @@ import { auditLogger } from '@/utils/auditLogger';
 import { toast } from 'sonner';
 import { useGenericCrud } from './useGenericCrud';
 import { safeErrorMessage } from '@/utils/safeError';
-import type { ProrrogacaoAfastamentoInsert, AfastamentoCrudItem } from '@/types/afastamentos';
+import { mockOr, getMockAfastamentos } from '@/mocks/colaboradoresMock';
 
 // P2-051 (batch 2026-07-26): filtros tipados para o useGenericCrud.
 // Cada chave é opcional e aceita string (filtro livre, id, status, etc.).
@@ -25,17 +25,15 @@ export function useAfastamentos() {
   const empresaId = empresaAtual?.id;
   const [filtros, setFiltros] = useState<AfastamentoFiltros>({});
 
-  const crud = useGenericCrud<AfastamentoCrudItem>({
+  const crud = useGenericCrud<unknown>({
     queryKey: 'afastamentos',
     service: afastamentoService,
-    empresaId,
-    injectEmpresaIdOnCreate: true,
     filters: { ...filtros, empresaId },
     successMessages: {
       create: 'Afastamento registrado com sucesso',
       update: 'Afastamento atualizado com sucesso',
-      delete: 'Afastamento excluído com sucesso',
-    },
+      delete: 'Afastamento excluído com sucesso'
+    }
   });
 
   const configsQuery = useQuery({
@@ -55,6 +53,20 @@ export function useAfastamentos() {
   };
 }
 
+// PARTE E: resumo por colaborador no Dossiê (situação atual + histórico
+// recente) — reusa afastamentoService.listarHistoricoRecente, já existente
+// e usado hoje só dentro do form de afastamento.
+export function useAfastamentosRecentes(colaboradorId: string, dias: number = 60) {
+  const { empresaAtual } = useEmpresas();
+  return useQuery({
+    queryKey: ['afastamentos-recentes', colaboradorId, empresaAtual?.id, dias],
+    queryFn: async () => mockOr(getMockAfastamentos(colaboradorId)) ?? afastamentoService.listarHistoricoRecente(colaboradorId, empresaAtual!.id, dias),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
+  });
+}
+
+
+
 export function useProrrogacoesAfastamento(afastamentoId?: string) {
   const queryClient = useQueryClient();
   const { empresaAtual } = useEmpresas();
@@ -66,16 +78,15 @@ export function useProrrogacoesAfastamento(afastamentoId?: string) {
   });
 
   const criarMutation = useMutation({
-    mutationFn: (data: ProrrogacaoAfastamentoInsert) => afastamentoService.criarProrrogacao(data, empresaAtual!.id),
+    mutationFn: (data: any) => afastamentoService.criarProrrogacao(data, empresaAtual!.id),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['prorrogacoes-afastamento'] });
       queryClient.invalidateQueries({ queryKey: ['afastamentos'] });
-      void auditLogger.log({
+      auditLogger.log({
         tabela: 'prorrogacoes_afastamento',
-        registro_id: data?.id ?? '',
+        registro_id: (data as any).id,
         acao: 'INSERT',
-        empresa_id: empresaAtual!.id,
-        dados_novos: data,
+        dados_novos: data
       });
       toast.success('Prorrogação registrada com sucesso');
     },
@@ -92,7 +103,6 @@ export function useProrrogacoesAfastamento(afastamentoId?: string) {
 
 export function useDocumentosAfastamento(afastamentoId?: string) {
   const queryClient = useQueryClient();
-  const { empresaAtual } = useEmpresas();
 
   const query = useQuery({
     queryKey: ['documentos-afastamento', afastamentoId],
@@ -112,10 +122,7 @@ export function useDocumentosAfastamento(afastamentoId?: string) {
   });
 
   const excluirMutation = useMutation({
-    mutationFn: (id: string) => {
-      if (!empresaAtual?.id) throw new Error('Empresa ativa não carregada.');
-      return afastamentoService.excluirDocumento(id, empresaAtual.id);
-    },
+    mutationFn: (id: string) => (afastamentoService as any).excluir(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documentos-afastamento', afastamentoId] });
       toast.success('Documento excluído com sucesso');

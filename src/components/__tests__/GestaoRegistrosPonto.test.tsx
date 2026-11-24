@@ -1,13 +1,24 @@
-import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
-  },
-  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
-}));
+vi.mock('framer-motion', () => {
+  // O `MotionCard` de `ui/entrada-cards` é criado no import da cadeia
+  // (GestaoPontoAnalytics → entradaCard → motion.create), então o mock precisa
+  // oferecer `create` e as tags que o módulo realmente renderiza.
+  const propsDom = ({ initial: _i, animate: _a, transition: _t, variants: _v, exit: _e, ...props }: any) => props;
+  return {
+    motion: {
+      div: ({ children, ...props }: any) => <div {...propsDom(props)}>{children}</div>,
+      tr: ({ children, ...props }: any) => <tr {...propsDom(props)}>{children}</tr>,
+      span: ({ children, ...props }: any) => <span {...propsDom(props)}>{children}</span>,
+      li: ({ children, ...props }: any) => <li {...propsDom(props)}>{children}</li>,
+      create: (Componente: any) => Componente,
+    },
+    AnimatePresence: ({ children }: any) => <>{children}</>,
+    useInView: () => true,
+    useReducedMotion: () => false,
+  };
+});
 
 vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
@@ -45,35 +56,38 @@ vi.mock('@/services/batidasPontoService', () => ({
 vi.mock('@/utils/dateLocal', () => ({
   formatDateLocalISO: (d: Date) => d.toISOString().split('T')[0],
   todayLocalISO: () => '2026-07-24',
+  // Usado pelo `DatePicker` (ver src/components/ui/date-picker.tsx) por trás
+  // de qualquer `Input type="date"` renderizado neste componente.
+  parseDateLocalISO: (iso?: string | null) => {
+    if (!iso) return undefined;
+    const [y, m, d] = iso.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  },
 }));
 
-vi.mock('./PontoInconsistencyPanel', () => ({
+vi.mock('@/components/ponto/PontoInconsistencyPanel', () => ({
   PontoInconsistencyPanel: () => <div data-testid="inconsistency-panel" />,
 }));
 
-vi.mock('./GestaoPontoAnalytics', () => ({
+vi.mock('@/components/ponto/GestaoPontoAnalytics', () => ({
   GestaoPontoAnalytics: () => <div data-testid="analytics-panel" />,
 }));
 
-vi.mock('./PontoGeoAnalytics', () => ({
-  PontoGeoAnalytics: () => <div data-testid="geo-analytics-panel" />,
-}));
-
 vi.mock('@/components/ui/tabs', () => ({
-  Tabs: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  TabsList: ({ children }: { children?: ReactNode }) => <div role="tablist">{children}</div>,
-  TabsTrigger: ({ children, value }: { children?: ReactNode; value?: string }) => (
+  Tabs: ({ children }: any) => <div>{children}</div>,
+  TabsList: ({ children }: any) => <div role="tablist">{children}</div>,
+  TabsTrigger: ({ children, value }: any) => (
     <button role="tab" data-value={value}>
       {children}
     </button>
   ),
-  TabsContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  TabsContent: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/popover', () => ({
-  Popover: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
-  PopoverTrigger: ({ children }: { children?: ReactNode }) => children,
-  PopoverContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  Popover: ({ children }: any) => <div>{children}</div>,
+  PopoverTrigger: ({ children }: any) => children,
+  PopoverContent: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/checkbox', () => ({
@@ -100,45 +114,45 @@ const MOCK_REGISTROS = [
 
 describe('GestaoRegistrosPonto', () => {
   it('renders Controle de Ponto title', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText(/Controle de Ponto/)).toBeInTheDocument();
   });
 
   it('renders Filtros Avançados button', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText('Filtros Avançados')).toBeInTheDocument();
   });
 
   it('renders search input', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByPlaceholderText(/Buscar/i)).toBeInTheDocument();
   });
 
   it('renders export buttons', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText('CSV')).toBeInTheDocument();
     expect(screen.getByText('PDF')).toBeInTheDocument();
   });
 
   it('renders colaborador name in table when data loaded', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as any);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText('João Silva')).toBeInTheDocument();
   });
 
   it('renders table headers when data present', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as any);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText('Colaborador')).toBeInTheDocument();
     expect(screen.getByText('Trabalhadas')).toBeInTheDocument();
   });
 
   it('shows empty state when no registros', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText(/Nenhum registro encontrado/)).toBeInTheDocument();
   });

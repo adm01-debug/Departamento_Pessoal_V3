@@ -4,27 +4,21 @@ import { toast } from 'sonner';
 import { contratacaoService } from '@/services/contratacaoService';
 import { safeErrorMessage } from '@/utils/safeError';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { validateTablePayload } from '@/schemas/validate';
-import type { Updatable } from '@/integrations/supabase/database.types';
+// MOCK VISUAL — ver src/mocks/admissoesMock.ts
+import { mockValidarDocumento } from '@/mocks/admissoesMock';
 
 export function useContratacaoDigital() {
   const queryClient = useQueryClient();
   const { empresaAtual } = useEmpresas();
 
   const atualizarEtapa = useMutation({
-    mutationFn: async ({ tokenId, campos }: { tokenId: string; campos: Updatable<'admissao_tokens'> }) => {
+    mutationFn: async ({ tokenId, campos }: { tokenId: string, campos: any }) => {
       const { data, error } = await supabase
         .from('admissao_tokens')
-        .update(
-          validateTablePayload(
-            'admissao_tokens',
-            {
-              ...campos,
-              updated_at: new Date().toISOString(),
-            },
-            'useContratacaoDigital:admissao_tokens'
-          )
-        )
+        .update({
+          ...campos,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', tokenId)
         .select()
         .single();
@@ -39,17 +33,14 @@ export function useContratacaoDigital() {
   });
 
   const validarDocumento = useMutation({
-    mutationFn: async ({
-      admissaoId,
-      docType,
-      status,
-      observacao,
-    }: {
-      admissaoId: string;
-      docType: string;
-      status: 'validado' | 'rejeitado';
-      observacao?: string;
+    mutationFn: async ({ admissaoId, docType, status, observacao }: {
+      admissaoId: string,
+      docType: string,
+      status: 'validado' | 'rejeitado',
+      observacao?: string
     }) => {
+      // MOCK VISUAL — valida o documento fictício em memória (nada é gravado).
+      if (mockValidarDocumento(admissaoId, docType, status, observacao)) return { admissaoId, docType, status };
       return await contratacaoService.validarDocumento(admissaoId, docType, status, observacao, empresaAtual?.id);
     },
     onSuccess: () => {

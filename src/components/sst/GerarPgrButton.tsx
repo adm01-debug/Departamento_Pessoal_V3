@@ -81,7 +81,7 @@ export function GerarPgrButton() {
           <FileText className="h-4 w-4 mr-2" />Gerar PGR (NR-01)
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5" />Gerador de PGR — NR-01

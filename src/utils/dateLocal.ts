@@ -39,6 +39,21 @@ export function todayLocalISO(): string {
 }
 
 /**
+ * Inverso de `formatDateLocalISO`: lê `YYYY-MM-DD` como meia-noite no fuso
+ * local, em vez de `new Date('YYYY-MM-DD')` (que o motor JS interpreta como
+ * UTC e pode exibir o dia anterior em fusos negativos, como UTC-3). Usado
+ * pelo `DatePicker` para reconstituir o `Date` que o calendário exibe a
+ * partir do valor `YYYY-MM-DD` guardado no formulário/banco.
+ */
+export function parseDateLocalISO(iso: string | null | undefined): Date | undefined {
+  if (!iso) return undefined;
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  if (!match) return undefined;
+  const [, year, month, day] = match;
+  return new Date(Number(year), Number(month) - 1, Number(day));
+}
+
+/**
  * Soma dias a uma data preservando o fuso local (ao contrário de operações
  * baseadas em UTC que podem cruzar meia-noite de forma inesperada).
  */

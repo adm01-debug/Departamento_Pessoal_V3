@@ -9,7 +9,7 @@ import { AlertCircle, CheckCircle2, Clock, Calendar } from 'lucide-react';
 
 export function FeriasSaldoReport() {
   const { colaboradores, isLoading: loadingColab } = useColaboradores();
-
+  
   // No mundo real, faríamos um join ou uma query batch. Aqui simularemos a agregação.
   // Em um sistema real de alta performance, usaríamos uma View no Postgres.
 
@@ -28,34 +28,34 @@ export function FeriasSaldoReport() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-[10px] uppercase font-bold">Colaborador</TableHead>
-                <TableHead className="text-[10px] uppercase font-bold text-center">Dias Disponíveis</TableHead>
-                <TableHead className="text-[10px] uppercase font-bold text-center">Progresso</TableHead>
-                <TableHead className="text-[10px] uppercase font-bold text-right">Status</TableHead>
+                <TableHead className="text-[10px] uppercase font-medium">Colaborador</TableHead>
+                <TableHead className="text-[10px] uppercase font-medium text-center">Dias Disponíveis</TableHead>
+                <TableHead className="text-[10px] uppercase font-medium text-center">Progresso</TableHead>
+                <TableHead className="text-[10px] uppercase font-medium text-right">Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {colaboradores.map((c) => {
+              {colaboradores.map((c: any) => {
                 // Cálculo determinístico baseado no ID para evitar instabilidade no render
                 const idNum = c.id.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
                 const saldo = idNum % 31;
                 const percent = (saldo / 30) * 100;
-
+                
                 return (
                   <TableRow key={c.id} className="hover:bg-muted/30 transition-colors">
                     <TableCell>
                       <div className="flex flex-col">
                         <span className="text-sm font-medium">{c.nome_completo}</span>
-                        <span className="text-[10px] text-muted-foreground">{c.departamento || 'Geral'}</span>
+                        <span className="text-[10px] text-muted-foreground">{c.departamento?.nome || 'Geral'}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-center font-display font-bold text-lg">{saldo}</TableCell>
+                    <TableCell className="text-center font-display font-medium text-lg">
+                      {saldo}
+                    </TableCell>
                     <TableCell className="w-[120px]">
                       <div className="flex flex-col gap-1">
                         <Progress value={percent} className="h-1.5" />
-                        <span className="text-[9px] text-right text-muted-foreground">
-                          {percent.toFixed(0)}% do período
-                        </span>
+                        <span className="text-[9px] text-right text-muted-foreground">{percent.toFixed(0)}% do período</span>
                       </div>
                     </TableCell>
                     <TableCell className="text-right">

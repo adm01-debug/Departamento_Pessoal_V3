@@ -30,7 +30,7 @@ const USER_FRIENDLY_MESSAGES: Record<string, string> = {
 function extractMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   if (typeof error === 'string') return error;
-  if (error !== null && typeof error === 'object') {
+  if (typeof error === 'object' && error !== null) {
     const candidate = error as Record<string, unknown>;
     for (const key of ['message', 'error_description', 'error', 'details', 'hint'] as const) {
       const value = candidate[key];
@@ -43,6 +43,7 @@ function extractMessage(error: unknown): string {
     }
     return '';
   }
+  if (error === null || error === undefined) return '';
   return String(error);
 }
 
@@ -56,7 +57,7 @@ export function safeErrorMessage(error: unknown, fallback = 'Ocorreu um erro. Te
   if (/permission denied/i.test(msg)) return USER_FRIENDLY_MESSAGES.permission;
   if (/row-level security/i.test(msg)) return USER_FRIENDLY_MESSAGES.rls;
 
-  if (INTERNAL_PATTERNS.some((p) => p.test(msg))) {
+  if (INTERNAL_PATTERNS.some(p => p.test(msg))) {
     return fallback;
   }
 

@@ -15,7 +15,7 @@ const BACKUP_TABLES = [
   'colaboradores',
   'admissoes',
   'registros_ponto',
-  'folhas_pagamento',
+  'folha_pagamento',
   'ferias',
   'beneficios',
   'departamentos',
@@ -24,64 +24,17 @@ const BACKUP_TABLES = [
   'treinamentos',
 ] as const;
 
-type BackupTable = (typeof BACKUP_TABLES)[number];
-type BackupRow = Record<string, unknown>;
+type BackupTable = typeof BACKUP_TABLES[number];
 
-// A exportação no navegador não tem snapshot transacional. Para não chamar um
-// recorte silencioso de "backup completo", ela falha quando uma tabela excede
-// este limite. Backups maiores devem usar o fluxo server-side auditável.
-const MAX_RECORDS_PER_TABLE = 10_000;
-
-function resolveTargetTables(tables?: readonly string[]): BackupTable[] {
-  const targetTables = tables ? [...tables] : [...BACKUP_TABLES];
-
-  if (targetTables.length === 0) {
-    throw new Error('Selecione ao menos uma tabela para exportação');
-  }
-
-  const invalidTable = targetTables.find((table) => !BACKUP_TABLES.includes(table as BackupTable));
-  if (invalidTable) {
-    throw new Error(`Tabela não permitida para exportação: ${invalidTable}`);
-  }
-
-  if (new Set(targetTables).size !== targetTables.length) {
-    throw new Error('A lista de tabelas para exportação contém duplicidades');
-  }
-
-  return targetTables as BackupTable[];
-}
-
-async function fetchTableData(
-  table: BackupTable,
-  empresaId: string
-): Promise<{ table: BackupTable; data: BackupRow[]; count: number }> {
-  const { data, error, count } = await supabase
-    .from(table)
-    .select('*', { count: 'exact' })
+async function fetchTableData(table: string, empresaId: string) {
+  const { data, error } = await supabase
+    .from(table as any)
+    .select('*')
     .eq('empresa_id', empresaId)
-    .limit(MAX_RECORDS_PER_TABLE);
+    .limit(10000);
 
   if (error) throw new Error(`Erro ao exportar ${table}: ${error.message}`);
-
-  // A tipagem gerada não conhece todas as tabelas da allowlist; a fonte foi
-  // validada em runtime antes desta conversão e o resultado continua privado.
-  const rows = (data as unknown as BackupRow[] | null) ?? [];
-  if (count === null) {
-    throw new Error(`Não foi possível confirmar a quantidade de registros de ${table}`);
-  }
-  if (count !== rows.length) {
-    throw new Error(
-      `Exportação incompleta de ${table}: ${count} registros encontrados, limite de ${MAX_RECORDS_PER_TABLE}. Use o backup server-side.`
-    );
-  }
-
-  return { table, data: rows, count };
-}
-
-async function fetchBackupTables(empresaId: string, tables?: readonly string[]) {
-  const targetTables = resolveTargetTables(tables);
-  const results = await Promise.all(targetTables.map((table) => fetchTableData(table, empresaId)));
-  return { targetTables, results };
+  return { table, data: (data as any[]) || [], count: (data as any[])?.length || 0 };
 }
 
 function formatBytes(bytes: number): string {
@@ -92,34 +45,32 @@ function formatBytes(bytes: number): string {
 
 export async function exportarBackupCSV(
   empresaId: string,
-  tables?: readonly string[]
+  tables?: string[]
 ): Promise<{ blob: Blob; fileName: string; stats: { tabelas: number; registros: number; tamanho: string } }> {
   if (!empresaId) throw new Error('empresaId é obrigatório para exportação');
-  const { targetTables, results } = await fetchBackupTables(empresaId, tables);
+  const targetTables = tables || [...BACKUP_TABLES];
+  const results = await Promise.allSettled(targetTables.map(t => fetchTableData(t, empresaId)));
 
   let csvContent = '';
   let totalRecords = 0;
 
   for (const result of results) {
-    const { table, data, count } = result;
-    totalRecords += count;
+    if (result.status === 'fulfilled') {
+      const { table, data, count } = result.value;
+      totalRecords += count;
 
-    if (data.length > 0) {
-      csvContent += `\n### TABELA: ${table.toUpperCase()} (${count} registros) ###\n`;
-      const headers = Object.keys(data[0]);
-      csvContent += headers.join(';') + '\n';
-      for (const row of data) {
-        csvContent +=
-          headers
-            .map((header) => {
-              const value = row[header];
-              if (value === null || value === undefined) return '';
-              const stringValue = typeof value === 'object' ? (JSON.stringify(value) ?? '') : String(value);
-              return stringValue.includes(';') || stringValue.includes('\n')
-                ? `"${stringValue.replace(/"/g, '""')}"`
-                : stringValue;
-            })
-            .join(';') + '\n';
+      if (data.length > 0) {
+        csvContent += `\n### TABELA: ${table.toUpperCase()} (${count} registros) ###\n`;
+        const headers = Object.keys(data[0]);
+        csvContent += headers.join(';') + '\n';
+        for (const row of data) {
+          csvContent += headers.map(h => {
+            const val = (row as any)[h];
+            if (val === null || val === undefined) return '';
+            const str = typeof val === 'object' ? JSON.stringify(val) : String(val);
+            return str.includes(';') || str.includes('\n') ? `"${str.replace(/"/g, '""')}"` : str;
+          }).join(';') + '\n';
+        }
       }
     }
   }
@@ -141,32 +92,31 @@ export async function exportarBackupCSV(
 
 export async function exportarBackupJSON(
   empresaId: string,
-  tables?: readonly string[]
+  tables?: string[]
 ): Promise<{ blob: Blob; fileName: string; stats: { tabelas: number; registros: number; tamanho: string } }> {
   if (!empresaId) throw new Error('empresaId é obrigatório para exportação');
-  const { targetTables, results } = await fetchBackupTables(empresaId, tables);
+  const targetTables = tables || [...BACKUP_TABLES];
+  const results = await Promise.allSettled(targetTables.map(t => fetchTableData(t, empresaId)));
 
-  const output: Partial<Record<BackupTable, BackupRow[]>> = {};
+  const output: Record<string, any[]> = {};
   let totalRecords = 0;
 
   for (const result of results) {
-    output[result.table] = result.data;
-    totalRecords += result.count;
+    if (result.status === 'fulfilled') {
+      output[result.value.table] = result.value.data;
+      totalRecords += result.value.count;
+    }
   }
 
-  const json = JSON.stringify(
-    {
-      metadata: {
-        gerado_em: new Date().toISOString(),
-        empresa_id: empresaId,
-        tabelas: Object.keys(output).length,
-        total_registros: totalRecords,
-      },
-      dados: output,
+  const json = JSON.stringify({
+    metadata: {
+      gerado_em: new Date().toISOString(),
+      empresa_id: empresaId,
+      tabelas: Object.keys(output).length,
+      total_registros: totalRecords,
     },
-    null,
-    2
-  );
+    dados: output,
+  }, null, 2);
 
   const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
   const now = new Date();

@@ -1,5 +1,11 @@
-import { useState, useCallback } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { useState, useCallback, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+// Moldura animada OFICIAL das janelas do sistema — a MESMA do popup "Pendências"
+// (véu em fade + caixa que cresce do centro + blocos em cascata). A coreografia
+// mora em ui/cascade-motion.ts; aqui só se consome.
+import { CascadeDialogFrame } from '@/components/ui/cascade-dialog';
+import { cascadeItemVariants } from '@/components/ui/cascade-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,10 +19,8 @@ import { useEmpresas } from '@/hooks/useEmpresas';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import type { Tables } from '@/integrations/supabase/database.types';
-
-type TipoDesligamento = Tables<'desligamentos'>['tipo'];
-
+// MOCK VISUAL — ver src/mocks/desligamentosMock.ts.
+import { bloquearEscritaDesligamento, getMockColaboradoresParaDesligamento } from '@/mocks/desligamentosMock';
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -37,7 +41,7 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
   const [form, setForm] = useState({
     colaborador_id: '',
     data_desligamento: '',
-    tipo: 'sem_justa_causa' as TipoDesligamento,
+    tipo: 'sem_justa_causa' as string,
     motivo: '',
     data_aviso_previo: '',
     quebra_contrato: false,
@@ -46,12 +50,21 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
     saldo_fgts: '',
   });
 
-  const set = (k: string, v: unknown) => setForm((p) => ({ ...p, [k]: v }));
+  const set = (k: string, v: any) => setForm((p) => ({ ...p, [k]: v }));
 
   // Load colaboradores when dialog opens
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const loadColaboradores = useCallback(async () => {
     if (!empresaAtual?.id) return;
+
+    // MOCK VISUAL — ver src/mocks/desligamentosMock.ts. Sem isto o select fica
+    // vazio no modo demonstração (a empresa fictícia não existe no banco).
+    const ficticios = getMockColaboradoresParaDesligamento();
+    if (ficticios) {
+      setColaboradores(ficticios);
+      return;
+    }
+
     setLoadingColab(true);
     const { data } = await supabase
       .from('colaboradores')
@@ -64,9 +77,20 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
     setLoadingColab(false);
   }, [empresaAtual?.id]);
 
+  /**
+   * Carrega os colaboradores QUANDO O DIÁLOGO ABRE.
+   *
+   * O `onOpenChange` do Radix só dispara em interação do usuário (Esc/clique
+   * fora). Como `open` é CONTROLADO pelo pai (DesligamentosPage), abrir pelo
+   * botão "Novo Desligamento" não passava por ele — o select abria vazio.
+   */
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- o setState da lista só ocorre depois do await (ou já vem pronto no modo demonstração): é sincronização com o banco, não estado derivado de props.
+    if (open) void loadColaboradores();
+  }, [open, loadColaboradores]);
+
   const handleOpenChange = (v: boolean) => {
-    if (v) loadColaboradores();
-    else onClose();
+    if (!v) onClose();
   };
 
   const handleSubmit = async () => {
@@ -75,15 +99,13 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
       return;
     }
 
+    // MOCK VISUAL — ver src/mocks/desligamentosMock.ts. Sem esta guarda o clique
+    // gravaria um desligamento real apontando para colaborador/empresa fictícios.
+    if (bloquearEscritaDesligamento('Registrar desligamento')) return;
+
     const colaborador = colaboradores.find((c) => c.id === form.colaborador_id);
     setLoading(true);
     try {
-      // BUG corrigido: `aviso_trabalhado` e `saldo_fgts` não são colunas de
-      // `desligamentos` (esse é o registro do caso/workflow) — são apenas
-      // parâmetros de entrada do cálculo de rescisão (`CalcularRescisaoParams`,
-      // persistidos depois em `historico_rescisoes`). Enviá-los aqui fazia o
-      // PostgREST rejeitar o INSERT inteiro por coluna inexistente: criar um
-      // desligamento por este diálogo sempre falhava, para qualquer valor.
       await desligamentoService.criar({
         colaborador_id: form.colaborador_id,
         data_desligamento: form.data_desligamento,
@@ -93,6 +115,8 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
         quebra_contrato: form.quebra_contrato,
         remover_beneficios: form.remover_beneficios,
         salario_base: colaborador?.salario_base || 0,
+        aviso_trabalhado: form.aviso_trabalhado,
+        saldo_fgts: Number(form.saldo_fgts) || 0,
         status: 'pendente',
         empresa_id: empresaAtual?.id,
       });
@@ -117,9 +141,26 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
     }
   };
 
+  // MESMA moldura animada do popup "Pendências" (`CascadeDialogFrame`): a caixa
+  // nasce como um quadradinho e cresce do centro (laterais, depois altura)
+  // enquanto o véu escurece em fade; em seguida os blocos entram em cascata —
+  // cabeçalho primeiro, campos e, por último, o botão. O `blocks={3}` alimenta o
+  // compasso de saída: a cascata some de trás para frente e só então a caixa
+  // encolhe (`cascadeShellVariants`).
+  //
+  // `className`/`contentClassName` reproduzem o `DialogContent` anterior
+  // (largura, borda, raio e grid com gap de 12 px) para o formulário não mudar
+  // de aparência; o `mt-1` do botão reconstrói os 16 px que o `space-y-4` dava
+  // a ele quando morava dentro do corpo.
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-lg rounded-2xl">
+    <CascadeDialogFrame
+      open={open}
+      onOpenChange={handleOpenChange}
+      blocks={3}
+      className="sm:max-w-lg border-border rounded-none sm:rounded-lg"
+      contentClassName="grid gap-3 p-5"
+    >
+      <motion.div variants={cascadeItemVariants}>
         <DialogHeader>
           <DialogTitle className="font-display flex items-center gap-2">
             <UserMinus className="h-5 w-5 text-destructive" />
@@ -129,14 +170,16 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
             Registre um novo desligamento de colaborador
           </DialogDescription>
         </DialogHeader>
+      </motion.div>
 
+      <motion.div variants={cascadeItemVariants}>
         <div className="space-y-4 mt-2">
           <div>
             <Label htmlFor="desl-colaborador" className="font-body text-xs">
               Colaborador *
             </Label>
             <Select value={form.colaborador_id} onValueChange={(v) => set('colaborador_id', v)}>
-              <SelectTrigger id="desl-colaborador" className="rounded-xl">
+              <SelectTrigger id="desl-colaborador">
                 <SelectValue placeholder={loadingColab ? 'Carregando...' : 'Selecione o colaborador'} />
               </SelectTrigger>
               <SelectContent>
@@ -159,7 +202,6 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
                 type="date"
                 value={form.data_desligamento}
                 onChange={(e) => set('data_desligamento', e.target.value)}
-                className="rounded-xl"
               />
             </div>
             <div>
@@ -167,16 +209,15 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
                 Tipo de Rescisão *
               </Label>
               <Select value={form.tipo} onValueChange={(v) => set('tipo', v)}>
-                <SelectTrigger id="desl-tipo" className="rounded-xl">
+                <SelectTrigger id="desl-tipo">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="sem_justa_causa">Sem Justa Causa</SelectItem>
-                  <SelectItem value="justa_causa">Com Justa Causa</SelectItem>
+                  <SelectItem value="com_justa_causa">Com Justa Causa</SelectItem>
                   <SelectItem value="pedido_demissao">Pedido de Demissão</SelectItem>
-                  <SelectItem value="acordo">Acordo Mútuo</SelectItem>
-                  <SelectItem value="fim_contrato">Término de Contrato</SelectItem>
-                  <SelectItem value="falecimento">Falecimento</SelectItem>
+                  <SelectItem value="acordo_mutuo">Acordo Mútuo</SelectItem>
+                  <SelectItem value="termino_contrato">Término de Contrato</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -204,7 +245,6 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
                 type="number"
                 value={form.saldo_fgts}
                 onChange={(e) => set('saldo_fgts', e.target.value)}
-                className="rounded-xl"
                 placeholder="0.00"
               />
             </div>
@@ -219,7 +259,6 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
               type="date"
               value={form.data_aviso_previo}
               onChange={(e) => set('data_aviso_previo', e.target.value)}
-              className="rounded-xl"
             />
           </div>
 
@@ -231,7 +270,7 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
               id="desl-motivo"
               value={form.motivo}
               onChange={(e) => set('motivo', e.target.value)}
-              className="rounded-xl resize-none"
+              className="resize-none"
               rows={2}
               placeholder="Descreva o motivo do desligamento..."
             />
@@ -257,17 +296,19 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
               onCheckedChange={(v) => set('remover_beneficios', v)}
             />
           </div>
-
-          <Button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="w-full rounded-xl bg-gradient-to-r from-destructive to-destructive/70 font-body"
-          >
-            {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserMinus className="h-4 w-4 mr-2" />}
-            Registrar Desligamento
-          </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </motion.div>
+
+      <motion.div variants={cascadeItemVariants} className="mt-1">
+        <Button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="w-full bg-gradient-to-r from-destructive to-destructive/70 font-body"
+        >
+          {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserMinus className="h-4 w-4 mr-2" />}
+          Registrar Desligamento
+        </Button>
+      </motion.div>
+    </CascadeDialogFrame>
   );
 }
