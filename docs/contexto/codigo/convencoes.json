@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(deps): bump the react-ecosystem group with 2 updates (#844)",
    "feat: entrega real de Web Push (VAPID) na fila de notificacoes (#853)",
    "chore: resgata autofix de eslint (type-imports e inferrable-types) de agente interrompido (#854)",
    "fix: impede que destinatario nao-roteavel derrube o lote de alertas por e-mail (#852)",
-   "chore: remove config.ts orfao de processar-agendamentos (#851)",
-   "fix: filtra destinatarios orfaos em alertas-dp para nao violar FK (#850)"
+   "chore: remove config.ts orfao de processar-agendamentos (#851)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

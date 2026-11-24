@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "2489b550341cd96ea8e7a495ec8e18c14d128b70",
+  "sha": "a036a9581b63101774be32cc36740a07f69cde02",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-24 00:30 UTC",
+  "generated_at": "2026-11-24 01:11 UTC",
   "files_total": 3745,
   "code_files": 3152,
   "code_lines": 502033
  },
  "version": "1.3.2",
- "facts_hash": "1ed6b079b8b2d0ba",
+ "facts_hash": "d4f16ecc2bccad6c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -57,7 +57,7 @@
     "in": "package.json"
    },
    "react-hook-form": {
-    "version": "^7.91.0",
+    "version": "^7.92.0",
     "role": "Forms (react-hook-form)",
     "in": "package.json"
    },
@@ -337897,10 +337897,20 @@
   }
  },
  "git": {
-  "sha": "2489b550341cd96ea8e7a495ec8e18c14d128b70",
+  "sha": "a036a9581b63101774be32cc36740a07f69cde02",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "a036a95",
+    "date": "2026-11-23",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump the react-ecosystem group with 2 updates (#844)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "2489b55",
     "date": "2026-11-23",
@@ -338240,15 +338250,6 @@
      "supabase/functions/fgts-digital/index.ts",
      "supabase/functions/gerar-guias/index.ts"
     ]
-   },
-   {
-    "sha": "d4b08fa",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "docs: reescreve a análise de pendentes com o estado real (9 dos 12 itens já estavam implementados) (#823)",
-    "files": [
-     "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md"
-    ]
    }
   ],
   "hot_files": [
@@ -338269,15 +338270,15 @@
     3
    ],
    [
-    "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md",
-    3
-   ],
-   [
     "scripts/automation.config.json",
     3
    ],
    [
     "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
+    2
+   ],
+   [
+    "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md",
     2
    ],
    [
@@ -338305,6 +338306,14 @@
     2
    ],
    [
+    "package-lock.json",
+    1
+   ],
+   [
+    "package.json",
+    1
+   ],
+   [
     ".env.example",
     1
    ],
@@ -338322,14 +338331,6 @@
    ],
    [
     "src/services/__tests__/pushNotificationService.test.ts",
-    1
-   ],
-   [
-    "src/services/pushNotificationService.ts",
-    1
-   ],
-   [
-    "src/vite-env.d.ts",
     1
    ]
   ]
