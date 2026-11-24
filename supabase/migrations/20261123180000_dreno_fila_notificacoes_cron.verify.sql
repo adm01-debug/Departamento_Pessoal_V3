@@ -2,6 +2,11 @@
 -- job existe apontando para os dois segredos do Vault, ou os segredos ainda nao
 -- existem (migration inerte, nada a cobrar). Job sem segredo, segredo sem job
 -- ou job apontando para outro nome de secret sao estados quebrados.
+--
+-- Contrato de saida: o gate de `canonical-migrations.yml` compara cada linha
+-- nao-vazia com `ok` usando `grep -vx 'ok'` -- qualquer texto extra reprova o
+-- lote. Por isso o caso inerte devolve exatamente `ok`; quem avisa que o dreno
+-- ainda nao foi agendado e o RAISE NOTICE da propria migration.
 WITH estado AS (
   SELECT
     (SELECT format('%I.%I', n.nspname, p.proname)
@@ -26,7 +31,7 @@ SELECT CASE
   WHEN total_segredos = 0 AND total_jobs = 1
     THEN 'FALHOU: job do dreno existe sem segredos no Vault'
   WHEN total_segredos = 0
-    THEN 'ok (dreno inerte: segredos ausentes no Vault; rodar select public.agendar_dreno_fila_notificacoes() depois de cria-los)'
+    THEN 'ok'
   WHEN total_jobs = 0
     THEN 'FALHOU: segredos existem mas o job do dreno nao foi criado'
   WHEN comando NOT LIKE '%agendamentos_dispatch_secret%'
