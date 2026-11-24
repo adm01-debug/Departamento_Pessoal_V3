@@ -71,12 +71,12 @@ Método (`/tmp/fecho5.py`): BFS nos imports a partir de `src/main.tsx`, lendo `f
 
 Resultados:
 
-| Árvore | Alcançáveis | Observação |
-| --- | --- | --- |
-| `origin/main` | 1031 de 1892 | baseline saudável |
-| Port do Muri (`296a01873`) | 1145 de 2047 | 73 dos 170 arquivos da fila **estão vivos lá** |
-| #872 (119 arquivos novos) | 0 dos 119 | tudo órfão na árvore da main |
-| Fecho da `BancoHorasPage` na #873 | 261 no total, 21 ausentes na main | 21 portados, todos vivos |
+| Árvore                            | Alcançáveis                       | Observação                                     |
+| --------------------------------- | --------------------------------- | ---------------------------------------------- |
+| `origin/main`                     | 1031 de 1892                      | baseline saudável                              |
+| Port do Muri (`296a01873`)        | 1145 de 2047                      | 73 dos 170 arquivos da fila **estão vivos lá** |
+| #872 (119 arquivos novos)         | 0 dos 119                         | tudo órfão na árvore da main                   |
+| Fecho da `BancoHorasPage` na #873 | 261 no total, 21 ausentes na main | 21 portados, todos vivos                       |
 
 Conclusão que mudou a estratégia: o Muri **reescreveu as páginas** (M, com remoções) para montar os componentes novos. Portar a fila isolada criaria código morto (foi o que a #872 fazia); portar as páginas inteiras, sem comparar, removia comportamento da main. O caminho correto é **portar por feature viva**: pegar a página que consome o conjunto, calcular o fecho transitivo dela e trazer exatamente os módulos que faltam na main — foi o que a #873 fez com Banco de Horas.
 
