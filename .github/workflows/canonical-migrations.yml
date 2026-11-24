@@ -251,7 +251,8 @@ jobs:
             20261122110500_ponto_rep_vinculo_unicidade_reversa.sql \
             20261122130000_indices_fk_join_ponto_pix.sql \
             20261123150000_ponto_rep_feriados_horarios.sql \
-            20261122041500_guias_fgts_digital_rls_por_empresa.sql
+            20261122041500_guias_fgts_digital_rls_por_empresa.sql \
+            20261123180000_dreno_fila_notificacoes_cron.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
