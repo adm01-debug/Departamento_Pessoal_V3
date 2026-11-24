@@ -13,6 +13,9 @@ import {
   cascadeShellVariants,
 } from '@/components/ui/cascade-motion';
 
+/** Só a transição interessa nas asserções de tempo do fechamento. */
+type FechoAnimado = { transition: { duration: number; delay: number } };
+
 /**
  * ============================================================================
  * PERFIS DE SAÍDA DA CASCATA — o fechamento não pode crescer com o tamanho da
@@ -53,9 +56,7 @@ describe('cascade-motion — perfil PADRÃO (comportamento histórico intacto)',
   it('é o mesmo `cascadeContainerVariants` que os ~30 consumidores importam', () => {
     // O `const` exportado é o perfil padrão aplicado — e o padrão não depende
     // da contagem de blocos, então o objeto é idêntico ao histórico.
-    expect(JSON.stringify(cascadeContainerVariants)).toBe(
-      JSON.stringify(cascadeContainerVariantsPara(3))
-    );
+    expect(JSON.stringify(cascadeContainerVariants)).toBe(JSON.stringify(cascadeContainerVariantsPara(3)));
     expect(JSON.stringify(cascadeContainerVariantsPara(BLOCOS_TALENTOS))).toBe(
       JSON.stringify(cascadeContainerVariants)
     );
@@ -65,12 +66,9 @@ describe('cascade-motion — perfil PADRÃO (comportamento histórico intacto)',
   });
 
   it('a caixa só encolhe depois da cascata (delay) e em 0,55 s', () => {
-    const caixa = cascadeShellVariants(BLOCOS_TALENTOS).closed as any;
+    const caixa = cascadeShellVariants(BLOCOS_TALENTOS).closed as unknown as FechoAnimado;
     expect(caixa.transition.duration).toBe(CASCADE_SHELL_CLOSE_DURATION);
-    expect(caixa.transition.delay).toBeCloseTo(
-      7 * CASCADE_ITEM_STAGGER + CASCADE_ITEM_DURATION_OUT,
-      10
-    );
+    expect(caixa.transition.delay).toBeCloseTo(7 * CASCADE_ITEM_STAGGER + CASCADE_ITEM_DURATION_OUT, 10);
   });
 });
 
@@ -94,9 +92,7 @@ describe('cascade-motion — perfil RÁPIDO (janelas de lista)', () => {
     const blocos = BLOCOS_TALENTOS;
     const stagger = cascadeExitStagger(blocos, CASCADE_SAIDA_RAPIDA);
     // Teto da SOMA dos intervalos (é o que mantém o total constante).
-    expect(stagger * (blocos - 1)).toBeLessThanOrEqual(
-      CASCADE_SAIDA_RAPIDA.intervaloTotalMax + 1e-9
-    );
+    expect(stagger * (blocos - 1)).toBeLessThanOrEqual(CASCADE_SAIDA_RAPIDA.intervaloTotalMax + 1e-9);
     // Ainda existe onda (os blocos não são exatamente simultâneos) e cada
     // passo cabe em menos de um quadro a 60 fps.
     expect(stagger).toBeGreaterThan(0);
@@ -110,22 +106,19 @@ describe('cascade-motion — perfil RÁPIDO (janelas de lista)', () => {
     const padrao = cascadeContainerVariantsPara(BLOCOS_TALENTOS, CASCADE_SAIDA_PADRAO);
     expect(rapido.open).toEqual(padrao.open);
 
-    const caixaRapida = cascadeShellVariants(BLOCOS_TALENTOS, CASCADE_SAIDA_RAPIDA).open as any;
-    const caixaPadrao = cascadeShellVariants(BLOCOS_TALENTOS, CASCADE_SAIDA_PADRAO).open as any;
+    const caixaRapida = cascadeShellVariants(BLOCOS_TALENTOS, CASCADE_SAIDA_RAPIDA).open;
+    const caixaPadrao = cascadeShellVariants(BLOCOS_TALENTOS, CASCADE_SAIDA_PADRAO).open;
     expect(caixaRapida).toEqual(caixaPadrao);
   });
 
   it('véu e caixa saem no mesmo compasso (uma única duração total)', () => {
     const blocos = BLOCOS_TALENTOS;
     const total = cascadeCloseDuration(blocos, CASCADE_SAIDA_RAPIDA);
-    const veu = cascadeOverlayVariants(blocos, CASCADE_SAIDA_RAPIDA).closed as any;
-    const caixa = cascadeShellVariants(blocos, CASCADE_SAIDA_RAPIDA).closed as any;
+    const veu = cascadeOverlayVariants(blocos, CASCADE_SAIDA_RAPIDA).closed as unknown as FechoAnimado;
+    const caixa = cascadeShellVariants(blocos, CASCADE_SAIDA_RAPIDA).closed as unknown as FechoAnimado;
     expect(veu.transition.duration).toBeCloseTo(total, 10);
     expect(caixa.transition.delay + caixa.transition.duration).toBeCloseTo(total, 10);
     // O conteúdo termina exatamente quando a caixa começa a encolher.
-    expect(caixa.transition.delay).toBeCloseTo(
-      CASCADE_SAIDA_RAPIDA.intervaloTotalMax + CASCADE_ITEM_DURATION_OUT,
-      6
-    );
+    expect(caixa.transition.delay).toBeCloseTo(CASCADE_SAIDA_RAPIDA.intervaloTotalMax + CASCADE_ITEM_DURATION_OUT, 6);
   });
 });

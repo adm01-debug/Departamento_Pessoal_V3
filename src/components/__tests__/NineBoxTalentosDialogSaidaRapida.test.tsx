@@ -17,26 +17,26 @@ import type { PontoNineBox } from '@/components/avaliacao/nineBoxComum';
  * ============================================================================
  */
 
-const capturado = vi.hoisted(() => ({ props: null as any }));
+type PropsCascata = {
+  open: boolean;
+  perfilSaida?: PerfilSaidaCascata;
+  items: unknown[];
+};
+
+const capturado = vi.hoisted(() => ({ props: null as unknown as PropsCascata }));
 
 vi.mock('@/components/ui/animated-cascade-dialog', () => ({
-  AnimatedCascadeDialog: (props: any) => {
+  AnimatedCascadeDialog: (props: PropsCascata) => {
     capturado.props = props;
     return <div />;
   },
 }));
 
-import {
-  CASCADE_SAIDA_PADRAO,
-  CASCADE_SAIDA_RAPIDA,
-  cascadeCloseDuration,
-} from '@/components/ui/cascade-motion';
+import { CASCADE_SAIDA_PADRAO, CASCADE_SAIDA_RAPIDA, cascadeCloseDuration } from '@/components/ui/cascade-motion';
+import type { PerfilSaidaCascata } from '@/components/ui/cascade-motion';
 import { NineBoxTalentosDialog } from '../avaliacao/NineBoxTalentosDialog';
 
-const FONTE = readFileSync(
-  path.resolve(process.cwd(), 'src/components/avaliacao/NineBoxTalentosDialog.tsx'),
-  'utf8'
-);
+const FONTE = readFileSync(path.resolve(process.cwd(), 'src/components/avaliacao/NineBoxTalentosDialog.tsx'), 'utf8');
 /** Sem comentários: a documentação pode citar o número, o código tem de usar a constante. */
 const CODIGO = FONTE.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
 
@@ -107,9 +107,7 @@ describe('NineBoxTalentosDialog — fechamento rápido (perfil de saída)', () =
 
   it('a fonte da janela passa o perfil (sem duração escrita à mão)', () => {
     expect(CODIGO).toMatch(/perfilSaida=\{CASCADE_SAIDA_RAPIDA\}/);
-    expect(CODIGO).toMatch(
-      /import\s*\{\s*CASCADE_SAIDA_RAPIDA\s*\}\s*from\s*'@\/components\/ui\/cascade-motion'/
-    );
+    expect(CODIGO).toMatch(/import\s*\{\s*CASCADE_SAIDA_RAPIDA\s*\}\s*from\s*'@\/components\/ui\/cascade-motion'/);
     // Nada de número mágico de animação nesta janela: quem manda é o perfil.
     expect(CODIGO).not.toMatch(/duration:\s*0?\.\d+/);
   });
