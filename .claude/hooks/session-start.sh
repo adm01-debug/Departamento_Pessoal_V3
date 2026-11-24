@@ -44,7 +44,8 @@ if ! graphify --version 2>/dev/null | grep -qx "graphify $versao"; then
   elif command -v pipx >/dev/null 2>&1; then
     pipx install --force "graphifyy[sql]==${versao}"
   else
-    python3 -m pip install --user --quiet "graphifyy[sql]==${versao}"
+    python3 -m pip install --user --quiet --only-binary :all: --require-hashes -r scripts/uv-pin.txt
+    uv tool install --force "graphifyy[sql]==${versao}"
   fi
 fi
 graphify --version
