@@ -244,6 +244,8 @@ jobs:
           # 23/11/2026: ponto_rep_feriados/ponto_rep_horarios (etapa 53 do plano
           # do relogio de ponto). Aditiva; o coletor 1.0.1 so grava nestas
           # tabelas depois que a Edge nova estiver publicada.
+          # 24/11/2026: 20261123180000_dreno_fila_notificacoes_cron.sql aplicada e no
+          # ledger, saiu daqui. A correcao do search_path dela vem na 20261124120000.
           for migration in \
             20261123090000_ponto_rep_converter_batidas.sql \
             20261122090000_recibos_ferias_criar_tabela_ausente.sql \
@@ -252,7 +254,7 @@ jobs:
             20261122130000_indices_fk_join_ponto_pix.sql \
             20261123150000_ponto_rep_feriados_horarios.sql \
             20261122041500_guias_fgts_digital_rls_por_empresa.sql \
-            20261123180000_dreno_fila_notificacoes_cron.sql
+            20261124120000_dreno_search_path_extensao.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
