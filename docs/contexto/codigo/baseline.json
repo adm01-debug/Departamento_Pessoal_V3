@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "252cc8071e69b9f6a54c9b25329c958c87327e7a",
+  "commit": "a19e496ff4bc4c4adb0746e4afcb9e7c06b07f57",
   "branch": "main",
-  "data_commit": "2026-11-24T10:59:57-03:00",
+  "data_commit": "2026-11-24T17:54:09-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a19e496",
+    "data": "2026-11-24",
+    "assunto": "docs(auditoria): registra o resgate do trabalho do agente Muri e a regra que evita regressao (#871)"
+   },
    {
     "sha": "252cc80",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "127ccc8",
     "data": "2026-11-22",
     "assunto": "infra: registra 20261123090000 no lote do canonical-migrations (#840)"
-   },
-   {
-    "sha": "4828437",
-    "data": "2026-11-22",
-    "assunto": "feat: coletor le feriados e jornadas do AtecSoft (etapa 53) (#839)"
    }
   ],
-  "arquivos_mudados_7d": 812,
+  "arquivos_mudados_7d": 692,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4052,
+  "arquivos_total": 4053,
   "arquivos_codigo": 2150,
   "linhas_codigo": 430698,
   "rotas": 116,
@@ -331,7 +331,7 @@
   "testes": 813,
   "workflows": 21,
   "scripts": 138,
-  "docs_md": 345
+  "docs_md": 346
  },
  "por_pasta": {
   "capacitor.config.ts": {

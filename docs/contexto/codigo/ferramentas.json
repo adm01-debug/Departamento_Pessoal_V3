@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (2007)",
    "SQL (1324)",
-   "Markdown (345)",
+   "Markdown (346)",
    "JavaScript (136)",
    "JSON (64)",
    "Shell (60)",
@@ -1554,7 +1554,7 @@
  "docs_em_subpastas": [
   {
    "pasta": "docs/auditoria",
-   "arquivos_md": 68
+   "arquivos_md": 69
   },
   {
    "pasta": "docs/_archive",

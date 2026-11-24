@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "docs(auditoria): registra o resgate do trabalho do agente Muri e a regra que evita regressao (#871)",
    "chore: placeholders no-op para as 316 versoes do ledger sem fonte local (#865)",
    "fix: guard to_regclass nas policies de backup_logs (apply abortava) (#867)",
    "fix: fixa o schema da extensao no search_path do dreno (#866)",
-   "fix: sidecar do dreno devolve 'ok' literal no caso inerte (#864)",
-   "fix: nao reexecuta o script da extensao pg_cron/pg_net no canonico (#862)"
+   "fix: sidecar do dreno devolve 'ok' literal no caso inerte (#864)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "252cc8071e69b9f6a54c9b25329c958c87327e7a",
+  "sha": "a19e496ff4bc4c4adb0746e4afcb9e7c06b07f57",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-24 14:02 UTC",
-  "files_total": 4066,
+  "generated_at": "2026-11-24 21:13 UTC",
+  "files_total": 4067,
   "code_files": 3472,
   "code_lines": 504779
  },
@@ -339572,10 +339572,19 @@
   }
  },
  "git": {
-  "sha": "252cc8071e69b9f6a54c9b25329c958c87327e7a",
+  "sha": "a19e496ff4bc4c4adb0746e4afcb9e7c06b07f57",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "a19e496",
+    "date": "2026-11-24",
+    "author": "adm01-debug",
+    "subject": "docs(auditoria): registra o resgate do trabalho do agente Muri e a regra que evita regressao (#871)",
+    "files": [
+     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md"
+    ]
+   },
    {
     "sha": "252cc80",
     "date": "2026-11-24",
@@ -340213,17 +340222,6 @@
      "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
      "docs/auditoria/ponto-atecsoft-estrutura.md"
     ]
-   },
-   {
-    "sha": "a2f4ebe",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: extrai e testa a regra do 23505 no vinculo do relogio (#835)",
-    "files": [
-     "supabase/functions/ingest-ponto-rep/index.ts",
-     "supabase/functions/ingest-ponto-rep/logica.test.ts",
-     "supabase/functions/ingest-ponto-rep/logica.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -340248,10 +340246,6 @@
     3
    ],
    [
-    "supabase/functions/ingest-ponto-rep/index.ts",
-    3
-   ],
-   [
     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql",
     2
    ],
@@ -340268,12 +340262,12 @@
     2
    ],
    [
-    "supabase/functions/ingest-ponto-rep/logica.test.ts",
+    "supabase/functions/ingest-ponto-rep/index.ts",
     2
    ],
    [
-    "supabase/functions/ingest-ponto-rep/logica.ts",
-    2
+    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    1
    ],
    [
     "supabase/migrations/20260511141726_placeholder_ledger_remoto.sql",
@@ -340305,6 +340299,10 @@
    ],
    [
     "supabase/migrations/20260511203842_placeholder_ledger_remoto.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20260511205215_placeholder_ledger_remoto.sql",
     1
    ]
   ]
