@@ -101,9 +101,9 @@ describe('NineBoxTalentosDialog — a MESMA janela de "Pendências"', () => {
     // Casca: a caixa que nasce quadrada e estica, ancorada no TOPO.
     const shell = (await achar('div[class*="max-w-[460px]"]')) as HTMLElement;
     // A origem do crescimento vem do `style` inline do Framer; o texto exato
-    // varia entre versoes (`transform-origin: top center` x `top center`), entao
-    // a checagem normaliza o espaco depois dos dois-pontos.
-    expect(shell.getAttribute('style') ?? '').toMatch(/transform-origin:\s*top center/);
+    // varia entre ambientes (`top center` x `center top`), então a checagem aceita
+    // as duas ordens.
+    expect(shell.getAttribute('style') ?? '').toMatch(/transform-origin:\s*(top center|center top)/);
     // Largura compacta padrão da referência (`max-w-[460px]`) — a mesma do
     // popup "Pendências", não uma largura própria.
     expect(shell.className).toContain('max-w-[460px]');
