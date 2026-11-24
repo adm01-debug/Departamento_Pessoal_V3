@@ -1843,7 +1843,7 @@
    {
     "pacote": "@sentry/react",
     "servico": "Sentry",
-    "versao": "11.12.0"
+    "versao": "11.13.0"
    },
    {
     "pacote": "@supabase/supabase-js",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0cec124ea16981cd9c9f7bb1c8021357ceda9745",
+  "commit": "fb2d3e0441c50d613cd846be621042e7263df9f3",
   "branch": "main",
-  "data_commit": "2026-11-23T22:37:15-03:00",
+  "data_commit": "2026-11-23T22:55:39-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "fb2d3e0",
+    "data": "2026-11-23",
+    "assunto": "chore(deps): bump the minor-patch group across 1 directory with 3 updates (#858)"
+   },
    {
     "sha": "0cec124",
     "data": "2026-11-23",
@@ -126,14 +131,9 @@
     "sha": "7bc68b4",
     "data": "2026-11-22",
     "assunto": "infra: adiciona migrations da #829/#830 a lista fechada do canonical-apply (#831)"
-   },
-   {
-    "sha": "b77692d",
-    "data": "2026-11-22",
-    "assunto": "fix: vinculo do relogio ganha unicidade reversa por colaborador (R8) (#830)"
    }
   ],
-  "arquivos_mudados_7d": 666,
+  "arquivos_mudados_7d": 653,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 23
+    "mudancas": 22
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -218,6 +218,10 @@
     "mudancas": 12
    },
    {
+    "arquivo": "package.json",
+    "mudancas": 11
+   },
+   {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
     "mudancas": 11
    },
@@ -226,16 +230,12 @@
     "mudancas": 10
    },
    {
-    "arquivo": "package.json",
+    "arquivo": "package-lock.json",
     "mudancas": 10
    },
    {
     "arquivo": "scripts/automation.config.json",
     "mudancas": 10
-   },
-   {
-    "arquivo": "package-lock.json",
-    "mudancas": 9
    },
    {
     "arquivo": "src/schemas/tableColumns.ts",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 291
+    "commits": 290
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 5
+    "commits": 6
    },
    {
     "autor": "github-actions[bot]",

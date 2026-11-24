@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "0cec124ea16981cd9c9f7bb1c8021357ceda9745",
+  "sha": "fb2d3e0441c50d613cd846be621042e7263df9f3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-24 01:38 UTC",
+  "generated_at": "2026-11-24 01:57 UTC",
   "files_total": 3745,
   "code_files": 3152,
   "code_lines": 502033
@@ -337897,10 +337897,20 @@
   }
  },
  "git": {
-  "sha": "0cec124ea16981cd9c9f7bb1c8021357ceda9745",
+  "sha": "fb2d3e0441c50d613cd846be621042e7263df9f3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "fb2d3e0",
+    "date": "2026-11-23",
+    "author": "dependabot[bot]",
+    "subject": "chore(deps): bump the minor-patch group across 1 directory with 3 updates (#858)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "0cec124",
     "date": "2026-11-23",
@@ -338233,25 +338243,20 @@
      "analise-prs/funcionalidades.csv",
      "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md"
     ]
-   },
-   {
-    "sha": "cb4d78c",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "fix: gates de baseline comparam chave com separador nativo (reprovavam no Windows sem regressão real) (#821)",
-    "files": [
-     ".github/workflows/ci.yml",
-     "scripts/audit-bridge-frontend-contract.mjs",
-     "scripts/automation.config.json",
-     "scripts/ratchet-any.mjs",
-     "scripts/tests/audit-baseline-portabilidade.test.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     ".github/workflows/canonical-migrations.yml",
     5
+   ],
+   [
+    "package-lock.json",
+    4
+   ],
+   [
+    "package.json",
+    4
    ],
    [
     "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
@@ -338262,19 +338267,7 @@
     4
    ],
    [
-    "package-lock.json",
-    3
-   ],
-   [
-    "package.json",
-    3
-   ],
-   [
     "supabase/functions/alertas-dp/index.ts",
-    3
-   ],
-   [
-    "scripts/automation.config.json",
     3
    ],
    [
@@ -338303,6 +338296,10 @@
    ],
    [
     "supabase/functions/ingest-ponto-rep/logica.ts",
+    2
+   ],
+   [
+    "scripts/automation.config.json",
     2
    ],
    [
