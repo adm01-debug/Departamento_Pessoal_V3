@@ -90963,7 +90963,6 @@
           "code_total_files": 3,
           "cron": [],
           "db": [
-            "public.admissao_assinar_contrato",
             "public.admissao_marcar_documentos",
             "public.admissao_registrar_documento",
             "public.admissao_salvar_dados",
@@ -91375,10 +91374,10 @@
         },
         "comment": null,
         "config": [
-          "search_path=public"
+          "search_path=pg_catalog, public"
         ],
         "definition": null,
-        "definition_sha": "bc7c65a7a1dc17e3",
+        "definition_sha": "79070633c19caaab",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,

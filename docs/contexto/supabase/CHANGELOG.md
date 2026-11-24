@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-24 10:13 UTC
+
+- **functions** alterado (2): `public._admissao_token_row(_token text)`, `public.admissao_assinar_contrato(_token text, _assinatura_base64 text, _ip text)`
+
 ## 2026-11-24 02:19 UTC
 
 - **realtime** removido (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_20`
