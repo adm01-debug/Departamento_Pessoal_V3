@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { supabase } from '@/integrations/supabase/client';
+import { auditoriaService } from '@/services/auditoriaService';
 import { exportPortaria671PDF } from '@/services/exportService';
 import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import {
@@ -76,18 +76,23 @@ export function CentralAjustesDetalhesDialog({
     enabled: Boolean(solicitacao?.id),
     queryFn: async () => {
       if (!solicitacao?.id) return [];
-      // A trilha do registro vive em `audit_log` (tabela + id do registro) — a
-      // MESMA fonte da Central de Auditoria. `trilha_auditoria_ponto` não tem
-      // `registro_id` (vincula por `ponto_id`) nem `user_email`, então a consulta
-      // anterior voltava 400 e a aba ficava sempre no estado vazio.
-      const { data, error } = await supabase
-        .from('audit_log')
-        .select('id, acao, created_at, user_email')
-        .eq('tabela', 'solicitacoes_ajuste_ponto')
-        .eq('registro_id', solicitacao.id)
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return (data || []) as TrilhaAuditoriaPonto[];
+      // A trilha do registro vive na RPC da trilha (`get_audit_trail`), a MESMA
+      // fonte da Central de Auditoria. `trilha_auditoria_ponto` não tem
+      // `registro_id` (vincula por `ponto_id`) nem `user_email`, então a
+      // consulta anterior voltava 400 e a aba ficava sempre no estado vazio;
+      // `audit_log` direto pelo cliente é recusado pelo contrato do bridge.
+      const trilha = await auditoriaService.listarTrilha({
+        empresa_id: empresaId ?? null,
+        tabela: 'solicitacoes_ajuste_ponto',
+        registro_id: solicitacao.id,
+        limite: 50,
+      });
+      return trilha.map((item) => ({
+        id: item.id,
+        acao: item.acao ?? 'evento',
+        created_at: item.created_at,
+        user_email: item.user_email,
+      })) as TrilhaAuditoriaPonto[];
     },
   });
 

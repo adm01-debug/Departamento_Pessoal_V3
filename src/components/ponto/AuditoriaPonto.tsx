@@ -55,6 +55,7 @@ import { EntradaPresenca } from '@/components/ui/entrada-cards';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { supabase } from '@/integrations/supabase/client';
 import { exportPontoCSV } from '@/services/exportService';
+import { auditoriaService } from '@/services/auditoriaService';
 import { CentralAuditoriaCabecalho } from './CentralAuditoriaCabecalho';
 import { CentralAuditoriaKpis } from './CentralAuditoriaKpis';
 import { CentralAuditoriaFiltros } from './CentralAuditoriaFiltros';
@@ -87,8 +88,8 @@ import { isPontoAuditoriaMockEnabled, trilhaAuditoriaDemonstrativa } from '@/moc
 /** Teto de linhas por consulta — o mesmo espírito do limite anterior (100). */
 const LIMITE_EVENTOS = 500;
 
-/** Tabelas auditadas pela aba (as do ponto) — o recorte é feito no servidor. */
-const TABELAS_PONTO = 'tabela.eq.batidas_ponto,tabela.eq.registros_ponto,tabela.eq.solicitacoes_ajuste_ponto';
+/** Tabelas auditadas pela aba — o recorte por tabela vai para a RPC da trilha. */
+const TABELAS_PONTO = ['batidas_ponto', 'registros_ponto', 'solicitacoes_ajuste_ponto'];
 
 /** Resultado da consulta: linhas + mensagem de erro (a tela avisa, não some). */
 interface ResultadoTrilha {
@@ -119,51 +120,25 @@ export function AuditoriaPonto() {
   const janelaAnterior = useMemo(() => intervaloAnteriorAuditoria(janela), [janela]);
 
   const { data, isLoading } = useQuery({
-    // A chave inclui o recorte: mudar de 7d para 90d refaz a consulta (o corte
-    // é feito no SERVIDOR — o cliente não pode depender de já ter as linhas).
+    // A chave inclui o recorte: mudar de 7d para 90d refaz a consulta e o
+    // recorte de período é reaplicado sobre as linhas do servidor.
     queryKey: ['ponto-audit-logs', empresaId, janela.inicio, janela.fim],
     queryFn: async (): Promise<ResultadoTrilha> => {
       if (mockAtivo) {
         return { eventos: normalizarEventos(trilhaAuditoriaDemonstrativa()), erro: null };
       }
       try {
-        const consulta = (
-          supabase as unknown as {
-            from: (tabela: string) => {
-              select: (colunas: string) => {
-                or: (filtro: string) => {
-                  gte: (
-                    campo: string,
-                    valor: string
-                  ) => {
-                    lte: (
-                      campo: string,
-                      valor: string
-                    ) => {
-                      order: (
-                        campo: string,
-                        opcoes: { ascending: boolean }
-                      ) => {
-                        limit: (n: number) => PromiseLike<{ data: unknown; error: unknown }>;
-                      };
-                    };
-                  };
-                };
-              };
-            };
-          }
-        )
-          .from('audit_log')
-          .select('*')
-          .or(TABELAS_PONTO)
-          // Pontas do dia LOCAL do recorte (o filtro do banco é por timestamp).
-          .gte('created_at', `${janela.inicio}T00:00:00`)
-          .lte('created_at', `${janela.fim}T23:59:59`)
-          .order('created_at', { ascending: false });
-
-        const { data: linhas, error } = await consulta.limit(LIMITE_EVENTOS);
-        if (error) throw error;
-        return { eventos: normalizarEventos((linhas ?? []) as LinhaAuditoriaCrua[]), erro: null };
+        // Caminho autorizado da trilha: RPC `get_audit_trail` (o gate
+        // `audit-bridge-frontend-contract` recusa leitura direta de
+        // `audit_log` pelo frontend). O recorte de período é aplicado em cima
+        // das linhas devolvidas, que já vêm das tabelas do ponto e as mais
+        // recentes primeiro.
+        const linhas = await auditoriaService.listarTrilha({
+          empresa_id: empresaId ?? null,
+          tabelas: TABELAS_PONTO,
+          limite: LIMITE_EVENTOS,
+        });
+        return { eventos: normalizarEventos(linhas as unknown as LinhaAuditoriaCrua[]), erro: null };
       } catch (e) {
         return {
           eventos: [],
