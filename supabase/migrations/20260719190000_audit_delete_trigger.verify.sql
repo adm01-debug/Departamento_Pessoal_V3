@@ -1,0 +1,1 @@
+SELECT CASE WHEN EXISTS (SELECT 1 FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'public' AND p.proname = 'audit_delete_operation') THEN 'ok' ELSE 'FALHOU: audit_delete_operation ausente' END;
