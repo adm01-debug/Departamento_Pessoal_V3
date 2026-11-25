@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ced6c84aa78d795fc580cdd12544f04e0aab3b7a",
+  "sha": "c71a3913d4e5ac42e4c533d4a754de1874c2417f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 17:37 UTC",
-  "files_total": 4202,
-  "code_files": 3606,
-  "code_lines": 533737
+  "generated_at": "2026-11-25 17:48 UTC",
+  "files_total": 4204,
+  "code_files": 3608,
+  "code_lines": 533869
  },
  "version": "1.3.2",
- "facts_hash": "9e1112a1f5ee5c66",
+ "facts_hash": "2b3bd269634d722b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 1335,
+   ".sql": 1337,
    ".tsx": 1116,
    ".ts": 1014,
    ".mjs": 110,
@@ -74048,6 +74048,8 @@
    "supabase/migrations/20261124150000_backup_logs_rls_policy.verify.sql",
    "supabase/migrations/20261125120000_secdef_refresh_dashboard_views_revoke.sql",
    "supabase/migrations/20261125120000_secdef_refresh_dashboard_views_revoke.verify.sql",
+   "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.sql",
+   "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -106719,8 +106721,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 1261,
-   "lines": 87443,
+   "files": 1263,
+   "lines": 87575,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -346230,6 +346232,14 @@
    "path": "supabase/migrations/20261125120000_secdef_refresh_dashboard_views_revoke.verify.sql",
    "lines": 2
   },
+  "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.sql": {
+   "path": "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.sql",
+   "lines": 94
+  },
+  "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.verify.sql": {
+   "path": "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.verify.sql",
+   "lines": 38
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -346625,10 +346635,21 @@
   }
  },
  "git": {
-  "sha": "ced6c84aa78d795fc580cdd12544f04e0aab3b7a",
+  "sha": "c71a3913d4e5ac42e4c533d4a754de1874c2417f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "c71a391",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix: policies de escrita de provisoes_folha e historico_calculos_folha usam pertence_a_empresa (#881)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.sql",
+     "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.verify.sql"
+    ]
+   },
    {
     "sha": "ced6c84",
     "date": "2026-11-25",
@@ -347380,16 +347401,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "a036a95",
-    "date": "2026-11-23",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps): bump the react-ecosystem group with 2 updates (#844)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -347398,11 +347409,7 @@
     7
    ],
    [
-    "package-lock.json",
-    5
-   ],
-   [
-    "package.json",
+    ".github/workflows/canonical-migrations.yml",
     5
    ],
    [
@@ -347410,7 +347417,11 @@
     4
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
+    "package-lock.json",
+    4
+   ],
+   [
+    "package.json",
     4
    ],
    [
@@ -347438,6 +347449,14 @@
     2
    ],
    [
+    "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.verify.sql",
+    1
+   ],
+   [
     "src/components/recrutamento/AnalyticsRecrutamento.tsx",
     1
    ],
@@ -347463,14 +347482,6 @@
    ],
    [
     "src/components/recrutamento/analyticsVagasFiltros.ts",
-    1
-   ],
-   [
-    "src/components/recrutamento/analyticsVisual.ts",
-    1
-   ],
-   [
-    "src/components/recrutamento/animacaoDetalheVaga.ts",
     1
    ]
   ]

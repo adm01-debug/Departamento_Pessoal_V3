@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ced6c84aa78d795fc580cdd12544f04e0aab3b7a",
+  "commit": "c71a3913d4e5ac42e4c533d4a754de1874c2417f",
   "branch": "main",
-  "data_commit": "2026-11-25T14:36:43-03:00",
+  "data_commit": "2026-11-25T14:47:24-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c71a391",
+    "data": "2026-11-25",
+    "assunto": "fix: policies de escrita de provisoes_folha e historico_calculos_folha usam pertence_a_empresa (#881)"
+   },
    {
     "sha": "ced6c84",
     "data": "2026-11-25",
@@ -126,14 +131,9 @@
     "sha": "7245d10",
     "data": "2026-11-24",
     "assunto": "infra: inclui a migration do cron do dreno no lote canonico (#860)"
-   },
-   {
-    "sha": "7069f54",
-    "data": "2026-11-24",
-    "assunto": "infra: agenda o dreno da fila de notificacoes quando os segredos existirem (#855)"
    }
   ],
-  "arquivos_mudados_7d": 773,
+  "arquivos_mudados_7d": 775,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -184,12 +184,12 @@
     "mudancas": 37
    },
    {
-    "pasta": "src/pages/__tests__",
+    "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 36
    },
    {
-    "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 35
+    "pasta": "src/pages/__tests__",
+    "mudancas": 36
    },
    {
     "pasta": "src/utils/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 35
+    "mudancas": 36
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4188,
+  "arquivos_total": 4190,
   "arquivos_codigo": 2273,
   "linhas_codigo": 459419,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 127,
   "edge_functions": 68,
   "tabelas": 438,
-  "migrations": 1261,
+  "migrations": 1263,
   "cron_jobs": 43,
   "testes": 853,
   "workflows": 21,

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ced6c84aa78d795fc580cdd12544f04e0aab3b7a` (2026-11-25T14:36:43-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c71a3913d4e5ac42e4c533d4a754de1874c2417f` (2026-11-25T14:47:24-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2130), SQL (1335), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2130), SQL (1337), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 4188 |
+| arquivos_total | 4190 |
 | arquivos_codigo | 2273 |
 | linhas_codigo | 459419 |
 | rotas | 116 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 127 |
 | edge_functions | 68 |
 | tabelas | 438 |
-| migrations | 1261 |
+| migrations | 1263 |
 | cron_jobs | 43 |
 | testes | 853 |
 | workflows | 21 |
@@ -404,13 +404,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 29589 nós · 67079 arestas · 2836 comunidades · grafo do commit `ced6c84a`
+- 29591 nós · 67079 arestas · 2838 comunidades · grafo do commit `c71a3913`
 - comunidades maiores: lucide-react (548), 20260831_corrected_public.sql (493), canonical_schema.sql (481), useEmpresas (467), button.tsx (415), @tanstack/react-query (371), client.ts (362), ColaboradorDetalhesPage.tsx (294), vitest (264), react (196), rateLimit.ts (188), cn (172)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (35)
+- .github/workflows/canonical-migrations.yml (36)
 - scripts/canonical-invariants.sql (21)
 - inventario/estado/rotas.json (19)
 - docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
@@ -663,6 +663,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-25 `c71a391` fix: policies de escrita de provisoes_folha e historico_calculos_folha usam pertence_a_empresa (#881)
 - 2026-11-25 `ced6c84` feat: resgata a janela Ver todas do desempenho de vagas (port do Muri) (#888)
 - 2026-11-25 `08dd398` feat: formulario de vaga coleta cargo, contrato, faixa e beneficios (#887)
 - 2026-11-25 `58dd46c` feat: resgata os cards de resumo do ponto (indicadores, equipe, pendencias e fechamento) (#886)
@@ -677,7 +678,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `ced7abd` fix: p4_071 nao aborta mais o lote aditivo no canônico (#879)
 - 2026-11-25 `014b447` fix: lote aditivo aplica no canônico, sem EXECUTE anon em refresh_dashboard_views e validate que reverte (#877)
 - 2026-11-25 `d30e8fb` infra: leva 7 migrations aditivas de observabilidade ao canônico + sidecars .verify (#869)
-- 2026-11-24 `ce83bb0` feat: banco de horas com extrato filtravel, KPIs e exportacao CSV (#873)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
