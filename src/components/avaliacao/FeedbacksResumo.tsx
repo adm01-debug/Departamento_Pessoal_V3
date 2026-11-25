@@ -11,13 +11,14 @@ import { ROTULO_TIPO_FEEDBACK, formatarNota, type LinhaDistribuicao, type LinhaT
  * RESUMO LATERAL — coluna direita da aba "Feedbacks".
  *
  * Três cards, todos sobre dado real:
- *   1. DISTRIBUIÇÃO DE NOTAS — barras de 5 a 1 (na MESMA animação e no mesmo
+ *   1. DICA — texto curto de orientação + o CTA real "Novo Feedback" (abre a
+ *      coluna: era o último e passou a ser o primeiro por pedido do usuário);
+ *   2. DISTRIBUIÇÃO DE NOTAS — barras de 5 a 1 (na MESMA animação e no mesmo
  *      degradê semântico do módulo, via `BarraProgresso`), com o total por
  *      faixa e o rodapé de nota média (e a diferença para o ciclo anterior —
  *      só quando os dois ciclos têm nota, nada de delta inventado);
- *   2. TIPOS DE FEEDBACK — donut SVG com o total no centro e legenda lateral
- *      com quantidade e percentual de cada tipo presente nos dados;
- *   3. DICA — texto curto de orientação + o CTA real "Novo Feedback".
+ *   3. TIPOS DE FEEDBACK — donut SVG com o total no centro e legenda lateral
+ *      com quantidade e percentual de cada tipo presente nos dados.
  *
  * GEOMETRIA E ANIMAÇÃO: os três cards entram na cascata do módulo
  * (`entradaCard`) e as barras/segmentos animam na régua aprovada
@@ -157,8 +158,33 @@ export function FeedbacksResumo({
 
   return (
     <div className="space-y-4">
-      {/* ── 1. Distribuição de notas ─────────────────────────────────────── */}
-      <CardResumo icone={<Star className="h-3.5 w-3.5" />} titulo="Distribuição de notas" indice={indiceBase}>
+      {/* ── 1. Dica + CTA real (abre a coluna) ─────────── */}
+      <MotionCard
+        {...entradaCard(indiceBase)}
+        className="rounded-xl border-primary/25 bg-primary/5 p-4 shadow-elevated"
+      >
+        <h3 className="flex items-center gap-2 font-display text-[12px] font-semibold tracking-tight">
+          <span className="text-primary">
+            <Lightbulb className="h-3.5 w-3.5" />
+          </span>
+          Dica
+        </h3>
+        <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+          Feedbacks construtivos geram desenvolvimento real. Descreva a situação, o comportamento observado e o impacto
+          — e reconheça o progresso antes de apontar o próximo passo.
+        </p>
+        <Button
+          size="sm"
+          className="mt-3 h-8 w-full gap-1.5 rounded-lg text-[11px] font-medium"
+          onClick={onNovoFeedback}
+        >
+          <Plus className="h-3.5 w-3.5" />
+          Novo Feedback
+        </Button>
+      </MotionCard>
+
+      {/* ── 2. Distribuição de notas ──────────────── */}
+      <CardResumo icone={<Star className="h-3.5 w-3.5" />} titulo="Distribuição de notas" indice={indiceBase + 1}>
         <div className="space-y-1.5">
           {distribuicao.map((faixa, i) => (
             <div key={faixa.nota} className="flex items-center gap-2">
@@ -200,8 +226,8 @@ export function FeedbacksResumo({
         </div>
       </CardResumo>
 
-      {/* ── 2. Tipos de feedback ─────────────────────────────────────────── */}
-      <CardResumo icone={<Star className="h-3.5 w-3.5" />} titulo="Tipos de feedback" indice={indiceBase + 1}>
+      {/* ── 3. Tipos de feedback ─────────────────────────────────────────── */}
+      <CardResumo icone={<Star className="h-3.5 w-3.5" />} titulo="Tipos de feedback" indice={indiceBase + 2}>
         <div className="flex items-center gap-3">
           <DonutTipos tipos={tipos} total={total} reduzirMovimento={reduzirMovimento} />
 
@@ -220,31 +246,6 @@ export function FeedbacksResumo({
           </ul>
         </div>
       </CardResumo>
-
-      {/* ── 3. Dica + CTA real ───────────────────────────────────────────── */}
-      <MotionCard
-        {...entradaCard(indiceBase + 2)}
-        className="rounded-xl border-primary/25 bg-primary/5 p-4 shadow-elevated"
-      >
-        <h3 className="flex items-center gap-2 font-display text-[12px] font-semibold tracking-tight">
-          <span className="text-primary">
-            <Lightbulb className="h-3.5 w-3.5" />
-          </span>
-          Dica
-        </h3>
-        <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-          Feedbacks construtivos geram desenvolvimento real. Descreva a situação, o comportamento observado e o impacto
-          — e reconheça o progresso antes de apontar o próximo passo.
-        </p>
-        <Button
-          size="sm"
-          className="mt-3 h-8 w-full gap-1.5 rounded-lg text-[11px] font-medium"
-          onClick={onNovoFeedback}
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Novo Feedback
-        </Button>
-      </MotionCard>
     </div>
   );
 }

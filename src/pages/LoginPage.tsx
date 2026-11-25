@@ -356,7 +356,7 @@ export default function LoginPage() {
                       <motion.div
                         initial={{ opacity: 0, y: -5 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="mb-4 flex items-center gap-2 rounded-lg bg-warning/10 border border-warning/30 px-3 py-2 text-sm text-warning-foreground"
+                        className="mb-4 flex items-center gap-2 rounded-lg bg-warning/10 border border-warning/30 px-3 py-2 text-sm text-foreground"
                       >
                         <Shield className="h-4 w-4 shrink-0 text-warning" />
                         <span className="font-body">{securityNotice}</span>
@@ -402,9 +402,9 @@ export default function LoginPage() {
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="seu@email.com"
+                                placeholder="ti@promobrindes.com.br"
                                 required
-                                className="h-11 pl-10 rounded-lg border-border/50 focus:border-primary/50 font-body"
+                                className="h-11 pl-10 rounded-lg border-border/50 focus:border-primary/50 font-body campo-login placeholder:text-muted-foreground/90"
                               />
                             </div>
                           </div>
@@ -453,21 +453,21 @@ export default function LoginPage() {
                               type="email"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
-                              placeholder="seu@email.com"
+                              placeholder="ti@promobrindes.com.br"
                               required
                               autoComplete="username"
-                              className="h-11 pl-10 rounded-lg border-border/50 focus:border-primary/50 font-body"
+                              className="h-11 pl-10 rounded-lg border-border/50 focus:border-primary/50 font-body campo-login placeholder:text-muted-foreground/90"
                             />
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-baseline justify-between">
                             <Label htmlFor="password" className="font-body text-sm font-medium">
                               Senha
                             </Label>
                             <button
                               type="button"
-                              className="text-xs text-primary hover:underline font-body"
+                              className="text-xs text-muted-foreground font-body hover:text-primary hover:underline focus-visible:text-primary"
                               onClick={() => {
                                 setForgotMode(true);
                                 setError('');
@@ -483,9 +483,10 @@ export default function LoginPage() {
                               type={showPassword ? 'text' : 'password'}
                               value={password}
                               onChange={(e) => setPassword(e.target.value)}
+                              placeholder="••••••••"
                               required
                               autoComplete="current-password"
-                              className="h-11 pl-10 pr-10 rounded-lg border-border/50 focus:border-primary/50 font-body"
+                              className="h-11 pl-10 pr-10 rounded-lg border-border/50 focus:border-primary/50 font-body campo-login placeholder:text-muted-foreground/90"
                             />
                             <button
                               type="button"
