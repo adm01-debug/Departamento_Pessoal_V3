@@ -1,13 +1,22 @@
 import type { Tables } from '@/integrations/supabase/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Timer, Clock, AlertTriangle, ArrowUpRight, ArrowDownRight, Coffee, BrainCircuit } from 'lucide-react';
+import { Timer, Clock, AlertTriangle, ArrowUpRight, ArrowDownRight, Coffee, BrainCircuit, Pencil } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { turnoService } from '@/services/turnoService';
+import { EditarEscalaDialog } from '@/components/ponto/EditarEscalaDialog';
 
 interface PontoTodayCardProps {
   registroHoje: Tables<'registros_ponto'> | null;
+  /** Sem os três identificadores o card apenas exibe a escala do registro, como antes. */
+  colaboradorId?: string;
+  colaboradorNome?: string;
+  empresaId?: string;
 }
 
 function formatInterval(val: string | null | undefined) {
@@ -25,7 +34,59 @@ function timeToMinutes(time: string) {
   return h * 60 + m;
 }
 
-export function PontoTodayCard({ registroHoje }: PontoTodayCardProps) {
+/**
+ * Lápis + diálogo da escala do dia. Fica isolado num componente porque só ele
+ * precisa de `react-query`: o card continua renderizável sem provedor (é o que
+ * os testes do card fazem) e a consulta só existe quando há colaborador e
+ * empresa para consultar.
+ */
+function EditarEscalaDoDia({
+  colaboradorId,
+  colaboradorNome,
+  empresaId,
+}: {
+  colaboradorId: string;
+  colaboradorNome?: string;
+  empresaId: string;
+}) {
+  const [aberto, setAberto] = useState(false);
+  const hojeStr = format(new Date(), 'yyyy-MM-dd');
+
+  // Mesma fonte da aba Turnos & Escalas: a escala do dia é a linha de
+  // `escalas_trabalho` para este colaborador nesta data (ver
+  // `turnoService.obterEscalaDoDia`). Sem consulta o diálogo não saberia se
+  // deve INSERT (dia sem escala) ou UPDATE (linha existente).
+  const { data: escalaHoje } = useQuery({
+    queryKey: ['escala-hoje', colaboradorId, empresaId, hojeStr],
+    queryFn: () => turnoService.obterEscalaDoDia(colaboradorId, empresaId, hojeStr),
+  });
+
+  return (
+    <>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-6 w-6 shrink-0 text-muted-foreground hover:text-foreground"
+        aria-label="Editar escala do dia"
+        title="Editar escala do dia"
+        onClick={() => setAberto(true)}
+      >
+        <Pencil className="h-3 w-3" />
+      </Button>
+      <EditarEscalaDialog
+        open={aberto}
+        onOpenChange={setAberto}
+        colaboradorId={colaboradorId}
+        colaboradorNome={colaboradorNome}
+        empresaId={empresaId}
+        data={hojeStr}
+        escalaAtual={escalaHoje ?? null}
+      />
+    </>
+  );
+}
+
+export function PontoTodayCard({ registroHoje, colaboradorId, colaboradorNome, empresaId }: PontoTodayCardProps) {
   const progress = useMemo(() => {
     if (!registroHoje || !registroHoje.entrada_esperada || !registroHoje.saida_esperada) return 0;
 
@@ -83,11 +144,20 @@ export function PontoTodayCard({ registroHoje }: PontoTodayCardProps) {
             <div className="flex items-center gap-2">
               <Timer className="h-4 w-4 text-info" /> Hoje
             </div>
-            {registroHoje?.entrada_esperada && (
-              <Badge variant="outline" className="text-[9px] font-bold uppercase tracking-wider bg-muted/50">
-                Escala: {registroHoje.entrada_esperada} - {registroHoje.saida_esperada}
-              </Badge>
-            )}
+            <div className="flex items-center gap-1">
+              {registroHoje?.entrada_esperada && (
+                <Badge variant="outline" className="text-[9px] font-bold uppercase tracking-wider bg-muted/50">
+                  Escala: {registroHoje.entrada_esperada} - {registroHoje.saida_esperada}
+                </Badge>
+              )}
+              {colaboradorId && empresaId && (
+                <EditarEscalaDoDia
+                  colaboradorId={colaboradorId}
+                  colaboradorNome={colaboradorNome}
+                  empresaId={empresaId}
+                />
+              )}
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">

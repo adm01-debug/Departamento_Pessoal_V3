@@ -547,7 +547,12 @@ export default function PontoPage() {
                 exigeBiometria={pontoCfg?.exige_reconhecimento_facial ?? true}
                 usaRelogio={usaRelogio}
               />
-              <PontoTodayCard registroHoje={registroHoje ?? null} />
+              <PontoTodayCard
+                registroHoje={registroHoje ?? null}
+                colaboradorId={meuColaborador?.id}
+                colaboradorNome={meuColaborador?.nome_completo}
+                empresaId={empresaAtual?.id}
+              />
               <div className="flex flex-col gap-6">
                 <PontoWeekSummary registrosSemana={registrosSemana} />
                 {bancoResumo && (

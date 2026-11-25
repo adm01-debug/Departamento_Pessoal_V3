@@ -1,8 +1,14 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+vi.mock('@/services/turnoService', () => ({
+  turnoService: { obterEscalaDoDia: vi.fn().mockResolvedValue(null), listarTurnos: vi.fn().mockResolvedValue([]) },
+}));
 
 vi.mock('framer-motion', () => ({
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
   motion: {
     div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
@@ -73,5 +79,19 @@ describe('PontoTodayCard', () => {
   it('shows meal break label when in interval', () => {
     render(<PontoTodayCard registroHoje={{ ...REGISTRO, saida_intervalo: '12:00', retorno_intervalo: null }} />);
     expect(screen.getByText(/Intervalo de Almoço/)).toBeInTheDocument();
+  });
+  it('offers the day-scale pencil only when collaborator and company are known', () => {
+    const cliente = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+
+    const { unmount } = render(
+      <QueryClientProvider client={cliente}>
+        <PontoTodayCard registroHoje={REGISTRO} colaboradorId="col-1" empresaId="e1" colaboradorNome="Ana" />
+      </QueryClientProvider>
+    );
+    expect(screen.getByRole('button', { name: 'Editar escala do dia' })).toBeInTheDocument();
+    unmount();
+
+    render(<PontoTodayCard registroHoje={REGISTRO} />);
+    expect(screen.queryByRole('button', { name: 'Editar escala do dia' })).not.toBeInTheDocument();
   });
 });
