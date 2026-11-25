@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "645def6f9d4f06b5caf806ed69cd09f8fdb0319c",
+  "commit": "61145b4f55d138b19f5d49e20124d58503e5c42c",
   "branch": "main",
-  "data_commit": "2026-11-25T10:36:15-03:00",
+  "data_commit": "2026-11-25T12:25:12-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "61145b4",
+    "data": "2026-11-25",
+    "assunto": "feat: resgata a tela de solicitacoes de horas extras do port do Muri (#884)"
+   },
    {
     "sha": "645def6",
     "data": "2026-11-25",
@@ -126,14 +131,9 @@
     "sha": "2489b55",
     "data": "2026-11-23",
     "assunto": "feat: entrega real de Web Push (VAPID) na fila de notificacoes (#853)"
-   },
-   {
-    "sha": "132ece1",
-    "data": "2026-11-23",
-    "assunto": "chore: resgata autofix de eslint (type-imports e inferrable-types) de agente interrompido (#854)"
    }
   ],
-  "arquivos_mudados_7d": 720,
+  "arquivos_mudados_7d": 734,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 20
+    "mudancas": 19
    },
    {
     "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4137,
-  "arquivos_codigo": 2222,
-  "linhas_codigo": 448199,
+  "arquivos_total": 4154,
+  "arquivos_codigo": 2239,
+  "linhas_codigo": 452386,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 85,
-  "componentes": 679,
+  "componentes": 686,
   "hooks": 126,
   "edge_functions": 68,
   "tabelas": 438,
   "migrations": 1261,
   "cron_jobs": 43,
-  "testes": 831,
+  "testes": 841,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 347
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1077,
-   "linhas": 203360
+   "arquivos": 1094,
+   "linhas": 207505
   },
   "src/constants": {
    "arquivos": 7,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 145,
-   "linhas": 51118
+   "linhas": 51160
   },
   "src/providers": {
    "arquivos": 4,
@@ -862,8 +862,8 @@
   "console_log": 416,
   "ts_ignore": 1,
   "eslint_disable": 4,
-  "todos": 27,
-  "arquivos_acima_500_linhas": 124
+  "todos": 28,
+  "arquivos_acima_500_linhas": 125
  },
  "todos": [
   {
@@ -943,6 +943,12 @@
    "linha": 25,
    "tipo": "TODO",
    "texto": "o sistema (`dashboard/DonutChart.tsx`), com o"
+  },
+  {
+   "arquivo": "src/components/horas-extras/HorasExtrasKpis.tsx",
+   "linha": 45,
+   "tipo": "TODO",
+   "texto": "`Card` carrega"
   },
   {
    "arquivo": "src/components/organograma/DepartmentRow.tsx",

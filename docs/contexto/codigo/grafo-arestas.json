@@ -2903,6 +2903,75 @@
    "src/components/forms/FormSelect.tsx",
    "src/components/forms/FormSwitch.tsx"
   ],
+  "src/components/horas-extras/AcoesDaLinha.tsx": [
+   "src/components/horas-extras/horasExtrasComum.ts",
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/horas-extras/AprovacoesPendentes.tsx": [
+   "src/components/horas-extras/horasExtrasComum.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/empty-state.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/entradaGlobal.ts",
+   "src/components/ui/select.tsx",
+   "src/components/ui/spinner.tsx",
+   "src/components/ui/user-avatar.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/horas-extras/CabecalhoSolicitacoes.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx"
+  ],
+  "src/components/horas-extras/HistoricoSolicitacoes.tsx": [
+   "src/components/horas-extras/AcoesDaLinha.tsx",
+   "src/components/horas-extras/FiltroSelectConteudo.tsx",
+   "src/components/horas-extras/horasExtrasComum.ts",
+   "src/components/ui/app-pagination.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-table.tsx",
+   "src/components/ui/empty-state.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/entradaGlobal.ts",
+   "src/components/ui/input.tsx",
+   "src/components/ui/linha-tabela-hover.ts",
+   "src/components/ui/select.tsx",
+   "src/components/ui/table-row-reveal.ts",
+   "src/components/ui/table.tsx",
+   "src/components/ui/user-avatar.tsx",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/horas-extras/HorasExtrasKpis.tsx": [
+   "src/components/horas-extras/horasExtrasComum.ts",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/entradaGlobal.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/horas-extras/NovaSolicitacaoDialog.tsx": [
+   "src/components/horas-extras/horasExtrasComum.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx"
+  ],
+  "src/components/horas-extras/SolicitacaoDetalhesDialog.tsx": [
+   "src/components/horas-extras/horasExtrasComum.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/user-avatar.tsx",
+   "src/lib/utils.ts",
+   "src/utils/format.ts"
+  ],
   "src/components/horas-extras/horasExtrasComum.ts": [
    "src/utils/format.ts"
   ],
@@ -6847,14 +6916,14 @@
   ],
   "src/pages/HorasExtrasPage.tsx": [
    "src/components/PageTitle.tsx",
+   "src/components/horas-extras/AprovacoesPendentes.tsx",
+   "src/components/horas-extras/CabecalhoSolicitacoes.tsx",
+   "src/components/horas-extras/HistoricoSolicitacoes.tsx",
+   "src/components/horas-extras/HorasExtrasKpis.tsx",
+   "src/components/horas-extras/NovaSolicitacaoDialog.tsx",
+   "src/components/horas-extras/SolicitacaoDetalhesDialog.tsx",
+   "src/components/horas-extras/horasExtrasComum.ts",
    "src/components/layout/index.ts",
-   "src/components/ui/badge.tsx",
-   "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx",
-   "src/components/ui/input.tsx",
-   "src/components/ui/label.tsx",
-   "src/components/ui/select.tsx",
-   "src/components/ui/table.tsx",
    "src/hooks/useColaboradores.ts",
    "src/hooks/useHorasExtras.ts"
   ],

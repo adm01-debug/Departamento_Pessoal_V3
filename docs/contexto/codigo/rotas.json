@@ -18415,8 +18415,10 @@
     "useGrupo",
     "useGuidedTour",
     "useHorasExtras",
+    "useInView",
     "useLocation",
     "useMemo",
+    "useMovimentoReduzido",
     "useMutation",
     "useNavigate",
     "useNotificacoes",
@@ -18444,6 +18446,7 @@
     "useGrupo",
     "useGuidedTour",
     "useHorasExtras",
+    "useMovimentoReduzido",
     "useNotificacoes",
     "useNotification",
     "useOnMount",
@@ -18515,7 +18518,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 98
+   "arquivos_puxados": 123
   },
   {
    "protegida": true,

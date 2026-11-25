@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "645def6f9d4f06b5caf806ed69cd09f8fdb0319c",
+  "sha": "61145b4f55d138b19f5d49e20124d58503e5c42c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 13:38 UTC",
-  "files_total": 4151,
-  "code_files": 3555,
-  "code_lines": 522517
+  "generated_at": "2026-11-25 15:26 UTC",
+  "files_total": 4168,
+  "code_files": 3572,
+  "code_lines": 526704
  },
  "version": "1.3.2",
- "facts_hash": "f0920a06495192f5",
+ "facts_hash": "b268eeccf55c55d8",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,8 +388,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1335,
-   ".tsx": 1082,
-   ".ts": 997,
+   ".tsx": 1098,
+   ".ts": 998,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -95356,7 +95356,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 90
+    "deps_count": 116
    },
    {
     "path": "",
@@ -103056,7 +103056,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1077,
+  "components_count": 1094,
   "hooks": [
    {
     "name": "useContacts",
@@ -104719,8 +104719,8 @@
   },
   {
    "module": "src/components",
-   "files": 1077,
-   "lines": 203360,
+   "files": 1094,
+   "lines": 207505,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105421,7 +105421,7 @@
   {
    "module": "src/pages",
    "files": 145,
-   "lines": 51118,
+   "lines": 51160,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -115834,6 +115834,16 @@
     "rules": "type=number, min=0, max=10"
    },
    {
+    "file": "src/components/horas-extras/NovaSolicitacaoDialog.tsx",
+    "field": "he-data",
+    "rules": "type=date"
+   },
+   {
+    "file": "src/components/horas-extras/NovaSolicitacaoDialog.tsx",
+    "field": "he-horas",
+    "rules": "type=number, step=0.5, min=0.5"
+   },
+   {
     "file": "src/components/pcs/PcsEquidadeTab.tsx",
     "field": "pcs-encargos",
     "rules": "type=number, min=0, max=200"
@@ -123487,6 +123497,62 @@
     "text": "Lançamento de Desconto (D: Salários a Pagar, C: Conta de Passivo/Desconto)"
    },
    {
+    "file": "src/components/horas-extras/AcoesDaLinha.tsx",
+    "text": "- A regra agora é ÚNICA para toda linha, em qualquer status:"
+   },
+   {
+    "file": "src/components/horas-extras/AcoesDaLinha.tsx",
+    "text": "* O que NÃO mudou (a poda é de APRESENTAÇÃO, não de negócio):"
+   },
+   {
+    "file": "src/components/horas-extras/AcoesDaLinha.tsx",
+    "text": "renderizado (perfil sem permissão de exclusão), e `justify-end` garante"
+   },
+   {
+    "file": "src/components/horas-extras/AcoesDaLinha.tsx",
+    "text": "* Sem handler não há permissão de exclusão — e o par continua no lugar. */"
+   },
+   {
+    "file": "src/components/horas-extras/AprovacoesPendentes.tsx",
+    "text": "- APENAS TRÊS cartões são exibidos no estado inicial — é a composição da"
+   },
+   {
+    "file": "src/components/horas-extras/AprovacoesPendentes.tsx",
+    "text": "clicável, então não pode parecer um controle."
+   },
+   {
+    "file": "src/components/horas-extras/AprovacoesPendentes.tsx",
+    "text": "* Somente as solicitações pendentes (a página já recorta o período). */"
+   },
+   {
+    "file": "src/components/horas-extras/AprovacoesPendentes.tsx",
+    "text": "referência (uma linha de desktop larga). Não é limite de dados — a lista"
+   },
+   {
+    "file": "src/components/horas-extras/AprovacoesPendentes.tsx",
+    "text": "* Decisão em voo — trava o duplo envio sem tocar na regra de negócio."
+   },
+   {
+    "file": "src/components/horas-extras/AprovacoesPendentes.tsx",
+    "text": "nunca mais: a posição na fila não pode depender do render. Aprovar, rejeitar"
+   },
+   {
+    "file": "src/components/horas-extras/CabecalhoSolicitacoes.tsx",
+    "text": "* Nada além de apresentação mora aqui: o botão apenas chama `onNova`, que é o"
+   },
+   {
+    "file": "src/components/horas-extras/HorasExtrasKpis.tsx",
+    "text": "não pode ocupar posição de KPI. Ele desceu para o cabeçalho da seção"
+   },
+   {
+    "file": "src/components/horas-extras/SolicitacaoDetalhesDialog.tsx",
+    "text": "* SOMENTE LEITURA: este diálogo não busca, não grava e não recalcula nada —"
+   },
+   {
+    "file": "src/components/horas-extras/SolicitacaoDetalhesDialog.tsx",
+    "text": "do cartão de aprovação). As duas ações opcionais apenas REPASSAM o registro"
+   },
+   {
     "file": "src/components/horas-extras/horasExtrasComum.ts",
     "text": "regra do sistema é nunca chamar `toLocaleDateString` direto."
    },
@@ -124721,6 +124787,10 @@
    {
     "file": "src/pages/FolhaCompliancePage.tsx",
     "text": "- validação client-side do `integrity_hash` (badge de conformidade)"
+   },
+   {
+    "file": "src/pages/HorasExtrasPage.tsx",
+    "text": "que tela e teste leiam a MESMA regra."
    },
    {
     "file": "src/pages/LoginPage.tsx",
@@ -151616,6 +151686,31 @@
     "value": "80"
    },
    {
+    "file": "src/components/horas-extras/AprovacoesPendentes.tsx",
+    "name": "LIMITE_CARTOES",
+    "value": "3"
+   },
+   {
+    "file": "src/components/horas-extras/HistoricoSolicitacoes.tsx",
+    "name": "POR_PAGINA_PADRAO",
+    "value": "10"
+   },
+   {
+    "file": "src/components/horas-extras/HorasExtrasKpis.tsx",
+    "name": "GRADE",
+    "value": "'grid grid-cols-1 gap-[13px] sm:grid-cols-2 xl:grid-cols-4'"
+   },
+   {
+    "file": "src/components/horas-extras/NovaSolicitacaoDialog.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "2"
+   },
+   {
+    "file": "src/components/horas-extras/SolicitacaoDetalhesDialog.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "5"
+   },
+   {
     "file": "src/components/horas-extras/horasExtrasComum.ts",
     "name": "MEDIDA_SELECT_PERIODO",
     "value": "'sm:min-w-[138px]'"
@@ -161279,12 +161374,6 @@
     "kind": "filtra"
    },
    {
-    "file": "src/pages/HorasExtrasPage.tsx",
-    "field": "status",
-    "value": "pendente",
-    "kind": "compara"
-   },
-   {
     "file": "src/pages/ImportacaoPage.tsx",
     "field": "status",
     "value": "valido",
@@ -166303,6 +166392,12 @@
     "body": "setLoading(true); const salario = parseFloat(form.salario) || 0; const inss = salario * (parseFloat(form.percentualInssPatronal) / 100); const fgts = salario * (parseFloat(form.percentualFgts) / 100); const rat = salario * (parseFloat(form.percentualRat) / 100); const terceiros = salario * (parseFloat(form.percentualTerceiros) / 100); const provisaoFerias = (salario * 1.3333) / 12; const provisao13 = salario / 12; const encargosProvisoes = (provisaoFerias + provisao13) * ((parseFloat(form.percen …"
    },
    {
+    "file": "src/components/horas-extras/HistoricoSolicitacoes.tsx",
+    "name": "aplicar",
+    "params": "parcial: Partial<FiltrosHistorico>",
+    "body": "setFiltros((atual) => ({ ...atual, ...parcial })); setPagina(1);"
+   },
+   {
     "file": "src/components/horas-extras/horasExtrasComum.ts",
     "name": "rotuloTaxaAprovacao",
     "params": "taxa: number | null",
@@ -169401,6 +169496,18 @@
    {
     "file": "src/components/folha/FolhaValidationAlerts.tsx",
     "line": "transition={{ delay: i * 0.05 }}"
+   },
+   {
+    "file": "src/components/horas-extras/AprovacoesPendentes.tsx",
+    "line": "* `border-primary/45` e fundo `bg-primary/10` (10% de alfa, a faixa pedida de"
+   },
+   {
+    "file": "src/components/horas-extras/AprovacoesPendentes.tsx",
+    "line": "* vai a 40%, um passo acima dos 30% do botão: a faixa é larga e o contorno"
+   },
+   {
+    "file": "src/components/horas-extras/HorasExtrasKpis.tsx",
+    "line": "* │ ⏳ 8 Pend. │ │ ✓ 20h30 Aprov│ │ 📄 20 Total │ │ ✓ 86% Taxa │"
    },
    {
     "file": "src/components/kanban/entradaKanban.ts",
@@ -188079,6 +188186,502 @@
    {
     "file": "src/components/folha/__tests__/folhaDashboardData.test.ts",
     "name": "omits zero-valued composition slices instead of presenting mock percentages"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AnimacaoDetalhesSolicitacao.test.tsx",
+    "name": "Detalhes da solicitação — moldura do popup de Pendências"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AnimacaoDetalhesSolicitacao.test.tsx",
+    "name": "abre crescendo de dentro para fora, com o véu escurecendo em fade"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AnimacaoDetalhesSolicitacao.test.tsx",
+    "name": "fecha encolhendo e mantém o registro à vista até o fim da transição"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AnimacaoDetalhesSolicitacao.test.tsx",
+    "name": "o X da moldura avisa o dono do estado (o fechamento animado continua)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AnimacaoNovaSolicitacao.test.tsx",
+    "name": "Nova solicitação de hora extra — moldura do popup de Pendências"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AnimacaoNovaSolicitacao.test.tsx",
+    "name": "abre crescendo de dentro para fora, com o véu escurecendo em fade"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AnimacaoNovaSolicitacao.test.tsx",
+    "name": "fecha encolhendo, com o conteúdo montado até o fim da transição"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AnimacaoNovaSolicitacao.test.tsx",
+    "name": "o X da moldura avisa o dono do estado (o fechamento animado continua)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "AprovacoesPendentes — selo "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "pinta TODOS os selos com o âmbar de atenção do sistema"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "mantém a geometria do selo: 21 px de altura, mesmo respiro e fonte"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "os cards revelados pelo "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "AprovacoesPendentes — "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "em repouso o botão continua NEUTRO (nada de verde permanente)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "no hover o texto, a borda e o fundo passam ao lime da marca"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "o foco por teclado repete a paleta do hover"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "a troca é suave e só de COR: "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "preserva tamanho e posicionamento do botão"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "AprovacoesPendentes — Aprovar e Rejeitar não foram tocados"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "mantêm as cores de veredito e não ganham o lime do "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "AprovacoesPendentes — descrição sobre azul translúcido"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "a faixa do motivo usa o mesmo azul do "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "o ícone assume o azul do sistema e o texto continua neutro"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "mantém border-radius, padding e altura mínima da faixa"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "AprovacoesPendentes — nada muda de medida nem vaza para os vizinhos"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "o cartão mantém a diagramação (padding, raio, grade de três colunas)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "o hover mora no botão: o cartão e a faixa não acendem junto"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+    "name": "todos os cartões (inclusive os revelados) têm classes idênticas"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/CascataHistorico.test.tsx",
+    "name": "Histórico de solicitações — cascata das linhas (referência: Candidatos)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/CascataHistorico.test.tsx",
+    "name": "cada linha recebe o variant compartilhado e o atraso escalonado da referência"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/CascataHistorico.test.tsx",
+    "name": "o movimento é o mesmo das linhas de Candidatos (variant única no sistema)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/CascataHistorico.test.tsx",
+    "name": "digitar na busca NÃO reinicia a sequência (a chave ignora o texto)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/CascataHistorico.test.tsx",
+    "name": "trocar de página troca a identidade da lista e a cascata toca de novo"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/CascataHistorico.test.tsx",
+    "name": "com movimento reduzido as linhas nascem prontas, sem deslocamento nem atraso"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/DialogosSolicitacao.test.tsx",
+    "name": "NovaSolicitacaoDialog"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/DialogosSolicitacao.test.tsx",
+    "name": "abre com o formulário vazio e o envio bloqueado"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/DialogosSolicitacao.test.tsx",
+    "name": "mostra a equivalência em h/min enquanto as horas são digitadas"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/DialogosSolicitacao.test.tsx",
+    "name": "cancelar fecha e descarta o rascunho (não reabre com dado antigo)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/DialogosSolicitacao.test.tsx",
+    "name": "SolicitacaoDetalhesDialog"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/DialogosSolicitacao.test.tsx",
+    "name": "lê o registro completo e oferece decidir enquanto pendente"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/DialogosSolicitacao.test.tsx",
+    "name": "já decidida: mostra a observação do aprovador e esconde as ações"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/EntradaHorasExtras.test.tsx",
+    "name": "entrada de Horas Extras — a fila única do Dashboard Executivo"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/EntradaHorasExtras.test.tsx",
+    "name": "a régua vem do módulo global: 14 px, 520 ms, 120 ms, ease-out"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/EntradaHorasExtras.test.tsx",
+    "name": "a tira de KPI Cards entra na fila intercalada: 0 / 120 / 360 / 600 ms"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/EntradaHorasExtras.test.tsx",
+    "name": "os cartões de aprovação preenchem os vãos dos KPI Cards: 240 / 480 / 840 ms"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/EntradaHorasExtras.test.tsx",
+    "name": "o cabeçalho da fila abre a banda de conteúdo (slot 0, junto do 1º KPI)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/EntradaHorasExtras.test.tsx",
+    "name": "o histórico entra depois do último cartão da fila (slot 8 → 960 ms)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/EntradaHorasExtras.test.tsx",
+    "name": "o slot do histórico é congelado na montagem: novo render não reanima"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "AprovacoesPendentes"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "mostra quem pediu, o que pediu e o selo de status"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "conta as solicitações no cabeçalho da fila"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "mostra o PERÍODO no cabeçalho da seção e devolve a escolha à página"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "desenha o rótulo do preset selecionado (não corta nem inventa)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "repassa o registro aos três botões do cartão (nenhuma escrita mora no card)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "explica o vazio em vez de sumir da tela"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "HistoricoSolicitacoes"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "abre em "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "o cabeçalho mostra um contador de registros — não um botão para outra vista"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "o contador respeita os filtros ativos (mostra o recorte e o total)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "o filtro de status traz as pendentes para a tabela (consulta única e completa)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "busca textual filtra por colaborador"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "ações da linha: olho e lixeira repassam o registro e não há menu de três pontos"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "a coluna AÇÕES é idêntica em TODA linha: [ visualizar, excluir ] e mais nada"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "linha já decidida mostra só olho e lixeira (nenhuma decisão a tomar)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "a linha inteira escurece no hover — e SÓ o fundo muda"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "lista vazia chama o cadastro em vez de ficar em branco"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+    "name": "mostra o carregamento enquanto a consulta não chega"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HorasExtrasKpis.test.tsx",
+    "name": "HorasExtrasKpis"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HorasExtrasKpis.test.tsx",
+    "name": "mostra EXATAMENTE os quatro indicadores, na ordem aprovada"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HorasExtrasKpis.test.tsx",
+    "name": "não deixa nenhum FILTRO dentro da faixa de indicadores"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HorasExtrasKpis.test.tsx",
+    "name": "mantém a estrutura de cada card: valor, rótulo e descrição auxiliar"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HorasExtrasKpis.test.tsx",
+    "name": "calcula a taxa com os dados reais do período (nada de percentual fixo)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HorasExtrasKpis.test.tsx",
+    "name": "acompanha a mudança de recorte: outras decisões, outra taxa"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HorasExtrasKpis.test.tsx",
+    "name": "sem decisão no período mostra "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/HorasExtrasKpis.test.tsx",
+    "name": "usa o singular quando só uma solicitação foi decidida"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/PadroesVisuaisSolicitacoes.test.tsx",
+    "name": "Aprovar e Rejeitar — o mesmo botão, só a cor semântica muda"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/PadroesVisuaisSolicitacoes.test.tsx",
+    "name": "compartilham geometria, foco, hover e ícone; diferem apenas em success/danger"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/PadroesVisuaisSolicitacoes.test.tsx",
+    "name": "Cabeçalho — mesma tipografia de "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/PadroesVisuaisSolicitacoes.test.tsx",
+    "name": "o <h1> repete exatamente a classe do cabeçalho padrão (PageLayout)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "horasExtrasComum — horas"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "formata horas decimais como h/min (2.5 → 2h30)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "aceita string com vírgula (o formulário digita 3,5)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "devolve travessão para valor ausente ou inválido"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "soma as horas ignorando valores inválidos"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "horasExtrasComum — status"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "normaliza status desconhecido para pendente"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "mantém os rótulos e pinta o veredito como pill translúcido"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "pinta "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "horasExtrasComum — vínculo e datas"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "lê o nome e o departamento do vínculo embutido"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "cai em textos neutros quando o vínculo não veio na consulta"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "mostra realização e solicitação em dd/mm/aaaa (sem shift de fuso)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "horasExtrasComum — período"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "resolve os presets em intervalos fechados (referência 30/10/2026)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "rotula o período pela faixa de datas (ou "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "recorta pela data de realização, com fallback para created_at"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "inclui as duas pontas do intervalo"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "sem recorte devolve tudo, mas em uma NOVA lista (não muta a origem)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "horasExtrasComum — busca textual"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "encontra por nome, departamento, motivo e rótulo de status"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "termo vazio combina com tudo; termo inexistente não combina"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "não quebra quando a linha não tem motivo nem vínculo"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "horasExtrasComum — filtros da lista"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "o padrão esconde as pendentes; "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "as cinco opções de status estão no menu, sem perder o padrão da tela"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "filtra por status e por departamento"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "combina busca textual com os demais filtros"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "ordena por data, nome e horas sem alterar o array recebido"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "ordenação NÃO conta como filtro ativo (mas busca, departamento e status contam)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "lista os departamentos presentes, sem vazio e em ordem alfabética"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "horasExtrasComum — medidas da barra de filtros"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "os controles mantêm a régua dos formulários (38 px de altura, raio 10)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "o select é dimensionado pelo CONTEÚDO, nunca por largura fixa"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "cada filtro tem piso; só os de conteúdo conhecido têm teto"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "resumoDecisoes — taxa de aprovação"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "divide aprovadas pelo total DECIDIDO (pendente não conta)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "arredonda a porcentagem e devolve "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "formata o valor do card: porcentagem inteira ou travessão"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "descreve "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "o rótulo do preset é o do menu (e nunca uma data solta)"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "horasExtrasComum — controles do cabeçalho da seção"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "período e "
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "o período é dimensionado pelo conteúdo, com piso para o rótulo não pular"
+   },
+   {
+    "file": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+    "name": "o período usa superfície neutra — lime fica para ação/estado ativo"
    },
    {
     "file": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
@@ -240341,7 +240944,6 @@
       "compara:src/pages/DespesasPage.tsx",
       "compara:src/pages/ESocialPage.tsx",
       "compara:src/pages/FeriasPage.tsx",
-      "compara:src/pages/HorasExtrasPage.tsx",
       "compara:src/pages/LGPDPage.tsx",
       "compara:src/pages/WorkflowsPage.tsx",
       "compara:src/services/cnabService.ts",
@@ -291592,11 +292194,147 @@
    "lines": 6,
    "doc": "V25: Forms Index - Active exports only"
   },
+  "src/components/horas-extras/AcoesDaLinha.tsx": {
+   "path": "src/components/horas-extras/AcoesDaLinha.tsx",
+   "lines": 157,
+   "exports": [
+    "interface AcoesDaLinhaProps",
+    "function AcoesDaLinha"
+   ],
+   "rule_comments": [
+    "- A regra agora é ÚNICA para toda linha, em qualquer status:",
+    "* O que NÃO mudou (a poda é de APRESENTAÇÃO, não de negócio):",
+    "renderizado (perfil sem permissão de exclusão), e `justify-end` garante",
+    "* Sem handler não há permissão de exclusão — e o par continua no lugar. */"
+   ]
+  },
+  "src/components/horas-extras/AprovacoesPendentes.tsx": {
+   "path": "src/components/horas-extras/AprovacoesPendentes.tsx",
+   "lines": 490,
+   "exports": [
+    "interface AprovacoesPendentesProps",
+    "const LIMITE_CARTOES",
+    "function AprovacoesPendentes"
+   ],
+   "params": [
+    {
+     "name": "LIMITE_CARTOES",
+     "value": "3"
+    }
+   ],
+   "rule_comments": [
+    "- APENAS TRÊS cartões são exibidos no estado inicial — é a composição da",
+    "clicável, então não pode parecer um controle.",
+    "* Somente as solicitações pendentes (a página já recorta o período). */",
+    "referência (uma linha de desktop larga). Não é limite de dados — a lista",
+    "* Decisão em voo — trava o duplo envio sem tocar na regra de negócio.",
+    "nunca mais: a posição na fila não pode depender do render. Aprovar, rejeitar"
+   ],
+   "percents": [
+    "* `border-primary/45` e fundo `bg-primary/10` (10% de alfa, a faixa pedida de",
+    "* vai a 40%, um passo acima dos 30% do botão: a faixa é larga e o contorno"
+   ]
+  },
+  "src/components/horas-extras/CabecalhoSolicitacoes.tsx": {
+   "path": "src/components/horas-extras/CabecalhoSolicitacoes.tsx",
+   "lines": 85,
+   "exports": [
+    "interface CabecalhoSolicitacoesProps",
+    "function CabecalhoSolicitacoes"
+   ],
+   "rule_comments": [
+    "* Nada além de apresentação mora aqui: o botão apenas chama `onNova`, que é o"
+   ]
+  },
   "src/components/horas-extras/FiltroSelectConteudo.tsx": {
    "path": "src/components/horas-extras/FiltroSelectConteudo.tsx",
    "lines": 49,
    "exports": [
     "function ConteudoFiltro"
+   ]
+  },
+  "src/components/horas-extras/HistoricoSolicitacoes.tsx": {
+   "path": "src/components/horas-extras/HistoricoSolicitacoes.tsx",
+   "lines": 550,
+   "exports": [
+    "interface HistoricoSolicitacoesProps",
+    "function HistoricoSolicitacoes"
+   ],
+   "params": [
+    {
+     "name": "POR_PAGINA_PADRAO",
+     "value": "10"
+    }
+   ],
+   "calc_fns": [
+    {
+     "name": "aplicar",
+     "params": "parcial: Partial<FiltrosHistorico>",
+     "body": "setFiltros((atual) => ({ ...atual, ...parcial })); setPagina(1);"
+    }
+   ]
+  },
+  "src/components/horas-extras/HorasExtrasKpis.tsx": {
+   "path": "src/components/horas-extras/HorasExtrasKpis.tsx",
+   "lines": 183,
+   "exports": [
+    "interface HorasExtrasKpisProps",
+    "function HorasExtrasKpis"
+   ],
+   "params": [
+    {
+     "name": "GRADE",
+     "value": "'grid grid-cols-1 gap-[13px] sm:grid-cols-2 xl:grid-cols-4'"
+    }
+   ],
+   "rule_comments": [
+    "não pode ocupar posição de KPI. Ele desceu para o cabeçalho da seção"
+   ],
+   "percents": [
+    "* │ ⏳ 8 Pend. │ │ ✓ 20h30 Aprov│ │ 📄 20 Total │ │ ✓ 86% Taxa │"
+   ]
+  },
+  "src/components/horas-extras/NovaSolicitacaoDialog.tsx": {
+   "path": "src/components/horas-extras/NovaSolicitacaoDialog.tsx",
+   "lines": 228,
+   "exports": [
+    "interface NovaSolicitacaoDados",
+    "interface NovaSolicitacaoDialogProps",
+    "function NovaSolicitacaoDialog"
+   ],
+   "html_constraints": [
+    {
+     "field": "he-data",
+     "rules": "type=date"
+    },
+    {
+     "field": "he-horas",
+     "rules": "type=number, step=0.5, min=0.5"
+    }
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "2"
+    }
+   ]
+  },
+  "src/components/horas-extras/SolicitacaoDetalhesDialog.tsx": {
+   "path": "src/components/horas-extras/SolicitacaoDetalhesDialog.tsx",
+   "lines": 253,
+   "exports": [
+    "interface SolicitacaoDetalhesDialogProps",
+    "function SolicitacaoDetalhesDialog"
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "5"
+    }
+   ],
+   "rule_comments": [
+    "* SOMENTE LEITURA: este diálogo não busca, não grava e não recalcula nada —",
+    "do cartão de aprovação). As duas ações opcionais apenas REPASSAM o registro"
    ]
   },
   "src/components/horas-extras/horasExtrasComum.ts": {
@@ -291743,6 +292481,213 @@
      "params": "resumo: ResumoDecisoes",
      "body": "if (resumo.decididas === 0) return 'Nenhuma decisão no período'; const sufixo = resumo.decididas === 1 ? 'solicitação decidida' : 'solicitações decididas'; return `${resumo.aprovadas} de ${resumo.decididas} ${sufixo}`;"
     }
+   ]
+  },
+  "src/components/horas-extras/__tests__/AnimacaoDetalhesSolicitacao.test.tsx": {
+   "path": "src/components/horas-extras/__tests__/AnimacaoDetalhesSolicitacao.test.tsx",
+   "lines": 158,
+   "is_test": true,
+   "tests": [
+    "Detalhes da solicitação — moldura do popup de Pendências",
+    "abre crescendo de dentro para fora, com o véu escurecendo em fade",
+    "fecha encolhendo e mantém o registro à vista até o fim da transição",
+    "o X da moldura avisa o dono do estado (o fechamento animado continua)"
+   ]
+  },
+  "src/components/horas-extras/__tests__/AnimacaoNovaSolicitacao.test.tsx": {
+   "path": "src/components/horas-extras/__tests__/AnimacaoNovaSolicitacao.test.tsx",
+   "lines": 136,
+   "is_test": true,
+   "tests": [
+    "Nova solicitação de hora extra — moldura do popup de Pendências",
+    "abre crescendo de dentro para fora, com o véu escurecendo em fade",
+    "fecha encolhendo, com o conteúdo montado até o fim da transição",
+    "o X da moldura avisa o dono do estado (o fechamento animado continua)"
+   ]
+  },
+  "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx": {
+   "path": "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+   "lines": 299,
+   "is_test": true,
+   "errors": [
+    "card não encontrado",
+    "faixa do motivo não encontrada"
+   ],
+   "tests": [
+    "AprovacoesPendentes — selo ",
+    "pinta TODOS os selos com o âmbar de atenção do sistema",
+    "mantém a geometria do selo: 21 px de altura, mesmo respiro e fonte",
+    "os cards revelados pelo ",
+    "AprovacoesPendentes — ",
+    "em repouso o botão continua NEUTRO (nada de verde permanente)",
+    "no hover o texto, a borda e o fundo passam ao lime da marca",
+    "o foco por teclado repete a paleta do hover",
+    "a troca é suave e só de COR: ",
+    "preserva tamanho e posicionamento do botão",
+    "AprovacoesPendentes — Aprovar e Rejeitar não foram tocados",
+    "mantêm as cores de veredito e não ganham o lime do ",
+    "AprovacoesPendentes — descrição sobre azul translúcido",
+    "a faixa do motivo usa o mesmo azul do ",
+    "o ícone assume o azul do sistema e o texto continua neutro",
+    "mantém border-radius, padding e altura mínima da faixa",
+    "AprovacoesPendentes — nada muda de medida nem vaza para os vizinhos",
+    "o cartão mantém a diagramação (padding, raio, grade de três colunas)",
+    "o hover mora no botão: o cartão e a faixa não acendem junto",
+    "todos os cartões (inclusive os revelados) têm classes idênticas"
+   ]
+  },
+  "src/components/horas-extras/__tests__/CascataHistorico.test.tsx": {
+   "path": "src/components/horas-extras/__tests__/CascataHistorico.test.tsx",
+   "lines": 205,
+   "is_test": true,
+   "tests": [
+    "Histórico de solicitações — cascata das linhas (referência: Candidatos)",
+    "cada linha recebe o variant compartilhado e o atraso escalonado da referência",
+    "o movimento é o mesmo das linhas de Candidatos (variant única no sistema)",
+    "digitar na busca NÃO reinicia a sequência (a chave ignora o texto)",
+    "trocar de página troca a identidade da lista e a cascata toca de novo",
+    "com movimento reduzido as linhas nascem prontas, sem deslocamento nem atraso"
+   ]
+  },
+  "src/components/horas-extras/__tests__/DialogosSolicitacao.test.tsx": {
+   "path": "src/components/horas-extras/__tests__/DialogosSolicitacao.test.tsx",
+   "lines": 121,
+   "is_test": true,
+   "tests": [
+    "NovaSolicitacaoDialog",
+    "abre com o formulário vazio e o envio bloqueado",
+    "mostra a equivalência em h/min enquanto as horas são digitadas",
+    "cancelar fecha e descarta o rascunho (não reabre com dado antigo)",
+    "SolicitacaoDetalhesDialog",
+    "lê o registro completo e oferece decidir enquanto pendente",
+    "já decidida: mostra a observação do aprovador e esconde as ações"
+   ]
+  },
+  "src/components/horas-extras/__tests__/EntradaHorasExtras.test.tsx": {
+   "path": "src/components/horas-extras/__tests__/EntradaHorasExtras.test.tsx",
+   "lines": 249,
+   "is_test": true,
+   "rule_comments": [
+    "ela, o `index` que a página passa. O card já visível não pode se mover."
+   ],
+   "tests": [
+    "entrada de Horas Extras — a fila única do Dashboard Executivo",
+    "a régua vem do módulo global: 14 px, 520 ms, 120 ms, ease-out",
+    "a tira de KPI Cards entra na fila intercalada: 0 / 120 / 360 / 600 ms",
+    "os cartões de aprovação preenchem os vãos dos KPI Cards: 240 / 480 / 840 ms",
+    "o cabeçalho da fila abre a banda de conteúdo (slot 0, junto do 1º KPI)",
+    "o histórico entra depois do último cartão da fila (slot 8 → 960 ms)",
+    "o slot do histórico é congelado na montagem: novo render não reanima"
+   ]
+  },
+  "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx": {
+   "path": "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+   "lines": 350,
+   "is_test": true,
+   "rule_comments": [
+    "Pendente (Ana) e aprovada (Bruno) lado a lado — o status não pode mudar a"
+   ],
+   "tests": [
+    "AprovacoesPendentes",
+    "mostra quem pediu, o que pediu e o selo de status",
+    "conta as solicitações no cabeçalho da fila",
+    "mostra o PERÍODO no cabeçalho da seção e devolve a escolha à página",
+    "desenha o rótulo do preset selecionado (não corta nem inventa)",
+    "repassa o registro aos três botões do cartão (nenhuma escrita mora no card)",
+    "explica o vazio em vez de sumir da tela",
+    "HistoricoSolicitacoes",
+    "abre em ",
+    "o cabeçalho mostra um contador de registros — não um botão para outra vista",
+    "o contador respeita os filtros ativos (mostra o recorte e o total)",
+    "o filtro de status traz as pendentes para a tabela (consulta única e completa)",
+    "busca textual filtra por colaborador",
+    "ações da linha: olho e lixeira repassam o registro e não há menu de três pontos",
+    "a coluna AÇÕES é idêntica em TODA linha: [ visualizar, excluir ] e mais nada",
+    "linha já decidida mostra só olho e lixeira (nenhuma decisão a tomar)",
+    "a linha inteira escurece no hover — e SÓ o fundo muda",
+    "lista vazia chama o cadastro em vez de ficar em branco",
+    "mostra o carregamento enquanto a consulta não chega"
+   ]
+  },
+  "src/components/horas-extras/__tests__/HorasExtrasKpis.test.tsx": {
+   "path": "src/components/horas-extras/__tests__/HorasExtrasKpis.test.tsx",
+   "lines": 94,
+   "is_test": true,
+   "tests": [
+    "HorasExtrasKpis",
+    "mostra EXATAMENTE os quatro indicadores, na ordem aprovada",
+    "não deixa nenhum FILTRO dentro da faixa de indicadores",
+    "mantém a estrutura de cada card: valor, rótulo e descrição auxiliar",
+    "calcula a taxa com os dados reais do período (nada de percentual fixo)",
+    "acompanha a mudança de recorte: outras decisões, outra taxa",
+    "sem decisão no período mostra ",
+    "usa o singular quando só uma solicitação foi decidida"
+   ]
+  },
+  "src/components/horas-extras/__tests__/PadroesVisuaisSolicitacoes.test.tsx": {
+   "path": "src/components/horas-extras/__tests__/PadroesVisuaisSolicitacoes.test.tsx",
+   "lines": 130,
+   "is_test": true,
+   "tests": [
+    "Aprovar e Rejeitar — o mesmo botão, só a cor semântica muda",
+    "compartilham geometria, foco, hover e ícone; diferem apenas em success/danger",
+    "Cabeçalho — mesma tipografia de ",
+    "o <h1> repete exatamente a classe do cabeçalho padrão (PageLayout)"
+   ]
+  },
+  "src/components/horas-extras/__tests__/horasExtrasComum.test.ts": {
+   "path": "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+   "lines": 457,
+   "is_test": true,
+   "rule_comments": [
+    "* KPI \"Taxa de aprovação\" — a regra que a tela usa precisa ser a MESMA do"
+   ],
+   "tests": [
+    "horasExtrasComum — horas",
+    "formata horas decimais como h/min (2.5 → 2h30)",
+    "aceita string com vírgula (o formulário digita 3,5)",
+    "devolve travessão para valor ausente ou inválido",
+    "soma as horas ignorando valores inválidos",
+    "horasExtrasComum — status",
+    "normaliza status desconhecido para pendente",
+    "mantém os rótulos e pinta o veredito como pill translúcido",
+    "pinta ",
+    "horasExtrasComum — vínculo e datas",
+    "lê o nome e o departamento do vínculo embutido",
+    "cai em textos neutros quando o vínculo não veio na consulta",
+    "mostra realização e solicitação em dd/mm/aaaa (sem shift de fuso)",
+    "horasExtrasComum — período",
+    "resolve os presets em intervalos fechados (referência 30/10/2026)",
+    "rotula o período pela faixa de datas (ou ",
+    "recorta pela data de realização, com fallback para created_at",
+    "inclui as duas pontas do intervalo",
+    "sem recorte devolve tudo, mas em uma NOVA lista (não muta a origem)",
+    "horasExtrasComum — busca textual",
+    "encontra por nome, departamento, motivo e rótulo de status",
+    "termo vazio combina com tudo; termo inexistente não combina",
+    "não quebra quando a linha não tem motivo nem vínculo",
+    "horasExtrasComum — filtros da lista",
+    "o padrão esconde as pendentes; ",
+    "as cinco opções de status estão no menu, sem perder o padrão da tela",
+    "filtra por status e por departamento",
+    "combina busca textual com os demais filtros",
+    "ordena por data, nome e horas sem alterar o array recebido",
+    "ordenação NÃO conta como filtro ativo (mas busca, departamento e status contam)",
+    "lista os departamentos presentes, sem vazio e em ordem alfabética",
+    "horasExtrasComum — medidas da barra de filtros",
+    "os controles mantêm a régua dos formulários (38 px de altura, raio 10)",
+    "o select é dimensionado pelo CONTEÚDO, nunca por largura fixa",
+    "cada filtro tem piso; só os de conteúdo conhecido têm teto",
+    "resumoDecisoes — taxa de aprovação",
+    "divide aprovadas pelo total DECIDIDO (pendente não conta)",
+    "arredonda a porcentagem e devolve ",
+    "formata o valor do card: porcentagem inteira ou travessão",
+    "descreve ",
+    "o rótulo do preset é o do menu (e nunca uma data solta)",
+    "horasExtrasComum — controles do cabeçalho da seção",
+    "período e ",
+    "o período é dimensionado pelo conteúdo, com piso para o rótulo não pular",
+    "o período usa superfície neutra — lime fica para ação/estado ativo"
    ]
   },
   "src/components/i18n/LanguageSelector.tsx": {
@@ -311181,16 +312126,12 @@
   },
   "src/pages/HorasExtrasPage.tsx": {
    "path": "src/pages/HorasExtrasPage.tsx",
-   "lines": 165,
+   "lines": 207,
    "exports": [
     "function HorasExtrasPage"
    ],
-   "status_values": [
-    {
-     "field": "status",
-     "value": "pendente",
-     "kind": "compara"
-    }
+   "rule_comments": [
+    "que tela e teste leiam a MESMA regra."
    ]
   },
   "src/pages/ImportacaoPage.tsx": {
@@ -343562,10 +344503,37 @@
   }
  },
  "git": {
-  "sha": "645def6f9d4f06b5caf806ed69cd09f8fdb0319c",
+  "sha": "61145b4f55d138b19f5d49e20124d58503e5c42c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "61145b4",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: resgata a tela de solicitacoes de horas extras do port do Muri (#884)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/components/horas-extras/AcoesDaLinha.tsx",
+     "src/components/horas-extras/AprovacoesPendentes.tsx",
+     "src/components/horas-extras/CabecalhoSolicitacoes.tsx",
+     "src/components/horas-extras/HistoricoSolicitacoes.tsx",
+     "src/components/horas-extras/HorasExtrasKpis.tsx",
+     "src/components/horas-extras/NovaSolicitacaoDialog.tsx",
+     "src/components/horas-extras/SolicitacaoDetalhesDialog.tsx",
+     "src/components/horas-extras/__tests__/AnimacaoDetalhesSolicitacao.test.tsx",
+     "src/components/horas-extras/__tests__/AnimacaoNovaSolicitacao.test.tsx",
+     "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
+     "src/components/horas-extras/__tests__/CascataHistorico.test.tsx",
+     "src/components/horas-extras/__tests__/DialogosSolicitacao.test.tsx",
+     "src/components/horas-extras/__tests__/EntradaHorasExtras.test.tsx",
+     "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
+     "src/components/horas-extras/__tests__/HorasExtrasKpis.test.tsx",
+     "src/components/horas-extras/__tests__/PadroesVisuaisSolicitacoes.test.tsx",
+     "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
+     "src/pages/HorasExtrasPage.tsx"
+    ]
+   },
    {
     "sha": "645def6",
     "date": "2026-11-25",
@@ -344275,15 +345243,6 @@
      "supabase/functions/enviar-relatorio/index.ts",
      "supabase/functions/processar-agendamentos/index.ts"
     ]
-   },
-   {
-    "sha": "3fface7",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "chore: registra notificacoes de workflow como resolvidas no doc (#848)",
-    "files": [
-     "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md"
-    ]
    }
   ],
   "hot_files": [
@@ -344296,12 +345255,12 @@
     5
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
+    "scripts/.bundle-budget.json",
     4
    ],
    [
-    "scripts/.bundle-budget.json",
-    3
+    ".github/workflows/canonical-migrations.yml",
+    4
    ],
    [
     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
@@ -344332,39 +345291,39 @@
     2
    ],
    [
-    "docs/ponto-geofencing.md",
+    "src/components/horas-extras/AcoesDaLinha.tsx",
     1
    ],
    [
-    "src/components/__tests__/PontoGeoDistancia.test.tsx",
+    "src/components/horas-extras/AprovacoesPendentes.tsx",
     1
    ],
    [
-    "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "src/components/horas-extras/CabecalhoSolicitacoes.tsx",
     1
    ],
    [
-    "src/components/__tests__/PontoGeofencingPainel.test.tsx",
+    "src/components/horas-extras/HistoricoSolicitacoes.tsx",
     1
    ],
    [
-    "src/components/ponto/PontoGeoDistancia.tsx",
+    "src/components/horas-extras/HorasExtrasKpis.tsx",
     1
    ],
    [
-    "src/components/ponto/PontoGeoMapa.tsx",
+    "src/components/horas-extras/NovaSolicitacaoDialog.tsx",
     1
    ],
    [
-    "src/components/ponto/PontoGeoRegistros.tsx",
+    "src/components/horas-extras/SolicitacaoDetalhesDialog.tsx",
     1
    ],
    [
-    "src/components/ponto/PontoGeofencingPainel.tsx",
+    "src/components/horas-extras/__tests__/AnimacaoDetalhesSolicitacao.test.tsx",
     1
    ],
    [
-    "src/components/ponto/acoesCardsPonto.ts",
+    "src/components/horas-extras/__tests__/AnimacaoNovaSolicitacao.test.tsx",
     1
    ]
   ]

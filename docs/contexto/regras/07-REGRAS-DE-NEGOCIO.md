@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `645def6f9d` · branch `main` · 2026-11-25 13:38 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `61145b4f55` · branch `main` · 2026-11-25 15:26 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2597,6 +2597,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `ferias-data-fim` | type=date, readOnly, disabled | `src/components/ferias/FeriasForm.tsx` |
 | `ferias-dias-gozo` | type=number, min=5, max=30 | `src/components/ferias/FeriasForm.tsx` |
 | `ferias-dias-abono` | type=number, min=0, max=10 | `src/components/ferias/FeriasForm.tsx` |
+| `he-data` | type=date | `src/components/horas-extras/NovaSolicitacaoDialog.tsx` |
+| `he-horas` | type=number, step=0.5, min=0.5 | `src/components/horas-extras/NovaSolicitacaoDialog.tsx` |
 | `pcs-encargos` | type=number, min=0, max=200 | `src/components/pcs/PcsEquidadeTab.tsx` |
 | `pcs-grades-n` | type=number, min=2, max=30 | `src/components/pcs/PcsGradesTab.tsx` |
 | `pcs-grades-base` | type=number, min=0 | `src/components/pcs/PcsGradesTab.tsx` |
@@ -3216,6 +3218,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 - **calcularImpacto()** — `src/components/folha/SimuladorWhatIf.tsx`
   ```
   setLoading(true); const salario = parseFloat(form.salario) || 0; const inss = salario * (parseFloat(form.percentualInssPatronal) / 100); const fgts = salario * (parseFloat(form.percentualFgts) / 100); const rat = salario * (parseFloat(form.percentualRat) / 100); const terceiros = salario * (parseFloat(form.percentualTerceiros) / 100); const provisaoFerias = (salario * 1.3333) / 12; const provisao13 = salario / 12; const encargosProvisoes = (provisaoFerias + provisao13) * ((parseFloat(form.percen …
+  ```
+- **aplicar(parcial: Partial<FiltrosHistorico>)** — `src/components/horas-extras/HistoricoSolicitacoes.tsx`
+  ```
+  setFiltros((atual) => ({ ...atual, ...parcial })); setPagina(1);
   ```
 - **rotuloTaxaAprovacao(taxa: number | null)** — `src/components/horas-extras/horasExtrasComum.ts`
   ```
@@ -4423,6 +4429,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: index * 0.08 }}` | `src/components/folha/FolhaPipeline.tsx` |
 | `if (resumo.totalDescontos > resumo.totalProventos * 0.4) {` | `src/components/folha/FolhaValidationAlerts.tsx` |
 | `transition={{ delay: i * 0.05 }}` | `src/components/folha/FolhaValidationAlerts.tsx` |
+| `* `border-primary/45` e fundo `bg-primary/10` (10% de alfa, a faixa pedida de` | `src/components/horas-extras/AprovacoesPendentes.tsx` |
+| `* vai a 40%, um passo acima dos 30% do botão: a faixa é larga e o contorno` | `src/components/horas-extras/AprovacoesPendentes.tsx` |
+| `* │ ⏳ 8 Pend. │ │ ✓ 20h30 Aprov│ │ 📄 20 Total │ │ ✓ 86% Taxa │` | `src/components/horas-extras/HorasExtrasKpis.tsx` |
 | `* `kanban-coluna-concluida`: altura final estável (100% responsivo) e cards` | `src/components/kanban/entradaKanban.ts` |
 | `* por `kanban-coluna-concluida` (altura 100% estável; cards novos/movidos não` | `src/components/kanban/entradaKanban.ts` |
 | `transition={{ delay: i * 0.05 }}` | `src/components/layout/MobileQuickActions.tsx` |
@@ -4567,10 +4576,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `(Math.abs(vf + tc - provF) > sal * 0.05 \|\| Math.abs(v13 - prov13) > sal * 0.05)` | `src/pages/PassivoTrabalhistaPage.tsx` |
 | `13º) e uma estimativa de 2% de reajustes ou novas admissões mensais.` | `src/pages/PassivoTrabalhistaPage.tsx` |
 | `Provisionamento registrado diverge &gt;5% do calculado — revise os valores da folha.` | `src/pages/PassivoTrabalhistaPage.tsx` |
-| `diff: Math.abs(vf + tc - provF) > sal * 0.05 ? Math.abs(vf + tc - provF) : Math.abs(v13 - prov13),` | `src/pages/PassivoTrabalhistaPage.tsx` |
-| `return { mes: format(d, 'MMM/yy', { locale: ptBR }), valor: tTotal * (1 + i * 0.015) };` | `src/pages/PassivoTrabalhistaPage.tsx` |
-| `tipo: Math.abs(vf + tc - provF) > sal * 0.05 ? 'Férias' : '13º',` | `src/pages/PassivoTrabalhistaPage.tsx` |
-| … +91 linhas — lista completa em `context.json` | |
+| … +94 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -4744,6 +4750,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `TRILHA_PASSOS_MAX` | `8` | `src/components/desligamentos/trilhaReveal.ts` |
 | `TRILHA_SAIDA_DURACAO` | `0.25` | `src/components/desligamentos/trilhaReveal.ts` |
 | `SLA_ALERT_THRESHOLD` | `80` | `src/components/ferias/FeriasReconciliacaoHistoricoCard.tsx` |
+| `LIMITE_CARTOES` | `3` | `src/components/horas-extras/AprovacoesPendentes.tsx` |
+| `POR_PAGINA_PADRAO` | `10` | `src/components/horas-extras/HistoricoSolicitacoes.tsx` |
+| `GRADE` | `'grid grid-cols-1 gap-[13px] sm:grid-cols-2 xl:grid-cols-4'` | `src/components/horas-extras/HorasExtrasKpis.tsx` |
+| `BLOCOS_CASCATA` | `2` | `src/components/horas-extras/NovaSolicitacaoDialog.tsx` |
+| `BLOCOS_CASCATA` | `5` | `src/components/horas-extras/SolicitacaoDetalhesDialog.tsx` |
 | `MEDIDA_SELECT_PERIODO` | `'sm:min-w-[138px]'` | `src/components/horas-extras/horasExtrasComum.ts` |
 | `MEDIDA_FILTRO_DEPARTAMENTO` | `'sm:min-w-[150px]'` | `src/components/horas-extras/horasExtrasComum.ts` |
 | `MEDIDA_FILTRO_STATUS` | `'sm:min-w-[194px] sm:max-w-[260px]'` | `src/components/horas-extras/horasExtrasComum.ts` |
@@ -4873,12 +4884,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `TOAST_LIMIT` | `1` | `src/components/ui/use-toast.ts` |
 | `SUPORTE_MAILTO` | `'mailto:suporte@promobrindes.com.br?subject='` | `src/components/ui/user-profile-menu.tsx` |
 | `NODE_W` | `160` | `src/components/workflows/WorkflowDesigner.tsx` |
-| `NODE_H` | `56` | `src/components/workflows/WorkflowDesigner.tsx` |
-| `GW_W` | `56` | `src/components/workflows/WorkflowDesigner.tsx` |
-| `GW_H` | `56` | `src/components/workflows/WorkflowDesigner.tsx` |
-| `PORT_R` | `7` | `src/components/workflows/WorkflowDesigner.tsx` |
-| `MIN_ZOOM` | `0.25` | `src/components/workflows/WorkflowDesigner.tsx` |
-| … +194 linhas — lista completa em `context.json` | | |
+| … +199 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5606,7 +5612,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (10024 testes em 786 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10148 testes em 796 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5633,6 +5639,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/NineBoxConsolidacao.test.tsx` | 48 | consolidação — escala e validação das notas · aceita apenas notas dentro da escala 1–5 e isola o resto · nota fora da escala não classifica e é contada como problema de dado · consolidação — cenários de avaliação por colaborador … |
 | `src/components/__tests__/OrganogramaNode.test.tsx` | 48 | OrganogramaNode · renders department name · shows colaborador count · pluralizes colaborador count correctly … |
 | `src/services/__tests__/feriasService.test.ts` | 46 | feriasService.listSolicitacoes · returns data and count from supabase · returns empty data when supabase returns null · filters by empresa_id when provided … |
+| `src/components/horas-extras/__tests__/horasExtrasComum.test.ts` | 45 | horasExtrasComum — horas · formata horas decimais como h/min (2.5 → 2h30) · aceita string com vírgula (o formulário digita 3,5) · devolve travessão para valor ausente ou inválido … |
 | `src/calculators/__tests__/tabelas.test.ts` | 44 | tabelas 2026 — integridade dos dados · salário mínimo · SALARIO_MINIMO_2026 é positivo · SALARIO_MINIMO_2026 vale R$ 1.621,00 … |
 | `src/services/__tests__/catalogoCursoService.test.ts` | 44 | catalogoCursoService.listarCursos · returns cursos without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/tabelas/__tests__/rhService.test.ts` | 44 | configAfastamentosService · obter calls from config_afastamentos · obter throws on error · salvar calls upsert … |
@@ -5728,6 +5735,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/GestaoRegistrosPonto.test.tsx` | 20 | GestaoRegistrosPonto · renders Controle de Ponto title · renders Filtros Avançados button · renders search input … |
 | `src/components/__tests__/MFASetup.test.tsx` | 20 | MFASetup · shows loading spinner when loading · renders 2FA title · shows Desativado badge when no factors … |
 | `src/components/__tests__/MetricCard.test.tsx` | 20 | MetricCard · renders title · renders string value directly · renders AnimatedNumber when rawValue is provided … |
+| `src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx` | 20 | AprovacoesPendentes — selo  · pinta TODOS os selos com o âmbar de atenção do sistema · mantém a geometria do selo: 21 px de altura, mesmo respiro e fonte · os cards revelados pelo  … |
 | `src/components/recrutamento/__tests__/candidatosComum.test.ts` | 20 | candidatosComum — situações e contagens · classifica status finais e em processo sem confundir etapa com situação · conta todas as situações sobre o escopo recebido (não só a página) · badge de etapa usa o status final quando existir e a etapa real nos demais … |
 | `src/hooks/__tests__/useGenericCrud.test.tsx` | 20 | useGenericCrud · initial state has correct defaults · respects custom initialPageSize · loads items from service after query resolves … |
 | `src/services/__tests__/contratacaoService.test.ts` | 20 | contratacaoService.validarDocumento · updates admissao document status and logs audit · sets document flag false when status is rejeitado · throws for a document type the admission checklist does not send … |
@@ -5740,6 +5748,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/FeriasForm.test.tsx` | 19 | FeriasForm · não renderiza quando fechado · lista só colaboradores não desligados · envia a solicitação com datas e valores calculados e fecha o diálogo … |
 | `src/components/__tests__/LayoutPrimitives.test.tsx` | 19 | PageContainer · renders children · renders title when provided · renders description when provided … |
 | `src/components/__tests__/PendenciasAprovacao.test.tsx` | 19 | fila de aprovação — controles padronizados por vínculo · registro REAL com vínculo provado: Ver, Devolver e Aprovar habilitados (nesta ordem) · registro REAL SEM o vínculo: os controles continuam VISÍVEIS, porém desabilitados · registro REAL com vínculo não avaliável ( … |
+| `src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx` | 19 | AprovacoesPendentes · mostra quem pediu, o que pediu e o selo de status · conta as solicitações no cabeçalho da fila · mostra o PERÍODO no cabeçalho da seção e devolve a escolha à página … |
 | `src/components/treinamentos/__tests__/TrainingCover.test.tsx` | 19 | TrainingCover — imagem real · exibe a URL válida com enquadramento cover e overlays de CSS · URL indisponível cai no fallback e não deixa a capa vazia · não usa URL externa quando não recebe imagem … |
 | `src/integrations/supabase/__tests__/clientBridge.test.ts` | 19 | client.ts — callBridge via query builder · select serializa action/table/filters/order/limit no body do bridge · filtro com valor  · ilike vazio e string  … |
 | `src/services/tabelas/__tests__/viewsService.test.ts` | 19 | viewsService · alertasRH queries vw_alertas_rh and returns array · alertasRH distinguishes schema failure from an empty result · kpiTurnover queries vw_kpi_turnover … |
@@ -5907,10 +5916,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/secureJson.test.ts` | 11 | secureJsonParse · parses simple valid JSON · parses JSON arrays · strips __proto__ keys to prevent prototype pollution … |
 | `src/components/__tests__/AfastamentoTable.test.tsx` | 10 | AfastamentoTable · renders Colaborador table header · renders Tipo / CID table header · renders Período table header … |
 | `src/components/__tests__/Breadcrumbs.test.tsx` | 10 | Breadcrumbs · returns null when path has only one segment · renders breadcrumb for two-segment path · shows  … |
-| `src/components/__tests__/CascadeSaidaPerfis.test.ts` | 10 | cascade-motion — perfil PADRÃO (comportamento histórico intacto) · mantém 0,12 s por bloco, sem teto, e 0,55 s de caixa · é o mesmo  · a caixa só encolhe depois da cascata (delay) e em 0,55 s … |
-| `src/components/__tests__/DarfTab.test.tsx` | 10 | DarfTab · renders DARF title · renders IRRF label · does not render non-payroll taxes (PIS/COFINS, CSLL) … |
-| `src/components/__tests__/DesempenhoBarrasProgresso.test.tsx` | 10 | barra de progresso — paridade com  · a régua do módulo é, número por número, a do card de referência · props da barra: 0 → pct%, com o stagger por índice · normaliza o percentual (limites 0–100 e valor inválido) … |
-| … +486 linhas — lista completa em `context.json` | | |
+| … +496 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6278,4 +6284,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * HABILITAÇÃO (regra ÚNICA, a MESMA do servidor — `pode_aprovar_colaborador` | `src/components/avaliacao/feedbackCanonico.ts` |
 | ENCAMINHAMENTO (RH/admin) — visível apenas para quem pode encaminhar E na | `src/components/avaliacao/feedbackCanonico.ts` |
 | VALIDAÇÃO DO POTENCIAL (RH) — controle LEGADO. O fluxo atual termina na | `src/components/avaliacao/feedbackCanonico.ts` |
-| … +1028 linhas — lista completa em `context.json` | |
+| … +1043 linhas — lista completa em `context.json` | |

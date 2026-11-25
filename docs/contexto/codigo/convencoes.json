@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (561)",
+   "src/components (568)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (694)",
+   "co-localizado (__tests__) (704)",
    "co-localizado (*.test) (78)",
    "e2e/ (33)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (679)"
+  ".tsx (686)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: resgata a tela de solicitacoes de horas extras do port do Muri (#884)",
    "feat: resgata o painel de geofencing do ponto com mapa real (#883)",
    "docs: registra o resgate da tela de Turnos e o lote canonico aplicado (#882)",
    "feat: resgata a tela de Turnos do agente Muri (calendario, escalas e dialogos) (#875)",
-   "fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)",
-   "fix: p4_071 nao aborta mais o lote aditivo no canônico (#879)"
+   "fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -3439,21 +3439,25 @@
   },
   {
    "modulo": "components/horas-extras",
-   "arquivos": 2,
-   "testes": 0,
-   "linhas": 588,
+   "arquivos": 9,
+   "testes": 10,
+   "linhas": 2534,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 1,
-   "hooks_locais": [],
+   "componentes": 8,
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
    "hooks_definidos": [],
    "edges": [],
    "tabelas": [],
    "rpcs": [],
    "buckets": [],
    "canais_realtime": [],
-   "env": [],
+   "env": [
+    "DEV"
+   ],
    "flags": [],
    "papeis": [],
    "diretos": {
@@ -3463,12 +3467,16 @@
    },
    "importado_por_outros_modulos": [
     "components/banco-horas",
-    "components/turnos"
+    "components/turnos",
+    "pages"
    ],
    "depende_de_modulos": [
+    "components/ui",
+    "lib",
     "utils"
    ],
    "pacotes_externos": [
+    "framer-motion",
     "lucide-react"
    ]
   },
@@ -7180,6 +7188,7 @@
     "components/ferias",
     "components/folha",
     "components/forms",
+    "components/horas-extras",
     "components/i18n",
     "components/integracoes",
     "components/layout",
@@ -8836,6 +8845,7 @@
     "components/ferias",
     "components/folha",
     "components/forms",
+    "components/horas-extras",
     "components/i18n",
     "components/layout",
     "components/medidas-disciplinares",
@@ -8954,7 +8964,7 @@
    "modulo": "pages",
    "arquivos": 115,
    "testes": 0,
-   "linhas": 46248,
+   "linhas": 46290,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -10062,6 +10072,7 @@
     "components/ferias",
     "components/folha",
     "components/forms",
+    "components/horas-extras",
     "components/integracoes",
     "components/layout",
     "components/login",

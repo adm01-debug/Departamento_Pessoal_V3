@@ -743,12 +743,13 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 26,
+   "usado_por": 27,
    "usado_por_modulos": [
     "components/avaliacao",
     "components/banco-horas",
     "components/dashboard",
     "components/desligamentos",
+    "components/horas-extras",
     "components/ponto",
     "components/premiacoes",
     "components/recrutamento",
@@ -757,7 +758,7 @@
     "components/ui",
     "pages"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {
@@ -955,7 +956,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 314,
+   "usado_por": 319,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -971,6 +972,7 @@
     "components/ferias",
     "components/folha",
     "components/forms",
+    "components/horas-extras",
     "components/i18n",
     "components/layout",
     "components/medidas-disciplinares",
@@ -5608,7 +5610,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 43,
+   "usado_por": 44,
    "usado_por_modulos": [
     "components/admissoes",
     "components/afastamentos",

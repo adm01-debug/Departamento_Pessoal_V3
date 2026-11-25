@@ -3415,7 +3415,7 @@
     "useReducedMotion"
    ],
    "canais_realtime": [],
-   "usado_por": 26,
+   "usado_por": 27,
    "usado_por_arquivos": [
     "src/components/avaliacao/AnaliticosDesempenho.tsx",
     "src/components/avaliacao/CicloAtivoPanel.tsx",
@@ -3432,6 +3432,7 @@
     "src/components/banco-horas/TotaisHorasCard.tsx",
     "src/components/dashboard/DonutChart.tsx",
     "src/components/desligamentos/TurnoverChart.tsx",
+    "src/components/horas-extras/HistoricoSolicitacoes.tsx",
     "src/components/ponto/PontoGeofencingPainel.tsx",
     "src/components/premiacoes/AuditoriaTab.tsx",
     "src/components/recrutamento/TabelaCandidatos.tsx",
@@ -3444,7 +3445,7 @@
     "src/pages/RecrutamentoPage.tsx",
     "src/pages/TreinamentosPage.tsx"
    ],
-   "coberto_por_testes": 0
+   "coberto_por_testes": 1
   },
   {
    "arquivo": "src/providers/index.ts",

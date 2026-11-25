@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `645def6f9d4f06b5caf806ed69cd09f8fdb0319c` (2026-11-25T10:36:15-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `61145b4f55d138b19f5d49e20124d58503e5c42c` (2026-11-25T12:25:12-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2079), SQL (1335), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2096), SQL (1335), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 4137 |
-| arquivos_codigo | 2222 |
-| linhas_codigo | 448199 |
+| arquivos_total | 4154 |
+| arquivos_codigo | 2239 |
+| linhas_codigo | 452386 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
 | itens_menu | 97 |
 | modulos | 85 |
-| componentes | 679 |
+| componentes | 686 |
 | hooks | 126 |
 | edge_functions | 68 |
 | tabelas | 438 |
 | migrations | 1261 |
 | cron_jobs | 43 |
-| testes | 831 |
+| testes | 841 |
 | workflows | 21 |
 | scripts | 138 |
 | docs_md | 347 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
-- componentes: src/components (561), src/pages (110), src/contexts (3)
+- componentes: src/components (568), src/pages (110), src/contexts (3)
 - hooks: src/hooks (104), src/components (12), src/contexts (4)
 - servicos_logica: src/services (100), src/utils (37), src/schemas (25)
-- testes: co-localizado (__tests__) (694), co-localizado (*.test) (78), e2e/ (33)
+- testes: co-localizado (__tests__) (704), co-localizado (*.test) (78), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -87,6 +87,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/ferias | 0 | 0 | 22 | 157 | 33 | 138 |
 | components/folha | 0 | 0 | 21 | 151 | 38 | 145 |
 | components/forms | 0 | 0 | 5 | 0 | 0 | 0 |
+| components/horas-extras | 0 | 0 | 9 | 1 | 0 | 0 |
 | components/layout | 0 | 1 | 28 | 17 | 25 | 7 |
 | components/medidas-disciplinares | 0 | 0 | 9 | 147 | 33 | 133 |
 | components/notifications | 0 | 0 | 5 | 4 | 0 | 6 |
@@ -401,15 +402,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 29253 nós · 65892 arestas · 2849 comunidades · grafo do commit `645def6f`
-- comunidades maiores: lucide-react (522), 20260831_corrected_public.sql (485), canonical_schema.sql (481), useEmpresas (478), button.tsx (472), client.ts (398), cn (324), react (252), vitest (250), rateLimit.ts (185), "public"."empresas" (164), "public"."empresas" (158)
+- 29348 nós · 66355 arestas · 2797 comunidades · grafo do commit `61145b4f`
+- comunidades maiores: 20260831_corrected_public.sql (485), canonical_schema.sql (481), react (432), lucide-react (429), cn (392), @tanstack/react-query (383), App.tsx (374), useEmpresas (333), vitest (264), GestaoCandidatos.tsx (221), "public"."empresas" (164), nineBoxComum.ts (161)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (35)
 - scripts/canonical-invariants.sql (21)
-- inventario/estado/rotas.json (20)
+- inventario/estado/rotas.json (19)
 - docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
 - package.json (12)
 - src/integrations/supabase/types.ts (12)
@@ -660,6 +661,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-25 `61145b4` feat: resgata a tela de solicitacoes de horas extras do port do Muri (#884)
 - 2026-11-25 `645def6` feat: resgata o painel de geofencing do ponto com mapa real (#883)
 - 2026-11-25 `5f2fa81` docs: registra o resgate da tela de Turnos e o lote canonico aplicado (#882)
 - 2026-11-25 `2a62b11` feat: resgata a tela de Turnos do agente Muri (calendario, escalas e dialogos) (#875)
@@ -674,7 +676,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `3ffaebd` fix: guard to_regclass nas policies de backup_logs (apply abortava) (#867)
 - 2026-11-24 `90a640d` fix: fixa o schema da extensao no search_path do dreno (#866)
 - 2026-11-24 `8893aba` fix: sidecar do dreno devolve 'ok' literal no caso inerte (#864)
-- 2026-11-24 `bb8ebe2` fix: nao reexecuta o script da extensao pg_cron/pg_net no canonico (#862)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

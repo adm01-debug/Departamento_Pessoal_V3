@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 679,
+ "total": 686,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -4488,6 +4488,52 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/horas-extras/AcoesDaLinha.tsx",
+   "exports": [
+    "AcoesDaLinha",
+    "AcoesDaLinhaProps"
+   ],
+   "export_default": null,
+   "linhas": 157,
+   "dominio": "components/horas-extras",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/horas-extras/AprovacoesPendentes.tsx",
+   "exports": [
+    "AprovacoesPendentes",
+    "AprovacoesPendentesProps",
+    "LIMITE_CARTOES"
+   ],
+   "export_default": null,
+   "linhas": 490,
+   "dominio": "components/horas-extras",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/horas-extras/CabecalhoSolicitacoes.tsx",
+   "exports": [
+    "CabecalhoSolicitacoes",
+    "CabecalhoSolicitacoesProps"
+   ],
+   "export_default": null,
+   "linhas": 85,
+   "dominio": "components/horas-extras",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/horas-extras/FiltroSelectConteudo.tsx",
    "exports": [
     "ConteudoFiltro"
@@ -4498,7 +4544,70 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/horas-extras/HistoricoSolicitacoes.tsx",
+   "exports": [
+    "HistoricoSolicitacoes",
+    "HistoricoSolicitacoesProps"
+   ],
+   "export_default": null,
+   "linhas": 550,
+   "dominio": "components/horas-extras",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/horas-extras/HorasExtrasKpis.tsx",
+   "exports": [
+    "HorasExtrasKpis",
+    "HorasExtrasKpisProps"
+   ],
+   "export_default": null,
+   "linhas": 183,
+   "dominio": "components/horas-extras",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/horas-extras/NovaSolicitacaoDialog.tsx",
+   "exports": [
+    "NovaSolicitacaoDados",
+    "NovaSolicitacaoDialog",
+    "NovaSolicitacaoDialogProps"
+   ],
+   "export_default": null,
+   "linhas": 228,
+   "dominio": "components/horas-extras",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/horas-extras/SolicitacaoDetalhesDialog.tsx",
+   "exports": [
+    "SolicitacaoDetalhesDialog",
+    "SolicitacaoDetalhesDialogProps"
+   ],
+   "export_default": null,
+   "linhas": 253,
+   "dominio": "components/horas-extras",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -7859,7 +7968,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 21,
+   "usado_por": 22,
    "orfao": false
   },
   {
@@ -7923,7 +8032,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 14,
+   "usado_por": 15,
    "orfao": false
   },
   {
@@ -7954,7 +8063,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 235,
+   "usado_por": 237,
    "orfao": false
   },
   {
@@ -7969,7 +8078,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 383,
+   "usado_por": 388,
    "orfao": false
   },
   {
@@ -8004,7 +8113,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 289,
+   "usado_por": 288,
    "orfao": false
   },
   {
@@ -8019,7 +8128,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 19,
+   "usado_por": 21,
    "orfao": false
   },
   {
@@ -8034,7 +8143,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 7,
+   "usado_por": 8,
    "orfao": false
   },
   {
@@ -8238,7 +8347,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 163,
+   "usado_por": 165,
    "orfao": false
   },
   {
@@ -8280,7 +8389,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 19,
+   "usado_por": 21,
    "orfao": false
   },
   {
@@ -8296,7 +8405,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 36,
+   "usado_por": 40,
    "orfao": false
   },
   {
@@ -8380,7 +8489,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 183,
+   "usado_por": 184,
    "orfao": false
   },
   {
@@ -8588,7 +8697,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 136,
+   "usado_por": 138,
    "orfao": false
   },
   {
@@ -8752,7 +8861,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 118,
+   "usado_por": 119,
    "orfao": false
   },
   {
@@ -8964,7 +9073,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 12,
+   "usado_por": 15,
    "orfao": false
   },
   {
@@ -10287,7 +10396,7 @@
     "HorasExtrasPage"
    ],
    "export_default": "HorasExtrasPage",
-   "linhas": 165,
+   "linhas": 207,
    "dominio": "pages",
    "hooks_locais": [
     "useColaboradores",
