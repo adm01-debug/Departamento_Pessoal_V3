@@ -83,11 +83,15 @@ CREATE INDEX IF NOT EXISTS idx_afastamentos_empresa_status_data
   ON afastamentos(empresa_id, status, data_inicio DESC)
   WHERE status = 'ativo';
 
--- Query: CLT Art. 476 — afastamento > 15 dias consecutivos
+-- Query: CLT Art. 476 — afastamento > 15 dias consecutivos.
+-- O enum tipo_afastamento não tem 'inss' nem 'maternidade': os equivalentes
+-- são 'doenca' (auxílio-doença/INSS), os dois acidentes e 'licenca_maternidade'.
+-- Literais fora do enum abortam a criação do índice com
+-- "invalid input value for enum tipo_afastamento".
 CREATE INDEX IF NOT EXISTS idx_afastamentos_tipo_data
   ON afastamentos(tipo, data_inicio)
   WHERE status = 'ativo'
-    AND tipo IN ('inss', 'acidente_trabalho', 'maternidade');
+    AND tipo IN ('doenca', 'acidente_trabalho', 'acidente_trajeto', 'licenca_maternidade');
 
 
 -- ── 5. FOLHAS DE PAGAMENTO ────────────────────────────────────
@@ -116,18 +120,53 @@ END $$;
 
 
 -- ── 6. HOLERITES ───────────────────────────────────────────────
--- Query: SELECT * FROM holerites WHERE empresa_id = ? AND competencia = ?
-CREATE INDEX IF NOT EXISTS idx_holerites_empresa_competencia
-  ON holerites(empresa_id, folha_id DESC);
+-- Query: Holerites de uma empresa.
+-- holerites não tem empresa_id no schema canônico (catálogo conferido em
+-- 25/11/2026: id, folha_id, colaborador_id, …): a empresa é alcançada por
+-- folha_id. O índice tenant-scoped existente é idx_holerites_colaborador_competencia.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+     WHERE table_schema = 'public' AND table_name = 'holerites'
+       AND column_name = 'empresa_id'
+  ) THEN
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_holerites_empresa_competencia
+               ON holerites(empresa_id, folha_id DESC)';
+  ELSE
+    RAISE NOTICE 'idx_holerites_empresa_competencia ignorado: holerites.empresa_id ausente';
+  END IF;
+END $$;
 
 -- Query: Holerite de um colaborador específico
 CREATE INDEX IF NOT EXISTS idx_holerites_colaborador_competencia
   ON holerites(colaborador_id, folha_id DESC);
 
--- Query: Status de holerite (pago / pendente)
-CREATE INDEX IF NOT EXISTS idx_holerites_empresa_status
-  ON holerites(empresa_id, status)
-  WHERE status = 'pendente';
+-- Query: Status de holerite (pago / pendente).
+-- O canônico controla emissão por holerites.assinado (boolean), não por um
+-- enum status — o índice parcial cobre os ainda não assinados.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+     WHERE table_schema = 'public' AND table_name = 'holerites'
+       AND column_name = 'assinado'
+  ) THEN
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_holerites_pendentes
+               ON holerites(created_at DESC) WHERE assinado = false';
+  END IF;
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+     WHERE table_schema = 'public' AND table_name = 'holerites'
+         AND column_name IN ('empresa_id', 'status')
+      HAVING count(*) = 2
+  ) THEN
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_holerites_empresa_status
+               ON holerites(empresa_id, status) WHERE status = ''pendente''';
+  ELSE
+    RAISE NOTICE 'idx_holerites_empresa_status ignorado: holerites.status ausente';
+  END IF;
+END $$;
 
 
 -- ── 7. DESLIGAMENTOS ──────────────────────────────────────────
@@ -176,16 +215,42 @@ CREATE INDEX IF NOT EXISTS idx_esocial_eventos_tipo_competencia
 CREATE INDEX IF NOT EXISTS idx_auditoria_empresa_data
   ON auditoria(empresa_id, created_at DESC);
 
--- Query: Auditoria por tabela + registro (track de mudanças)
-CREATE INDEX IF NOT EXISTS idx_auditoria_tabela_registro
-  ON auditoria(tabela, registro_id, created_at DESC);
+-- Query: Auditoria por tabela + registro (track de mudanças).
+-- O canônico nomeia esses campos entidade/entidade_id (catálogo conferido em
+-- 25/11/2026); tabela/registro_id só existem em bases legadas.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+     WHERE table_schema = 'public' AND table_name = 'auditoria'
+       AND column_name = 'tabela'
+  ) THEN
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_auditoria_tabela_registro
+               ON auditoria(tabela, registro_id, created_at DESC)';
+  ELSE
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_auditoria_entidade_registro
+               ON auditoria(entidade, entidade_id, created_at DESC)';
+  END IF;
+END $$;
 
 
 -- ── 12. NOTIFICAÇÕES ──────────────────────────────────────────
--- Query: Notificações não lidas do usuário
-CREATE INDEX IF NOT EXISTS idx_notificacoes_usuario_status
-  ON notificacoes(usuario_id, lida, created_at DESC)
-  WHERE lida = false;
+-- Query: Notificações não lidas do usuário.
+-- A coluna é user_id no canônico (usuario_id só em bases legadas).
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+     WHERE table_schema = 'public' AND table_name = 'notificacoes'
+       AND column_name = 'usuario_id'
+  ) THEN
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_notificacoes_usuario_status
+               ON notificacoes(usuario_id, lida, created_at DESC) WHERE lida = false';
+  ELSE
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_notificacoes_usuario_status
+               ON notificacoes(user_id, lida, created_at DESC) WHERE lida = false';
+  END IF;
+END $$;
 
 -- ── 13. BANCO DE HORAS ────────────────────────────────────────
 -- Query: Saldo do banco por colaborador
