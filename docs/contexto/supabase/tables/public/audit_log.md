@@ -10,7 +10,7 @@
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
-| usada por views | public.v_audit_events_unified, public.v_audit_trail, public.vw_folha_compliance |
+| usada por views | public.v_audit_events_unified, public.v_audit_summary_7d, public.v_audit_trail, public.v_security_dashboard, public.vw_folha_compliance |
 
 
 ## Colunas
@@ -57,6 +57,7 @@
 | idx_audit_log_status_change | btree | tabela, registro_id, created_at | não | sim | `(acao = 'STATUS_CHANGE'::text)` | `CREATE INDEX idx_audit_log_status_change ON public.audit_log USING btree (tabela, registro_id, created_at DESC) WHERE (acao = 'STATUS_CHANGE'::text)` |
 | idx_audit_log_status_change_scan | btree | tabela, created_at | não | sim | `(acao = 'STATUS_CHANGE'::text)` | `CREATE INDEX idx_audit_log_status_change_scan ON public.audit_log USING btree (tabela, created_at DESC) WHERE (acao = 'STATUS_CHANGE'::text)` |
 | idx_audit_log_tabela | btree | tabela | não | sim |  | `CREATE INDEX idx_audit_log_tabela ON public.audit_log USING btree (tabela)` |
+| idx_audit_log_tabela_acao_created | btree | tabela, acao, created_at | não | sim |  | `CREATE INDEX idx_audit_log_tabela_acao_created ON public.audit_log USING btree (tabela, acao, created_at DESC)` |
 | idx_audit_log_user_created | btree | user_id, created_at | não | sim |  | `CREATE INDEX idx_audit_log_user_created ON public.audit_log USING btree (user_id, created_at DESC)` |
 | idx_audit_log_user_id | btree | user_id | não | sim |  | `CREATE INDEX idx_audit_log_user_id ON public.audit_log USING btree (user_id)` |
 

@@ -37156,6 +37156,214 @@
         "nullable": true,
         "position": 1,
         "schema": "public",
+        "table": "mv_afastamento_summary",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "mes",
+        "nullable": true,
+        "position": 2,
+        "schema": "public",
+        "table": "mv_afastamento_summary",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": true,
+        "name": "tipo_afastamento",
+        "nullable": true,
+        "position": 3,
+        "schema": "public",
+        "table": "mv_afastamento_summary",
+        "type": "tipo_afastamento"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "total_afastamentos",
+        "nullable": true,
+        "position": 4,
+        "schema": "public",
+        "table": "mv_afastamento_summary",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "dias_totais",
+        "nullable": true,
+        "position": 5,
+        "schema": "public",
+        "table": "mv_afastamento_summary",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "media_dias",
+        "nullable": true,
+        "position": 6,
+        "schema": "public",
+        "table": "mv_afastamento_summary",
+        "type": "numeric"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "em_andamento",
+        "nullable": true,
+        "position": 7,
+        "schema": "public",
+        "table": "mv_afastamento_summary",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "encerrados",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "mv_afastamento_summary",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": true,
+        "position": 1,
+        "schema": "public",
+        "table": "mv_ferias_balance",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "departamento",
+        "nullable": true,
+        "position": 2,
+        "schema": "public",
+        "table": "mv_ferias_balance",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "colaborador_id",
+        "nullable": true,
+        "position": 3,
+        "schema": "public",
+        "table": "mv_ferias_balance",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "colaborador_nome",
+        "nullable": true,
+        "position": 4,
+        "schema": "public",
+        "table": "mv_ferias_balance",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "data_admissao",
+        "nullable": true,
+        "position": 5,
+        "schema": "public",
+        "table": "mv_ferias_balance",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "saldo_dias",
+        "nullable": true,
+        "position": 6,
+        "schema": "public",
+        "table": "mv_ferias_balance",
+        "type": "numeric"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "anos_trabalhados",
+        "nullable": true,
+        "position": 7,
+        "schema": "public",
+        "table": "mv_ferias_balance",
+        "type": "numeric"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "gozos_12m",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "mv_ferias_balance",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": true,
+        "position": 1,
+        "schema": "public",
         "table": "mv_folha_summary",
         "type": "uuid"
       },
@@ -37301,6 +37509,123 @@
         "schema": "public",
         "table": "mv_folha_summary",
         "type": "numeric"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": true,
+        "position": 1,
+        "schema": "public",
+        "table": "mv_headcount_daily",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "snapshot_date",
+        "nullable": true,
+        "position": 2,
+        "schema": "public",
+        "table": "mv_headcount_daily",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": true,
+        "name": "status",
+        "nullable": true,
+        "position": 3,
+        "schema": "public",
+        "table": "mv_headcount_daily",
+        "type": "status_colaborador"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "departamento",
+        "nullable": true,
+        "position": 4,
+        "schema": "public",
+        "table": "mv_headcount_daily",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "headcount",
+        "nullable": true,
+        "position": 5,
+        "schema": "public",
+        "table": "mv_headcount_daily",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "ativos",
+        "nullable": true,
+        "position": 6,
+        "schema": "public",
+        "table": "mv_headcount_daily",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "desligados",
+        "nullable": true,
+        "position": 7,
+        "schema": "public",
+        "table": "mv_headcount_daily",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "em_ferias",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "mv_headcount_daily",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "afastados",
+        "nullable": true,
+        "position": 9,
+        "schema": "public",
+        "table": "mv_headcount_daily",
+        "type": "bigint"
       },
       {
         "comment": null,
@@ -37496,6 +37821,110 @@
         "schema": "public",
         "table": "mv_telemetry_dashboard",
         "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": true,
+        "position": 1,
+        "schema": "public",
+        "table": "mv_turnover_rate",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "mes",
+        "nullable": true,
+        "position": 2,
+        "schema": "public",
+        "table": "mv_turnover_rate",
+        "type": "date"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "admissoes",
+        "nullable": true,
+        "position": 3,
+        "schema": "public",
+        "table": "mv_turnover_rate",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "desligamentos",
+        "nullable": true,
+        "position": 4,
+        "schema": "public",
+        "table": "mv_turnover_rate",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "total_movimentacao",
+        "nullable": true,
+        "position": 5,
+        "schema": "public",
+        "table": "mv_turnover_rate",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "headcount_inicio",
+        "nullable": true,
+        "position": 6,
+        "schema": "public",
+        "table": "mv_turnover_rate",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "headcount_fim",
+        "nullable": true,
+        "position": 7,
+        "schema": "public",
+        "table": "mv_turnover_rate",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "turnover_rate_pct",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "mv_turnover_rate",
+        "type": "numeric"
       },
       {
         "comment": null,
@@ -58290,6 +58719,58 @@
         "generated": null,
         "identity": null,
         "is_enum": false,
+        "name": "acao",
+        "nullable": true,
+        "position": 1,
+        "schema": "public",
+        "table": "v_audit_summary_7d",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "tabela",
+        "nullable": true,
+        "position": 2,
+        "schema": "public",
+        "table": "v_audit_summary_7d",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "total_events",
+        "nullable": true,
+        "position": 3,
+        "schema": "public",
+        "table": "v_audit_summary_7d",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "unique_users",
+        "nullable": true,
+        "position": 4,
+        "schema": "public",
+        "table": "v_audit_summary_7d",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
         "name": "id",
         "nullable": true,
         "position": 1,
@@ -59050,6 +59531,110 @@
         "schema": "public",
         "table": "v_contratos_vencendo",
         "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "view_name",
+        "nullable": true,
+        "position": 1,
+        "schema": "public",
+        "table": "v_dashboard_refresh_status",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "table_name",
+        "nullable": true,
+        "position": 2,
+        "schema": "public",
+        "table": "v_dashboard_refresh_status",
+        "type": "name"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "row_count",
+        "nullable": true,
+        "position": 3,
+        "schema": "public",
+        "table": "v_dashboard_refresh_status",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "last_vacuum",
+        "nullable": true,
+        "position": 4,
+        "schema": "public",
+        "table": "v_dashboard_refresh_status",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "last_autovacuum",
+        "nullable": true,
+        "position": 5,
+        "schema": "public",
+        "table": "v_dashboard_refresh_status",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "last_analyze",
+        "nullable": true,
+        "position": 6,
+        "schema": "public",
+        "table": "v_dashboard_refresh_status",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "last_autoanalyze",
+        "nullable": true,
+        "position": 7,
+        "schema": "public",
+        "table": "v_dashboard_refresh_status",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "last_refresh_hint",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "v_dashboard_refresh_status",
+        "type": "timestamp with time zone"
       },
       {
         "comment": null,
@@ -60220,6 +60805,71 @@
         "schema": "public",
         "table": "v_pii_access_suspeitos",
         "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "email",
+        "nullable": true,
+        "position": 1,
+        "schema": "public",
+        "table": "v_security_brute_force_targets",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "failure_count",
+        "nullable": true,
+        "position": 2,
+        "schema": "public",
+        "table": "v_security_brute_force_targets",
+        "type": "bigint"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "last_attempt",
+        "nullable": true,
+        "position": 3,
+        "schema": "public",
+        "table": "v_security_brute_force_targets",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "metric",
+        "nullable": true,
+        "position": 1,
+        "schema": "public",
+        "table": "v_security_dashboard",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "value",
+        "nullable": true,
+        "position": 2,
+        "schema": "public",
+        "table": "v_security_dashboard",
+        "type": "text"
       },
       {
         "comment": null,
@@ -92051,6 +92701,52 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260719190000_audit_delete_trigger.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.asos.trg_audit_delete_asos",
+            "public.beneficios.trg_audit_delete_beneficios",
+            "public.colaboradores.trg_audit_delete_colaboradores",
+            "public.contas_bancarias.trg_audit_delete_contas_bancarias",
+            "public.dependentes.trg_audit_delete_dependentes",
+            "public.despesas.trg_audit_delete_despesas",
+            "public.documentos.trg_audit_delete_documentos",
+            "public.ferias.trg_audit_delete_ferias",
+            "public.folhas_pagamento.trg_audit_delete_folhas_pagamento",
+            "public.historico_rescisoes.trg_audit_delete_historico_rescisoes"
+          ],
+          "views": []
+        },
+        "comment": "LGPD Art.37 — logs full row data before any DELETE on critical tables to audit_log.",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "54f59284c7a8173e",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "audit_delete_operation",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
               "file": "supabase/migrations/20260712211940_fd8bc9f9-8edb-4c33-918b-1d5b1e783716.sql",
               "hits": 14
             },
@@ -98768,9 +99464,13 @@
             {
               "file": "supabase/migrations/20261122090000_recibos_ferias_criar_tabela_ausente.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261124150000_backup_logs_rls_policy.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 26,
+          "code_total_files": 27,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -103510,6 +104210,46 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260719170000_security_indexes_constraints.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.admissoes.trg_prevent_empty_empresa_admissoes",
+            "public.batidas_ponto.trg_prevent_empty_empresa_batidas_ponto",
+            "public.colaboradores.trg_prevent_empty_empresa_colaboradores",
+            "public.despesas.trg_prevent_empty_empresa_despesas",
+            "public.folhas_pagamento.trg_prevent_empty_empresa_folhas_pagamento",
+            "public.registros_ponto.trg_prevent_empty_empresa_registros_ponto"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": null,
+        "definition": null,
+        "definition_sha": "f87937cecb4b15b8",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "prevent_empty_empresa_id",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
               "file": "supabase/migrations/20260509181501_4a2d0f1d-ae8b-44db-a4cf-1979dd0f353a.sql",
               "hits": 1
             },
@@ -105173,6 +105913,53 @@
         "name": "refresh_dashboard_mvs",
         "owner": "postgres",
         "returns": "jsonb",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20260724140000_p4_072_mv_dashboards.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261018130000_onda4e_objetos_ausentes.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261125120000_secdef_refresh_dashboard_views_revoke.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261125120000_secdef_refresh_dashboard_views_revoke.verify.sql",
+              "hits": 5
+            }
+          ],
+          "code_total_files": 4,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "P4-072: Refresh todas as materialized views de dashboard. Rodar via cron às 5h BRT. Usa CONCURRENTLY (não bloqueia reads).",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "62d474e45f8b6f2e",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "refresh_dashboard_views",
+        "owner": "postgres",
+        "returns": "void",
         "schema": "public",
         "security_definer": true,
         "strict": false,
@@ -119444,6 +120231,18 @@
           "table": "v_audit_legacy"
         },
         {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "v_audit_summary_7d"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "v_audit_summary_7d"
+        },
+        {
           "grantee": "authenticated",
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
@@ -119534,6 +120333,18 @@
           "table": "v_contratos_vencendo"
         },
         {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "v_dashboard_refresh_status"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "v_dashboard_refresh_status"
+        },
+        {
           "grantee": "authenticated",
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
@@ -119676,6 +120487,30 @@
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
           "table": "v_pii_access_suspeitos"
+        },
+        {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "v_security_brute_force_targets"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "v_security_brute_force_targets"
+        },
+        {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "v_security_dashboard"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "v_security_dashboard"
         },
         {
           "grantee": "authenticated",
@@ -121739,6 +122574,22 @@
         "is_valid": true,
         "method": "btree",
         "name": "idx_audit_log_tabela",
+        "predicate": null,
+        "schema": "public",
+        "table": "audit_log"
+      },
+      {
+        "columns": [
+          "tabela",
+          "acao",
+          "created_at"
+        ],
+        "definition": "CREATE INDEX idx_audit_log_tabela_acao_created ON public.audit_log USING btree (tabela, acao, created_at DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_audit_log_tabela_acao_created",
         "predicate": null,
         "schema": "public",
         "table": "audit_log"
@@ -131845,6 +132696,21 @@
           "email",
           "created_at"
         ],
+        "definition": "CREATE INDEX idx_login_attempts_email_created ON public.login_attempts USING btree (email, created_at DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_login_attempts_email_created",
+        "predicate": null,
+        "schema": "public",
+        "table": "login_attempts"
+      },
+      {
+        "columns": [
+          "email",
+          "created_at"
+        ],
         "definition": "CREATE INDEX idx_login_attempts_email_hour ON public.login_attempts USING btree (email, created_at DESC)",
         "is_primary": false,
         "is_unique": false,
@@ -132598,6 +133464,52 @@
       {
         "columns": [
           "empresa_id",
+          "mes",
+          "tipo_afastamento"
+        ],
+        "definition": "CREATE UNIQUE INDEX idx_mv_afastamento_summary_pk ON public.mv_afastamento_summary USING btree (empresa_id, mes, tipo_afastamento)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_mv_afastamento_summary_pk",
+        "predicate": null,
+        "schema": "public",
+        "table": "mv_afastamento_summary"
+      },
+      {
+        "columns": [
+          "empresa_id",
+          "departamento",
+          "saldo_dias"
+        ],
+        "definition": "CREATE INDEX idx_mv_ferias_balance_dept ON public.mv_ferias_balance USING btree (empresa_id, departamento, saldo_dias DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_mv_ferias_balance_dept",
+        "predicate": null,
+        "schema": "public",
+        "table": "mv_ferias_balance"
+      },
+      {
+        "columns": [
+          "colaborador_id"
+        ],
+        "definition": "CREATE UNIQUE INDEX idx_mv_ferias_balance_pk ON public.mv_ferias_balance USING btree (colaborador_id)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_mv_ferias_balance_pk",
+        "predicate": null,
+        "schema": "public",
+        "table": "mv_ferias_balance"
+      },
+      {
+        "columns": [
+          "empresa_id",
           "competencia_month"
         ],
         "definition": "CREATE UNIQUE INDEX idx_mv_folha_summary_pk ON public.mv_folha_summary USING btree (empresa_id, competencia_month)",
@@ -132609,6 +133521,23 @@
         "predicate": null,
         "schema": "public",
         "table": "mv_folha_summary"
+      },
+      {
+        "columns": [
+          "empresa_id",
+          "snapshot_date",
+          "status",
+          "departamento"
+        ],
+        "definition": "CREATE UNIQUE INDEX idx_mv_headcount_daily_pk ON public.mv_headcount_daily USING btree (empresa_id, snapshot_date, status, departamento)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_mv_headcount_daily_pk",
+        "predicate": null,
+        "schema": "public",
+        "table": "mv_headcount_daily"
       },
       {
         "columns": [
@@ -132643,6 +133572,21 @@
         "predicate": null,
         "schema": "public",
         "table": "mv_telemetry_dashboard"
+      },
+      {
+        "columns": [
+          "empresa_id",
+          "mes"
+        ],
+        "definition": "CREATE UNIQUE INDEX idx_mv_turnover_rate_pk ON public.mv_turnover_rate USING btree (empresa_id, mes)",
+        "is_primary": false,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_mv_turnover_rate_pk",
+        "predicate": null,
+        "schema": "public",
+        "table": "mv_turnover_rate"
       },
       {
         "columns": [
@@ -140051,6 +140995,12 @@
       {
         "code": "view_security_definer",
         "detail": "View em public sem security_invoker: executa como owner e ignora RLS das tabelas base.",
+        "object": "public.v_dashboard_refresh_status",
+        "severity": "ALTA"
+      },
+      {
+        "code": "view_security_definer",
+        "detail": "View em public sem security_invoker: executa como owner e ignora RLS das tabelas base.",
         "object": "public.v_login_anomalies",
         "severity": "ALTA"
       },
@@ -143358,6 +144308,12 @@
         "code": "rpc_anon_executable",
         "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
         "object": "public.medida_verificar_ciencia_hash(p_hash text)",
+        "severity": "INFO"
+      },
+      {
+        "code": "rpc_anon_executable",
+        "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
+        "object": "public.refresh_dashboard_views()",
         "severity": "INFO"
       }
     ],
@@ -151453,11 +152409,6 @@
         {
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
-          "table": "messages_2026_11_21"
-        },
-        {
-          "publication": "supabase_realtime_messages_publication",
-          "schema": "realtime",
           "table": "messages_2026_11_22"
         },
         {
@@ -151484,6 +152435,11 @@
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
           "table": "messages_2026_11_27"
+        },
+        {
+          "publication": "supabase_realtime_messages_publication",
+          "schema": "realtime",
+          "table": "messages_2026_11_28"
         }
       ]
     },
@@ -158121,6 +159077,17 @@
         "timing": "AFTER"
       },
       {
+        "definition": "CREATE TRIGGER trg_prevent_empty_empresa_admissoes BEFORE INSERT OR UPDATE ON admissoes FOR EACH ROW EXECUTE FUNCTION prevent_empty_empresa_id()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.prevent_empty_empresa_id",
+        "level": "ROW",
+        "name": "trg_prevent_empty_empresa_admissoes",
+        "schema": "public",
+        "status": "enabled",
+        "table": "admissoes",
+        "timing": "BEFORE"
+      },
+      {
         "definition": "CREATE TRIGGER trg_workflow_admissao AFTER INSERT ON admissoes FOR EACH ROW EXECUTE FUNCTION fn_processar_workflow_admissao()",
         "events": "INSERT",
         "function": "public.fn_processar_workflow_admissao",
@@ -158291,6 +159258,17 @@
         "function": "public.proibir_delete_aso_emitido",
         "level": "ROW",
         "name": "tr_proibir_delete_aso_emitido",
+        "schema": "public",
+        "status": "enabled",
+        "table": "asos",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_audit_delete_asos BEFORE DELETE ON asos FOR EACH ROW EXECUTE FUNCTION audit_delete_operation()",
+        "events": "DELETE",
+        "function": "public.audit_delete_operation",
+        "level": "ROW",
+        "name": "trg_audit_delete_asos",
         "schema": "public",
         "status": "enabled",
         "table": "asos",
@@ -158704,6 +159682,17 @@
         "timing": "BEFORE"
       },
       {
+        "definition": "CREATE TRIGGER trg_prevent_empty_empresa_batidas_ponto BEFORE INSERT OR UPDATE ON batidas_ponto FOR EACH ROW EXECUTE FUNCTION prevent_empty_empresa_id()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.prevent_empty_empresa_id",
+        "level": "ROW",
+        "name": "trg_prevent_empty_empresa_batidas_ponto",
+        "schema": "public",
+        "status": "enabled",
+        "table": "batidas_ponto",
+        "timing": "BEFORE"
+      },
+      {
         "definition": "CREATE TRIGGER trigger_imutabilidade_ponto BEFORE DELETE ON batidas_ponto FOR EACH ROW EXECUTE FUNCTION proibir_delete_ponto()",
         "events": "DELETE",
         "function": "public.proibir_delete_ponto",
@@ -158742,6 +159731,17 @@
         "function": "public.update_updated_at_column",
         "level": "ROW",
         "name": "tr_updated_at_beneficios",
+        "schema": "public",
+        "status": "enabled",
+        "table": "beneficios",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_audit_delete_beneficios BEFORE DELETE ON beneficios FOR EACH ROW EXECUTE FUNCTION audit_delete_operation()",
+        "events": "DELETE",
+        "function": "public.audit_delete_operation",
+        "level": "ROW",
+        "name": "trg_audit_delete_beneficios",
         "schema": "public",
         "status": "enabled",
         "table": "beneficios",
@@ -159177,11 +160177,33 @@
         "timing": "AFTER"
       },
       {
+        "definition": "CREATE TRIGGER trg_audit_delete_colaboradores BEFORE DELETE ON colaboradores FOR EACH ROW EXECUTE FUNCTION audit_delete_operation()",
+        "events": "DELETE",
+        "function": "public.audit_delete_operation",
+        "level": "ROW",
+        "name": "trg_audit_delete_colaboradores",
+        "schema": "public",
+        "status": "enabled",
+        "table": "colaboradores",
+        "timing": "BEFORE"
+      },
+      {
         "definition": "CREATE TRIGGER trg_colab_cpf_hash BEFORE INSERT OR UPDATE OF cpf ON colaboradores FOR EACH ROW EXECUTE FUNCTION fn_colab_cpf_hash()",
         "events": "INSERT OR UPDATE",
         "function": "public.fn_colab_cpf_hash",
         "level": "ROW",
         "name": "trg_colab_cpf_hash",
+        "schema": "public",
+        "status": "enabled",
+        "table": "colaboradores",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_prevent_empty_empresa_colaboradores BEFORE INSERT OR UPDATE ON colaboradores FOR EACH ROW EXECUTE FUNCTION prevent_empty_empresa_id()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.prevent_empty_empresa_id",
+        "level": "ROW",
+        "name": "trg_prevent_empty_empresa_colaboradores",
         "schema": "public",
         "status": "enabled",
         "table": "colaboradores",
@@ -159375,6 +160397,17 @@
         "timing": "BEFORE"
       },
       {
+        "definition": "CREATE TRIGGER trg_audit_delete_contas_bancarias BEFORE DELETE ON contas_bancarias FOR EACH ROW EXECUTE FUNCTION audit_delete_operation()",
+        "events": "DELETE",
+        "function": "public.audit_delete_operation",
+        "level": "ROW",
+        "name": "trg_audit_delete_contas_bancarias",
+        "schema": "public",
+        "status": "enabled",
+        "table": "contas_bancarias",
+        "timing": "BEFORE"
+      },
+      {
         "definition": "CREATE TRIGGER trg_contas_bancarias_encrypt BEFORE INSERT OR UPDATE ON contas_bancarias FOR EACH ROW EXECUTE FUNCTION encrypt_contas_bancarias_fields()",
         "events": "INSERT OR UPDATE",
         "function": "public.encrypt_contas_bancarias_fields",
@@ -159496,6 +160529,17 @@
         "timing": "BEFORE"
       },
       {
+        "definition": "CREATE TRIGGER trg_audit_delete_dependentes BEFORE DELETE ON dependentes FOR EACH ROW EXECUTE FUNCTION audit_delete_operation()",
+        "events": "DELETE",
+        "function": "public.audit_delete_operation",
+        "level": "ROW",
+        "name": "trg_audit_delete_dependentes",
+        "schema": "public",
+        "status": "enabled",
+        "table": "dependentes",
+        "timing": "BEFORE"
+      },
+      {
         "definition": "CREATE TRIGGER audit_desligamentos AFTER INSERT OR DELETE OR UPDATE ON desligamentos FOR EACH ROW EXECUTE FUNCTION log_audit_change()",
         "events": "INSERT OR DELETE OR UPDATE",
         "function": "public.log_audit_change",
@@ -159595,6 +160639,17 @@
         "timing": "BEFORE"
       },
       {
+        "definition": "CREATE TRIGGER trg_audit_delete_despesas BEFORE DELETE ON despesas FOR EACH ROW EXECUTE FUNCTION audit_delete_operation()",
+        "events": "DELETE",
+        "function": "public.audit_delete_operation",
+        "level": "ROW",
+        "name": "trg_audit_delete_despesas",
+        "schema": "public",
+        "status": "enabled",
+        "table": "despesas",
+        "timing": "BEFORE"
+      },
+      {
         "definition": "CREATE TRIGGER trg_despesas_log AFTER INSERT OR UPDATE OF status ON despesas FOR EACH ROW EXECUTE FUNCTION log_despesa_status_change()",
         "events": "INSERT OR UPDATE",
         "function": "public.log_despesa_status_change",
@@ -159604,6 +160659,17 @@
         "status": "enabled",
         "table": "despesas",
         "timing": "AFTER"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_prevent_empty_empresa_despesas BEFORE INSERT OR UPDATE ON despesas FOR EACH ROW EXECUTE FUNCTION prevent_empty_empresa_id()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.prevent_empty_empresa_id",
+        "level": "ROW",
+        "name": "trg_prevent_empty_empresa_despesas",
+        "schema": "public",
+        "status": "enabled",
+        "table": "despesas",
+        "timing": "BEFORE"
       },
       {
         "definition": "CREATE TRIGGER set_timestamp_documento_templates BEFORE UPDATE ON documento_templates FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()",
@@ -159625,6 +160691,17 @@
         "schema": "public",
         "status": "enabled",
         "table": "documento_templates",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_audit_delete_documentos BEFORE DELETE ON documentos FOR EACH ROW EXECUTE FUNCTION audit_delete_operation()",
+        "events": "DELETE",
+        "function": "public.audit_delete_operation",
+        "level": "ROW",
+        "name": "trg_audit_delete_documentos",
+        "schema": "public",
+        "status": "enabled",
+        "table": "documentos",
         "timing": "BEFORE"
       },
       {
@@ -160442,6 +161519,17 @@
         "timing": "BEFORE"
       },
       {
+        "definition": "CREATE TRIGGER trg_audit_delete_ferias BEFORE DELETE ON ferias FOR EACH ROW EXECUTE FUNCTION audit_delete_operation()",
+        "events": "DELETE",
+        "function": "public.audit_delete_operation",
+        "level": "ROW",
+        "name": "trg_audit_delete_ferias",
+        "schema": "public",
+        "status": "enabled",
+        "table": "ferias",
+        "timing": "BEFORE"
+      },
+      {
         "definition": "CREATE TRIGGER trg_enforce_ferias_hash BEFORE INSERT OR UPDATE ON ferias FOR EACH ROW EXECUTE FUNCTION enforce_ferias_hash()",
         "events": "INSERT OR UPDATE",
         "function": "public.enforce_ferias_hash",
@@ -160904,6 +161992,17 @@
         "timing": "BEFORE"
       },
       {
+        "definition": "CREATE TRIGGER trg_audit_delete_folhas_pagamento BEFORE DELETE ON folhas_pagamento FOR EACH ROW EXECUTE FUNCTION audit_delete_operation()",
+        "events": "DELETE",
+        "function": "public.audit_delete_operation",
+        "level": "ROW",
+        "name": "trg_audit_delete_folhas_pagamento",
+        "schema": "public",
+        "status": "enabled",
+        "table": "folhas_pagamento",
+        "timing": "BEFORE"
+      },
+      {
         "definition": "CREATE TRIGGER trg_audit_folha AFTER INSERT OR DELETE OR UPDATE ON folhas_pagamento FOR EACH ROW EXECUTE FUNCTION process_audit_log()",
         "events": "INSERT OR DELETE OR UPDATE",
         "function": "public.process_audit_log",
@@ -160942,6 +162041,17 @@
         "function": "public.impedir_alteracao_folha_fechada",
         "level": "ROW",
         "name": "trg_impedir_alteracao_folha_fechada",
+        "schema": "public",
+        "status": "enabled",
+        "table": "folhas_pagamento",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_prevent_empty_empresa_folhas_pagamento BEFORE INSERT OR UPDATE ON folhas_pagamento FOR EACH ROW EXECUTE FUNCTION prevent_empty_empresa_id()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.prevent_empty_empresa_id",
+        "level": "ROW",
+        "name": "trg_prevent_empty_empresa_folhas_pagamento",
         "schema": "public",
         "status": "enabled",
         "table": "folhas_pagamento",
@@ -161022,6 +162132,17 @@
         "schema": "public",
         "status": "enabled",
         "table": "historico_contratos",
+        "timing": "BEFORE"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_audit_delete_historico_rescisoes BEFORE DELETE ON historico_rescisoes FOR EACH ROW EXECUTE FUNCTION audit_delete_operation()",
+        "events": "DELETE",
+        "function": "public.audit_delete_operation",
+        "level": "ROW",
+        "name": "trg_audit_delete_historico_rescisoes",
+        "schema": "public",
+        "status": "enabled",
+        "table": "historico_rescisoes",
         "timing": "BEFORE"
       },
       {
@@ -162268,6 +163389,17 @@
         "timing": "BEFORE"
       },
       {
+        "definition": "CREATE TRIGGER trg_prevent_empty_empresa_registros_ponto BEFORE INSERT OR UPDATE ON registros_ponto FOR EACH ROW EXECUTE FUNCTION prevent_empty_empresa_id()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.prevent_empty_empresa_id",
+        "level": "ROW",
+        "name": "trg_prevent_empty_empresa_registros_ponto",
+        "schema": "public",
+        "status": "enabled",
+        "table": "registros_ponto",
+        "timing": "BEFORE"
+      },
+      {
         "definition": "CREATE TRIGGER update_registros_ponto_updated_at BEFORE UPDATE ON registros_ponto FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()",
         "events": "UPDATE",
         "function": "public.update_updated_at_column",
@@ -163394,12 +164526,61 @@
       },
       {
         "comment": null,
+        "definition": " SELECT empresa_id,\n    date_trunc('month'::text, data_inicio::timestamp with time zone)::date AS mes,\n    tipo AS tipo_afastamento,\n    count(*) AS total_afastamentos,\n    sum(dias_total) FILTER (WHERE dias_total IS NOT NULL) AS dias_totais,\n    avg(dias_total) FILTER (WHERE dias_total IS NOT NULL) AS media_dias,\n    count(*) FILTER (WHERE status = 'ativo'::status_afastamento) AS em_andamento,\n    count(*) FILTER (WHERE status = 'encerrado'::status_afastamento) AS encerrados\n   FROM afastamentos a\n  WHERE data_inicio >= (now() - '3 years'::interval)\n  GROUP BY empresa_id, (date_trunc('month'::text, data_inicio::timestamp with time zone)::date), tipo;",
+        "depends_on": [
+          "public.afastamentos"
+        ],
+        "kind": "materialized",
+        "name": "mv_afastamento_summary",
+        "options": [
+          "fillfactor=80"
+        ],
+        "owner": "postgres",
+        "populated": true,
+        "schema": "public",
+        "security_invoker": false
+      },
+      {
+        "comment": null,
+        "definition": " SELECT empresa_id,\n    departamento,\n    id AS colaborador_id,\n    nome_completo AS colaborador_nome,\n    data_admissao,\n    GREATEST(0::numeric, EXTRACT(year FROM age(now(), data_admissao::timestamp with time zone)) * 30::numeric - COALESCE(( SELECT sum(f.dias_gozo) AS sum\n           FROM ferias f\n          WHERE f.colaborador_id = c.id AND (f.status::text = ANY (ARRAY['aprovada'::character varying, 'agendada'::character varying, 'programada'::character varying, 'em_gozo'::character varying, 'concluida'::character varying]::text[]))), 0::bigint)::numeric) AS saldo_dias,\n    EXTRACT(year FROM age(now(), data_admissao::timestamp with time zone)) AS anos_trabalhados,\n    ( SELECT count(*) AS count\n           FROM ferias f\n          WHERE f.colaborador_id = c.id AND f.status::text = 'concluida'::text AND f.data_fim >= (now() - '1 year'::interval)) AS gozos_12m\n   FROM colaboradores c\n  WHERE status = ANY (ARRAY['ativo'::status_colaborador, 'ferias'::status_colaborador]);",
+        "depends_on": [
+          "public.colaboradores",
+          "public.ferias"
+        ],
+        "kind": "materialized",
+        "name": "mv_ferias_balance",
+        "options": [
+          "fillfactor=80"
+        ],
+        "owner": "postgres",
+        "populated": true,
+        "schema": "public",
+        "security_invoker": false
+      },
+      {
+        "comment": null,
         "definition": " SELECT empresa_id,\n    to_date(competencia || '-01'::text, 'YYYY-MM-DD'::text) AS competencia_month,\n    sum(total_colaboradores) AS headcount_folha,\n    sum(total_proventos) AS total_bruto,\n    sum(total_descontos) AS total_descontos,\n    sum(total_liquido) AS total_liquido,\n    sum(total_fgts) AS total_fgts,\n    sum(total_inss_patronal) AS total_inss,\n    sum(total_proventos) / NULLIF(sum(total_colaboradores), 0)::numeric AS salario_medio,\n    min(total_proventos / NULLIF(total_colaboradores, 0)::numeric) AS piso_salarial,\n    max(total_proventos / NULLIF(total_colaboradores, 0)::numeric) AS teto_salarial,\n    sum(total_proventos) / NULLIF(sum(total_colaboradores), 0)::numeric AS custo_medio\n   FROM folhas_pagamento f\n  WHERE to_date(competencia || '-01'::text, 'YYYY-MM-DD'::text) >= (now() - '3 years'::interval)\n  GROUP BY empresa_id, (to_date(competencia || '-01'::text, 'YYYY-MM-DD'::text));",
         "depends_on": [
           "public.folhas_pagamento"
         ],
         "kind": "materialized",
         "name": "mv_folha_summary",
+        "options": [
+          "fillfactor=80"
+        ],
+        "owner": "postgres",
+        "populated": true,
+        "schema": "public",
+        "security_invoker": false
+      },
+      {
+        "comment": null,
+        "definition": " SELECT empresa_id,\n    date_trunc('day'::text, created_at)::date AS snapshot_date,\n    status,\n    departamento,\n    count(*) AS headcount,\n    count(*) FILTER (WHERE status = 'ativo'::status_colaborador) AS ativos,\n    count(*) FILTER (WHERE status = 'desligado'::status_colaborador) AS desligados,\n    count(*) FILTER (WHERE status = 'ferias'::status_colaborador) AS em_ferias,\n    count(*) FILTER (WHERE status = 'afastado'::status_colaborador) AS afastados\n   FROM colaboradores\n  WHERE created_at >= (now() - '3 years'::interval)\n  GROUP BY empresa_id, (date_trunc('day'::text, created_at)::date), status, departamento;",
+        "depends_on": [
+          "public.colaboradores"
+        ],
+        "kind": "materialized",
+        "name": "mv_headcount_daily",
         "options": [
           "fillfactor=80"
         ],
@@ -163417,6 +164598,22 @@
         "kind": "materialized",
         "name": "mv_telemetry_dashboard",
         "options": null,
+        "owner": "postgres",
+        "populated": true,
+        "schema": "public",
+        "security_invoker": false
+      },
+      {
+        "comment": null,
+        "definition": " WITH meses AS (\n         SELECT generate_series(date_trunc('month'::text, now() - '3 years'::interval)::date::timestamp with time zone, date_trunc('month'::text, now())::date::timestamp with time zone, '1 mon'::interval)::date AS mes\n        ), mensal AS (\n         SELECT e.empresa_id,\n            m_1.mes,\n            ( SELECT count(*) AS count\n                   FROM colaboradores c\n                  WHERE c.empresa_id = e.empresa_id AND date_trunc('month'::text, c.data_admissao::timestamp with time zone)::date = m_1.mes) AS admissoes,\n            ( SELECT count(*) AS count\n                   FROM colaboradores c\n                  WHERE c.empresa_id = e.empresa_id AND c.data_desligamento IS NOT NULL AND date_trunc('month'::text, c.data_desligamento::timestamp with time zone)::date = m_1.mes) AS desligamentos\n           FROM ( SELECT DISTINCT colaboradores.empresa_id\n                   FROM colaboradores) e\n             CROSS JOIN meses m_1\n        )\n SELECT empresa_id,\n    mes,\n    admissoes,\n    desligamentos,\n    admissoes + desligamentos AS total_movimentacao,\n    ( SELECT count(*) AS count\n           FROM colaboradores c\n          WHERE c.empresa_id = m.empresa_id AND c.data_admissao < m.mes AND (c.data_desligamento IS NULL OR c.data_desligamento >= m.mes)) AS headcount_inicio,\n    ( SELECT count(*) AS count\n           FROM colaboradores c\n          WHERE c.empresa_id = m.empresa_id AND c.data_admissao <= (m.mes + '1 mon'::interval - '1 day'::interval) AND (c.data_desligamento IS NULL OR c.data_desligamento >= (m.mes + '1 mon'::interval - '1 day'::interval))) AS headcount_fim,\n    round((admissoes + desligamentos)::numeric / NULLIF(((( SELECT count(*) AS count\n           FROM colaboradores c\n          WHERE c.empresa_id = m.empresa_id AND c.data_admissao < m.mes AND (c.data_desligamento IS NULL OR c.data_desligamento >= m.mes))) + (( SELECT count(*) AS count\n           FROM colaboradores c\n          WHERE c.empresa_id = m.empresa_id AND c.data_admissao <= (m.mes + '1 mon'::interval - '1 day'::interval) AND (c.data_desligamento IS NULL OR c.data_desligamento >= (m.mes + '1 mon'::interval - '1 day'::interval)))))::numeric / 2::numeric, 0::numeric) * 100::numeric, 2) AS turnover_rate_pct\n   FROM mensal m;",
+        "depends_on": [
+          "public.colaboradores"
+        ],
+        "kind": "materialized",
+        "name": "mv_turnover_rate",
+        "options": [
+          "fillfactor=80"
+        ],
         "owner": "postgres",
         "populated": true,
         "schema": "public",
@@ -163486,6 +164683,22 @@
         ],
         "kind": "view",
         "name": "v_audit_legacy",
+        "options": [
+          "security_invoker=true"
+        ],
+        "owner": "postgres",
+        "populated": null,
+        "schema": "public",
+        "security_invoker": true
+      },
+      {
+        "comment": null,
+        "definition": " SELECT acao,\n    tabela,\n    count(*) AS total_events,\n    count(DISTINCT user_id) AS unique_users\n   FROM audit_log\n  WHERE created_at > (now() - '7 days'::interval)\n  GROUP BY acao, tabela\n  ORDER BY (count(*)) DESC;",
+        "depends_on": [
+          "public.audit_log"
+        ],
+        "kind": "view",
+        "name": "v_audit_summary_7d",
         "options": [
           "security_invoker=true"
         ],
@@ -163580,6 +164793,20 @@
         "populated": null,
         "schema": "public",
         "security_invoker": true
+      },
+      {
+        "comment": null,
+        "definition": " SELECT 'mv_headcount_daily'::text AS view_name,\n    pg_class.relname AS table_name,\n    pg_stat_user_tables.n_live_tup AS row_count,\n    pg_stat_user_tables.last_vacuum,\n    pg_stat_user_tables.last_autovacuum,\n    pg_stat_user_tables.last_analyze,\n    pg_stat_user_tables.last_autoanalyze,\n    GREATEST(COALESCE(pg_stat_user_tables.last_autovacuum, pg_stat_user_tables.last_vacuum), COALESCE(pg_stat_user_tables.last_autoanalyze, pg_stat_user_tables.last_analyze)) AS last_refresh_hint\n   FROM pg_stat_user_tables\n     JOIN pg_class ON pg_class.relname = 'mv_headcount_daily'::name\nUNION ALL\n SELECT 'mv_folha_summary'::text AS view_name,\n    pg_class.relname AS table_name,\n    pg_stat_user_tables.n_live_tup AS row_count,\n    pg_stat_user_tables.last_vacuum,\n    pg_stat_user_tables.last_autovacuum,\n    pg_stat_user_tables.last_analyze,\n    pg_stat_user_tables.last_autoanalyze,\n    GREATEST(COALESCE(pg_stat_user_tables.last_autovacuum, pg_stat_user_tables.last_vacuum), COALESCE(pg_stat_user_tables.last_autoanalyze, pg_stat_user_tables.last_analyze)) AS last_refresh_hint\n   FROM pg_stat_user_tables\n     JOIN pg_class ON pg_class.relname = 'mv_folha_summary'::name\nUNION ALL\n SELECT 'mv_turnover_rate'::text AS view_name,\n    pg_class.relname AS table_name,\n    pg_stat_user_tables.n_live_tup AS row_count,\n    pg_stat_user_tables.last_vacuum,\n    pg_stat_user_tables.last_autovacuum,\n    pg_stat_user_tables.last_analyze,\n    pg_stat_user_tables.last_autoanalyze,\n    GREATEST(COALESCE(pg_stat_user_tables.last_autovacuum, pg_stat_user_tables.last_vacuum), COALESCE(pg_stat_user_tables.last_autoanalyze, pg_stat_user_tables.last_analyze)) AS last_refresh_hint\n   FROM pg_stat_user_tables\n     JOIN pg_class ON pg_class.relname = 'mv_turnover_rate'::name\nUNION ALL\n SELECT 'mv_ferias_balance'::text AS view_name,\n    pg_class.relname AS table_name,\n    pg_stat_user_tables.n_live_tup AS row_count,\n    pg_stat_user_tables.last_vacuum,\n    pg_stat_user_tables.last_autovacuum,\n    pg_stat_user_tables.last_analyze,\n    pg_stat_user_tables.last_autoanalyze,\n    GREATEST(COALESCE(pg_stat_user_tables.last_autovacuum, pg_stat_user_tables.last_vacuum), COALESCE(pg_stat_user_tables.last_autoanalyze, pg_stat_user_tables.last_analyze)) AS last_refresh_hint\n   FROM pg_stat_user_tables\n     JOIN pg_class ON pg_class.relname = 'mv_ferias_balance'::name\nUNION ALL\n SELECT 'mv_afastamento_summary'::text AS view_name,\n    pg_class.relname AS table_name,\n    pg_stat_user_tables.n_live_tup AS row_count,\n    pg_stat_user_tables.last_vacuum,\n    pg_stat_user_tables.last_autovacuum,\n    pg_stat_user_tables.last_analyze,\n    pg_stat_user_tables.last_autoanalyze,\n    GREATEST(COALESCE(pg_stat_user_tables.last_autovacuum, pg_stat_user_tables.last_vacuum), COALESCE(pg_stat_user_tables.last_autoanalyze, pg_stat_user_tables.last_analyze)) AS last_refresh_hint\n   FROM pg_stat_user_tables\n     JOIN pg_class ON pg_class.relname = 'mv_afastamento_summary'::name;",
+        "depends_on": [
+          "pg_catalog.pg_stat_user_tables"
+        ],
+        "kind": "view",
+        "name": "v_dashboard_refresh_status",
+        "options": null,
+        "owner": "postgres",
+        "populated": null,
+        "schema": "public",
+        "security_invoker": false
       },
       {
         "comment": null,
@@ -163716,6 +164943,40 @@
         ],
         "kind": "view",
         "name": "v_pii_access_suspeitos",
+        "options": [
+          "security_invoker=true"
+        ],
+        "owner": "postgres",
+        "populated": null,
+        "schema": "public",
+        "security_invoker": true
+      },
+      {
+        "comment": null,
+        "definition": " SELECT email,\n    count(*) AS failure_count,\n    max(created_at) AS last_attempt\n   FROM login_attempts\n  WHERE success = false AND created_at > (now() - '24:00:00'::interval)\n  GROUP BY email\n HAVING count(*) >= 3\n  ORDER BY (count(*)) DESC\n LIMIT 20;",
+        "depends_on": [
+          "public.login_attempts"
+        ],
+        "kind": "view",
+        "name": "v_security_brute_force_targets",
+        "options": [
+          "security_invoker=true"
+        ],
+        "owner": "postgres",
+        "populated": null,
+        "schema": "public",
+        "security_invoker": true
+      },
+      {
+        "comment": "Admin-facing security metrics: failed logins, rate limits, active sessions, deletions.",
+        "definition": " SELECT 'login_failures_24h'::text AS metric,\n    count(*)::text AS value\n   FROM login_attempts\n  WHERE login_attempts.success = false AND login_attempts.created_at > (now() - '24:00:00'::interval)\nUNION ALL\n SELECT 'rate_limit_hits_24h'::text AS metric,\n    count(*)::text AS value\n   FROM rate_limit_logs\n  WHERE rate_limit_logs.created_at > (now() - '24:00:00'::interval)\nUNION ALL\n SELECT 'active_sessions'::text AS metric,\n    count(DISTINCT audit_log.user_id)::text AS value\n   FROM audit_log\n  WHERE (audit_log.acao = ANY (ARRAY['INSERT'::text, 'UPDATE'::text])) AND audit_log.created_at > (now() - '01:00:00'::interval)\nUNION ALL\n SELECT 'data_deletions_7d'::text AS metric,\n    count(*)::text AS value\n   FROM audit_log\n  WHERE audit_log.acao = 'DELETE'::text AND audit_log.created_at > (now() - '7 days'::interval);",
+        "depends_on": [
+          "public.audit_log",
+          "public.login_attempts",
+          "public.rate_limit_logs"
+        ],
+        "kind": "view",
+        "name": "v_security_dashboard",
         "options": [
           "security_invoker=true"
         ],

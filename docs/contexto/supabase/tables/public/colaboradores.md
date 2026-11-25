@@ -10,7 +10,7 @@
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
-| usada por views | public.excecoes_ponto, public.pontos_abertos, public.v_contratos_tokens_pendentes, public.v_ferias_alertas_criticos, public.v_ferias_folha_reconciliacao, public.vw_alertas_compensacao, public.vw_banco_horas_saldo, public.vw_batidas_dia, public.vw_batidas_resumo, public.vw_cadastro_incompleto, public.vw_colaboradores_completo, public.vw_dashboard_time, public.vw_espelho_ponto_mensal, public.vw_ferias_resumo, public.vw_folha_ponto_mensal, public.vw_kpi_ponto_resumo, public.vw_kpi_turnover, public.vw_matriz_nine_box, public.vw_passivo_trabalhista_consolidado, public.vw_saldo_compensacao_mensal |
+| usada por views | public.excecoes_ponto, public.mv_ferias_balance, public.mv_headcount_daily, public.mv_turnover_rate, public.pontos_abertos, public.v_contratos_tokens_pendentes, public.v_ferias_alertas_criticos, public.v_ferias_folha_reconciliacao, public.vw_alertas_compensacao, public.vw_banco_horas_saldo, public.vw_batidas_dia, public.vw_batidas_resumo, public.vw_cadastro_incompleto, public.vw_colaboradores_completo, public.vw_dashboard_time, public.vw_espelho_ponto_mensal, public.vw_ferias_resumo, public.vw_folha_ponto_mensal, public.vw_kpi_ponto_resumo, public.vw_kpi_turnover, public.vw_matriz_nine_box, public.vw_passivo_trabalhista_consolidado, public.vw_saldo_compensacao_mensal |
 
 
 ## Colunas
@@ -382,7 +382,9 @@
 | tr_auto_start_workflow_on_hiring | AFTER | INSERT | ROW | enabled | public.fn_start_workflow_on_colaborador_create |
 | tr_increment_version_colab | BEFORE | UPDATE | ROW | enabled | public.increment_version |
 | trg_audit_colaboradores | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.process_audit_log |
+| trg_audit_delete_colaboradores | BEFORE | DELETE | ROW | enabled | public.audit_delete_operation |
 | trg_colab_cpf_hash | BEFORE | INSERT OR UPDATE | ROW | enabled | public.fn_colab_cpf_hash |
+| trg_prevent_empty_empresa_colaboradores | BEFORE | INSERT OR UPDATE | ROW | enabled | public.prevent_empty_empresa_id |
 | trigger_lgpd_limpeza_desligamento | AFTER | UPDATE | ROW | enabled | public.agendar_limpeza_pos_desligamento |
 | update_colaboradores_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 

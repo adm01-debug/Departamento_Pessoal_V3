@@ -86,7 +86,9 @@
 
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
+| trg_audit_delete_despesas | BEFORE | DELETE | ROW | enabled | public.audit_delete_operation |
 | trg_despesas_log | AFTER | INSERT OR UPDATE | ROW | enabled | public.log_despesa_status_change |
+| trg_prevent_empty_empresa_despesas | BEFORE | INSERT OR UPDATE | ROW | enabled | public.prevent_empty_empresa_id |
 
 
 ## Grants

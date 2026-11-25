@@ -10,7 +10,7 @@
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
-| usada por views | public.v_login_anomalies_email, public.v_login_anomalies_ip |
+| usada por views | public.v_login_anomalies_email, public.v_login_anomalies_ip, public.v_security_brute_force_targets, public.v_security_dashboard |
 
 
 ## Colunas
@@ -39,6 +39,7 @@
 
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
+| idx_login_attempts_email_created | btree | email, created_at | não | sim |  | `CREATE INDEX idx_login_attempts_email_created ON public.login_attempts USING btree (email, created_at DESC)` |
 | idx_login_attempts_email_hour | btree | email, created_at | não | sim |  | `CREATE INDEX idx_login_attempts_email_hour ON public.login_attempts USING btree (email, created_at DESC)` |
 | idx_login_attempts_email_ip | btree | email, ip_address, created_at | não | sim |  | `CREATE INDEX idx_login_attempts_email_ip ON public.login_attempts USING btree (email, ip_address, created_at)` |
 | idx_login_attempts_ip_hour | btree | ip_address, created_at | não | sim |  | `CREATE INDEX idx_login_attempts_ip_hour ON public.login_attempts USING btree (ip_address, created_at DESC)` |

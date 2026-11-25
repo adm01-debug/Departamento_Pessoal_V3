@@ -133,6 +133,7 @@
 | tr_bloquear_aprovacao_ponto_sem_rh | BEFORE | INSERT OR UPDATE | ROW | enabled | public.bloquear_aprovacao_ponto_sem_rh |
 | tr_gerar_hash_ponto | BEFORE | INSERT | ROW | enabled | public.gerar_hash_ponto |
 | tr_increment_version_ponto | BEFORE | UPDATE | ROW | enabled | public.increment_version |
+| trg_prevent_empty_empresa_registros_ponto | BEFORE | INSERT OR UPDATE | ROW | enabled | public.prevent_empty_empresa_id |
 | update_registros_ponto_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 
 

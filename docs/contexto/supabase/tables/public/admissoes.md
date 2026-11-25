@@ -151,6 +151,7 @@
 | tr_admissoes_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 | tr_create_onboarding_tasks | AFTER | INSERT | ROW | enabled | public.fn_create_default_onboarding_tasks |
 | trg_admissao_auto_workflow | AFTER | INSERT | ROW | enabled | public.fn_workflow_admissao_auto |
+| trg_prevent_empty_empresa_admissoes | BEFORE | INSERT OR UPDATE | ROW | enabled | public.prevent_empty_empresa_id |
 | trg_workflow_admissao | AFTER | INSERT | ROW | enabled | public.fn_processar_workflow_admissao |
 | trigger_auditoria_admissao | BEFORE | UPDATE | ROW | enabled | public.registrar_auditoria_contratual |
 | update_admissoes_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |

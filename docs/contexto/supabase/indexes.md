@@ -67,6 +67,7 @@ Uso e tamanho em `stats.md`.
 | public.audit_log | idx_audit_log_status_change | btree | tabela, registro_id, created_at | não | sim | `(acao = 'STATUS_CHANGE'::text)` |
 | public.audit_log | idx_audit_log_status_change_scan | btree | tabela, created_at | não | sim | `(acao = 'STATUS_CHANGE'::text)` |
 | public.audit_log | idx_audit_log_tabela | btree | tabela | não | sim |  |
+| public.audit_log | idx_audit_log_tabela_acao_created | btree | tabela, acao, created_at | não | sim |  |
 | public.audit_log | idx_audit_log_user_created | btree | user_id, created_at | não | sim |  |
 | public.audit_log | idx_audit_log_user_id | btree | user_id | não | sim |  |
 | public.audit_log_unified | audit_log_unified_pkey | btree | id | sim | sim |  |
@@ -778,6 +779,7 @@ Uso e tamanho em `stats.md`.
 | public.locais_trabalho | locais_trabalho_pkey | btree | id | sim | sim |  |
 | public.log_envio_relatorios | idx_log_envio_relatorios_agendamento_id | btree | agendamento_id | não | sim |  |
 | public.log_envio_relatorios | log_envio_relatorios_pkey | btree | id | sim | sim |  |
+| public.login_attempts | idx_login_attempts_email_created | btree | email, created_at | não | sim |  |
 | public.login_attempts | idx_login_attempts_email_hour | btree | email, created_at | não | sim |  |
 | public.login_attempts | idx_login_attempts_email_ip | btree | email, ip_address, created_at | não | sim |  |
 | public.login_attempts | idx_login_attempts_ip_hour | btree | ip_address, created_at | não | sim |  |
@@ -831,9 +833,14 @@ Uso e tamanho em `stats.md`.
 | public.metricas_processamento | metricas_processamento_pkey | btree | id | sim | sim |  |
 | public.motivos_afastamento | motivos_afastamento_nome_key | btree | nome | sim | sim |  |
 | public.motivos_afastamento | motivos_afastamento_pkey | btree | id | sim | sim |  |
+| public.mv_afastamento_summary | idx_mv_afastamento_summary_pk | btree | empresa_id, mes, tipo_afastamento | sim | sim |  |
+| public.mv_ferias_balance | idx_mv_ferias_balance_dept | btree | empresa_id, departamento, saldo_dias | não | sim |  |
+| public.mv_ferias_balance | idx_mv_ferias_balance_pk | btree | colaborador_id | sim | sim |  |
 | public.mv_folha_summary | idx_mv_folha_summary_pk | btree | empresa_id, competencia_month | sim | sim |  |
+| public.mv_headcount_daily | idx_mv_headcount_daily_pk | btree | empresa_id, snapshot_date, status, departamento | sim | sim |  |
 | public.mv_telemetry_dashboard | idx_mv_telemetry_tenant_key | btree | empresa_id, hour, table_name, operation, severity | sim | sim |  |
 | public.mv_telemetry_dashboard | idx_mv_telemetry_tenant_p95 | btree | empresa_id, hour, p95_ms | não | sim |  |
+| public.mv_turnover_rate | idx_mv_turnover_rate_pk | btree | empresa_id, mes | sim | sim |  |
 | public.nacionalidades | nacionalidades_nome_key | btree | nome | sim | sim |  |
 | public.nacionalidades | nacionalidades_pkey | btree | id | sim | sim |  |
 | public.ninebox_permissoes_homologacao | ninebox_permissoes_homologacao_pkey | btree | user_id | sim | sim |  |

@@ -10,7 +10,7 @@
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
-| usada por views | public.v_ferias_adiant13_elegibilidade, public.v_ferias_alerta_pagamento_d2, public.v_ferias_alertas_criticos, public.v_ferias_folha_reconciliacao, public.vw_ferias_resumo |
+| usada por views | public.mv_ferias_balance, public.v_ferias_adiant13_elegibilidade, public.v_ferias_alerta_pagamento_d2, public.v_ferias_alertas_criticos, public.v_ferias_folha_reconciliacao, public.vw_ferias_resumo |
 
 
 ## Colunas
@@ -175,6 +175,7 @@
 | ferias_bloquear_gozo_sem_pagamento | BEFORE | UPDATE | ROW | enabled | public.trg_ferias_bloquear_gozo_sem_pagamento |
 | ferias_status_transition | BEFORE | UPDATE | ROW | enabled | public.trg_ferias_status_transition |
 | tr_update_ferias_status | BEFORE | INSERT OR UPDATE | ROW | enabled | public.fn_update_ferias_status_by_date |
+| trg_audit_delete_ferias | BEFORE | DELETE | ROW | enabled | public.audit_delete_operation |
 | trg_enforce_ferias_hash | BEFORE | INSERT OR UPDATE | ROW | enabled | public.enforce_ferias_hash |
 | trg_ferias_bloquear_aprovacao_rh_sem_rh | BEFORE | UPDATE | ROW | enabled | public.ferias_bloquear_aprovacao_rh_sem_rh |
 | trg_ferias_gerar_rubricas | AFTER | UPDATE | ROW | enabled | public.trg_ferias_gerar_rubricas |

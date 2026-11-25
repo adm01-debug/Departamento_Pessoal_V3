@@ -14,9 +14,9 @@
 | public.regime_tributario | enum | simples_nacional, lucro_presumido, lucro_real, mei | public.empresas.regime_tributario, public.provisoes_competencia_tributaria.regime_tributario, public.provisoes_mensais.regime_tributario |
 | public.sexo | enum | masculino, feminino | public.colaboradores.sexo |
 | public.status_afastamento | enum | ativo, encerrado, cancelado, prorrogado | public.afastamentos.status |
-| public.status_colaborador | enum | ativo, ferias, afastado, desligado, pendente | public.colaboradores.status, public.vw_cadastro_incompleto.status, public.vw_colaboradores_completo.status |
+| public.status_colaborador | enum | ativo, ferias, afastado, desligado, pendente | public.colaboradores.status, public.mv_headcount_daily.status, public.vw_cadastro_incompleto.status, public.vw_colaboradores_completo.status |
 | public.status_folha | enum | aberta, calculada, fechada, paga | public.folhas_pagamento.status |
-| public.tipo_afastamento | enum | doenca, acidente_trabalho, acidente_trajeto, licenca_maternidade, licenca_paternidade, licenca_casamento, licenca_obito, licenca_nao_remunerada, servico_militar, mandato_sindical, suspensao_disciplinar, outros | public.afastamentos.tipo, public.config_afastamentos.tipo |
+| public.tipo_afastamento | enum | doenca, acidente_trabalho, acidente_trajeto, licenca_maternidade, licenca_paternidade, licenca_casamento, licenca_obito, licenca_nao_remunerada, servico_militar, mandato_sindical, suspensao_disciplinar, outros | public.afastamentos.tipo, public.config_afastamentos.tipo, public.mv_afastamento_summary.tipo_afastamento |
 | public.tipo_conta | enum | corrente, poupanca, salario | public.colaboradores.tipo_conta |
 | public.tipo_contrato | enum | clt, pj, estagiario, temporario, intermitente, aprendiz | public.colaboradores.tipo_contrato |
 | public.tipo_desligamento | enum | sem_justa_causa, justa_causa, pedido_demissao, acordo, fim_contrato, falecimento | public.desligamentos.tipo |

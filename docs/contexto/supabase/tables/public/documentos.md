@@ -86,6 +86,7 @@
 
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
+| trg_audit_delete_documentos | BEFORE | DELETE | ROW | enabled | public.audit_delete_operation |
 | trg_documentos_sync_empresa_id | BEFORE | INSERT OR UPDATE | ROW | enabled | public.documentos_sync_empresa_id |
 | trg_sync_empresa_colaborador | BEFORE | INSERT OR UPDATE | ROW | enabled | public.dp_sync_empresa_from_colaborador |
 | update_documentos_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |

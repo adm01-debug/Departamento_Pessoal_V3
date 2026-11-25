@@ -124,10 +124,12 @@
 | tr_folhas_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_folha_updated_at |
 | tr_increment_version_folhas | BEFORE | UPDATE | ROW | enabled | public.increment_version |
 | tr_updated_at_folhas | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
+| trg_audit_delete_folhas_pagamento | BEFORE | DELETE | ROW | enabled | public.audit_delete_operation |
 | trg_audit_folha | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.process_audit_log |
 | trg_enforce_folha_pagamento_hash | BEFORE | INSERT OR UPDATE | ROW | enabled | public.enforce_folha_pagamento_hash |
 | trg_folha_optimistic_lock | BEFORE | UPDATE | ROW | enabled | public.fn_folha_optimistic_lock |
 | trg_impedir_alteracao_folha_fechada | BEFORE | UPDATE | ROW | enabled | public.impedir_alteracao_folha_fechada |
+| trg_prevent_empty_empresa_folhas_pagamento | BEFORE | INSERT OR UPDATE | ROW | enabled | public.prevent_empty_empresa_id |
 | trg_proibir_delete_folha_fechada | BEFORE | DELETE | ROW | enabled | public.proibir_delete_folha_fechada |
 | trigger_alerta_divergencia | BEFORE | INSERT OR UPDATE | ROW | disabled | public.verificar_divergencias_folha |
 | trigger_gerar_provisao | AFTER | INSERT OR UPDATE | ROW | disabled | public.calcular_provisao_mensal |

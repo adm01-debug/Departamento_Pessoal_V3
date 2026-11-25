@@ -4,6 +4,7 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 
 | severidade | código | objeto | detalhe |
 |---|---|---|---|
+| ALTA | view_security_definer | public.v_dashboard_refresh_status | View em public sem security_invoker: executa como owner e ignora RLS das tabelas base. |
 | ALTA | view_security_definer | public.v_login_anomalies | View em public sem security_invoker: executa como owner e ignora RLS das tabelas base. |
 | ALTA | view_security_definer | public.v_login_anomalies_email | View em public sem security_invoker: executa como owner e ignora RLS das tabelas base. |
 | ALTA | view_security_definer | public.v_login_anomalies_ip | View em public sem security_invoker: executa como owner e ignora RLS das tabelas base. |
@@ -556,3 +557,4 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | INFO | rpc_anon_executable | public.medida_consultar_por_token(p_token text) | SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública). |
 | INFO | rpc_anon_executable | public.medida_registrar_ciencia_publica(p_token text, p_acao text, p_motivo_recusa text, p_ip text, p_user_agent text, p_geo jsonb) | SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública). |
 | INFO | rpc_anon_executable | public.medida_verificar_ciencia_hash(p_hash text) | SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública). |
+| INFO | rpc_anon_executable | public.refresh_dashboard_views() | SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública). |

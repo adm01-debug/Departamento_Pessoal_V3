@@ -201,6 +201,61 @@ SELECT b.colaborador_id,
  HAVING (count(*) % 2::bigint) <> 0 OR count(*) < 4;
 ```
 
+## public.mv_afastamento_summary (materialized)
+
+| campo | valor |
+|---|---|
+| owner | postgres |
+| security_invoker | n/a |
+| opções | fillfactor=80 |
+| depende de | public.afastamentos |
+| populada | sim |
+| comentário |  |
+
+
+```sql
+SELECT empresa_id,
+    date_trunc('month'::text, data_inicio::timestamp with time zone)::date AS mes,
+    tipo AS tipo_afastamento,
+    count(*) AS total_afastamentos,
+    sum(dias_total) FILTER (WHERE dias_total IS NOT NULL) AS dias_totais,
+    avg(dias_total) FILTER (WHERE dias_total IS NOT NULL) AS media_dias,
+    count(*) FILTER (WHERE status = 'ativo'::status_afastamento) AS em_andamento,
+    count(*) FILTER (WHERE status = 'encerrado'::status_afastamento) AS encerrados
+   FROM afastamentos a
+  WHERE data_inicio >= (now() - '3 years'::interval)
+  GROUP BY empresa_id, (date_trunc('month'::text, data_inicio::timestamp with time zone)::date), tipo;
+```
+
+## public.mv_ferias_balance (materialized)
+
+| campo | valor |
+|---|---|
+| owner | postgres |
+| security_invoker | n/a |
+| opções | fillfactor=80 |
+| depende de | public.colaboradores, public.ferias |
+| populada | sim |
+| comentário |  |
+
+
+```sql
+SELECT empresa_id,
+    departamento,
+    id AS colaborador_id,
+    nome_completo AS colaborador_nome,
+    data_admissao,
+    GREATEST(0::numeric, EXTRACT(year FROM age(now(), data_admissao::timestamp with time zone)) * 30::numeric - COALESCE(( SELECT sum(f.dias_gozo) AS sum
+           FROM ferias f
+          WHERE f.colaborador_id = c.id AND (f.status::text = ANY (ARRAY['aprovada'::character varying, 'agendada'::character varying, 'programada'::character varying, 'em_gozo'::character varying, 'concluida'::character varying]::text[]))), 0::bigint)::numeric) AS saldo_dias,
+    EXTRACT(year FROM age(now(), data_admissao::timestamp with time zone)) AS anos_trabalhados,
+    ( SELECT count(*) AS count
+           FROM ferias f
+          WHERE f.colaborador_id = c.id AND f.status::text = 'concluida'::text AND f.data_fim >= (now() - '1 year'::interval)) AS gozos_12m
+   FROM colaboradores c
+  WHERE status = ANY (ARRAY['ativo'::status_colaborador, 'ferias'::status_colaborador]);
+```
+
 ## public.mv_folha_summary (materialized)
 
 | campo | valor |
@@ -229,6 +284,33 @@ SELECT empresa_id,
    FROM folhas_pagamento f
   WHERE to_date(competencia || '-01'::text, 'YYYY-MM-DD'::text) >= (now() - '3 years'::interval)
   GROUP BY empresa_id, (to_date(competencia || '-01'::text, 'YYYY-MM-DD'::text));
+```
+
+## public.mv_headcount_daily (materialized)
+
+| campo | valor |
+|---|---|
+| owner | postgres |
+| security_invoker | n/a |
+| opções | fillfactor=80 |
+| depende de | public.colaboradores |
+| populada | sim |
+| comentário |  |
+
+
+```sql
+SELECT empresa_id,
+    date_trunc('day'::text, created_at)::date AS snapshot_date,
+    status,
+    departamento,
+    count(*) AS headcount,
+    count(*) FILTER (WHERE status = 'ativo'::status_colaborador) AS ativos,
+    count(*) FILTER (WHERE status = 'desligado'::status_colaborador) AS desligados,
+    count(*) FILTER (WHERE status = 'ferias'::status_colaborador) AS em_ferias,
+    count(*) FILTER (WHERE status = 'afastado'::status_colaborador) AS afastados
+   FROM colaboradores
+  WHERE created_at >= (now() - '3 years'::interval)
+  GROUP BY empresa_id, (date_trunc('day'::text, created_at)::date), status, departamento;
 ```
 
 ## public.mv_telemetry_dashboard (materialized)
@@ -262,6 +344,53 @@ SELECT empresa_id,
    FROM query_telemetry
   WHERE empresa_id IS NOT NULL AND created_at >= (now() - '90 days'::interval)
   GROUP BY empresa_id, (date_trunc('hour'::text, created_at)), table_name, operation, severity;
+```
+
+## public.mv_turnover_rate (materialized)
+
+| campo | valor |
+|---|---|
+| owner | postgres |
+| security_invoker | n/a |
+| opções | fillfactor=80 |
+| depende de | public.colaboradores |
+| populada | sim |
+| comentário |  |
+
+
+```sql
+WITH meses AS (
+         SELECT generate_series(date_trunc('month'::text, now() - '3 years'::interval)::date::timestamp with time zone, date_trunc('month'::text, now())::date::timestamp with time zone, '1 mon'::interval)::date AS mes
+        ), mensal AS (
+         SELECT e.empresa_id,
+            m_1.mes,
+            ( SELECT count(*) AS count
+                   FROM colaboradores c
+                  WHERE c.empresa_id = e.empresa_id AND date_trunc('month'::text, c.data_admissao::timestamp with time zone)::date = m_1.mes) AS admissoes,
+            ( SELECT count(*) AS count
+                   FROM colaboradores c
+                  WHERE c.empresa_id = e.empresa_id AND c.data_desligamento IS NOT NULL AND date_trunc('month'::text, c.data_desligamento::timestamp with time zone)::date = m_1.mes) AS desligamentos
+           FROM ( SELECT DISTINCT colaboradores.empresa_id
+                   FROM colaboradores) e
+             CROSS JOIN meses m_1
+        )
+ SELECT empresa_id,
+    mes,
+    admissoes,
+    desligamentos,
+    admissoes + desligamentos AS total_movimentacao,
+    ( SELECT count(*) AS count
+           FROM colaboradores c
+          WHERE c.empresa_id = m.empresa_id AND c.data_admissao < m.mes AND (c.data_desligamento IS NULL OR c.data_desligamento >= m.mes)) AS headcount_inicio,
+    ( SELECT count(*) AS count
+           FROM colaboradores c
+          WHERE c.empresa_id = m.empresa_id AND c.data_admissao <= (m.mes + '1 mon'::interval - '1 day'::interval) AND (c.data_desligamento IS NULL OR c.data_desligamento >= (m.mes + '1 mon'::interval - '1 day'::interval))) AS headcount_fim,
+    round((admissoes + desligamentos)::numeric / NULLIF(((( SELECT count(*) AS count
+           FROM colaboradores c
+          WHERE c.empresa_id = m.empresa_id AND c.data_admissao < m.mes AND (c.data_desligamento IS NULL OR c.data_desligamento >= m.mes))) + (( SELECT count(*) AS count
+           FROM colaboradores c
+          WHERE c.empresa_id = m.empresa_id AND c.data_admissao <= (m.mes + '1 mon'::interval - '1 day'::interval) AND (c.data_desligamento IS NULL OR c.data_desligamento >= (m.mes + '1 mon'::interval - '1 day'::interval)))))::numeric / 2::numeric, 0::numeric) * 100::numeric, 2) AS turnover_rate_pct
+   FROM mensal m;
 ```
 
 ## public.pontos_abertos (view)
@@ -437,6 +566,29 @@ SELECT id,
    FROM audit_log_unified;
 ```
 
+## public.v_audit_summary_7d (view)
+
+| campo | valor |
+|---|---|
+| owner | postgres |
+| security_invoker | sim |
+| opções | security_invoker=true |
+| depende de | public.audit_log |
+| populada | n/a |
+| comentário |  |
+
+
+```sql
+SELECT acao,
+    tabela,
+    count(*) AS total_events,
+    count(DISTINCT user_id) AS unique_users
+   FROM audit_log
+  WHERE created_at > (now() - '7 days'::interval)
+  GROUP BY acao, tabela
+  ORDER BY (count(*)) DESC;
+```
+
 ## public.v_audit_trail (view)
 
 | campo | valor |
@@ -589,6 +741,75 @@ SELECT cg.id,
    FROM contratos_gerados cg
      JOIN contrato_templates ct ON ct.id = cg.template_id
   WHERE cg.data_fim IS NOT NULL AND (cg.status = ANY (ARRAY['gerado'::text, 'enviado'::text, 'assinado'::text])) AND (ct.tipo_contrato = ANY (ARRAY['clt_experiencia'::text, 'clt_determinado'::text, 'estagio'::text, 'temporario'::text]));
+```
+
+## public.v_dashboard_refresh_status (view)
+
+| campo | valor |
+|---|---|
+| owner | postgres |
+| security_invoker | não |
+| opções |  |
+| depende de | pg_catalog.pg_stat_user_tables |
+| populada | n/a |
+| comentário |  |
+
+
+```sql
+SELECT 'mv_headcount_daily'::text AS view_name,
+    pg_class.relname AS table_name,
+    pg_stat_user_tables.n_live_tup AS row_count,
+    pg_stat_user_tables.last_vacuum,
+    pg_stat_user_tables.last_autovacuum,
+    pg_stat_user_tables.last_analyze,
+    pg_stat_user_tables.last_autoanalyze,
+    GREATEST(COALESCE(pg_stat_user_tables.last_autovacuum, pg_stat_user_tables.last_vacuum), COALESCE(pg_stat_user_tables.last_autoanalyze, pg_stat_user_tables.last_analyze)) AS last_refresh_hint
+   FROM pg_stat_user_tables
+     JOIN pg_class ON pg_class.relname = 'mv_headcount_daily'::name
+UNION ALL
+ SELECT 'mv_folha_summary'::text AS view_name,
+    pg_class.relname AS table_name,
+    pg_stat_user_tables.n_live_tup AS row_count,
+    pg_stat_user_tables.last_vacuum,
+    pg_stat_user_tables.last_autovacuum,
+    pg_stat_user_tables.last_analyze,
+    pg_stat_user_tables.last_autoanalyze,
+    GREATEST(COALESCE(pg_stat_user_tables.last_autovacuum, pg_stat_user_tables.last_vacuum), COALESCE(pg_stat_user_tables.last_autoanalyze, pg_stat_user_tables.last_analyze)) AS last_refresh_hint
+   FROM pg_stat_user_tables
+     JOIN pg_class ON pg_class.relname = 'mv_folha_summary'::name
+UNION ALL
+ SELECT 'mv_turnover_rate'::text AS view_name,
+    pg_class.relname AS table_name,
+    pg_stat_user_tables.n_live_tup AS row_count,
+    pg_stat_user_tables.last_vacuum,
+    pg_stat_user_tables.last_autovacuum,
+    pg_stat_user_tables.last_analyze,
+    pg_stat_user_tables.last_autoanalyze,
+    GREATEST(COALESCE(pg_stat_user_tables.last_autovacuum, pg_stat_user_tables.last_vacuum), COALESCE(pg_stat_user_tables.last_autoanalyze, pg_stat_user_tables.last_analyze)) AS last_refresh_hint
+   FROM pg_stat_user_tables
+     JOIN pg_class ON pg_class.relname = 'mv_turnover_rate'::name
+UNION ALL
+ SELECT 'mv_ferias_balance'::text AS view_name,
+    pg_class.relname AS table_name,
+    pg_stat_user_tables.n_live_tup AS row_count,
+    pg_stat_user_tables.last_vacuum,
+    pg_stat_user_tables.last_autovacuum,
+    pg_stat_user_tables.last_analyze,
+    pg_stat_user_tables.last_autoanalyze,
+    GREATEST(COALESCE(pg_stat_user_tables.last_autovacuum, pg_stat_user_tables.last_vacuum), COALESCE(pg_stat_user_tables.last_autoanalyze, pg_stat_user_tables.last_analyze)) AS last_refresh_hint
+   FROM pg_stat_user_tables
+     JOIN pg_class ON pg_class.relname = 'mv_ferias_balance'::name
+UNION ALL
+ SELECT 'mv_afastamento_summary'::text AS view_name,
+    pg_class.relname AS table_name,
+    pg_stat_user_tables.n_live_tup AS row_count,
+    pg_stat_user_tables.last_vacuum,
+    pg_stat_user_tables.last_autovacuum,
+    pg_stat_user_tables.last_analyze,
+    pg_stat_user_tables.last_autoanalyze,
+    GREATEST(COALESCE(pg_stat_user_tables.last_autovacuum, pg_stat_user_tables.last_vacuum), COALESCE(pg_stat_user_tables.last_autoanalyze, pg_stat_user_tables.last_analyze)) AS last_refresh_hint
+   FROM pg_stat_user_tables
+     JOIN pg_class ON pg_class.relname = 'mv_afastamento_summary'::name;
 ```
 
 ## public.v_ferias_adiant13_elegibilidade (view)
@@ -909,6 +1130,64 @@ SELECT user_id,
   WHERE created_at > (now() - '24:00:00'::interval)
   GROUP BY user_id, empresa_id, tabela, acao, (date_trunc('hour'::text, created_at))
  HAVING sum(registro_count) > 200 OR (acao = ANY (ARRAY['export'::text, 'download'::text])) AND sum(registro_count) > 50;
+```
+
+## public.v_security_brute_force_targets (view)
+
+| campo | valor |
+|---|---|
+| owner | postgres |
+| security_invoker | sim |
+| opções | security_invoker=true |
+| depende de | public.login_attempts |
+| populada | n/a |
+| comentário |  |
+
+
+```sql
+SELECT email,
+    count(*) AS failure_count,
+    max(created_at) AS last_attempt
+   FROM login_attempts
+  WHERE success = false AND created_at > (now() - '24:00:00'::interval)
+  GROUP BY email
+ HAVING count(*) >= 3
+  ORDER BY (count(*)) DESC
+ LIMIT 20;
+```
+
+## public.v_security_dashboard (view)
+
+| campo | valor |
+|---|---|
+| owner | postgres |
+| security_invoker | sim |
+| opções | security_invoker=true |
+| depende de | public.audit_log, public.login_attempts, public.rate_limit_logs |
+| populada | n/a |
+| comentário | Admin-facing security metrics: failed logins, rate limits, active sessions, deletions. |
+
+
+```sql
+SELECT 'login_failures_24h'::text AS metric,
+    count(*)::text AS value
+   FROM login_attempts
+  WHERE login_attempts.success = false AND login_attempts.created_at > (now() - '24:00:00'::interval)
+UNION ALL
+ SELECT 'rate_limit_hits_24h'::text AS metric,
+    count(*)::text AS value
+   FROM rate_limit_logs
+  WHERE rate_limit_logs.created_at > (now() - '24:00:00'::interval)
+UNION ALL
+ SELECT 'active_sessions'::text AS metric,
+    count(DISTINCT audit_log.user_id)::text AS value
+   FROM audit_log
+  WHERE (audit_log.acao = ANY (ARRAY['INSERT'::text, 'UPDATE'::text])) AND audit_log.created_at > (now() - '01:00:00'::interval)
+UNION ALL
+ SELECT 'data_deletions_7d'::text AS metric,
+    count(*)::text AS value
+   FROM audit_log
+  WHERE audit_log.acao = 'DELETE'::text AND audit_log.created_at > (now() - '7 days'::interval);
 ```
 
 ## public.v_slow_queries_top50 (view)

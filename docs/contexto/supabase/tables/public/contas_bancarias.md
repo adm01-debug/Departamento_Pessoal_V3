@@ -75,6 +75,7 @@
 
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
+| trg_audit_delete_contas_bancarias | BEFORE | DELETE | ROW | enabled | public.audit_delete_operation |
 | trg_contas_bancarias_encrypt | BEFORE | INSERT OR UPDATE | ROW | enabled | public.encrypt_contas_bancarias_fields |
 | update_contas_bancarias_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 

@@ -166,6 +166,7 @@
 | trg_enforce_batida_ponto_hash | BEFORE | INSERT | ROW | enabled | public.enforce_batida_ponto_hash |
 | trg_impedir_alteracao_batida_periodo_fechado_upd | BEFORE | UPDATE | ROW | enabled | public.impedir_alteracao_batida_em_periodo_fechado |
 | trg_impedir_delete_batida_periodo_fechado | BEFORE | DELETE | ROW | enabled | public.impedir_alteracao_batida_em_periodo_fechado |
+| trg_prevent_empty_empresa_batidas_ponto | BEFORE | INSERT OR UPDATE | ROW | enabled | public.prevent_empty_empresa_id |
 | trigger_imutabilidade_ponto | BEFORE | DELETE | ROW | enabled | public.proibir_delete_ponto |
 
 

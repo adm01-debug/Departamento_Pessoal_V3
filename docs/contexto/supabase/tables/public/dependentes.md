@@ -92,7 +92,9 @@
 
 ## Triggers
 
-_nenhum_
+| nome | timing | eventos | nível | status | função |
+|---|---|---|---|---|---|
+| trg_audit_delete_dependentes | BEFORE | DELETE | ROW | enabled | public.audit_delete_operation |
 
 
 ## Grants

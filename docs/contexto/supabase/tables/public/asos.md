@@ -104,6 +104,7 @@
 | tr_enforce_aso_hash | BEFORE | INSERT OR UPDATE | ROW | enabled | public.enforce_aso_hash |
 | tr_impedir_alteracao_aso_emitido | BEFORE | UPDATE | ROW | enabled | public.impedir_alteracao_aso_emitido |
 | tr_proibir_delete_aso_emitido | BEFORE | DELETE | ROW | enabled | public.proibir_delete_aso_emitido |
+| trg_audit_delete_asos | BEFORE | DELETE | ROW | enabled | public.audit_delete_operation |
 | update_asos_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 
 

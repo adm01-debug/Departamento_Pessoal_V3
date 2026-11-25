@@ -105,6 +105,7 @@
 |---|---|---|---|---|---|
 | audit_beneficios | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.log_audit_change |
 | tr_updated_at_beneficios | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
+| trg_audit_delete_beneficios | BEFORE | DELETE | ROW | enabled | public.audit_delete_operation |
 | trigger_protecao_beneficio_lei | BEFORE | UPDATE | ROW | enabled | public.validar_suspensao_beneficio_obrigatorio |
 | update_beneficios_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 

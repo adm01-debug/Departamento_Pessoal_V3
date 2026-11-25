@@ -1469,6 +1469,8 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.v_audit_legacy | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.v_audit_legacy | dp_mcp_role | SELECT |
 | public.v_audit_legacy | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.v_audit_summary_7d | dp_mcp_role | SELECT |
+| public.v_audit_summary_7d | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.v_audit_trail | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, TRIGGER, TRUNCATE, UPDATE |
 | public.v_audit_trail | dp_mcp_role | SELECT |
 | public.v_audit_trail | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
@@ -1484,6 +1486,8 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.v_contratos_vencendo | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.v_contratos_vencendo | dp_mcp_role | SELECT |
 | public.v_contratos_vencendo | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.v_dashboard_refresh_status | dp_mcp_role | SELECT |
+| public.v_dashboard_refresh_status | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.v_ferias_adiant13_elegibilidade | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.v_ferias_adiant13_elegibilidade | dp_mcp_role | SELECT |
 | public.v_ferias_adiant13_elegibilidade | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
@@ -1508,6 +1512,10 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.v_pii_access_suspeitos | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.v_pii_access_suspeitos | dp_mcp_role | SELECT |
 | public.v_pii_access_suspeitos | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.v_security_brute_force_targets | dp_mcp_role | SELECT |
+| public.v_security_brute_force_targets | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.v_security_dashboard | dp_mcp_role | SELECT |
+| public.v_security_dashboard | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.v_slow_queries_top50 | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.v_slow_queries_top50 | dp_mcp_role | SELECT |
 | public.v_slow_queries_top50 | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
