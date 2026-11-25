@@ -109,7 +109,7 @@ describe('RecrutamentoPage — formulário de vaga completo', () => {
 
   it('bloqueia a publicação quando a faixa máxima é menor que a mínima', async () => {
     renderizar();
-    const { user, dialog } = await abrirFormulario();
+    const { dialog } = await abrirFormulario();
 
     preencher(within(dialog).getByPlaceholderText('Ex: Desenvolvedor Senior'), 'Vaga invertida');
     preencher(within(dialog).getByPlaceholderText('4500'), '6000');

@@ -33,13 +33,14 @@ vi.mock('framer-motion', async () => {
     'onAnimationComplete',
     'transformOrigin',
   ]);
-  const criar = (Componente: any) =>
-    React.forwardRef(({ children, ...rest }: any, _ref: any) => {
+  type PropsMotion = Record<string, unknown> & { children?: React.ReactNode };
+  const criar = (tag: string) =>
+    React.forwardRef<HTMLElement, PropsMotion>(({ children, ...rest }) => {
       const props: Record<string, unknown> = {};
       for (const chave of Object.keys(rest)) {
         if (!PROPS_MOTION.has(chave)) props[chave] = rest[chave];
       }
-      return React.createElement(Componente, props, children);
+      return React.createElement(tag, props as React.HTMLAttributes<HTMLElement>, children as React.ReactNode);
     });
   return {
     motion: {
@@ -51,7 +52,8 @@ vi.mock('framer-motion', async () => {
       li: criar('li'),
       ol: criar('ol'),
     },
-    AnimatePresence: ({ children }: any) => React.createElement(React.Fragment, null, children),
+    AnimatePresence: ({ children }: { children?: React.ReactNode }) =>
+      React.createElement(React.Fragment, null, children),
     useReducedMotion: () => false,
   };
 });
