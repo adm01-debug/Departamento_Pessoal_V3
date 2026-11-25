@@ -44,7 +44,7 @@ import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PontoAuditTimeline } from '@/components/ponto/PontoAuditTimeline';
 import { GestaoPontoAnalytics } from '@/components/ponto/GestaoPontoAnalytics';
-import { PontoGeoAnalytics } from '@/components/ponto/PontoGeoAnalytics';
+import { PontoGeofencingPainel } from '@/components/ponto/PontoGeofencingPainel';
 import { EspelhosPapelPanel } from '@/components/ponto/EspelhosPapelPanel';
 import { formatDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
 import { loggerService } from '@/services/loggerService';
@@ -648,7 +648,7 @@ export default function PontoPage() {
               </TabsContent>
 
               <TabsContent value="geofencing">
-                <PontoGeoAnalytics batidas={batidasHoje} />
+                <PontoGeofencingPainel empresaId={empresaAtual?.id} />
               </TabsContent>
 
               <TabsContent value="ajustes" className="space-y-6">
