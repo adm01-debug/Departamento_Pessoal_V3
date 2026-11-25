@@ -28,6 +28,12 @@ import {
 import { pontoService, batidasPontoService } from '@/services';
 import { useAuth } from '@/contexts';
 import { useEmpresas, usePontoOffline } from '@/hooks';
+import {
+  periodoDoMesCorrente,
+  useColaboradoresEquipePonto,
+  useRegistrosPontoEmpresa,
+  useSolicitacoesAjustePontoPendentes,
+} from '@/hooks/usePontoDashboard';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { motion } from 'framer-motion';
@@ -44,16 +50,16 @@ import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PontoAuditTimeline } from '@/components/ponto/PontoAuditTimeline';
 import { GestaoPontoAnalytics } from '@/components/ponto/GestaoPontoAnalytics';
-import { PontoGeoAnalytics } from '@/components/ponto/PontoGeoAnalytics';
+import { PontoGeofencingPainel } from '@/components/ponto/PontoGeofencingPainel';
+import { PontoIndicadoresKpi } from '@/components/ponto/PontoIndicadoresKpi';
+import { PontoEquipeStatusCard } from '@/components/ponto/PontoEquipeStatusCard';
+import { PontoBancoHorasCard, type BancoHorasResumo } from '@/components/ponto/PontoBancoHorasCard';
+import { PontoPendenciasCard } from '@/components/ponto/PontoPendenciasCard';
+import { PontoFechamentoCard } from '@/components/ponto/PontoFechamentoCard';
 import { EspelhosPapelPanel } from '@/components/ponto/EspelhosPapelPanel';
 import { formatDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
+import { resumirEquipeDoDia, temSaidaPendente } from '@/utils/pontoEquipe';
 import { loggerService } from '@/services/loggerService';
-
-interface BancoHorasResumo {
-  saldo: string;
-  saldoMinutos: number;
-  tipo: 'credito' | 'debito';
-}
 
 export default function PontoPage() {
   const [loading, setLoading] = useState<string | null>(null);
@@ -66,6 +72,8 @@ export default function PontoPage() {
 
   // configuracoes_ponto.exige_reconhecimento_facial — alimenta
   // PontoClockRegister (o switch da aba Configurações agora tem efeito).
+  const [abaPrincipal, setAbaPrincipal] = useState<'meu-ponto' | 'gestao'>('meu-ponto');
+
   const { data: pontoCfg } = useQuery({
     queryKey: ['configuracoes-ponto-clock', empresaAtual?.id],
     queryFn: async () => {
@@ -222,7 +230,7 @@ export default function PontoPage() {
         .select('horas, tipo')
         .eq('colaborador_id', colab.id);
 
-      if (!bancoData) return { saldo: '00:00', saldoMinutos: 0, tipo: 'credito' };
+      if (!bancoData) return { saldo: '00:00', saldoMinutos: 0, tipo: 'credito' } as BancoHorasResumo;
 
       let totalMinutos = 0;
       bancoData.forEach((b) => {
@@ -242,6 +250,25 @@ export default function PontoPage() {
     },
     enabled: !!user?.id,
   });
+
+  // Resumos do dashboard (Situação da Equipe, Pendências e Fechamento): fonte
+  // única por empresa em `usePontoDashboard`, então os três cards mostram
+  // números coerentes entre si e não abrem consulta própria.
+  const periodoCompetencia = useMemo(() => periodoDoMesCorrente(), []);
+  const { data: colaboradoresEquipe = [] } = useColaboradoresEquipePonto();
+  const { data: registrosCompetencia = [] } = useRegistrosPontoEmpresa(periodoCompetencia);
+  const { data: ajustesPendentes = 0 } = useSolicitacoesAjustePontoPendentes();
+
+  const resumoEquipe = useMemo(
+    () => resumirEquipeDoDia(batidasHoje, colaboradoresEquipe.length),
+    [batidasHoje, colaboradoresEquipe.length]
+  );
+
+  const fechamento = useMemo(() => {
+    const processados = new Set(registrosCompetencia.map((registro) => registro.colaborador_id)).size;
+    const pendentes = registrosCompetencia.filter(temSaidaPendente).length;
+    return { processados, pendentes };
+  }, [registrosCompetencia]);
 
   const captureGeo = (): Promise<{ lat: number; lng: number; accuracy: number } | null> =>
     new Promise((resolve) => {
@@ -478,7 +505,11 @@ export default function PontoPage() {
           </div>
         </motion.div>
 
-        <Tabs defaultValue="meu-ponto" className="space-y-6">
+        <Tabs
+          value={abaPrincipal}
+          onValueChange={(valor) => setAbaPrincipal(valor as 'meu-ponto' | 'gestao')}
+          className="space-y-6"
+        >
           <TabsList className="bg-muted/50 p-1 rounded-xl">
             <TabsTrigger
               value="meu-ponto"
@@ -503,6 +534,9 @@ export default function PontoPage() {
           </TabsList>
 
           <TabsContent value="meu-ponto" className="space-y-6">
+            {/* Indicadores pessoais dos últimos 7 dias (pontualidade, média
+                diária, saldo da semana, dias com registro). */}
+            <PontoIndicadoresKpi registrosSemana={registrosSemana} />
             <div className="grid gap-6 lg:grid-cols-3">
               <PontoClockRegister
                 time={time}
@@ -517,58 +551,36 @@ export default function PontoPage() {
               <div className="flex flex-col gap-6">
                 <PontoWeekSummary registrosSemana={registrosSemana} />
                 {bancoResumo && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <Card className="border border-border/30 shadow-xs rounded-2xl overflow-hidden bg-gradient-to-br from-card to-accent/5">
-                      <div
-                        className={cn('h-[2px]', bancoResumo.tipo === 'credito' ? 'bg-success' : 'bg-destructive')}
-                      />
-                      <CardContent className="p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={cn(
-                              'p-2 rounded-xl',
-                              bancoResumo.tipo === 'credito'
-                                ? 'bg-success/10 text-success'
-                                : 'bg-destructive/10 text-destructive'
-                            )}
-                          >
-                            <Clock className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest">
-                              Saldo Banco de Horas
-                            </p>
-                            <p
-                              className={cn(
-                                'text-xl font-display font-bold',
-                                bancoResumo.tipo === 'credito' ? 'text-success' : 'text-destructive'
-                              )}
-                            >
-                              {bancoResumo.tipo === 'credito' ? '+' : '-'}
-                              {bancoResumo.saldo}
-                            </p>
-                          </div>
-                        </div>
-                        <Badge
-                          variant="outline"
-                          className={cn(
-                            'font-body text-[10px]',
-                            bancoResumo.tipo === 'credito'
-                              ? 'text-success border-success/30'
-                              : 'text-destructive border-destructive/30'
-                          )}
-                        >
-                          {bancoResumo.tipo === 'credito' ? 'Credor' : 'Devedor'}
-                        </Badge>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
+                  <PontoBancoHorasCard
+                    bancoResumo={bancoResumo}
+                    registrosSemana={registrosSemana}
+                    onVerDetalhes={() => setAbaPrincipal('gestao')}
+                  />
                 )}
               </div>
+            </div>
+            {/* Linha 2 — Situação da Equipe · Pendências de Ponto · Fechamento
+                da competência. Mesmo recorte de dados do mês corrente. */}
+            <div className="grid gap-6 lg:grid-cols-3">
+              <PontoEquipeStatusCard
+                batidasHoje={batidasHoje}
+                colaboradores={colaboradoresEquipe}
+                onVerEquipe={() => setAbaPrincipal('gestao')}
+              />
+              <PontoPendenciasCard
+                jornadasAbertas={resumoEquipe.emJornada}
+                ajustesPendentes={ajustesPendentes}
+                colaboradoresSemRegistro={resumoEquipe.semBatida}
+                onRevisar={() => setAbaPrincipal('gestao')}
+              />
+              <PontoFechamentoCard
+                inicio={periodoCompetencia.inicio}
+                fim={periodoCompetencia.fim}
+                processados={fechamento.processados}
+                colaboradores={colaboradoresEquipe.length}
+                pendentes={fechamento.pendentes}
+                onAcompanhar={() => setAbaPrincipal('gestao')}
+              />
             </div>
             <div className="mt-6">
               <PontoStreakCard />
@@ -648,7 +660,7 @@ export default function PontoPage() {
               </TabsContent>
 
               <TabsContent value="geofencing">
-                <PontoGeoAnalytics batidas={batidasHoje} />
+                <PontoGeofencingPainel empresaId={empresaAtual?.id} />
               </TabsContent>
 
               <TabsContent value="ajustes" className="space-y-6">

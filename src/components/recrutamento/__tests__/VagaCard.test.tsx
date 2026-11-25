@@ -218,4 +218,36 @@ describe('VagaCard — identidade, funil e ações reais', () => {
     expect(document.querySelector('[data-vaga-funil]')).toHaveTextContent(/0\s*candidatos/);
     expect(screen.getByText('Nenhum candidato ainda')).toBeInTheDocument();
   });
+
+  it('mostra faixa salarial e tipo de contrato quando a vaga os tem', () => {
+    render(
+      <VagaCard
+        resumo={resumo({ faixa_salarial_min: 4500, faixa_salarial_max: 6000, tipo_contrato: 'clt' })}
+        indice={0}
+        onGerenciar={vi.fn()}
+        onEditar={vi.fn()}
+        onVerAnalises={vi.fn()}
+        onExcluir={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText(/R\$\s*4\.500\s*–\s*R\$\s*6\.000/)).toBeInTheDocument();
+    expect(screen.getByText('CLT')).toBeInTheDocument();
+  });
+
+  it('não renderiza a linha de faixa/contrato quando a vaga não os informa', () => {
+    render(
+      <VagaCard
+        resumo={resumo({ faixa_salarial_min: null, faixa_salarial_max: null, tipo_contrato: null })}
+        indice={0}
+        onGerenciar={vi.fn()}
+        onEditar={vi.fn()}
+        onVerAnalises={vi.fn()}
+        onExcluir={vi.fn()}
+      />
+    );
+
+    expect(screen.queryByText(/R\$/)).toBeNull();
+    expect(screen.queryByText(/^CLT$/)).toBeNull();
+  });
 });

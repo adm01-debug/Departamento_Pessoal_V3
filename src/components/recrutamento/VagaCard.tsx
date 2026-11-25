@@ -1,6 +1,17 @@
 import { useState, type CSSProperties } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, BarChart3, Building2, Clock, MapPin, MoreVertical, Pencil, Trash2 } from 'lucide-react';
+import {
+  ArrowRight,
+  BarChart3,
+  Banknote,
+  Building2,
+  Clock,
+  FileText,
+  MapPin,
+  MoreVertical,
+  Pencil,
+  Trash2,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -14,7 +25,7 @@ import type { VagaRow } from '@/types/recrutamento';
 import { ETAPAS, type EtapaPipelineId } from './pipelineEtapas';
 import { temaDaCompetencia } from './competenciasComum';
 import { gradienteDaVaga } from './vagasGradients';
-import type { VagaComResumo } from './vagasComum';
+import { formatarFaixaSalarial, rotuloTipoContrato, type VagaComResumo } from './vagasComum';
 
 /**
  * ============================================================================
@@ -89,6 +100,8 @@ export function VagaCard({ resumo, indice, onGerenciar, onEditar, onVerAnalises,
   const visiveis = requisitos.slice(0, 3);
   const restantes = requisitos.slice(3);
   const titulo = vaga.titulo?.trim() || 'Vaga sem título';
+  const faixaSalarial = formatarFaixaSalarial(vaga.faixa_salarial_min, vaga.faixa_salarial_max);
+  const tipoContrato = rotuloTipoContrato(vaga.tipo_contrato);
   const gradiente = gradienteDaVaga(identidade.token);
   const estiloIdentidade = {
     '--vaga-accent': identidade.accent,
@@ -211,6 +224,28 @@ export function VagaCard({ resumo, indice, onGerenciar, onEditar, onVerAnalises,
           <span className="truncate">{vaga.modalidade?.trim() || 'Modalidade não informada'}</span>
         </span>
       </div>
+
+      {/* Faixa salarial e tipo de contrato só aparecem quando a vaga os tem:
+          vagas antigas (sem esses campos) mantêm a altura do card inalterada. */}
+      {faixaSalarial || tipoContrato ? (
+        <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] leading-tight text-foreground/75">
+          {faixaSalarial ? (
+            <span className="flex min-w-0 items-center gap-1">
+              <Banknote className="h-3 w-3 shrink-0 text-foreground/65" aria-hidden />
+              <span className="truncate">{faixaSalarial}</span>
+            </span>
+          ) : null}
+          {faixaSalarial && tipoContrato ? (
+            <span aria-hidden className="h-1 w-1 shrink-0 rounded-full bg-foreground/25" />
+          ) : null}
+          {tipoContrato ? (
+            <span className="flex min-w-0 items-center gap-1">
+              <FileText className="h-3 w-3 shrink-0 text-foreground/65" aria-hidden />
+              <span className="truncate">{tipoContrato}</span>
+            </span>
+          ) : null}
+        </div>
+      ) : null}
 
       {/* `mt-2.5` (10px) em vez de 12px: as pills de 24px são 2px mais altas que
           as antigas de 22px, então a margem absorve a diferença e a altura do

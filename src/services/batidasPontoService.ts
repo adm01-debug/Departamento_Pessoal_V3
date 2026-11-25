@@ -38,6 +38,27 @@ export const batidasPontoService = {
     if (error) throw error;
     return (result || []) as unknown as BatidaComColaborador[];
   },
+  /**
+   * Batidas de um INTERVALO de datas locais (`yyyy-MM-dd`), com o colaborador
+   * embutido — usado pelo painel de Geofencing, que precisa do período inteiro
+   * (e não só do dia) para calcular conformidade, faixas de distância e a
+   * comparação com o período anterior.
+   */
+  async listarPorPeriodo(empresaId: string, dataInicio: string, dataFim: string): Promise<BatidaComColaborador[]> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    if (!dataInicio || !dataFim) throw new Error('intervalo de datas obrigatório para listar batidas');
+
+    const { data: result, error } = await supabase
+      .from('batidas_ponto')
+      .select('*, colaborador:colaboradores!batidas_ponto_colaborador_id_fkey(nome_completo, foto_url)')
+      .eq('empresa_id', empresaId)
+      .gte('data', dataInicio)
+      .lte('data', dataFim)
+      .order('data')
+      .order('hora');
+    if (error) throw error;
+    return (result || []) as unknown as BatidaComColaborador[];
+  },
   async registrar(d: TablesInsert<'batidas_ponto'>): Promise<BatidaPonto> {
     const { data, error } = await supabase
       .from('batidas_ponto')
