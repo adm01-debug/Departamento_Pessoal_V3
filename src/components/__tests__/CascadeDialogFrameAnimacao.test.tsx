@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { act, render } from '@testing-library/react';
+import type { ReactNode } from 'react';
 
 /**
  * ============================================================================
@@ -17,14 +18,16 @@ import { act, render } from '@testing-library/react';
 
 // Radix em duble: o que interessa aqui é a animação da moldura, não
 // focus-trap/portal no jsdom (mesmo caminho de `NineBoxQuadranteDialog.test.tsx`).
+type RadixChildren = { children?: ReactNode };
+
 vi.mock('@radix-ui/react-dialog', () => ({
-  Root: ({ children }: any) => <div>{children}</div>,
-  Portal: ({ children }: any) => <div>{children}</div>,
-  Overlay: ({ children }: any) => <div>{children}</div>,
-  Content: ({ children }: any) => <div>{children}</div>,
-  Close: ({ children }: any) => <button>{children}</button>,
-  Title: ({ children, ...props }: any) => <h2 {...props}>{children}</h2>,
-  Description: ({ children, ...props }: any) => <p {...props}>{children}</p>,
+  Root: ({ children }: RadixChildren) => <div>{children}</div>,
+  Portal: ({ children }: RadixChildren) => <div>{children}</div>,
+  Overlay: ({ children }: RadixChildren) => <div>{children}</div>,
+  Content: ({ children }: RadixChildren) => <div>{children}</div>,
+  Close: ({ children }: RadixChildren) => <button>{children}</button>,
+  Title: ({ children, ...props }: RadixChildren) => <h2 {...props}>{children}</h2>,
+  Description: ({ children, ...props }: RadixChildren) => <p {...props}>{children}</p>,
 }));
 
 import { motion } from 'framer-motion';
