@@ -3,6 +3,20 @@
 @import 'tailwindcss';
 @config "../tailwind.config.js";
 
+/* ============================================================================
+   MOTION — RÉGUA GLOBAL DE DURAÇÃO.
+
+   O sistema nomeia os passos de duração (`duration-fast`, `duration-slow`,
+   `duration-slower`) em vez de repetir milissegundos soltos, e a onda do
+   `ui/flow-hover-button` (botão "Sincronizar"/"Exportar") lê `duration-slower`
+   — 500ms é o tempo em que o preenchimento é percebido, não um "piscar".
+   Aqui mora o passo usado hoje; os demais passos entram conforme forem
+   consumidos por componente, para não mudar o ritmo do que já está em produção.
+   ========================================================================== */
+@theme {
+  --transition-duration-slower: 500ms;
+}
+
 @layer base {
   :root {
     /* ─── LIGHT MODE (Bombon Lime — Clean & Modern) ─── */
