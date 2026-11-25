@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "docs(auditoria): fecha o mapa do port do Muri com a escala do dia (#892) e a fila ja resgatada (#893)",
    "feat: edita a escala do dia direto do card Hoje (port do Muri) (#892)",
    "feat: resgata recorte de período/vaga e exportação CSV da Analytics (port do Muri) (#891)",
    "fix(db): fecha record_backup_run para anon e tira backup_logs do claim de JWT (#890)",
-   "fix: policies de escrita de provisoes_folha e historico_calculos_folha usam pertence_a_empresa (#881)",
-   "feat: resgata a janela Ver todas do desempenho de vagas (port do Muri) (#888)"
+   "fix: policies de escrita de provisoes_folha e historico_calculos_folha usam pertence_a_empresa (#881)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

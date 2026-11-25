@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "58eab8d320cb38c92fa18e7d827682cb474d6080",
+  "sha": "c87122f8c50c373a177605f554407e17b309ec80",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 18:40 UTC",
+  "generated_at": "2026-11-25 19:11 UTC",
   "files_total": 4215,
   "code_files": 3619,
   "code_lines": 535354
@@ -346986,10 +346986,19 @@
   }
  },
  "git": {
-  "sha": "58eab8d320cb38c92fa18e7d827682cb474d6080",
+  "sha": "c87122f8c50c373a177605f554407e17b309ec80",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "c87122f",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "docs(auditoria): fecha o mapa do port do Muri com a escala do dia (#892) e a fila ja resgatada (#893)",
+    "files": [
+     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md"
+    ]
+   },
    {
     "sha": "58eab8d",
     "date": "2026-11-25",
@@ -347757,16 +347766,6 @@
      "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
      "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql"
     ]
-   },
-   {
-    "sha": "347a2ba",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "chore(security): pina node:22-alpine e nginx:alpine por digest (#859)",
-    "files": [
-     "Dockerfile",
-     "Dockerfile.prod"
-    ]
    }
   ],
   "hot_files": [
@@ -347775,12 +347774,12 @@
     8
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
+    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
     6
    ],
    [
-    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-    5
+    ".github/workflows/canonical-migrations.yml",
+    6
    ],
    [
     "src/pages/PontoPage.tsx",

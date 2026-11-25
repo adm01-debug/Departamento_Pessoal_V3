@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `58eab8d320cb38c92fa18e7d827682cb474d6080` (2026-11-25T15:39:18-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c87122f8c50c373a177605f554407e17b309ec80` (2026-11-25T15:49:58-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -404,8 +404,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 29643 nós · 67275 arestas · 2788 comunidades · grafo do commit `58eab8d3`
-- comunidades maiores: cn (518), 20260831_corrected_public.sql (493), canonical_schema.sql (481), button.tsx (439), lucide-react (409), @tanstack/react-query (409), App.tsx (370), vitest (364), useEmpresas (261), rateLimit.ts (178), "public"."empresas" (164), "public"."colaboradores" (155)
+- 29647 nós · 67293 arestas · 2801 comunidades · grafo do commit `c87122f8`
+- comunidades maiores: lucide-react (665), cn (662), button.tsx (639), useEmpresas (563), client.ts (512), 20260831_corrected_public.sql (485), canonical_schema.sql (481), vitest (307), DetalhesAdmissaoDialog.tsx (266), ref_node_fs (196), contract.ts (184), Plano Exaustivo de Correções e Melhorias — 100 Etapas (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -663,6 +663,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-25 `c87122f` docs(auditoria): fecha o mapa do port do Muri com a escala do dia (#892) e a fila ja resgatada (#893)
 - 2026-11-25 `58eab8d` feat: edita a escala do dia direto do card Hoje (port do Muri) (#892)
 - 2026-11-25 `c697595` feat: resgata recorte de período/vaga e exportação CSV da Analytics (port do Muri) (#891)
 - 2026-11-25 `43dd2de` fix(db): fecha record_backup_run para anon e tira backup_logs do claim de JWT (#890)
@@ -677,7 +678,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `645def6` feat: resgata o painel de geofencing do ponto com mapa real (#883)
 - 2026-11-25 `5f2fa81` docs: registra o resgate da tela de Turnos e o lote canonico aplicado (#882)
 - 2026-11-25 `2a62b11` feat: resgata a tela de Turnos do agente Muri (calendario, escalas e dialogos) (#875)
-- 2026-11-25 `4046e24` fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

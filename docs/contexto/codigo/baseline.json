@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "58eab8d320cb38c92fa18e7d827682cb474d6080",
+  "commit": "c87122f8c50c373a177605f554407e17b309ec80",
   "branch": "main",
-  "data_commit": "2026-11-25T15:39:18-03:00",
+  "data_commit": "2026-11-25T15:49:58-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c87122f",
+    "data": "2026-11-25",
+    "assunto": "docs(auditoria): fecha o mapa do port do Muri com a escala do dia (#892) e a fila ja resgatada (#893)"
+   },
    {
     "sha": "58eab8d",
     "data": "2026-11-25",
@@ -126,14 +131,9 @@
     "sha": "90a640d",
     "data": "2026-11-24",
     "assunto": "fix: fixa o schema da extensao no search_path do dreno (#866)"
-   },
-   {
-    "sha": "8893aba",
-    "data": "2026-11-24",
-    "assunto": "fix: sidecar do dreno devolve 'ok' literal no caso inerte (#864)"
    }
   ],
-  "arquivos_mudados_7d": 776,
+  "arquivos_mudados_7d": 774,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -262,6 +262,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    "mudancas": 6
+   },
+   {
     "arquivo": "docs/auditoria/VEREDITO_MURI_2026-11-17.md",
     "mudancas": 6
    },
@@ -287,10 +291,6 @@
    },
    {
     "arquivo": "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
     "mudancas": 5
    },
    {
