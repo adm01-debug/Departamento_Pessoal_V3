@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { toast } from 'sonner';
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -20,6 +21,15 @@ import { MotionCard, entradaCard } from '@/components/ui/entrada-cards';
 import { cn } from '@/lib/utils';
 import type { CandidatoRow, CandidaturaComRelacoes, VagaRow } from '@/types/recrutamento';
 import { construirAnalytics, type KpiRecrutamento } from './analyticsComum';
+import {
+  FILTROS_PADRAO,
+  VAGA_TODAS,
+  filtrarEntradaAnalytics,
+  type FiltrosAnalytics,
+  type PeriodoAnalytics,
+} from './analyticsFiltros';
+import { baixarRelatorioCsv } from './analyticsRelatorio';
+import { AnalyticsBarraFiltros } from './AnalyticsBarraFiltros';
 import { AnalyticsFunil } from './AnalyticsFunil';
 import { AnalyticsEvolucao } from './AnalyticsEvolucao';
 import { AnalyticsOrigens } from './AnalyticsOrigens';
@@ -33,6 +43,7 @@ import { AnalyticsIndicadores } from './AnalyticsIndicadores';
  * ABA ANALYTICS — dashboard analítico do Recrutamento & Seleção
  *
  * Composição em quatro faixas, como na referência aprovada:
+ *   0. Topo ......... barra de recorte (período · vaga · exportar) + data da base;
  *   1. KPIs ......... vagas, candidatos, processos ativos e conversão;
  *   2. Visão geral .. funil por etapa, evolução mensal e origens;
  *   3. Operação ..... tempo por etapa, pontos de atenção e vagas;
@@ -191,17 +202,43 @@ export function AnalyticsRecrutamento({
   /** A consulta falhou: mostrar a falha em vez de um painel saudável de zeros. */
   erro?: string | null;
 }) {
-  const analytics = useMemo(
-    () => construirAnalytics({ candidaturas, vagas, candidatos }),
-    [candidaturas, vagas, candidatos]
+  const [filtros, setFiltros] = useState<FiltrosAnalytics>(FILTROS_PADRAO);
+
+  // A vaga escolhida pode sair da base (nova carga, vaga excluída): nesse caso o
+  // recorte volta para "Todas as vagas" em vez de renderizar uma tela vazia.
+  const vagaEfetiva =
+    filtros.vagaId === VAGA_TODAS || vagas.some((vaga) => vaga.id === filtros.vagaId) ? filtros.vagaId : VAGA_TODAS;
+
+  const filtrosEfetivos = useMemo<FiltrosAnalytics>(
+    () => ({ periodo: filtros.periodo, vagaId: vagaEfetiva }),
+    [filtros.periodo, vagaEfetiva]
   );
+
+  // O recorte acontece ANTES da matemática: todas as faixas leem o mesmo corte
+  // (`analyticsFiltros.ts`), então nenhum painel mostra número de outro recorte.
+  const entrada = useMemo(
+    () => filtrarEntradaAnalytics({ candidaturas, vagas, candidatos }, filtrosEfetivos),
+    [candidaturas, vagas, candidatos, filtrosEfetivos]
+  );
+
+  const analytics = useMemo(() => construirAnalytics(entrada), [entrada]);
+
   // Sem nenhum registro não existe "data de referência": o módulo usaria o
   // relógio do navegador, e o selo afirmaria uma base que não foi lida.
   const temBase = candidaturas.length + vagas.length + candidatos.length > 0;
 
+  const exportar = useCallback(() => {
+    try {
+      toast.success(`Relatório exportado: ${baixarRelatorioCsv(analytics)}`);
+    } catch {
+      toast.error('Não foi possível exportar o relatório.');
+    }
+  }, [analytics]);
+
   return (
     <div data-analytics-recrutamento className="space-y-3.5 sm:space-y-4">
-      {/* Cabeçalho da aba — contexto + data de referência da base. */}
+      {/* Cabeçalho da aba — contexto + data de referência da base + barra de
+          recorte (período · vaga · exportar) alinhada à direita. */}
       <div className="flex flex-wrap items-center justify-between gap-2 px-0.5">
         <div className="min-w-0">
           <h2 className="font-display text-[15px] font-semibold tracking-tight text-foreground">
@@ -211,12 +248,25 @@ export function AnalyticsRecrutamento({
             Funil, origens e desempenho derivados da base atual do módulo.
           </p>
         </div>
-        {temBase && !erro && !carregando && (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/40 bg-card/60 px-2.5 py-1 text-[10px] leading-none text-muted-foreground">
-            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-success" />
-            Base de referência: {format(analytics.referencia, 'dd MMM yyyy', { locale: ptBR })}
-          </span>
-        )}
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {/* Sem base (ou com a leitura falhada) não há o que recortar nem o que
+              exportar — a barra só aparece quando existe dado para ela operar. */}
+          {temBase && !erro && (
+            <AnalyticsBarraFiltros
+              filtros={filtrosEfetivos}
+              vagas={vagas}
+              onPeriodo={(periodo: PeriodoAnalytics) => setFiltros((atual) => ({ ...atual, periodo }))}
+              onVaga={(vagaId) => setFiltros((atual) => ({ ...atual, vagaId }))}
+              onExportar={exportar}
+            />
+          )}
+          {temBase && !erro && !carregando && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/40 bg-card/60 px-2.5 py-1 text-[10px] leading-none text-muted-foreground">
+              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-success" />
+              Base de referência: {format(analytics.referencia, 'dd MMM yyyy', { locale: ptBR })}
+            </span>
+          )}
+        </div>
       </div>
 
       {erro ? (
@@ -265,7 +315,7 @@ export function AnalyticsRecrutamento({
                 index={4}
               />
             </div>
-            <AnalyticsEvolucao candidaturas={candidaturas} referencia={analytics.referencia} index={5} />
+            <AnalyticsEvolucao candidaturas={entrada.candidaturas} referencia={analytics.referencia} index={5} />
             <AnalyticsOrigens origens={analytics.origens} index={6} />
           </div>
 

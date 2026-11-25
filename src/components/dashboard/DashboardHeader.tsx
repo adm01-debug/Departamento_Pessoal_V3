@@ -1,4 +1,5 @@
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { FlowHoverButton } from '@/components/ui/flow-hover-button';
 import { RefreshCw, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
@@ -24,16 +25,22 @@ export function DashboardHeader({ greeting, isLoading, onRefresh }: DashboardHea
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
+          {/* "Sincronizar" com a onda de hover do Design System: mesmo
+              componente do "Exportar" da Analytics (`ui/flow-hover-button`) e
+              a mesma cor de onda (`before:bg-primary`), o que faz os dois
+              botões animarem juntos — a regressão que garante isso é
+              `recrutamento/__tests__/analyticsExportarAnimacao.test.tsx`. */}
+          <FlowHoverButton
             onClick={onRefresh}
             disabled={isLoading}
-            className="gap-2 rounded-xl border-border/50 hover:border-primary/30 hover:bg-primary/5 transition-all font-body h-10 shadow-xs"
+            className={cn(
+              buttonVariants({ variant: 'outline', size: 'sm' }),
+              'gap-2 rounded-xl border-border/50 hover:border-primary/30 hover:bg-primary/5 transition-all font-body h-10 shadow-xs before:bg-primary hover:text-primary-foreground'
+            )}
+            icon={<RefreshCw className={cn('h-4 w-4', isLoading && 'animate-spin')} />}
           >
-            <RefreshCw className={cn('h-4 w-4', isLoading && 'animate-spin')} />
             <span className="hidden sm:inline">Sincronizar</span>
-          </Button>
+          </FlowHoverButton>
 
           <Button
             variant="premium"

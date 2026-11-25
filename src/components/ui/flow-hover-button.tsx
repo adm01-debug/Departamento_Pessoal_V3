@@ -28,7 +28,7 @@ export const FlowHoverButton = React.forwardRef<HTMLButtonElement, FlowHoverButt
       ref={ref}
       className={cn(
         `relative z-0 flex items-center justify-center gap-2 overflow-hidden
-        transition-all duration-500
+        transition-all duration-slower
         before:absolute before:inset-0 before:-z-10 before:translate-x-[150%] before:translate-y-[150%] before:scale-[2.5]
         before:rounded-[100%] before:transition-transform before:duration-700 before:content-['']
         hover:scale-[1.02] hover:before:translate-x-0 hover:before:translate-y-0 active:scale-[0.98]`,
