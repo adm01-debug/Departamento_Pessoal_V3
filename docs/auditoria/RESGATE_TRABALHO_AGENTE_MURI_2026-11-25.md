@@ -47,15 +47,16 @@ Divergentes por pasta: 713 `src/components`, 163 `src/services`, 137 `src/hooks`
 ## 5. Resgatado até aqui
 
 - **#870** — "Ver todos" dos Talentos em destaque abre a janela completa (aba Nine-Box). 11 arquivos: `NineBoxTalentosDialog` novo, `onVerTodos` no card, perfis de saída (`CASCADE_SAIDA_RAPIDA`) no `cascade-motion`, 4 arquivos de teste novos. Verificado: `tsc --noEmit` 0 erros, 322 testes em 18 arquivos verdes, `audit:ratchet-any-tests` e `audit:ratchet-warnings` sem regressão.
+- **#875** — **Turnos**: `src/pages/TurnosPage.tsx` + `src/components/turnos/*` (30 arquivos) + `src/services/turnoService.ts`, com `main.tsx` e rota consumindo a página (fecho transitivo conferido, nenhum órfão). Orçamento de bundle medido no CI e ajustado em `scripts/.bundle-budget.json` (`js_total_kb 8073`, `js_max_chunk_kb 980`, `css_total_kb 366`). Mergeada em 25/11/2026 (`2a62b1124`); todos os checks verdes — o único vermelho é o `Integridade do banco canônico (live)`, que é o defeito de RLS de `provisoes_folha` (item 9) e não tem relação com esta feature.
 - **#873** — **Banco de Horas** completo: `BancoHorasPage` reescrita (filtros de período, 5 KPIs, extrato paginado com busca/ordenação/tipo, cascata de detalhe, rosca de situação, barras de totais, alerta de saldo negativo, evolução do saldo e CSV) + 21 módulos do fecho transitivo que não existiam na main (11 `components/banco-horas`, `horasExtrasComum`, `FiltroSelectConteudo`, `tooltipGrafico`, `revelacaoGrafico`, `entradaGlobal`, `progressMotion`, `donutMotion`, `estruturaAnimacoes`, `linha-tabela-hover`, `useEntradaCardConcluida`) + `bancoHorasService.listarDaEmpresa` tipado. Verificado: `tsc 0`, `typecheck:tests 0`, eslint/prettier limpos, ratchets verdes, 60 testes vitest, build ok e `css_total_kb 359 ≤ 362` / `js_total_kb 7999 ≤ 8000`.
 
 ## 6. Fila de resgate (valor × risco)
 
 1. **Ponto / geofencing** — `src/utils/pontoGeofencing.ts`, `src/hooks/usePontoGeofencing.ts`, `PontoGeofencingPainel`, `PontoGeoMapa`, `PontoGeoRegistros` + testes. Entra junto com os consumidores; isolado vira código morto.
-2. **Turnos** — `src/components/turnos/*` (30 arquivos novos) + `turnoService`, grade semanal e seletor de cor.
+2. **~~Turnos~~ — RESGATADO na #875.** `src/components/turnos/*` (30 arquivos) + `turnoService`, página e rota.
 3. **~~Banco de horas~~ — RESGATADO na #873.** `src/components/banco-horas/*` (11 arquivos) + `exportarBancoHoras` + os primitivos de UI do port que a página consome (`tooltipGrafico`, `revelacaoGrafico`, `entradaGlobal`, `progressMotion`, `donutMotion`, `estruturaAnimacoes`, `linha-tabela-hover`, `useEntradaCardConcluida`, `horasExtrasComum`, `FiltroSelectConteudo`).
 4. **Horas extras** — refatora `HorasExtrasPage` em componentes (`horas-extras/*`, 19 arquivos com 14 testes). Exige revisar a página modificada, não substituí-la.
-5. **104 `supabase/migrations` divergentes** — DDL: exige autorização explícita antes de qualquer `apply` (as 316 versões do ledger sem fonte local já têm placeholder no-op desde a #865).
+5. **`supabase/migrations` divergentes** — DDL: exige autorização explícita antes de qualquer `apply` (as 316 versões do ledger sem fonte local já têm placeholder no-op desde a #865). O lote curado de 17 arquivos foi aplicado e verificado no canônico em 25/11/2026 — ver item 9.
 
 ## 7. Auditoria das refs remotas
 
@@ -81,3 +82,47 @@ Resultados:
 Conclusão que mudou a estratégia: o Muri **reescreveu as páginas** (M, com remoções) para montar os componentes novos. Portar a fila isolada criaria código morto (foi o que a #872 fazia); portar as páginas inteiras, sem comparar, removia comportamento da main. O caminho correto é **portar por feature viva**: pegar a página que consome o conjunto, calcular o fecho transitivo dela e trazer exatamente os módulos que faltam na main — foi o que a #873 fez com Banco de Horas.
 
 A #872 foi **fechada sem merge e sem apagar a branch**: os 119 arquivos ficam preservados no remoto (`8bdf70d5e`) para resgate incremental, um por feature. Nenhuma página de produção do port é superconjunto puro da main (todas têm deleções), então cada resgate restante exige comparação funcional — não substituição cega.
+
+## 9. Banco canônico — lote aditivo aplicado (25/11/2026)
+
+O `canonical-migrations.yml` roda em três modos (`validate` → `apply` → `verify`) e o "dry-run" do `validate`
+**não era** dry-run: as migrations carregam `BEGIN;/COMMIT;` próprios, e o `COMMIT` interno fechava a
+transação de teste. Isso derrubava a simulação com `relation "public.config_retencao" does not exist`
+(a `p3_060` rodava duas vezes). Corrigido na #877, junto com os dois sidecars de índice que cobravam
+objetos que o banco real não tem (#880) e com 4 defeitos de SQL da `p4_071` (#879).
+
+Lote de 17 migrations aplicado no projeto `frjbfeamybqsejlvmqbl`:
+
+| passo | run | resultado |
+| --- | --- | --- |
+| `validate` | 45609683492 | SUCCESS (primeiro verde de todos os três modos) |
+| `apply` | 45610349420 | SUCCESS |
+| `verify` | 45610901215 | SUCCESS |
+
+Confirmado por consulta read-only no canônico (run 45611331779): `backup_logs` existe com RLS e 1 policy,
+6 materialized views presentes, `refresh_dashboard_views` **sem** EXECUTE para `anon`, 27 índices do top-20
+e 17 versões novas no ledger. O único DDL não-aditivo do lote é `ALTER COLUMN empresa_id SET NOT NULL` em
+`colaboradores`/`folhas_pagamento`/`despesas`, guardado por checagem de nulos.
+
+### Pendência aberta: RLS de `provisoes_folha` e `historico_calculos_folha`
+
+Com o `refresh_dashboard_views` fechado, o step 8 do job `Integridade do banco canônico (live)`
+(`scripts/audit-rls-pii.mjs`) passou a reprovar seis policies que derivam o tenant de claim livre do JWT
+(`app_metadata ->> 'empresa_id'`) — claim que o próprio usuário pode forjar contra o PostgREST:
+
+- `provisoes_folha_insert` / `_update` / `_delete` (de `20260804000000_p0_010_write_policies_provisoes.sql`);
+- `Acesso por empresa historico` / `Insercao por empresa historico` / `historico_calculos_delete`.
+
+A correção está na **#881**, aberta e **sem merge**: migration aditiva `20261125130000` reescrevendo as seis
+com `public.pertence_a_empresa(empresa_id)`, sem mudar regra de negócio (`is_admin`/`has_role` continuam
+iguais). Provado em Postgres 16 descartável (auditor reprova 6 antes, OK depois; migration idempotente;
+sidecar responde `ok`). Toca `canonical-migrations.yml`, então é regra 8 — aguarda autorização para
+mergear e aplicar.
+
+### Fila restante do port do Muri
+
+1. **Ponto / geofencing** — `src/utils/pontoGeofencing.ts`, `src/hooks/usePontoGeofencing.ts`,
+   `PontoGeofencingPainel`, `PontoGeoMapa`, `PontoGeoRegistros` + testes (entra com os consumidores).
+2. **Horas extras** — `horas-extras/*` (19 arquivos, 14 testes); a página foi modificada, não substituída.
+3. **Demais páginas do port** — cada uma exige comparação funcional (todas têm deleções, nenhuma é
+   superconjunto puro da main).
