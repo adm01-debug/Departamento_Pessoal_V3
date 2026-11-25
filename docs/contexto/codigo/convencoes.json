@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "docs: registra o resgate da tela de Turnos e o lote canonico aplicado (#882)",
    "feat: resgata a tela de Turnos do agente Muri (calendario, escalas e dialogos) (#875)",
    "fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)",
    "fix: p4_071 nao aborta mais o lote aditivo no canônico (#879)",
-   "fix: lote aditivo aplica no canônico, sem EXECUTE anon em refresh_dashboard_views e validate que reverte (#877)",
-   "infra: leva 7 migrations aditivas de observabilidade ao canônico + sidecars .verify (#869)"
+   "fix: lote aditivo aplica no canônico, sem EXECUTE anon em refresh_dashboard_views e validate que reverte (#877)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

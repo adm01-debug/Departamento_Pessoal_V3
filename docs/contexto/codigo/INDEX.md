@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2a62b11242998afe8e44ad6ea4cdc2923ffb7506` (2026-11-25T09:27:31-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `5f2fa81a90ced4f5c2e763bb929755504d7f7651` (2026-11-25T09:39:43-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -401,13 +401,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 29109 nós · 65468 arestas · 2758 comunidades · grafo do commit `2a62b112`
-- comunidades maiores: 20260831_corrected_public.sql (493), lucide-react (492), canonical_schema.sql (481), button.tsx (439), useEmpresas (371), vitest (358), cn (262), react (257), client.ts (242), contract.ts (196), colaboradoresMock.ts (179), ref_node_fs (168)
+- 29112 nós · 65472 arestas · 2778 comunidades · grafo do commit `5f2fa81a`
+- comunidades maiores: cn (645), lucide-react (525), 20260831_corrected_public.sql (485), canonical_schema.sql (481), useEmpresas (474), button.tsx (405), App.tsx (373), vitest (260), rateLimit.ts (188), "public"."empresas" (164), "public"."empresas" (158), "public"."colaboradores" (157)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (36)
+- .github/workflows/canonical-migrations.yml (35)
 - scripts/canonical-invariants.sql (21)
 - inventario/estado/rotas.json (20)
 - docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
@@ -659,6 +659,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-25 `5f2fa81` docs: registra o resgate da tela de Turnos e o lote canonico aplicado (#882)
 - 2026-11-25 `2a62b11` feat: resgata a tela de Turnos do agente Muri (calendario, escalas e dialogos) (#875)
 - 2026-11-25 `4046e24` fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)
 - 2026-11-25 `ced7abd` fix: p4_071 nao aborta mais o lote aditivo no canônico (#879)
@@ -673,7 +674,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `8893aba` fix: sidecar do dreno devolve 'ok' literal no caso inerte (#864)
 - 2026-11-24 `bb8ebe2` fix: nao reexecuta o script da extensao pg_cron/pg_net no canonico (#862)
 - 2026-11-24 `084b528` chore: pina por hash os tres pip install sinalizados pelo Scorecard (#861)
-- 2026-11-24 `7245d10` infra: inclui a migration do cron do dreno no lote canonico (#860)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

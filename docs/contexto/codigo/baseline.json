@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2a62b11242998afe8e44ad6ea4cdc2923ffb7506",
+  "commit": "5f2fa81a90ced4f5c2e763bb929755504d7f7651",
   "branch": "main",
-  "data_commit": "2026-11-25T09:27:31-03:00",
+  "data_commit": "2026-11-25T09:39:43-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "5f2fa81",
+    "data": "2026-11-25",
+    "assunto": "docs: registra o resgate da tela de Turnos e o lote canonico aplicado (#882)"
+   },
    {
     "sha": "2a62b11",
     "data": "2026-11-25",
@@ -126,11 +131,6 @@
     "sha": "066f553",
     "data": "2026-11-23",
     "assunto": "fix: impede que destinatario nao-roteavel derrube o lote de alertas por e-mail (#852)"
-   },
-   {
-    "sha": "59be355",
-    "data": "2026-11-23",
-    "assunto": "chore: remove config.ts orfao de processar-agendamentos (#851)"
    }
   ],
   "arquivos_mudados_7d": 701,
@@ -181,7 +181,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 36
+    "mudancas": 35
    },
    {
     "pasta": "src/pages/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 36
+    "mudancas": 35
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",

@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "2a62b11242998afe8e44ad6ea4cdc2923ffb7506",
+  "sha": "5f2fa81a90ced4f5c2e763bb929755504d7f7651",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 12:31 UTC",
+  "generated_at": "2026-11-25 13:15 UTC",
   "files_total": 4135,
   "code_files": 3540,
   "code_lines": 518322
@@ -342553,10 +342553,19 @@
   }
  },
  "git": {
-  "sha": "2a62b11242998afe8e44ad6ea4cdc2923ffb7506",
+  "sha": "5f2fa81a90ced4f5c2e763bb929755504d7f7651",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "5f2fa81",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "docs: registra o resgate da tela de Turnos e o lote canonico aplicado (#882)",
+    "files": [
+     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md"
+    ]
+   },
    {
     "sha": "2a62b11",
     "date": "2026-11-25",
@@ -343244,15 +343253,6 @@
     "files": [
      "src/services/workflowService.ts"
     ]
-   },
-   {
-    "sha": "81693b2",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "feat: notificacoes de workflow por e-mail e in-app (#843)",
-    "files": [
-     "src/services/workflowService.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -343267,6 +343267,10 @@
    [
     "package.json",
     4
+   ],
+   [
+    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    3
    ],
    [
     "supabase/functions/alertas-dp/index.ts",
@@ -343285,10 +343289,6 @@
     2
    ],
    [
-    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-    2
-   ],
-   [
     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql",
     2
    ],
@@ -343298,10 +343298,6 @@
    ],
    [
     "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
-    2
-   ],
-   [
-    "src/services/workflowService.ts",
     2
    ],
    [
@@ -343334,6 +343330,10 @@
    ],
    [
     "src/components/turnos/DialogoDiaEscalas.tsx",
+    1
+   ],
+   [
+    "src/components/turnos/DialogoGerenciarTurnos.tsx",
     1
    ]
   ]
