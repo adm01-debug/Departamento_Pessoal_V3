@@ -4600,13 +4600,13 @@
   },
   {
    "modulo": "components/ponto",
-   "arquivos": 36,
-   "testes": 0,
-   "linhas": 8508,
+   "arquivos": 37,
+   "testes": 1,
+   "linhas": 8725,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 32,
+   "componentes": 33,
    "hooks_locais": [
     "useASOs",
     "useAdmissaoWorkflow",
@@ -9025,7 +9025,7 @@
    "modulo": "pages",
    "arquivos": 115,
    "testes": 0,
-   "linhas": 46972,
+   "linhas": 46977,
    "itens_menu": [
     "Admissões",
     "Afastamentos",

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 698,
+ "total": 699,
  "orfaos": 24,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -5674,6 +5674,20 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/ponto/EditarEscalaDialog.tsx",
+   "exports": [
+    "EditarEscalaDialog"
+   ],
+   "export_default": null,
+   "linhas": 147,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ponto/EspelhosPapelPanel.tsx",
    "exports": [
     "EspelhosPapelPanel"
@@ -6094,7 +6108,7 @@
     "PontoTodayCard"
    ],
    "export_default": null,
-   "linhas": 235,
+   "linhas": 305,
    "dominio": "components/ponto",
    "hooks_locais": [],
    "tabelas": [],
@@ -8183,7 +8197,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 16,
+   "usado_por": 17,
    "orfao": false
   },
   {
@@ -8262,7 +8276,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 394,
+   "usado_por": 396,
    "orfao": false
   },
   {
@@ -8687,7 +8701,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 160,
+   "usado_por": 161,
    "orfao": false
   },
   {
@@ -8881,7 +8895,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 140,
+   "usado_por": 141,
    "orfao": false
   },
   {
@@ -9045,7 +9059,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 119,
+   "usado_por": 120,
    "orfao": false
   },
   {
@@ -11003,7 +11017,7 @@
     "PontoPage"
    ],
    "export_default": "PontoPage",
-   "linhas": 735,
+   "linhas": 740,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

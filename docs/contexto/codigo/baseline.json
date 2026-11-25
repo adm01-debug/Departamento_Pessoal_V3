@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c697595dd1ed8bd0160efcc6eddb5422819d0a80",
+  "commit": "58eab8d320cb38c92fa18e7d827682cb474d6080",
   "branch": "main",
-  "data_commit": "2026-11-25T15:28:16-03:00",
+  "data_commit": "2026-11-25T15:39:18-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "58eab8d",
+    "data": "2026-11-25",
+    "assunto": "feat: edita a escala do dia direto do card Hoje (port do Muri) (#892)"
+   },
    {
     "sha": "c697595",
     "data": "2026-11-25",
@@ -126,18 +131,13 @@
     "sha": "8893aba",
     "data": "2026-11-24",
     "assunto": "fix: sidecar do dreno devolve 'ok' literal no caso inerte (#864)"
-   },
-   {
-    "sha": "bb8ebe2",
-    "data": "2026-11-24",
-    "assunto": "fix: nao reexecuta o script da extensao pg_cron/pg_net no canonico (#862)"
    }
   ],
-  "arquivos_mudados_7d": 772,
+  "arquivos_mudados_7d": 776,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 381
+    "mudancas": 382
    },
    {
     "pasta": "src/components/ui",
@@ -172,11 +172,11 @@
     "mudancas": 57
    },
    {
-    "pasta": "src/components/layout",
-    "mudancas": 43
+    "pasta": "src/components/ponto",
+    "mudancas": 46
    },
    {
-    "pasta": "src/components/ponto",
+    "pasta": "src/components/layout",
     "mudancas": 43
    },
    {
@@ -274,6 +274,10 @@
     "mudancas": 6
    },
    {
+    "arquivo": "src/pages/PontoPage.tsx",
+    "mudancas": 6
+   },
+   {
     "arquivo": "supabase/functions/ingest-ponto-rep/index.ts",
     "mudancas": 6
    },
@@ -291,10 +295,6 @@
    },
    {
     "arquivo": "docs/pendencias/_ordem.md",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/App.tsx",
     "mudancas": 5
    }
   ],
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4199,
-  "arquivos_codigo": 2280,
-  "linhas_codigo": 460426,
+  "arquivos_total": 4201,
+  "arquivos_codigo": 2282,
+  "linhas_codigo": 460816,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 86,
-  "componentes": 698,
+  "componentes": 699,
   "hooks": 127,
   "edge_functions": 68,
   "tabelas": 438,
   "migrations": 1265,
   "cron_jobs": 43,
-  "testes": 857,
+  "testes": 858,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 347
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1128,
-   "linhas": 214025
+   "arquivos": 1130,
+   "linhas": 214410
   },
   "src/constants": {
    "arquivos": 7,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 146,
-   "linhas": 51965
+   "linhas": 51970
   },
   "src/providers": {
    "arquivos": 4,

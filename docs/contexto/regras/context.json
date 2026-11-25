@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c697595dd1ed8bd0160efcc6eddb5422819d0a80",
+  "sha": "58eab8d320cb38c92fa18e7d827682cb474d6080",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 18:29 UTC",
-  "files_total": 4213,
-  "code_files": 3617,
-  "code_lines": 534964
+  "generated_at": "2026-11-25 18:40 UTC",
+  "files_total": 4215,
+  "code_files": 3619,
+  "code_lines": 535354
  },
  "version": "1.3.2",
- "facts_hash": "8e0bc4666dac260e",
+ "facts_hash": "19c97e9f67fc0b16",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1339,
-   ".tsx": 1119,
+   ".tsx": 1121,
    ".ts": 1018,
    ".mjs": 110,
    ".js": 15,
@@ -92074,7 +92074,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 315
+    "deps_count": 316
    },
    {
     "path": "",
@@ -97621,7 +97621,7 @@
      "validar_potencial_avaliacao",
      "verificar_espelho_ponto"
     ],
-    "deps_count": 267
+    "deps_count": 269
    },
    {
     "path": "",
@@ -103060,7 +103060,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1128,
+  "components_count": 1130,
   "hooks": [
    {
     "name": "useContacts",
@@ -104735,8 +104735,8 @@
   },
   {
    "module": "src/components",
-   "files": 1128,
-   "lines": 214025,
+   "files": 1130,
+   "lines": 214410,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105440,7 +105440,7 @@
   {
    "module": "src/pages",
    "files": 146,
-   "lines": 51965,
+   "lines": 51970,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -123824,6 +123824,14 @@
    {
     "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
     "text": "Já gravados (aprovados/cobrados): \"Mostrar ocultas\" não pode trazê-los de"
+   },
+   {
+    "file": "src/components/ponto/PontoTodayCard.tsx",
+    "text": "* Sem os três identificadores o card apenas exibe a escala do registro, como antes. */"
+   },
+   {
+    "file": "src/components/ponto/PontoTodayCard.tsx",
+    "text": "deve INSERT (dia sem escala) ou UPDATE (linha existente)."
    },
    {
     "file": "src/components/ponto/acoesCardsPonto.ts",
@@ -156965,6 +156973,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/ponto/EditarEscalaDialog.tsx",
+    "field": "status",
+    "value": "agendado",
+    "kind": "escreve"
+   },
+   {
     "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
     "field": "status",
     "value": "pendente",
@@ -185529,6 +185543,10 @@
     "name": "shows meal break label when in interval"
    },
    {
+    "file": "src/components/__tests__/PontoTodayCard.test.tsx",
+    "name": "offers the day-scale pencil only when collaborator and company are known"
+   },
+   {
     "file": "src/components/__tests__/PontoWeekSummary.test.tsx",
     "name": "PontoWeekSummary"
    },
@@ -189659,6 +189677,22 @@
    {
     "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
     "name": "status desconhecido continua caindo em "
+   },
+   {
+    "file": "src/components/ponto/__tests__/EditarEscalaDialog.test.tsx",
+    "name": "EditarEscalaDialog"
+   },
+   {
+    "file": "src/components/ponto/__tests__/EditarEscalaDialog.test.tsx",
+    "name": "leva para Turnos & Escalas quando a empresa não tem turno cadastrado"
+   },
+   {
+    "file": "src/components/ponto/__tests__/EditarEscalaDialog.test.tsx",
+    "name": "cria a escala do dia quando ainda não existe linha para a data"
+   },
+   {
+    "file": "src/components/ponto/__tests__/EditarEscalaDialog.test.tsx",
+    "name": "atualiza a linha existente em vez de duplicar a escala do dia"
    },
    {
     "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.recorte.test.tsx",
@@ -242799,6 +242833,11 @@
       "escreve:supabase/functions/gerar-ltcat-os/index.ts",
       "filtra:supabase/functions/gerar-ltcat-os/index.ts"
      ],
+     "agendado": [
+      "compara:src/pages/AdminAgendamentoExamesPage.tsx",
+      "escreve:src/components/ponto/EditarEscalaDialog.tsx",
+      "escreve:src/components/turnos/DialogoNovaEscala.tsx"
+     ],
      "PUBLICADO": [
       "compara:src/pages/AdminRegimentoInternoPage.tsx",
       "filtra:src/components/portal/PortalRegimentoCard.tsx",
@@ -242876,10 +242915,6 @@
      ],
      "inativa": [
       "compara:src/components/treinamentos/TrilhaCard.tsx"
-     ],
-     "agendado": [
-      "compara:src/pages/AdminAgendamentoExamesPage.tsx",
-      "escreve:src/components/turnos/DialogoNovaEscala.tsx"
      ],
      "expirado": [
       "compara:src/hooks/useAssinaturas.ts"
@@ -282659,7 +282694,7 @@
   },
   "src/components/__tests__/PontoTodayCard.test.tsx": {
    "path": "src/components/__tests__/PontoTodayCard.test.tsx",
-   "lines": 78,
+   "lines": 98,
    "is_test": true,
    "tests": [
     "PontoTodayCard",
@@ -282671,7 +282706,8 @@
     "renders Débito label",
     "renders atraso badge",
     "renders scale badge from entrada/saida esperada",
-    "shows meal break label when in interval"
+    "shows meal break label when in interval",
+    "offers the day-scale pencil only when collaborator and company are known"
    ]
   },
   "src/components/__tests__/PontoWeekSummary.test.tsx": {
@@ -295413,6 +295449,20 @@
     "PINs não conferem"
    ]
   },
+  "src/components/ponto/EditarEscalaDialog.tsx": {
+   "path": "src/components/ponto/EditarEscalaDialog.tsx",
+   "lines": 147,
+   "exports": [
+    "function EditarEscalaDialog"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "agendado",
+     "kind": "escreve"
+    }
+   ]
+  },
   "src/components/ponto/EspelhosPapelPanel.tsx": {
    "path": "src/components/ponto/EspelhosPapelPanel.tsx",
    "lines": 266,
@@ -296159,9 +296209,13 @@
   },
   "src/components/ponto/PontoTodayCard.tsx": {
    "path": "src/components/ponto/PontoTodayCard.tsx",
-   "lines": 235,
+   "lines": 305,
    "exports": [
     "function PontoTodayCard"
+   ],
+   "rule_comments": [
+    "* Sem os três identificadores o card apenas exibe a escala do registro, como antes. */",
+    "deve INSERT (dia sem escala) ou UPDATE (linha existente)."
    ]
   },
   "src/components/ponto/PontoWeekSummary.tsx": {
@@ -296250,6 +296304,20 @@
      "name": "VERMELHO_BORDA_SUAVE",
      "value": "'border-[rgba(239,68,68,0.32)]'"
     }
+   ]
+  },
+  "src/components/ponto/__tests__/EditarEscalaDialog.test.tsx": {
+   "path": "src/components/ponto/__tests__/EditarEscalaDialog.test.tsx",
+   "lines": 148,
+   "is_test": true,
+   "rule_comments": [
+    "* Cliente novo por teste: o cache de `listarTurnos` não pode vazar entre casos. */"
+   ],
+   "tests": [
+    "EditarEscalaDialog",
+    "leva para Turnos & Escalas quando a empresa não tem turno cadastrado",
+    "cria a escala do dia quando ainda não existe linha para a data",
+    "atualiza a linha existente em vez de duplicar a escala do dia"
    ]
   },
   "src/components/ponto/relogio/JustificativasRelogioTab.tsx": {
@@ -315763,7 +315831,7 @@
   },
   "src/pages/PontoPage.tsx": {
    "path": "src/pages/PontoPage.tsx",
-   "lines": 735,
+   "lines": 740,
    "exports": [
     "function PontoPage"
    ],
@@ -346918,10 +346986,23 @@
   }
  },
  "git": {
-  "sha": "c697595dd1ed8bd0160efcc6eddb5422819d0a80",
+  "sha": "58eab8d320cb38c92fa18e7d827682cb474d6080",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "58eab8d",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: edita a escala do dia direto do card Hoje (port do Muri) (#892)",
+    "files": [
+     "src/components/__tests__/PontoTodayCard.test.tsx",
+     "src/components/ponto/EditarEscalaDialog.tsx",
+     "src/components/ponto/PontoTodayCard.tsx",
+     "src/components/ponto/__tests__/EditarEscalaDialog.test.tsx",
+     "src/pages/PontoPage.tsx"
+    ]
+   },
    {
     "sha": "c697595",
     "date": "2026-11-25",
@@ -347686,16 +347767,6 @@
      "Dockerfile",
      "Dockerfile.prod"
     ]
-   },
-   {
-    "sha": "fb2d3e0",
-    "date": "2026-11-23",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps): bump the minor-patch group across 1 directory with 3 updates (#858)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -347712,6 +347783,10 @@
     5
    ],
    [
+    "src/pages/PontoPage.tsx",
+    3
+   ],
+   [
     "src/components/recrutamento/AnalyticsRecrutamento.tsx",
     2
    ],
@@ -347721,18 +347796,6 @@
    ],
    [
     "src/pages/__tests__/RecrutamentoPage.vagaForm.test.tsx",
-    2
-   ],
-   [
-    "src/pages/PontoPage.tsx",
-    2
-   ],
-   [
-    "package-lock.json",
-    2
-   ],
-   [
-    "package.json",
     2
    ],
    [
@@ -347752,6 +347815,22 @@
     2
    ],
    [
+    "src/components/__tests__/PontoTodayCard.test.tsx",
+    1
+   ],
+   [
+    "src/components/ponto/EditarEscalaDialog.tsx",
+    1
+   ],
+   [
+    "src/components/ponto/PontoTodayCard.tsx",
+    1
+   ],
+   [
+    "src/components/ponto/__tests__/EditarEscalaDialog.test.tsx",
+    1
+   ],
+   [
     "src/components/dashboard/DashboardHeader.tsx",
     1
    ],
@@ -347769,14 +347848,6 @@
    ],
    [
     "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
-    1
-   ],
-   [
-    "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
-    1
-   ],
-   [
-    "src/components/recrutamento/analyticsFiltros.ts",
     1
    ]
   ]

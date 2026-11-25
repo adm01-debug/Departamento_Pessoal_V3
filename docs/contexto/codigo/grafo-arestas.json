@@ -3427,6 +3427,15 @@
    "src/integrations/supabase/client.ts",
    "src/utils/safeError.ts"
   ],
+  "src/components/ponto/EditarEscalaDialog.tsx": [
+   "src/components/ui/animated-cascade-dialog.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/spinner.tsx",
+   "src/services/turnoService.ts",
+   "src/utils/safeError.ts"
+  ],
   "src/components/ponto/EspelhosPapelPanel.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -3666,10 +3675,13 @@
    "src/utils/dateLocal.ts"
   ],
   "src/components/ponto/PontoTodayCard.tsx": [
+   "src/components/ponto/EditarEscalaDialog.tsx",
    "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/integrations/supabase/types.ts",
-   "src/lib/utils.ts"
+   "src/lib/utils.ts",
+   "src/services/turnoService.ts"
   ],
   "src/components/ponto/PontoWeekSummary.tsx": [
    "src/components/ui/badge.tsx",

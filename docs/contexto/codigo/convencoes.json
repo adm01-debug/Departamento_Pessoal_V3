@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (580)",
+   "src/components (581)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (720)",
+   "co-localizado (__tests__) (721)",
    "co-localizado (*.test) (78)",
    "e2e/ (33)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (698)"
+  ".tsx (699)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: edita a escala do dia direto do card Hoje (port do Muri) (#892)",
    "feat: resgata recorte de período/vaga e exportação CSV da Analytics (port do Muri) (#891)",
    "fix(db): fecha record_backup_run para anon e tira backup_logs do claim de JWT (#890)",
    "fix: policies de escrita de provisoes_folha e historico_calculos_folha usam pertence_a_empresa (#881)",
-   "feat: resgata a janela Ver todas do desempenho de vagas (port do Muri) (#888)",
-   "feat: formulario de vaga coleta cargo, contrato, faixa e beneficios (#887)"
+   "feat: resgata a janela Ver todas do desempenho de vagas (port do Muri) (#888)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

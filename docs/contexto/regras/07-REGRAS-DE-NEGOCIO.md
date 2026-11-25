@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c697595dd1` · branch `main` · 2026-11-25 18:29 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `58eab8d320` · branch `main` · 2026-11-25 18:40 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1704,7 +1704,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `adquirido` | compara, filtra | `src/components/ferias/FeriasForm.tsx`<br>`src/hooks/useNotificacoes.ts` |
 | `status` | `afastado` | compara, escreve, filtra | `src/mocks/colaboradoresMock.ts`<br>`supabase/functions/enviar-relatorio/index.ts`<br>`supabase/functions/metricas/index.ts` |
 | `status` | `agendada` | compara | `src/components/recrutamento/CandidatoTimeline.tsx` |
-| `status` | `agendado` | compara, escreve | `src/components/turnos/DialogoNovaEscala.tsx`<br>`src/pages/AdminAgendamentoExamesPage.tsx` |
+| `status` | `agendado` | compara, escreve | `src/components/ponto/EditarEscalaDialog.tsx`<br>`src/components/turnos/DialogoNovaEscala.tsx`<br>`src/pages/AdminAgendamentoExamesPage.tsx` |
 | `status` | `aguardando_gestor` | compara | `src/components/avaliacao/aprovacaoGestor.ts` |
 | `status` | `aguardando_inicio` | escreve | `src/mocks/treinamentosMock.ts` |
 | `status` | `aguardando_inss` | compara, escreve | `src/pages/AfastamentosPage.tsx`<br>`src/services/afastamentoService.ts` |
@@ -5640,7 +5640,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (10316 testes em 812 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10321 testes em 813 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5931,6 +5931,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/MorningBriefing.test.tsx` | 11 | MorningBriefing · separa o cache por empresa e não consulta sem tenant selecionado · shows skeleton when loading · renders error state when error occurs … |
 | `src/components/__tests__/NineBoxTalentosDialog.test.tsx` | 11 | NineBoxTalentosDialog — a MESMA janela de  · monta véu, casca e conteúdo com a receita do  · tem o título do card e o ícone de destaque · não renderiza nada com a janela fechada … |
 | `src/components/__tests__/PontoInconsistencyPanel.test.tsx` | 11 | PontoInconsistencyPanel · renders without crash when registros is empty · shows Insights de Inteligência when inconsistency detected · shows Resolução Assistida Ativa badge when inconsistencies exist … |
+| `src/components/__tests__/PontoTodayCard.test.tsx` | 11 | PontoTodayCard · renders Hoje title · shows empty state when no registro · renders Progresso da Jornada when registro present … |
 | `src/components/__tests__/QuickActionsGrid.test.tsx` | 11 | QuickActionsGrid · renders Ações Rápidas heading · renders Novo Colaborador action · renders Lançar Ponto action … |
 | `src/components/__tests__/auditoriaDerivacoes.test.ts` | 11 | auditoriaDerivacoes · conta os status e as fatias do resumo (nunca NaN) · conta os eventos dos últimos 30 dias · detecta filtros ativos (inclusive os do painel avançado) … |
 | `src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx` | 11 | CandidatoDetalhesDialog · mostra identificação, cargo, departamento e etapa atual · destaca SOMENTE a etapa efetiva do candidato no indicador · não inventa contato ausente (nem  … |
@@ -5943,8 +5944,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/hooks/__tests__/useHistoricoColaborador.test.ts` | 11 | useHistoricoColaborador · merges events from every source and sorts them from most to least recent · preserves rich fields instead of flattening them into a single description string · includes audit entries as a filterable  … |
 | `src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx` | 11 | CalculadoraRescisaoPage — importar colaborador · o seletor é um combobox com busca, não uma lista de rolagem · a busca filtra a lista pelo nome digitado · a busca aceita a matrícula e separa homônimos … |
 | `src/services/__tests__/bancoHorasConfigService.test.ts` | 11 | bancoHorasConfigService.buscar · returns config for empresa · returns null when no config exists · filters by empresa_id … |
-| `src/services/__tests__/colaboradorService.recontratacao.test.ts` | 11 | colaboradorService.recontratar · exige empresaId (isolamento de tenant) · exige data_admissao · atualiza o MESMO colaborador.id (status ativo, data_desligamento null) e cria vínculo tipo  … |
-| … +512 linhas — lista completa em `context.json` | | |
+| … +513 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6312,4 +6312,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * HABILITAÇÃO (regra ÚNICA, a MESMA do servidor — `pode_aprovar_colaborador` | `src/components/avaliacao/feedbackCanonico.ts` |
 | ENCAMINHAMENTO (RH/admin) — visível apenas para quem pode encaminhar E na | `src/components/avaliacao/feedbackCanonico.ts` |
 | VALIDAÇÃO DO POTENCIAL (RH) — controle LEGADO. O fluxo atual termina na | `src/components/avaliacao/feedbackCanonico.ts` |
-| … +1071 linhas — lista completa em `context.json` | |
+| … +1073 linhas — lista completa em `context.json` | |
