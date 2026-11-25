@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c87122f8c5` · branch `main` · 2026-11-25 19:11 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7a0aee8ae5` · branch `main` · 2026-11-25 19:30 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2976,7 +2976,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **FeedbacksResumo({ distribuicao, media, delta, tipos, total, indiceBase = 2, reduzirMovimento = false, onNovoFeedback, }: FeedbacksResumo)** — `src/components/avaliacao/FeedbacksResumo.tsx`
   ```
-  const tomDelta = delta === null ? 'neutra' : delta > 0 ? 'alta' : delta < 0 ? 'baixa' : 'neutra'; const APARENCIA_DELTA = { alta: { Icone: TrendingUp, tinta: 'text-success' }, baixa: { Icone: TrendingDown, tinta: 'text-destructive-vivid' }, neutra: { Icone: Minus, tinta: 'text-muted-foreground' }, } as const; const { Icone: IconeDelta, tinta: tintaDelta } = APARENCIA_DELTA[tomDelta]; return ( <div className="space-y-4"> {/* ── 1. Distribuição de notas ─────────────────────────────────────── */} …
+  const tomDelta = delta === null ? 'neutra' : delta > 0 ? 'alta' : delta < 0 ? 'baixa' : 'neutra'; const APARENCIA_DELTA = { alta: { Icone: TrendingUp, tinta: 'text-success' }, baixa: { Icone: TrendingDown, tinta: 'text-destructive-vivid' }, neutra: { Icone: Minus, tinta: 'text-muted-foreground' }, } as const; const { Icone: IconeDelta, tinta: tintaDelta } = APARENCIA_DELTA[tomDelta]; return ( <div className="space-y-4"> {/* ── 1. Dica + CTA real (abre a coluna) ─────────── */} <MotionCard {...en …
   ```
 - **FeedbacksTimeline({ grupos, apresentacao, reduzirMovimento = false, onVer, onEditar, onFiltrarAvaliador, onFiltrarAvaliado, onLimpar, }: F)** — `src/components/avaliacao/FeedbacksTimeline.tsx`
   ```
@@ -5640,7 +5640,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (10321 testes em 813 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10342 testes em 816 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5836,6 +5836,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/passwordPolicy.test.ts` | 16 | validatePassword · returns valid for a strong password · rejects passwords shorter than 8 chars · rejects passwords longer than 128 chars … |
 | `src/calculators/__tests__/auditHelper.test.ts` | 15 | signCalculation · returns a hex string · returns the same hash for identical data · returns different hashes for different data … |
 | `src/components/__tests__/ESocialEventComponents.test.tsx` | 15 | S2200Admissao (NaoPeriodicos) · renders trabalhador name · renders CPF · renders admissao date … |
+| `src/components/__tests__/LoginPageAjustesVisuais.test.ts` | 15 | Login — campos começam vazios e usam placeholder · estado inicial do e-mail e da senha é string vazia · nenhum valor estático é passado para os inputs · o exemplo virou placeholder real nos dois campos … |
 | `src/components/__tests__/NewLoanDialog.test.tsx` | 15 | NewLoanDialog · renders Novo Empréstimo trigger button · renders Registrar Empréstimo Consignado title · renders Compliance L10.820 badge … |
 | `src/components/__tests__/TrilhaAuditoriaDesligamentos.test.tsx` | 15 | TrilhaAuditoriaDesligamentos — coluna de ações uniforme · renderiza um  · usa um único container horizontal (flex-nowrap, items-center, justify-end) em TODOS os eventos · coloca o selo  … |
 | `src/components/integracoes/__tests__/ConfigPanels.test.tsx` | 15 | CnabConfigPanel · Salvar Configurações grava os dados editados e invalida a configuração · não salva sem os campos obrigatórios · Salvar Configurações fica desabilitado enquanto a config carrega … |
@@ -5943,8 +5944,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/hooks/__tests__/useBackGesture.test.ts` | 11 | useBackGesture · navigates back on left-edge swipe right · does not navigate when swipe starts away from left edge · does not navigate when horizontal distance is too small … |
 | `src/hooks/__tests__/useHistoricoColaborador.test.ts` | 11 | useHistoricoColaborador · merges events from every source and sorts them from most to least recent · preserves rich fields instead of flattening them into a single description string · includes audit entries as a filterable  … |
 | `src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx` | 11 | CalculadoraRescisaoPage — importar colaborador · o seletor é um combobox com busca, não uma lista de rolagem · a busca filtra a lista pelo nome digitado · a busca aceita a matrícula e separa homônimos … |
-| `src/services/__tests__/bancoHorasConfigService.test.ts` | 11 | bancoHorasConfigService.buscar · returns config for empresa · returns null when no config exists · filters by empresa_id … |
-| … +513 linhas — lista completa em `context.json` | | |
+| … +516 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

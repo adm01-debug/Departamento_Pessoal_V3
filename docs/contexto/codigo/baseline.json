@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c87122f8c50c373a177605f554407e17b309ec80",
+  "commit": "7a0aee8ae57dab602ac642ec028b42e54e820fd2",
   "branch": "main",
-  "data_commit": "2026-11-25T15:49:58-03:00",
+  "data_commit": "2026-11-25T16:29:26-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "7a0aee8",
+    "data": "2026-11-25",
+    "assunto": "feat: resgata a ordem aprovada da coluna de Feedbacks e os ajustes de login do port do Muri (#894)"
+   },
    {
     "sha": "c87122f",
     "data": "2026-11-25",
@@ -126,18 +131,13 @@
     "sha": "3ffaebd",
     "data": "2026-11-24",
     "assunto": "fix: guard to_regclass nas policies de backup_logs (apply abortava) (#867)"
-   },
-   {
-    "sha": "90a640d",
-    "data": "2026-11-24",
-    "assunto": "fix: fixa o schema da extensao no search_path do dreno (#866)"
    }
   ],
-  "arquivos_mudados_7d": 774,
+  "arquivos_mudados_7d": 775,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 382
+    "mudancas": 385
    },
    {
     "pasta": "src/components/ui",
@@ -153,7 +153,7 @@
    },
    {
     "pasta": "src/components/avaliacao",
-    "mudancas": 91
+    "mudancas": 92
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -238,12 +238,12 @@
     "mudancas": 10
    },
    {
-    "arquivo": "src/schemas/tableColumns.ts",
+    "arquivo": "src/index.css",
     "mudancas": 9
    },
    {
-    "arquivo": "src/index.css",
-    "mudancas": 8
+    "arquivo": "src/schemas/tableColumns.ts",
+    "mudancas": 9
    },
    {
     "arquivo": "docs/auditoria/sql-preservado/README.md",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4201,
-  "arquivos_codigo": 2282,
-  "linhas_codigo": 460816,
+  "arquivos_total": 4204,
+  "arquivos_codigo": 2285,
+  "linhas_codigo": 461179,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 438,
   "migrations": 1265,
   "cron_jobs": 43,
-  "testes": 858,
+  "testes": 861,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 347
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1130,
-   "linhas": 214410
+   "arquivos": 1133,
+   "linhas": 214772
   },
   "src/constants": {
    "arquivos": 7,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 146,
-   "linhas": 51970
+   "linhas": 51971
   },
   "src/providers": {
    "arquivos": 4,

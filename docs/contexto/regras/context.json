@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c87122f8c50c373a177605f554407e17b309ec80",
+  "sha": "7a0aee8ae57dab602ac642ec028b42e54e820fd2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 19:11 UTC",
-  "files_total": 4215,
-  "code_files": 3619,
-  "code_lines": 535354
+  "generated_at": "2026-11-25 19:30 UTC",
+  "files_total": 4218,
+  "code_files": 3622,
+  "code_lines": 535717
  },
  "version": "1.3.2",
- "facts_hash": "19c97e9f67fc0b16",
+ "facts_hash": "7bb99589548d3dd0",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,8 +388,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1339,
-   ".tsx": 1121,
-   ".ts": 1018,
+   ".tsx": 1123,
+   ".ts": 1019,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -103060,7 +103060,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1130,
+  "components_count": 1133,
   "hooks": [
    {
     "name": "useContacts",
@@ -104735,8 +104735,8 @@
   },
   {
    "module": "src/components",
-   "files": 1130,
-   "lines": 214410,
+   "files": 1133,
+   "lines": 214772,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -104941,6 +104941,7 @@
     "src/components/__tests__/CamposCustomizadosTab.test.tsx",
     "src/components/__tests__/CandidatoTimeline.test.tsx",
     "src/components/__tests__/CardProgramacao.test.tsx",
+    "src/components/__tests__/CascadeDialogFrameAnimacao.test.tsx",
     "src/components/__tests__/CascadeSaidaPerfis.test.ts",
     "src/components/__tests__/CascadeSaidaRapidaAnimacao.test.tsx",
     "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
@@ -104962,8 +104963,7 @@
     "src/components/__tests__/CurrencyInput.test.tsx",
     "src/components/__tests__/DarfTab.test.tsx",
     "src/components/__tests__/DashboardHeader.test.tsx",
-    "src/components/__tests__/DashboardWidgets.test.tsx",
-    "src/components/__tests__/DeclaracoesTable.test.tsx"
+    "src/components/__tests__/DashboardWidgets.test.tsx"
    ]
   },
   {
@@ -105440,7 +105440,7 @@
   {
    "module": "src/pages",
    "files": 146,
-   "lines": 51970,
+   "lines": 51971,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -166512,7 +166512,7 @@
     "file": "src/components/avaliacao/FeedbacksResumo.tsx",
     "name": "FeedbacksResumo",
     "params": "{ distribuicao, media, delta, tipos, total, indiceBase = 2, reduzirMovimento = false, onNovoFeedback, }: FeedbacksResumo",
-    "body": "const tomDelta = delta === null ? 'neutra' : delta > 0 ? 'alta' : delta < 0 ? 'baixa' : 'neutra'; const APARENCIA_DELTA = { alta: { Icone: TrendingUp, tinta: 'text-success' }, baixa: { Icone: TrendingDown, tinta: 'text-destructive-vivid' }, neutra: { Icone: Minus, tinta: 'text-muted-foreground' }, } as const; const { Icone: IconeDelta, tinta: tintaDelta } = APARENCIA_DELTA[tomDelta]; return ( <div className=\"space-y-4\"> {/* ── 1. Distribuição de notas ─────────────────────────────────────── */} …"
+    "body": "const tomDelta = delta === null ? 'neutra' : delta > 0 ? 'alta' : delta < 0 ? 'baixa' : 'neutra'; const APARENCIA_DELTA = { alta: { Icone: TrendingUp, tinta: 'text-success' }, baixa: { Icone: TrendingDown, tinta: 'text-destructive-vivid' }, neutra: { Icone: Minus, tinta: 'text-muted-foreground' }, } as const; const { Icone: IconeDelta, tinta: tintaDelta } = APARENCIA_DELTA[tomDelta]; return ( <div className=\"space-y-4\"> {/* ── 1. Dica + CTA real (abre a coluna) ─────────── */} <MotionCard {...en …"
    },
    {
     "file": "src/components/avaliacao/FeedbacksTimeline.tsx",
@@ -175667,6 +175667,18 @@
     "name": "shows data_inicio_prevista in formatted form"
    },
    {
+    "file": "src/components/__tests__/CascadeDialogFrameAnimacao.test.tsx",
+    "name": "CascadeDialogFrame — a janela abre e fecha animada (Framer real)"
+   },
+   {
+    "file": "src/components/__tests__/CascadeDialogFrameAnimacao.test.tsx",
+    "name": "a caixa cresce de zero e o véu escurece em fade na abertura"
+   },
+   {
+    "file": "src/components/__tests__/CascadeDialogFrameAnimacao.test.tsx",
+    "name": "no fechamento a caixa encolhe de novo antes de sair (exit animado)"
+   },
+   {
     "file": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
     "name": "cascade-motion — perfil PADRÃO (comportamento histórico intacto)"
    },
@@ -179375,6 +179387,18 @@
     "name": "descreve o prazo e cobre ciclo sem data"
    },
    {
+    "file": "src/components/__tests__/FeedbacksResumoOrdem.test.tsx",
+    "name": "Feedbacks — ordem dos widgets da coluna lateral"
+   },
+   {
+    "file": "src/components/__tests__/FeedbacksResumoOrdem.test.tsx",
+    "name": "o CTA "
+   },
+   {
+    "file": "src/components/__tests__/FeedbacksResumoOrdem.test.tsx",
+    "name": "os índices da cascata sobem na ordem de leitura (Dica = indiceBase)"
+   },
+   {
     "file": "src/components/__tests__/FeriasActions.test.tsx",
     "name": "FeriasActions"
    },
@@ -181669,6 +181693,66 @@
    {
     "file": "src/components/__tests__/LoginForm.test.tsx",
     "name": "password input is of type password"
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "Login — campos começam vazios e usam placeholder"
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "estado inicial do e-mail e da senha é string vazia"
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "nenhum valor estático é passado para os inputs"
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "o exemplo virou placeholder real nos dois campos"
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "placeholder em cinza neutro com opacidade reduzida"
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "autofill do navegador é neutralizado pela classe "
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "o token "
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "Login — contraste do aviso de sessão expirada"
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "usa texto claro do tema, não o "
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "mantém a leitura semântica âmbar no ícone e no fundo"
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "o texto do aviso continua vindo da regra de negócio"
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "Login — alinhamento e cor do "
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "rótulo e link compartilham a baseline"
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "repouso em cinza, amarelo da marca + sublinhado só no hover/foco"
+   },
+   {
+    "file": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "name": "o link continua disparando o modo de recuperação"
    },
    {
     "file": "src/components/__tests__/LogsIntegracoesTab.test.tsx",
@@ -278367,6 +278451,16 @@
     "shows data_inicio_prevista in formatted form"
    ]
   },
+  "src/components/__tests__/CascadeDialogFrameAnimacao.test.tsx": {
+   "path": "src/components/__tests__/CascadeDialogFrameAnimacao.test.tsx",
+   "lines": 115,
+   "is_test": true,
+   "tests": [
+    "CascadeDialogFrame — a janela abre e fecha animada (Framer real)",
+    "a caixa cresce de zero e o véu escurece em fade na abertura",
+    "no fechamento a caixa encolhe de novo antes de sair (exit animado)"
+   ]
+  },
   "src/components/__tests__/CascadeSaidaPerfis.test.ts": {
    "path": "src/components/__tests__/CascadeSaidaPerfis.test.ts",
    "lines": 125,
@@ -280000,6 +280094,16 @@
     "descreve o prazo e cobre ciclo sem data"
    ]
   },
+  "src/components/__tests__/FeedbacksResumoOrdem.test.tsx": {
+   "path": "src/components/__tests__/FeedbacksResumoOrdem.test.tsx",
+   "lines": 115,
+   "is_test": true,
+   "tests": [
+    "Feedbacks — ordem dos widgets da coluna lateral",
+    "o CTA ",
+    "os índices da cascata sobem na ordem de leitura (Dica = indiceBase)"
+   ]
+  },
   "src/components/__tests__/FeriasActions.test.tsx": {
    "path": "src/components/__tests__/FeriasActions.test.tsx",
    "lines": 129,
@@ -281000,6 +281104,31 @@
     "calls onForgotPassword when link clicked",
     "email input is of type email",
     "password input is of type password"
+   ]
+  },
+  "src/components/__tests__/LoginPageAjustesVisuais.test.ts": {
+   "path": "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+   "lines": 131,
+   "is_test": true,
+   "rule_comments": [
+    "(`items-baseline`) em cinza no repouso, com o amarelo da marca apenas"
+   ],
+   "tests": [
+    "Login — campos começam vazios e usam placeholder",
+    "estado inicial do e-mail e da senha é string vazia",
+    "nenhum valor estático é passado para os inputs",
+    "o exemplo virou placeholder real nos dois campos",
+    "placeholder em cinza neutro com opacidade reduzida",
+    "autofill do navegador é neutralizado pela classe ",
+    "o token ",
+    "Login — contraste do aviso de sessão expirada",
+    "usa texto claro do tema, não o ",
+    "mantém a leitura semântica âmbar no ícone e no fundo",
+    "o texto do aviso continua vindo da regra de negócio",
+    "Login — alinhamento e cor do ",
+    "rótulo e link compartilham a baseline",
+    "repouso em cinza, amarelo da marca + sublinhado só no hover/foco",
+    "o link continua disparando o modo de recuperação"
    ]
   },
   "src/components/__tests__/LogsIntegracoesTab.test.tsx": {
@@ -286008,7 +286137,7 @@
   },
   "src/components/avaliacao/FeedbacksResumo.tsx": {
    "path": "src/components/avaliacao/FeedbacksResumo.tsx",
-   "lines": 251,
+   "lines": 252,
    "exports": [
     "function FeedbacksResumo"
    ],
@@ -286026,7 +286155,7 @@
     {
      "name": "FeedbacksResumo",
      "params": "{ distribuicao, media, delta, tipos, total, indiceBase = 2, reduzirMovimento = false, onNovoFeedback, }: FeedbacksResumo",
-     "body": "const tomDelta = delta === null ? 'neutra' : delta > 0 ? 'alta' : delta < 0 ? 'baixa' : 'neutra'; const APARENCIA_DELTA = { alta: { Icone: TrendingUp, tinta: 'text-success' }, baixa: { Icone: TrendingDown, tinta: 'text-destructive-vivid' }, neutra: { Icone: Minus, tinta: 'text-muted-foreground' }, } as const; const { Icone: IconeDelta, tinta: tintaDelta } = APARENCIA_DELTA[tomDelta]; return ( <div className=\"space-y-4\"> {/* ── 1. Distribuição de notas ─────────────────────────────────────── */} …"
+     "body": "const tomDelta = delta === null ? 'neutra' : delta > 0 ? 'alta' : delta < 0 ? 'baixa' : 'neutra'; const APARENCIA_DELTA = { alta: { Icone: TrendingUp, tinta: 'text-success' }, baixa: { Icone: TrendingDown, tinta: 'text-destructive-vivid' }, neutra: { Icone: Minus, tinta: 'text-muted-foreground' }, } as const; const { Icone: IconeDelta, tinta: tintaDelta } = APARENCIA_DELTA[tomDelta]; return ( <div className=\"space-y-4\"> {/* ── 1. Dica + CTA real (abre a coluna) ─────────── */} <MotionCard {...en …"
     }
    ],
    "percents": [
@@ -314749,7 +314878,7 @@
   },
   "src/pages/LoginPage.tsx": {
    "path": "src/pages/LoginPage.tsx",
-   "lines": 607,
+   "lines": 608,
    "exports": [
     "function LoginPage"
    ],
@@ -346986,10 +347115,25 @@
   }
  },
  "git": {
-  "sha": "c87122f8c50c373a177605f554407e17b309ec80",
+  "sha": "7a0aee8ae57dab602ac642ec028b42e54e820fd2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7a0aee8",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: resgata a ordem aprovada da coluna de Feedbacks e os ajustes de login do port do Muri (#894)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/CascadeDialogFrameAnimacao.test.tsx",
+     "src/components/__tests__/FeedbacksResumoOrdem.test.tsx",
+     "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+     "src/components/avaliacao/FeedbacksResumo.tsx",
+     "src/index.css",
+     "src/pages/LoginPage.tsx"
+    ]
+   },
    {
     "sha": "c87122f",
     "date": "2026-11-25",
@@ -347756,22 +347900,12 @@
     "files": [
      ".github/workflows/canonical-migrations.yml"
     ]
-   },
-   {
-    "sha": "7069f54",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "infra: agenda o dreno da fila de notificacoes quando os segredos existirem (#855)",
-    "files": [
-     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
-     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    8
+    9
    ],
    [
     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
@@ -347782,15 +347916,15 @@
     6
    ],
    [
+    "src/index.css",
+    3
+   ],
+   [
     "src/pages/PontoPage.tsx",
     3
    ],
    [
     "src/components/recrutamento/AnalyticsRecrutamento.tsx",
-    2
-   ],
-   [
-    "src/index.css",
     2
    ],
    [
@@ -347806,12 +347940,24 @@
     2
    ],
    [
-    "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql",
-    2
+    "src/components/__tests__/CascadeDialogFrameAnimacao.test.tsx",
+    1
    ],
    [
-    "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
-    2
+    "src/components/__tests__/FeedbacksResumoOrdem.test.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    1
+   ],
+   [
+    "src/components/avaliacao/FeedbacksResumo.tsx",
+    1
+   ],
+   [
+    "src/pages/LoginPage.tsx",
+    1
    ],
    [
     "src/components/__tests__/PontoTodayCard.test.tsx",
@@ -347835,18 +347981,6 @@
    ],
    [
     "src/components/recrutamento/AnalyticsBarraFiltros.tsx",
-    1
-   ],
-   [
-    "src/components/recrutamento/__tests__/AnalyticsRecrutamento.recorte.test.tsx",
-    1
-   ],
-   [
-    "src/components/recrutamento/__tests__/analyticsExportarAnimacao.test.tsx",
-    1
-   ],
-   [
-    "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
     1
    ]
   ]

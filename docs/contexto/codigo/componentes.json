@@ -946,7 +946,7 @@
     "FeedbacksResumo"
    ],
    "export_default": null,
-   "linhas": 251,
+   "linhas": 252,
    "dominio": "components/avaliacao",
    "hooks_locais": [],
    "tabelas": [],
@@ -10700,7 +10700,7 @@
     "LoginPage"
    ],
    "export_default": "LoginPage",
-   "linhas": 607,
+   "linhas": 608,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
