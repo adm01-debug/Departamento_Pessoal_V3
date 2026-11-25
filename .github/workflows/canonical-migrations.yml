@@ -261,6 +261,10 @@ jobs:
           # backup_logs - a 20260725100000 cria a tabela sem RLS nem policy e,
           # com os GRANTs default do Supabase, ela ficaria legivel por
           # anon/authenticated sem filtro de empresa.
+          # 25/11/2026: 20261125130000 troca a origem do tenant das policies de
+          # escrita de provisoes_folha e de historico_calculos_folha. Elas liam
+          # app_metadata->>'empresa_id' do JWT (claim forjavel pelo cliente) e o
+          # gate de RLS sobre PII reprovava. Passam a usar public.pertence_a_empresa.
           for migration in \
             20261123090000_ponto_rep_converter_batidas.sql \
             20261122090000_recibos_ferias_criar_tabela_ausente.sql \
@@ -278,7 +282,8 @@ jobs:
             20260804000000_p0_010_write_policies_provisoes.sql \
             20260817000000_p4_071_indices_compostos_top20.sql \
             20261124150000_backup_logs_rls_policy.sql \
-            20261125120000_secdef_refresh_dashboard_views_revoke.sql
+            20261125120000_secdef_refresh_dashboard_views_revoke.sql \
+            20261125130000_provisoes_folha_tenant_pertence.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
