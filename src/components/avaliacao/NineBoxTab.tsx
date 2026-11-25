@@ -60,11 +60,10 @@ import {
 interface NineBoxTabProps {
   /** Feedbacks da empresa (mesma lista que a página já carregava). */
   feedbacks: any[];
-  /** Ciclos cadastrados (opções do seletor "Visão atual" + ciclo anterior). */
+  /** Ciclos cadastrados (base do ciclo anterior usado no comparativo). */
   ciclos?: any[];
   /** Ciclo em foco (o mesmo selecionado na página). `''` = todos. */
   cicloId?: string;
-  onCicloId?: (cicloId: string) => void;
   /** Colaboradores já carregados pela página (cargo/departamento/foto). */
   colaboradores?: ColaboradorNineBox[];
   /** PDIs já carregados pela página (relação real por `colaborador_id`). */
@@ -103,7 +102,6 @@ export function NineBoxTab({
   feedbacks,
   ciclos = [],
   cicloId = '',
-  onCicloId,
   colaboradores = [],
   pdis = [],
   empresaId,
@@ -352,7 +350,7 @@ export function NineBoxTab({
           onVerDetalhes={atencao.total > 0 ? () => setEmAtencao((v) => !v) : undefined}
         />
 
-        {/* C · Busca + filtros + comparativo + ciclo em visão. */}
+        {/* C · Busca + filtros + comparativo. */}
         <NineBoxFiltros
           indice={5}
           busca={busca}
@@ -369,9 +367,6 @@ export function NineBoxTab({
           onEmAtencao={setEmAtencao}
           comparar={comparar}
           onComparar={setComparar}
-          ciclos={ciclosOrdenados}
-          cicloId={cicloId}
-          onCicloId={(id) => onCicloId?.(id)}
           filtrosAtivos={filtrosAtivos}
           onLimpar={limparFiltros}
         />

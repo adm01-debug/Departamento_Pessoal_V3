@@ -1541,7 +1541,6 @@ export default function AvaliacaoPage() {
                 feedbacks={feedbacks}
                 ciclos={ciclos}
                 cicloId={cicloSelecionado?.id ?? ''}
-                onCicloId={setCicloSelecionadoId}
                 colaboradores={colaboradoresVisuais}
                 pdis={pdis}
                 /* Modo real (inerte com a flag desligada): a matriz passa a vir

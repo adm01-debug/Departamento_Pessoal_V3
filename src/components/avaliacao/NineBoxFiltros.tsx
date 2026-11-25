@@ -52,9 +52,6 @@ interface NineBoxFiltrosProps {
   onEmAtencao: (valor: boolean) => void;
   comparar: boolean;
   onComparar: (valor: boolean) => void;
-  ciclos: { id: string; nome: string }[];
-  cicloId: string;
-  onCicloId: (valor: string) => void;
   filtrosAtivos: number;
   onLimpar: () => void;
 }
@@ -75,9 +72,6 @@ export function NineBoxFiltros({
   onEmAtencao,
   comparar,
   onComparar,
-  ciclos,
-  cicloId,
-  onCicloId,
   filtrosAtivos,
   onLimpar,
 }: NineBoxFiltrosProps) {
@@ -217,20 +211,6 @@ export function NineBoxFiltros({
           </span>
           Comparar ciclos
         </Button>
-
-        <Select value={cicloId || TODOS} onValueChange={(v) => onCicloId(v === TODOS ? '' : v)}>
-          <SelectTrigger aria-label="Ciclo em visão" className="h-9 w-full rounded-lg sm:w-[200px]">
-            <SelectValue placeholder="Visão atual" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={TODOS}>Todos os ciclos</SelectItem>
-            {ciclos.map((c) => (
-              <SelectItem key={c.id} value={c.id}>
-                {c.nome}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
     </motion.div>
   );
