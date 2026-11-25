@@ -25,8 +25,8 @@
  *  • cada um tem um registro no ciclo em foco (`mock-ciclo-3`, o ativo) e outro
  *    no anterior (`mock-ciclo-2`) — é isso que faz "Evoluíram / Permaneceram /
  *    Regrediram" e o widget "Movimentações" aparecerem preenchidos;
- *  • os ids de ciclo são os MESMOS do mock do módulo, então o seletor
- *    "Ciclo em visão" e o botão "Comparar ciclos" funcionam de verdade;
+ *  • os ids de ciclo são os MESMOS do mock do módulo, então o botão
+ *    "Comparar ciclos" funciona de verdade;
  *  • os dados são ADICIONADOS aos reais (não substituem): a Estrela mantém as
  *    pessoas que já vinham do feedback real e os quadrantes vazios ganham gente.
  * ============================================================================
