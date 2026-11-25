@@ -7,13 +7,13 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (541)",
+   "src/components (557)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
   "hooks": [
    "src/hooks (103)",
-   "src/components (10)",
+   "src/components (11)",
    "src/contexts (4)"
   ],
   "servicos_logica": [
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (681)",
+   "co-localizado (__tests__) (689)",
    "co-localizado (*.test) (78)",
    "e2e/ (33)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (659)"
+  ".tsx (675)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: resgata a tela de Turnos do agente Muri (calendario, escalas e dialogos) (#875)",
    "fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)",
    "fix: p4_071 nao aborta mais o lote aditivo no canônico (#879)",
    "fix: lote aditivo aplica no canônico, sem EXECUTE anon em refresh_dashboard_views e validate que reverte (#877)",
-   "infra: leva 7 migrations aditivas de observabilidade ao canônico + sidecars .verify (#869)",
-   "feat: banco de horas com extrato filtravel, KPIs e exportacao CSV (#873)"
+   "infra: leva 7 migrations aditivas de observabilidade ao canônico + sidecars .verify (#869)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

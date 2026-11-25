@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2034)",
+   "TypeScript (2064)",
    "SQL (1335)",
    "Markdown (346)",
    "JavaScript (136)",
@@ -2177,12 +2177,12 @@
     "ocorrencias": 12
    },
    {
-    "papel": "tablist",
+    "papel": "group",
     "ocorrencias": 10
    },
    {
-    "papel": "group",
-    "ocorrencias": 9
+    "papel": "tablist",
+    "ocorrencias": 10
    },
    {
     "papel": "progressbar",
@@ -2209,6 +2209,10 @@
     "ocorrencias": 4
    },
    {
+    "papel": "switch",
+    "ocorrencias": 4
+   },
+   {
     "papel": "cell",
     "ocorrencias": 3
    },
@@ -2222,10 +2226,6 @@
    },
    {
     "papel": "rowgroup",
-    "ocorrencias": 3
-   },
-   {
-    "papel": "switch",
     "ocorrencias": 3
    },
    {
@@ -2298,6 +2298,10 @@
    },
    {
     "papel": "main",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "slider",
     "ocorrencias": 1
    },
    {

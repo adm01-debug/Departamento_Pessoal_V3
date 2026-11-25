@@ -1,20 +1,20 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1361,
- "arestas": 6650,
+ "nos": 1383,
+ "arestas": 6792,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 372
+   "importado_por": 381
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 301
+   "importado_por": 310
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 285
+   "importado_por": 286
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
@@ -22,31 +22,31 @@
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 228
+   "importado_por": 232
   },
   {
    "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 181
-  },
-  {
-   "arquivo": "src/components/ui/label.tsx",
-   "importado_por": 159
+   "importado_por": 183
   },
   {
    "arquivo": "src/components/ui/dialog.tsx",
-   "importado_por": 156
+   "importado_por": 162
+  },
+  {
+   "arquivo": "src/components/ui/label.tsx",
+   "importado_por": 160
   },
   {
    "arquivo": "src/utils/safeError.ts",
-   "importado_por": 138
+   "importado_por": 141
+  },
+  {
+   "arquivo": "src/components/ui/select.tsx",
+   "importado_por": 136
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
    "importado_por": 135
-  },
-  {
-   "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 134
   },
   {
    "arquivo": "src/components/ui/table.tsx",
@@ -54,7 +54,7 @@
   },
   {
    "arquivo": "src/components/ui/spinner.tsx",
-   "importado_por": 119
+   "importado_por": 118
   },
   {
    "arquivo": "src/schemas/validate.ts",
@@ -89,12 +89,12 @@
    "importado_por": 68
   },
   {
-   "arquivo": "supabase/functions/_shared/csrf.ts",
+   "arquivo": "src/hooks/index.ts",
    "importado_por": 62
   },
   {
-   "arquivo": "src/hooks/index.ts",
-   "importado_por": 61
+   "arquivo": "supabase/functions/_shared/csrf.ts",
+   "importado_por": 62
   },
   {
    "arquivo": "supabase/functions/_shared/sentry.ts",
@@ -105,12 +105,12 @@
    "importado_por": 55
   },
   {
-   "arquivo": "src/components/ui/tabs.tsx",
+   "arquivo": "src/components/ui/textarea.tsx",
    "importado_por": 52
   },
   {
-   "arquivo": "src/components/ui/textarea.tsx",
-   "importado_por": 52
+   "arquivo": "src/components/ui/tabs.tsx",
+   "importado_por": 51
   },
   {
    "arquivo": "src/utils/format.ts",
@@ -118,7 +118,7 @@
   },
   {
    "arquivo": "src/components/ui/tooltip.tsx",
-   "importado_por": 41
+   "importado_por": 42
   },
   {
    "arquivo": "src/hooks/usePiiMask.ts",
@@ -133,6 +133,10 @@
    "importado_por": 39
   },
   {
+   "arquivo": "src/components/ui/cascade-motion.ts",
+   "importado_por": 39
+  },
+  {
    "arquivo": "src/components/ui/dropdown-menu.tsx",
    "importado_por": 38
   },
@@ -142,15 +146,11 @@
   },
   {
    "arquivo": "src/components/ui/entrada-cards.tsx",
-   "importado_por": 33
+   "importado_por": 36
   },
   {
    "arquivo": "src/hooks/useColaboradorDetalhes.ts",
    "importado_por": 33
-  },
-  {
-   "arquivo": "src/components/ui/cascade-motion.ts",
-   "importado_por": 32
   },
   {
    "arquivo": "src/services/piiAccessLogService.ts",
@@ -259,23 +259,23 @@
  "modulos_mais_acoplados": [
   {
    "modulo": "pages",
-   "depende_de": 55,
+   "depende_de": 56,
    "importado_por": 1
   },
   {
    "modulo": "components/ui",
    "depende_de": 8,
-   "importado_por": 47
+   "importado_por": 48
   },
   {
    "modulo": "hooks",
    "depende_de": 18,
-   "importado_por": 34
+   "importado_por": 35
   },
   {
    "modulo": "services",
    "depende_de": 11,
-   "importado_por": 35
+   "importado_por": 36
   },
   {
    "modulo": "integrations/supabase",
@@ -285,17 +285,17 @@
   {
    "modulo": "utils",
    "depende_de": 5,
-   "importado_por": 38
+   "importado_por": 39
   },
   {
    "modulo": "lib",
    "depende_de": 1,
-   "importado_por": 36
+   "importado_por": 37
   },
   {
    "modulo": "components/dashboard",
    "depende_de": 9,
-   "importado_por": 13
+   "importado_por": 14
   },
   {
    "modulo": "types",

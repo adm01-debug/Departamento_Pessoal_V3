@@ -4537,6 +4537,196 @@
   "src/components/treinamentos/turmasDerivacoes.ts": [
    "src/components/treinamentos/treinamentosDerivacoes.ts"
   ],
+  "src/components/turnos/BarraFiltrosEscalas.tsx": [
+   "src/components/horas-extras/FiltroSelectConteudo.tsx",
+   "src/components/horas-extras/horasExtrasComum.ts",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/search-input.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/turnos/CabecalhoTurnos.tsx": [
+   "src/components/turnos/turnosCalendario.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/sliding-indicator.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/turnos/CalendarioMensal.tsx": [
+   "src/components/turnos/turnosAnimacoes.ts",
+   "src/components/turnos/turnosCalendario.ts",
+   "src/components/turnos/turnosCores.ts",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/turnos/turnosSuperficies.ts",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/turnos/CalendarioSemanal.tsx": [
+   "src/components/turnos/turnosAnimacoes.ts",
+   "src/components/turnos/turnosCalendario.ts",
+   "src/components/turnos/turnosCores.ts",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/turnos/turnosSuperficies.ts",
+   "src/components/ui/tooltip.tsx",
+   "src/components/ui/user-avatar.tsx",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/turnos/ColunaLateralTurnos.tsx": [
+   "src/components/dashboard/DonutChart.tsx",
+   "src/components/dashboard/donutMotion.ts",
+   "src/components/turnos/turnosAnimacoes.ts",
+   "src/components/turnos/turnosCalendario.ts",
+   "src/components/turnos/turnosCores.ts",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/entradaGlobal.ts",
+   "src/hooks/useEntradaCardConcluida.ts",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/turnos/DialogoConflitos.tsx": [
+   "src/components/turnos/turnosCalendario.ts",
+   "src/components/turnos/turnosCores.ts",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx"
+  ],
+  "src/components/turnos/DialogoDetalhesEscala.tsx": [
+   "src/components/turnos/turnosCalendario.ts",
+   "src/components/turnos/turnosCores.ts",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/user-avatar.tsx"
+  ],
+  "src/components/turnos/DialogoDiaEscalas.tsx": [
+   "src/components/turnos/turnosCalendario.ts",
+   "src/components/turnos/turnosCores.ts",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/user-avatar.tsx"
+  ],
+  "src/components/turnos/DialogoGerenciarTurnos.tsx": [
+   "src/components/turnos/turnosCores.ts",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/search-input.tsx",
+   "src/components/ui/table.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/turnos/DialogoNovaEscala.tsx": [
+   "src/components/turnos/turnosCalendario.ts",
+   "src/components/turnos/turnosCores.ts",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/services/turnoService.ts",
+   "src/utils/safeError.ts"
+  ],
+  "src/components/turnos/DialogoProximasEscalas.tsx": [
+   "src/components/turnos/turnosCalendario.ts",
+   "src/components/turnos/turnosCores.ts",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx"
+  ],
+  "src/components/turnos/DialogoTurno.tsx": [
+   "src/components/turnos/SeletorCor.tsx",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/services/turnoService.ts",
+   "src/utils/safeError.ts"
+  ],
+  "src/components/turnos/ListaEscalas.tsx": [
+   "src/components/turnos/turnosCalendario.ts",
+   "src/components/turnos/turnosCores.ts",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/turnos/turnosSuperficies.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/user-avatar.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/turnos/SeletorCor.tsx": [
+   "src/components/turnos/turnosCores.ts",
+   "src/components/ui/input.tsx",
+   "src/components/ui/popover.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/turnos/TurnosConteudo.tsx": [
+   "src/components/turnos/BarraFiltrosEscalas.tsx",
+   "src/components/turnos/CabecalhoTurnos.tsx",
+   "src/components/turnos/CalendarioMensal.tsx",
+   "src/components/turnos/CalendarioSemanal.tsx",
+   "src/components/turnos/ColunaLateralTurnos.tsx",
+   "src/components/turnos/DialogoConflitos.tsx",
+   "src/components/turnos/DialogoDetalhesEscala.tsx",
+   "src/components/turnos/DialogoDiaEscalas.tsx",
+   "src/components/turnos/DialogoGerenciarTurnos.tsx",
+   "src/components/turnos/DialogoNovaEscala.tsx",
+   "src/components/turnos/DialogoProximasEscalas.tsx",
+   "src/components/turnos/DialogoTurno.tsx",
+   "src/components/turnos/ListaEscalas.tsx",
+   "src/components/turnos/TurnosKpiCards.tsx",
+   "src/components/turnos/turnosCalendario.ts",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/turnos/useTurnosEscalas.ts",
+   "src/hooks/index.ts",
+   "src/hooks/useAuth.ts",
+   "src/hooks/usePermissions.ts",
+   "src/services/turnoService.ts",
+   "src/utils/safeError.ts"
+  ],
+  "src/components/turnos/TurnosKpiCards.tsx": [
+   "src/components/turnos/turnosMetricas.ts",
+   "src/components/ui/card.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/entradaGlobal.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/turnos/turnosAnimacoes.ts": [
+   "src/components/ui/entradaGlobal.ts"
+  ],
+  "src/components/turnos/turnosMetricas.ts": [
+   "src/components/turnos/turnosCalendario.ts"
+  ],
+  "src/components/turnos/useTurnosEscalas.ts": [
+   "src/components/turnos/turnosCalendario.ts",
+   "src/components/turnos/turnosMetricas.ts",
+   "src/hooks/index.ts",
+   "src/services/turnoService.ts"
+  ],
   "src/components/ui/alert-dialog.tsx": [
    "src/components/ui/button.tsx",
    "src/lib/utils.ts"
@@ -7297,17 +7487,7 @@
   "src/pages/TurnosPage.tsx": [
    "src/components/PageTitle.tsx",
    "src/components/layout/index.ts",
-   "src/components/ui/badge.tsx",
-   "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx",
-   "src/components/ui/dialog.tsx",
-   "src/components/ui/input.tsx",
-   "src/components/ui/label.tsx",
-   "src/components/ui/spinner.tsx",
-   "src/components/ui/table.tsx",
-   "src/components/ui/tabs.tsx",
-   "src/hooks/index.ts",
-   "src/services/turnoService.ts"
+   "src/components/turnos/TurnosConteudo.tsx"
   ],
   "src/pages/UsuariosPage.tsx": [
    "src/components/PageTitle.tsx",

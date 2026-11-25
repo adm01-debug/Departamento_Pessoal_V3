@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4046e24de099152e0ccf3e63c4325d8c53800949",
+  "commit": "2a62b11242998afe8e44ad6ea4cdc2923ffb7506",
   "branch": "main",
-  "data_commit": "2026-11-25T09:00:10-03:00",
+  "data_commit": "2026-11-25T09:27:31-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2a62b11",
+    "data": "2026-11-25",
+    "assunto": "feat: resgata a tela de Turnos do agente Muri (calendario, escalas e dialogos) (#875)"
+   },
    {
     "sha": "4046e24",
     "data": "2026-11-25",
@@ -126,14 +131,9 @@
     "sha": "59be355",
     "data": "2026-11-23",
     "assunto": "chore: remove config.ts orfao de processar-agendamentos (#851)"
-   },
-   {
-    "sha": "bd79c79",
-    "data": "2026-11-23",
-    "assunto": "fix: filtra destinatarios orfaos em alertas-dp para nao violar FK (#850)"
    }
   ],
-  "arquivos_mudados_7d": 669,
+  "arquivos_mudados_7d": 701,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4091,
-  "arquivos_codigo": 2177,
-  "linhas_codigo": 437147,
+  "arquivos_total": 4121,
+  "arquivos_codigo": 2207,
+  "linhas_codigo": 444004,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
-  "modulos": 84,
-  "componentes": 659,
-  "hooks": 123,
+  "modulos": 85,
+  "componentes": 675,
+  "hooks": 124,
   "edge_functions": 68,
   "tabelas": 438,
   "migrations": 1261,
   "cron_jobs": 43,
-  "testes": 818,
+  "testes": 826,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 346
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1036,
-   "linhas": 193120
+   "arquivos": 1066,
+   "linhas": 200221
   },
   "src/constants": {
    "arquivos": 7,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 145,
-   "linhas": 51409
+   "linhas": 51118
   },
   "src/providers": {
    "arquivos": 4,
@@ -696,7 +696,7 @@
   },
   "src/services": {
    "arquivos": 198,
-   "linhas": 42434
+   "linhas": 42481
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -862,8 +862,8 @@
   "console_log": 416,
   "ts_ignore": 1,
   "eslint_disable": 4,
-  "todos": 26,
-  "arquivos_acima_500_linhas": 120
+  "todos": 27,
+  "arquivos_acima_500_linhas": 122
  },
  "todos": [
   {
@@ -955,6 +955,12 @@
    "linha": 172,
    "tipo": "TODO",
    "texto": "curso vinculado tem carga horária válida. */"
+  },
+  {
+   "arquivo": "src/components/turnos/SeletorCor.tsx",
+   "linha": 261,
+   "tipo": "TODO",
+   "texto": "clique atravessa para o formulário atrás dele."
   },
   {
    "arquivo": "src/components/ui/data-table.tsx",

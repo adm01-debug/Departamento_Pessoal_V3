@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 123,
+ "total": 124,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -199,6 +199,30 @@
     "src/components/layout/SidebarFooter.tsx"
    ],
    "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/components/turnos/useTurnosEscalas.ts",
+   "hooks_exportados": [
+    "useTurnosEscalas"
+   ],
+   "linhas": 156,
+   "dominio": "components/turnos",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEmpresas",
+    "useNow",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/turnos/TurnosConteudo.tsx"
+   ],
+   "coberto_por_testes": 0
   },
   {
    "arquivo": "src/components/ui/form.tsx",
@@ -729,7 +753,7 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 58,
+   "usado_por": 59,
    "usado_por_arquivos": [
     "scripts/ai-context/cenarios.mjs",
     "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
@@ -754,13 +778,13 @@
     "src/components/ponto/PontoAdjustmentRequests.tsx",
     "src/components/premiacoes/PagamentosTab.tsx",
     "src/components/settings/CamposCustomizadosTab.tsx",
+    "src/components/turnos/TurnosConteudo.tsx",
+    "src/components/turnos/useTurnosEscalas.ts",
     "src/pages/AvaliacaoPage.tsx",
     "src/pages/BancoHorasPage.tsx",
     "src/pages/CanalContabilidadePage.tsx",
     "src/pages/CanalEticaPage.tsx",
-    "src/pages/CentrosCustoPage.tsx",
-    "src/pages/ColaboradorFormPage.tsx",
-    "src/pages/ComunicacaoInternaPage.tsx"
+    "src/pages/CentrosCustoPage.tsx"
    ],
    "coberto_por_testes": 3
   },
@@ -997,7 +1021,7 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 22,
+   "usado_por": 23,
    "usado_por_arquivos": [
     "src/components/AdminRoute.tsx",
     "src/components/MfaGate.tsx",
@@ -1010,6 +1034,7 @@
     "src/components/layout/MobileBottomNav.tsx",
     "src/components/layout/MobileQuickActions.tsx",
     "src/components/ponto/relogio/RelogiosPanel.tsx",
+    "src/components/turnos/TurnosConteudo.tsx",
     "src/hooks/index.ts",
     "src/hooks/useAssinaturas.ts",
     "src/hooks/useHorasExtras.ts",
@@ -1806,10 +1831,11 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_arquivos": [
     "src/components/banco-horas/EvolucaoSaldoCard.tsx",
-    "src/components/banco-horas/SituacaoSaldosCard.tsx"
+    "src/components/banco-horas/SituacaoSaldosCard.tsx",
+    "src/components/turnos/ColunaLateralTurnos.tsx"
    ],
    "coberto_por_testes": 0
   },
@@ -2637,10 +2663,11 @@
     "useQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_arquivos": [
     "src/components/PermissionRoute.tsx",
-    "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx"
+    "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
+    "src/components/turnos/TurnosConteudo.tsx"
    ],
    "coberto_por_testes": 1
   },
@@ -3342,7 +3369,7 @@
     "useReducedMotion"
    ],
    "canais_realtime": [],
-   "usado_por": 22,
+   "usado_por": 25,
    "usado_por_arquivos": [
     "src/components/avaliacao/AnaliticosDesempenho.tsx",
     "src/components/avaliacao/CicloAtivoPanel.tsx",
@@ -3362,6 +3389,9 @@
     "src/components/premiacoes/AuditoriaTab.tsx",
     "src/components/recrutamento/TabelaCandidatos.tsx",
     "src/components/treinamentos/InscricoesPainel.tsx",
+    "src/components/turnos/CalendarioMensal.tsx",
+    "src/components/turnos/CalendarioSemanal.tsx",
+    "src/components/turnos/ColunaLateralTurnos.tsx",
     "src/components/ui/command.tsx",
     "src/pages/PremiacoesPage.tsx",
     "src/pages/RecrutamentoPage.tsx",

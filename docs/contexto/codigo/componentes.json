@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 659,
+ "total": 675,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -2940,7 +2940,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 6,
+   "usado_por": 7,
    "orfao": false
   },
   {
@@ -4498,7 +4498,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -7520,6 +7520,258 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/turnos/BarraFiltrosEscalas.tsx",
+   "exports": [
+    "BarraFiltrosEscalas",
+    "BarraFiltrosEscalasProps"
+   ],
+   "export_default": null,
+   "linhas": 239,
+   "dominio": "components/turnos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/CabecalhoTurnos.tsx",
+   "exports": [
+    "CabecalhoTurnos",
+    "CabecalhoTurnosProps"
+   ],
+   "export_default": null,
+   "linhas": 176,
+   "dominio": "components/turnos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/CalendarioMensal.tsx",
+   "exports": [
+    "CalendarioMensal",
+    "CalendarioMensalProps"
+   ],
+   "export_default": null,
+   "linhas": 205,
+   "dominio": "components/turnos",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/CalendarioSemanal.tsx",
+   "exports": [
+    "CalendarioSemanal",
+    "CalendarioSemanalProps",
+    "CelulaVazia"
+   ],
+   "export_default": null,
+   "linhas": 530,
+   "dominio": "components/turnos",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/ColunaLateralTurnos.tsx",
+   "exports": [
+    "ColunaLateralTurnos",
+    "ColunaLateralTurnosProps"
+   ],
+   "export_default": null,
+   "linhas": 357,
+   "dominio": "components/turnos",
+   "hooks_locais": [
+    "useEntradaCardConcluida",
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/DialogoConflitos.tsx",
+   "exports": [
+    "DialogoConflitos",
+    "DialogoConflitosProps"
+   ],
+   "export_default": null,
+   "linhas": 128,
+   "dominio": "components/turnos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/DialogoDetalhesEscala.tsx",
+   "exports": [
+    "DialogoDetalhesEscala",
+    "DialogoDetalhesEscalaProps"
+   ],
+   "export_default": null,
+   "linhas": 208,
+   "dominio": "components/turnos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/DialogoDiaEscalas.tsx",
+   "exports": [
+    "DialogoDiaEscalas",
+    "DialogoDiaEscalasProps"
+   ],
+   "export_default": null,
+   "linhas": 171,
+   "dominio": "components/turnos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/DialogoGerenciarTurnos.tsx",
+   "exports": [
+    "DialogoGerenciarTurnos",
+    "DialogoGerenciarTurnosProps"
+   ],
+   "export_default": null,
+   "linhas": 240,
+   "dominio": "components/turnos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/DialogoNovaEscala.tsx",
+   "exports": [
+    "DialogoNovaEscala",
+    "DialogoNovaEscalaProps"
+   ],
+   "export_default": null,
+   "linhas": 357,
+   "dominio": "components/turnos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/DialogoProximasEscalas.tsx",
+   "exports": [
+    "DialogoProximasEscalas",
+    "DialogoProximasEscalasProps"
+   ],
+   "export_default": null,
+   "linhas": 133,
+   "dominio": "components/turnos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/DialogoTurno.tsx",
+   "exports": [
+    "DialogoTurno",
+    "DialogoTurnoProps"
+   ],
+   "export_default": null,
+   "linhas": 296,
+   "dominio": "components/turnos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/ListaEscalas.tsx",
+   "exports": [
+    "ListaEscalas",
+    "ListaEscalasProps"
+   ],
+   "export_default": null,
+   "linhas": 218,
+   "dominio": "components/turnos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/SeletorCor.tsx",
+   "exports": [
+    "SeletorCor",
+    "SeletorCorProps"
+   ],
+   "export_default": null,
+   "linhas": 493,
+   "dominio": "components/turnos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/TurnosConteudo.tsx",
+   "exports": [
+    "TurnosConteudo"
+   ],
+   "export_default": null,
+   "linhas": 418,
+   "dominio": "components/turnos",
+   "hooks_locais": [
+    "useAuth",
+    "useEmpresas",
+    "usePermissions",
+    "useTurnosEscalas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/turnos/TurnosKpiCards.tsx",
+   "exports": [
+    "TurnosKpiCards",
+    "TurnosKpiCardsProps"
+   ],
+   "export_default": null,
+   "linhas": 230,
+   "dominio": "components/turnos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ui/alert-dialog.tsx",
    "exports": [
     "AlertDialog",
@@ -7635,7 +7887,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 228,
+   "usado_por": 232,
    "orfao": false
   },
   {
@@ -7650,7 +7902,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 372,
+   "usado_por": 381,
    "orfao": false
   },
   {
@@ -7685,7 +7937,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 285,
+   "usado_por": 286,
    "orfao": false
   },
   {
@@ -7700,7 +7952,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 11,
+   "usado_por": 18,
    "orfao": false
   },
   {
@@ -7748,7 +8000,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 21,
+   "usado_por": 22,
    "orfao": false
   },
   {
@@ -7919,7 +8171,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 156,
+   "usado_por": 162,
    "orfao": false
   },
   {
@@ -7977,7 +8229,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 33,
+   "usado_por": 36,
    "orfao": false
   },
   {
@@ -8060,7 +8312,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 181,
+   "usado_por": 183,
    "orfao": false
   },
   {
@@ -8074,7 +8326,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 159,
+   "usado_por": 160,
    "orfao": false
   },
   {
@@ -8172,7 +8424,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 20,
+   "usado_por": 22,
    "orfao": false
   },
   {
@@ -8249,7 +8501,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 5,
+   "usado_por": 7,
    "orfao": false
   },
   {
@@ -8268,7 +8520,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 133,
+   "usado_por": 135,
    "orfao": false
   },
   {
@@ -8400,7 +8652,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "orfao": false
   },
   {
@@ -8432,7 +8684,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 119,
+   "usado_por": 118,
    "orfao": false
   },
   {
@@ -8527,7 +8779,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 50,
+   "usado_por": 49,
    "orfao": false
   },
   {
@@ -8611,7 +8863,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 41,
+   "usado_por": 42,
    "orfao": false
   },
   {
@@ -8644,7 +8896,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 8,
+   "usado_por": 12,
    "orfao": false
   },
   {
@@ -10665,11 +10917,9 @@
     "TurnosPage"
    ],
    "export_default": "TurnosPage",
-   "linhas": 324,
+   "linhas": 33,
    "dominio": "pages",
-   "hooks_locais": [
-    "useEmpresas"
-   ],
+   "hooks_locais": [],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,

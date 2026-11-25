@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 818,
+ "total": 826,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 773
+  "unit": 781
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 681
+   "arquivos": 689
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -4248,6 +4248,83 @@
    "casos": 6
   },
   {
+   "arquivo": "src/components/turnos/__tests__/CalendarioMensal.test.tsx",
+   "tipo": "unit",
+   "linhas": 154,
+   "testa": [
+    "src/components/turnos/CalendarioMensal.tsx",
+    "src/components/turnos/turnosCalendario.ts",
+    "src/components/turnos/turnosMetricas.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/turnos/__tests__/CalendarioSemanal.test.tsx",
+   "tipo": "unit",
+   "linhas": 199,
+   "testa": [
+    "src/components/turnos/CalendarioSemanal.tsx",
+    "src/components/turnos/turnosCalendario.ts",
+    "src/components/turnos/turnosMetricas.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/turnos/__tests__/ListaEscalas.test.tsx",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/components/turnos/ListaEscalas.tsx",
+    "src/components/turnos/turnosMetricas.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/turnos/__tests__/SeletorCor.test.tsx",
+   "tipo": "unit",
+   "linhas": 121,
+   "testa": [
+    "src/components/turnos/SeletorCor.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+   "tipo": "unit",
+   "linhas": 129,
+   "testa": [
+    "src/components/turnos/turnosCalendario.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
+   "tipo": "unit",
+   "linhas": 202,
+   "testa": [
+    "src/components/turnos/TurnosConteudo.tsx"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/turnos/__tests__/turnosCores.test.ts",
+   "tipo": "unit",
+   "linhas": 65,
+   "testa": [
+    "src/components/turnos/turnosCores.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+   "tipo": "unit",
+   "linhas": 512,
+   "testa": [
+    "src/components/turnos/turnosMetricas.ts"
+   ],
+   "casos": 29
+  },
+  {
    "arquivo": "src/components/ui/__tests__/data-table-toolbar.test.tsx",
    "tipo": "unit",
    "linhas": 33,
@@ -7971,6 +8048,14 @@
   "src/components/treinamentos/treinamentosDerivacoes.ts": 4,
   "src/components/treinamentos/trilhasDerivacoes.ts": 2,
   "src/components/treinamentos/turmasDerivacoes.ts": 8,
+  "src/components/turnos/CalendarioMensal.tsx": 1,
+  "src/components/turnos/CalendarioSemanal.tsx": 1,
+  "src/components/turnos/ListaEscalas.tsx": 1,
+  "src/components/turnos/SeletorCor.tsx": 1,
+  "src/components/turnos/TurnosConteudo.tsx": 1,
+  "src/components/turnos/turnosCalendario.ts": 3,
+  "src/components/turnos/turnosCores.ts": 1,
+  "src/components/turnos/turnosMetricas.ts": 4,
   "src/components/ui/animated-cascade-dialog.tsx": 1,
   "src/components/ui/animated-tabs.tsx": 1,
   "src/components/ui/app-pagination.tsx": 1,
@@ -8422,6 +8507,7 @@
    "src/components/avaliacao/useHistoricoFeedback.ts",
    "src/components/dashboard/useMorningBriefing.ts",
    "src/components/layout/Breadcrumb.tsx",
+   "src/components/turnos/useTurnosEscalas.ts",
    "src/components/ui/form.tsx",
    "src/components/ui/sidebar.tsx",
    "src/components/ui/use-toast.ts",

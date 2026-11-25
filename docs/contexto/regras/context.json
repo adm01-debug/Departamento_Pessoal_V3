@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4046e24de099152e0ccf3e63c4325d8c53800949",
+  "sha": "2a62b11242998afe8e44ad6ea4cdc2923ffb7506",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 12:01 UTC",
-  "files_total": 4105,
-  "code_files": 3510,
-  "code_lines": 511465
+  "generated_at": "2026-11-25 12:31 UTC",
+  "files_total": 4135,
+  "code_files": 3540,
+  "code_lines": 518322
  },
  "version": "1.3.2",
- "facts_hash": "b2512cf8d7259cbc",
+ "facts_hash": "5e78323ef0b5ce8a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,8 +388,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1335,
-   ".tsx": 1054,
-   ".ts": 980,
+   ".tsx": 1075,
+   ".ts": 989,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -99348,19 +99348,13 @@
      "beneficios",
      "beneficios_colaborador",
      "campos_customizados",
-     "canal_etica",
      "catalogo_cursos",
      "centros_custo",
      "certificados_digitais",
      "ciclos_avaliacao",
      "cid10",
-     "cnab_configuracoes",
-     "cnab_itens",
-     "cnab_remessas",
      "colaboradores",
      "competencias_config",
-     "comunicados",
-     "comunicados_leituras",
      "config_afastamentos",
      "configuracoes_esocial",
      "configuracoes_intervalo",
@@ -99368,14 +99362,11 @@
      "contas_bancarias",
      "contatos_emergencia",
      "contratos",
-     "controle_acesso",
      "dados_estagiario",
      "dados_estrangeiro",
      "deficiencias",
      "dependentes",
      "dependentes_beneficios",
-     "despesas",
-     "despesas_aprovacoes_log",
      "documentos",
      "documentos_afastamento",
      "documentos_pessoais_arquivos",
@@ -99394,12 +99385,10 @@
      "feriados",
      "ferias",
      "ferias_aprovacoes",
-     "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
      "ferias_solicitacoes",
      "folha_itens",
-     "folhas_pagamento",
      "formacoes_academicas",
      "historico_cargo",
      "historico_contratos",
@@ -99408,11 +99397,7 @@
      "holerites",
      "identidades_genero",
      "inscricoes_cursos",
-     "jornadas",
      "jornadas_horarios",
-     "lancamentos_contabeis",
-     "lgpd_consentimentos",
-     "lgpd_solicitacoes",
      "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
@@ -99430,16 +99415,10 @@
      "periodos_aquisitivos",
      "periodos_experiencia",
      "periodos_ponto",
-     "pesquisas",
-     "pesquisas_perguntas",
-     "pesquisas_respostas",
-     "pix_lotes",
-     "plano_contas",
-     "ponto_auditoria",
+     "permissions",
      "pontos_abertos",
      "profiles",
      "prorrogacoes_afastamento",
-     "provisoes_mensais",
      "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
@@ -99463,7 +99442,6 @@
      "vw_feedbacks_360_versao",
      "webhook_logs",
      "webhooks_config",
-     "workflows_definicoes",
      "workflows_etapas",
      "workflows_execucoes",
      "workflows_historico"
@@ -99479,7 +99457,6 @@
     "rpc_transitive": [
      "admin_associar_usuario_empresa",
      "aplicar_medida_folha_ponto",
-     "aprovar_despesa",
      "claim_admission_esocial_event",
      "complete_admission_esocial_event",
      "criar_feedback_seguro",
@@ -99488,12 +99465,9 @@
      "enviar_avaliacao_ao_gestor",
      "fail_admission_esocial_event",
      "finalizar_feedback",
-     "get_audit_trail",
-     "get_empresa_admin_ids",
      "get_my_user_empresas",
      "get_security_alerts_summary",
      "get_user_roles",
-     "listar_auditoria",
      "listar_historico_feedback",
      "log_frontend_error",
      "medida_aprovar",
@@ -99502,18 +99476,15 @@
      "medida_enviar_aprovacao",
      "medida_rejeitar",
      "medida_responder_contestacao",
-     "next_cnab_sequencial",
      "pode_aprovar_colaborador",
      "pode_gerir_avaliacoes",
-     "record_pii_access",
      "registrar_auditoria",
      "registrar_batida_ponto",
-     "rejeitar_despesa",
      "set_own_default_empresa",
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 200
+    "deps_count": 204
    },
    {
     "path": "",
@@ -103085,7 +103056,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1036,
+  "components_count": 1066,
   "hooks": [
    {
     "name": "useContacts",
@@ -103110,6 +103081,10 @@
    {
     "name": "useGuidedTour",
     "file": "src/components/onboarding/GuidedTour.tsx"
+   },
+   {
+    "name": "useTurnosEscalas",
+    "file": "src/components/turnos/useTurnosEscalas.ts"
    },
    {
     "name": "useAuth",
@@ -104736,8 +104711,8 @@
   },
   {
    "module": "src/components",
-   "files": 1036,
-   "lines": 193120,
+   "files": 1066,
+   "lines": 200221,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105434,7 +105409,7 @@
   {
    "module": "src/pages",
    "files": 145,
-   "lines": 51409,
+   "lines": 51118,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -105802,7 +105777,7 @@
   {
    "module": "src/services",
    "files": 198,
-   "lines": 42434,
+   "lines": 42481,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -107552,6 +107527,7 @@
      "src/services/relogio/espelhosPapelService.ts",
      "src/services/relogio/vinculosService.ts",
      "src/services/tabelasReferenciaService.ts",
+     "src/services/turnoService.ts",
      "supabase/functions/adiantamento-salarial/index.ts",
      "supabase/functions/alertas-dp/index.ts",
      "supabase/functions/alertas-preditivos/index.ts",
@@ -110913,6 +110889,7 @@
     "data",
     "empresa_id",
     "id",
+    "status",
     "turno_id"
    ],
    "esocial_eventos": [
@@ -115899,6 +115876,21 @@
     "rules": "type=number, min=1"
    },
    {
+    "file": "src/components/turnos/DialogoNovaEscala.tsx",
+    "field": "nova-escala-data",
+    "rules": "type=date"
+   },
+   {
+    "file": "src/components/turnos/DialogoNovaEscala.tsx",
+    "field": "nova-escala-ocorrencias",
+    "rules": "type=number, min=1, max=MAX_OCORRENCIAS_ESCALA"
+   },
+   {
+    "file": "src/components/turnos/DialogoTurno.tsx",
+    "field": "turno-intervalo",
+    "rules": "type=number, min=0"
+   },
+   {
     "file": "src/components/ui/phone-input.tsx",
     "field": "id",
     "rules": "disabled=disabled"
@@ -116669,6 +116661,21 @@
     "file": "src/components/treinamentos/turmasDerivacoes.ts",
     "name": "OrdenacaoTurma",
     "values": "data_asc | data_desc | curso | capacidade"
+   },
+   {
+    "file": "src/components/turnos/turnosCalendario.ts",
+    "name": "ModoPeriodo",
+    "values": "semana | mes"
+   },
+   {
+    "file": "src/components/turnos/turnosCalendario.ts",
+    "name": "VisualizacaoTurnos",
+    "values": "semana | mes | lista"
+   },
+   {
+    "file": "src/components/turnos/turnosCalendario.ts",
+    "name": "RecorrenciaEscala",
+    "values": "unica | diaria | semanal"
    },
    {
     "file": "src/components/ui/filter-chip.tsx",
@@ -118277,6 +118284,22 @@
     "msg": "\n      data-turmas-erro\n      className="
    },
    {
+    "file": "src/components/turnos/DialogoNovaEscala.tsx",
+    "msg": "Empresa não selecionada."
+   },
+   {
+    "file": "src/components/turnos/DialogoTurno.tsx",
+    "msg": "Empresa não selecionada."
+   },
+   {
+    "file": "src/components/turnos/DialogoTurno.tsx",
+    "msg": "Turno não selecionado."
+   },
+   {
+    "file": "src/components/turnos/TurnosConteudo.tsx",
+    "msg": "Empresa não selecionada."
+   },
+   {
     "file": "src/components/ui/alert.tsx",
     "msg": " className={cn(alertVariants({ variant }), className)} {...props} />\n));\nAlert.displayName = "
    },
@@ -119215,18 +119238,6 @@
    {
     "file": "src/pages/TreinamentosPage.tsx",
     "msg": "Selecione uma empresa antes de criar a turma"
-   },
-   {
-    "file": "src/pages/TurnosPage.tsx",
-    "msg": "Erro ao atualizar turno"
-   },
-   {
-    "file": "src/pages/TurnosPage.tsx",
-    "msg": "Erro ao criar turno"
-   },
-   {
-    "file": "src/pages/TurnosPage.tsx",
-    "msg": "Erro ao excluir turno"
    },
    {
     "file": "src/pages/ValesPage.tsx",
@@ -120187,6 +120198,10 @@
    {
     "file": "src/services/turnoService.ts",
     "msg": "Nenhum registro de turno foi retornado."
+   },
+   {
+    "file": "src/services/turnoService.ts",
+    "msg": "empresa_id obrigatorio para isolamento de tenant"
    },
    {
     "file": "src/services/turnoService.ts",
@@ -123973,6 +123988,90 @@
     "text": "* Sem data, ou em situações que a regra não cobre (turma “planejada” com data"
    },
    {
+    "file": "src/components/turnos/CabecalhoTurnos.tsx",
+    "text": "* Permissão de escrita (criar/editar turnos e escalas). */"
+   },
+   {
+    "file": "src/components/turnos/CalendarioSemanal.tsx",
+    "text": "colaborador e data preenchidos (quando há permissão de escrita). O hover só"
+   },
+   {
+    "file": "src/components/turnos/CalendarioSemanal.tsx",
+    "text": "células (~117px por dia — o mínimo em que o nome do turno mais longo,"
+   },
+   {
+    "file": "src/components/turnos/CalendarioSemanal.tsx",
+    "text": "mas o texto diz o que é — nada de \"Folga\" inventada. Com permissão de"
+   },
+   {
+    "file": "src/components/turnos/DialogoConflitos.tsx",
+    "text": "colaborador em que DUAS escalas se sobrepõem (regra em `detectarConflitos` —"
+   },
+   {
+    "file": "src/components/turnos/DialogoConflitos.tsx",
+    "text": "sobreposição de horários, não regra trabalhista) e oferece a única correção"
+   },
+   {
+    "file": "src/components/turnos/DialogoNovaEscala.tsx",
+    "text": "avisa antes de confirmar (a regra é a mesma de `detectarConflitos`)."
+   },
+   {
+    "file": "src/components/turnos/DialogoNovaEscala.tsx",
+    "text": "* Nada de validação trabalhista: o aviso é de SOBREPOSIÇÃO de horários, que é"
+   },
+   {
+    "file": "src/components/turnos/DialogoTurno.tsx",
+    "text": "`turnos.cor` — validação, payload e serviço não mudaram."
+   },
+   {
+    "file": "src/components/turnos/SeletorCor.tsx",
+    "text": "na validação. A peça é composta de:"
+   },
+   {
+    "file": "src/components/turnos/TurnosConteudo.tsx",
+    "text": "* ── PERMISSÃO DE ESCRITA ────────────────────────────────────────────────────"
+   },
+   {
+    "file": "src/components/turnos/TurnosConteudo.tsx",
+    "text": "semeada). Sem permissão, a tela continua 100% navegável: calendário, mês,"
+   },
+   {
+    "file": "src/components/turnos/turnosAnimacoes.ts",
+    "text": "* A animação roda só na MONTAGEM da grade (a `key` do bloco muda apenas quando"
+   },
+   {
+    "file": "src/components/turnos/turnosMetricas.ts",
+    "text": "se sobrepõem. É a única regra aplicada, e ela é de consistência de dados"
+   },
+   {
+    "file": "src/components/turnos/turnosMetricas.ts",
+    "text": "validação trabalhista — o sistema não tem, e este módulo não inventa,"
+   },
+   {
+    "file": "src/components/turnos/turnosMetricas.ts",
+    "text": "regras de descanso/limite legal;"
+   },
+   {
+    "file": "src/components/turnos/turnosMetricas.ts",
+    "text": "regra é sobreposição, não quantidade."
+   },
+   {
+    "file": "src/components/turnos/turnosMetricas.ts",
+    "text": "botão \"Mais filtros\". Mora aqui (e não na barra) porque é regra de estado,"
+   },
+   {
+    "file": "src/components/turnos/turnosMetricas.ts",
+    "text": "* `escalasPeriodoAnterior` já deve vir com os MESMOS filtros aplicados"
+   },
+   {
+    "file": "src/components/turnos/turnosSuperficies.ts",
+    "text": "primeira coluna é `sticky` (o nome não pode sair de vista na rolagem"
+   },
+   {
+    "file": "src/components/turnos/turnosSuperficies.ts",
+    "text": "* Regra de convivência: quem pinta uma célula fixa sobre estes cards usa"
+   },
+   {
     "file": "src/components/ui/app-pagination.tsx",
     "text": "* APRESENTAÇÃO apenas: o componente não busca, filtra nem guarda estado de"
    },
@@ -125042,7 +125141,15 @@
    },
    {
     "file": "src/services/turnoService.ts",
+    "text": "* Colaborador ativo, no minimo que a grade de Turnos precisa (sem PII). */"
+   },
+   {
+    "file": "src/services/turnoService.ts",
     "text": "o fluxo de salvar deve fazer UPDATE (linha já existe) ou INSERT (ainda"
+   },
+   {
+    "file": "src/services/turnoService.ts",
+    "text": "`limit(5000)` e teto de seguranca: 300 pessoas x 31 dias ~ 9.300 linhas,"
    },
    {
     "file": "src/services/vinculoService.ts",
@@ -151785,6 +151892,91 @@
     "value": "'data_asc'"
    },
    {
+    "file": "src/components/turnos/CalendarioSemanal.tsx",
+    "name": "LINHAS_POR_PAGINA",
+    "value": "20"
+   },
+   {
+    "file": "src/components/turnos/CalendarioSemanal.tsx",
+    "name": "LARGURA_MAX_GRADE",
+    "value": "'max-w-[78.5rem]'"
+   },
+   {
+    "file": "src/components/turnos/CalendarioSemanal.tsx",
+    "name": "RAIO_CELULA",
+    "value": "'rounded-[6px]'"
+   },
+   {
+    "file": "src/components/turnos/CalendarioSemanal.tsx",
+    "name": "ALTURA_CELULA",
+    "value": "'h-full min-h-[2.4rem]'"
+   },
+   {
+    "file": "src/components/turnos/DialogoConflitos.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "3"
+   },
+   {
+    "file": "src/components/turnos/DialogoDetalhesEscala.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "4"
+   },
+   {
+    "file": "src/components/turnos/DialogoDiaEscalas.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "3"
+   },
+   {
+    "file": "src/components/turnos/DialogoGerenciarTurnos.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "4"
+   },
+   {
+    "file": "src/components/turnos/DialogoNovaEscala.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "5"
+   },
+   {
+    "file": "src/components/turnos/DialogoProximasEscalas.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "3"
+   },
+   {
+    "file": "src/components/turnos/DialogoTurno.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "4"
+   },
+   {
+    "file": "src/components/turnos/TurnosKpiCards.tsx",
+    "name": "ROTULO",
+    "value": "'text-[11px] leading-snug text-muted-foreground'"
+   },
+   {
+    "file": "src/components/turnos/turnosCalendario.ts",
+    "name": "MAX_OCORRENCIAS_ESCALA",
+    "value": "30"
+   },
+   {
+    "file": "src/components/turnos/turnosCores.ts",
+    "name": "COR_TURNO_PADRAO",
+    "value": "'#64748b'"
+   },
+   {
+    "file": "src/components/turnos/turnosSuperficies.ts",
+    "name": "FUNDO_CARD",
+    "value": "'bg-card/40'"
+   },
+   {
+    "file": "src/components/turnos/useTurnosEscalas.ts",
+    "name": "DIAS_PROXIMAS_ESCALAS",
+    "value": "60"
+   },
+   {
+    "file": "src/components/turnos/useTurnosEscalas.ts",
+    "name": "STALE_TIME",
+    "value": "60"
+   },
+   {
     "file": "src/components/ui/app-pagination.tsx",
     "name": "ROTULO_LINHAS_POR_PAGINA",
     "value": "'Linhas por página'"
@@ -157531,6 +157723,36 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/turnos/BarraFiltrosEscalas.tsx",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/turnos/DialogoNovaEscala.tsx",
+    "field": "status",
+    "value": "agendado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/turnos/turnosMetricas.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/turnos/turnosMetricas.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/turnos/turnosMetricas.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/ui/animated-tabs.tsx",
     "field": "type",
     "value": "spring",
@@ -162481,6 +162703,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/services/turnoService.ts",
+    "field": "status",
+    "value": "ativo",
+    "kind": "filtra"
+   },
+   {
     "file": "src/services/vinculoService.ts",
     "field": "tipo",
     "value": "Admissão",
@@ -166155,6 +166383,24 @@
     "body": "if (!capacidade || capacidade <= 0) return null; if (inscritos === null || inscritos === undefined || inscritos === '') return null; const total = typeof inscritos === 'number' ? inscritos : Number(String(inscritos).replace(',', '.')); if (!Number.isFinite(total) || total < 0) return null; return { inscritos: total, capacidade, percentual: Math.round((total / capacidade) * 100) };"
    },
    {
+    "file": "src/components/turnos/SeletorCor.tsx",
+    "name": "aplicarCor",
+    "params": "hex: string",
+    "body": "const normalizado = normalizarHex(hex); setAssinatura(normalizado); setTexto(normalizado); setHsv(hexParaHsv(normalizado)); onValor(normalizado);"
+   },
+   {
+    "file": "src/components/turnos/SeletorCor.tsx",
+    "name": "aplicarHsv",
+    "params": "parcial: Partial<CorHsv>",
+    "body": "const proximo = { ...hsv, ...parcial }; const hex = hsvParaHex(proximo); setHsv(proximo); setAssinatura(hex); setTexto(hex); onValor(hex);"
+   },
+   {
+    "file": "src/components/turnos/turnosCalendario.ts",
+    "name": "gerarDatasRecorrentes",
+    "params": "data: string, recorrencia: RecorrenciaEscala, ocorrencias: number",
+    "body": "const base = data.slice(0, 10); if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(base)) return []; if (recorrencia === 'unica') return [base]; const total = Math.min(Math.max(Math.round(ocorrencias) || 1, 1), MAX_OCORRENCIAS_ESCALA); const passoDias = recorrencia === 'semanal' ? 7 : 1; const referencia = dataDaChave(base); const datas: string[] = []; for (let indice = 0; indice < total; indice += 1) { datas.push(chaveData(addDays(referencia, indice * passoDias))); } return datas;"
+   },
+   {
     "file": "src/components/ui/cnpj-input.tsx",
     "name": "validateCNPJ",
     "params": "cnpj: string",
@@ -167627,6 +167873,26 @@
    {
     "file": "src/components/treinamentos/TreinamentosTabela.tsx",
     "line": "const timer = window.setTimeout(() => setAnimar(false), 1400);"
+   },
+   {
+    "file": "src/components/turnos/TurnosConteudo.tsx",
+    "line": "const fim = new Date(agora.getTime() + DIAS_PROXIMAS_ESCALAS * 24 * 60 * 60 * 1000);"
+   },
+   {
+    "file": "src/components/turnos/turnosCalendario.ts",
+    "line": "const amanha = chaveData(addDays(referencia, 1));"
+   },
+   {
+    "file": "src/components/turnos/turnosCalendario.ts",
+    "line": "const fimDate = modo === 'semana' ? addDays(inicioDate, 6) : endOfMonth(ancora);"
+   },
+   {
+    "file": "src/components/turnos/turnosCalendario.ts",
+    "line": "return modo === 'semana' ? addDays(ancora, 7 * passo) : addMonths(ancora, passo);"
+   },
+   {
+    "file": "src/components/turnos/useTurnosEscalas.ts",
+    "line": "const fimProximas = chaveData(new Date(agora + DIAS_PROXIMAS_ESCALAS * 24 * 60 * 60 * 1000));"
    },
    {
     "file": "src/hooks/useBruteForceProtection.ts",
@@ -169141,6 +169407,26 @@
    {
     "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
     "line": "* (\"—\") em vez de 0%, que seria uma afirmação falsa."
+   },
+   {
+    "file": "src/components/turnos/CalendarioSemanal.tsx",
+    "line": "temas; 80% do texto principal mantém a hierarquia (horário"
+   },
+   {
+    "file": "src/components/turnos/ColunaLateralTurnos.tsx",
+    "line": "// terminou (o arco precisa desenhar 100% visível) e com dados na mão."
+   },
+   {
+    "file": "src/components/turnos/SeletorCor.tsx",
+    "line": "* TURNOS & ESCALAS — SELETOR DE COR DO TURNO (100% dark, sem UI nativa)."
+   },
+   {
+    "file": "src/components/turnos/TurnosConteudo.tsx",
+    "line": "* semeada). Sem permissão, a tela continua 100% navegável: calendário, mês,"
+   },
+   {
+    "file": "src/components/turnos/TurnosKpiCards.tsx",
+    "line": "* `px-3 py-2.5` + `gap-1` + ícone `h-6` — o mesmo desenho, ~24% mais baixo"
    },
    {
     "file": "src/components/ui/cascade-motion.ts",
@@ -188983,6 +189269,398 @@
    {
     "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
     "name": "intercala a entrada: 1º de cada coluna, depois o 2º"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioMensal.test.tsx",
+    "name": "CalendarioMensal — células e abertura do dia"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioMensal.test.tsx",
+    "name": "desenha um botão por dia do mês e abre o dia escolhido no clique"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioMensal.test.tsx",
+    "name": "distingue dia com escala de dia sem escala sem depender só da cor"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioMensal.test.tsx",
+    "name": "marca o dia de hoje com etiqueta própria, além da cor"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioMensal.test.tsx",
+    "name": "marca o dia aberto no modal com anel e "
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioMensal.test.tsx",
+    "name": "não renderiza lista de detalhes abaixo da grade"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioSemanal.test.tsx",
+    "name": "CalendarioSemanal — grade compacta"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioSemanal.test.tsx",
+    "name": "mostra o card do turno com a faixa completa de horário"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioSemanal.test.tsx",
+    "name": "pinta a bolinha do card com a cor cadastrada do turno"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioSemanal.test.tsx",
+    "name": "distingue folga explícita de célula sem escala e mantém a MESMA altura"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioSemanal.test.tsx",
+    "name": "marca o dia com mais de uma escala com o selo de excedente"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioSemanal.test.tsx",
+    "name": "pinta o card em três camadas com os alfas da cor cadastrada do turno"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioSemanal.test.tsx",
+    "name": "acende fundo e borda no hover por alfa, com transição curta (sem mover a grade)"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioSemanal.test.tsx",
+    "name": "distribui o miolo em duas linhas: nome em destaque e horário na coluna do nome"
+   },
+   {
+    "file": "src/components/turnos/__tests__/CalendarioSemanal.test.tsx",
+    "name": "mantém a célula sem escala neutra, centrada e sem tinta de turno"
+   },
+   {
+    "file": "src/components/turnos/__tests__/ListaEscalas.test.tsx",
+    "name": "ListaEscalas — altura controlada"
+   },
+   {
+    "file": "src/components/turnos/__tests__/ListaEscalas.test.tsx",
+    "name": "deixa o card ocupar a coluna e rola só o miolo"
+   },
+   {
+    "file": "src/components/turnos/__tests__/ListaEscalas.test.tsx",
+    "name": "mantém o cabeçalho fixo no topo da rolagem"
+   },
+   {
+    "file": "src/components/turnos/__tests__/ListaEscalas.test.tsx",
+    "name": "desenha uma linha por escala com as colunas alinhadas"
+   },
+   {
+    "file": "src/components/turnos/__tests__/ListaEscalas.test.tsx",
+    "name": "abre os detalhes com a data e a escala da linha"
+   },
+   {
+    "file": "src/components/turnos/__tests__/ListaEscalas.test.tsx",
+    "name": "mostra o estado vazio quando o período não tem escala"
+   },
+   {
+    "file": "src/components/turnos/__tests__/SeletorCor.test.tsx",
+    "name": "SeletorCor"
+   },
+   {
+    "file": "src/components/turnos/__tests__/SeletorCor.test.tsx",
+    "name": "mostra a cor atual e não usa o seletor nativo do navegador"
+   },
+   {
+    "file": "src/components/turnos/__tests__/SeletorCor.test.tsx",
+    "name": "publica a cor normalizada ao escolher um atalho da paleta"
+   },
+   {
+    "file": "src/components/turnos/__tests__/SeletorCor.test.tsx",
+    "name": "publica hexadecimal completo na digitação, consolida o curto no blur e ignora lixo"
+   },
+   {
+    "file": "src/components/turnos/__tests__/SeletorCor.test.tsx",
+    "name": "ressincroniza quando a cor chega de fora (outro turno no modal)"
+   },
+   {
+    "file": "src/components/turnos/__tests__/SeletorCor.test.tsx",
+    "name": "expõe área de saturação e faixa de matiz como sliders acessíveis"
+   },
+   {
+    "file": "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
+    "name": "TurnosConteudo"
+   },
+   {
+    "file": "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
+    "name": "abre na visão Semana com o cabeçalho e os KPI Cards alimentados pelos dados"
+   },
+   {
+    "file": "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
+    "name": "desenha a grade semanal com a célula do turno e a célula vazia"
+   },
+   {
+    "file": "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
+    "name": "filtra o calendário pela busca por colaborador"
+   },
+   {
+    "file": "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
+    "name": "troca para a visão Lista mantendo os mesmos dados"
+   },
+   {
+    "file": "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
+    "name": "abre os detalhes ao clicar numa célula com escala"
+   },
+   {
+    "file": "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
+    "name": "lista as próximas escalas com a contagem real e navega ao clicar"
+   },
+   {
+    "file": "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
+    "name": "mostra o resumo do período com o total de escalas no centro da rosca"
+   },
+   {
+    "file": "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
+    "name": "abre o modal do dia ao clicar numa célula do mês (sem empilhar seção na página)"
+   },
+   {
+    "file": "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
+    "name": "abre o modal "
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "turnosCalendario · período"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "monta a semana de segunda a domingo a partir de qualquer dia dela"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "monta o mês inteiro (28 a 31 dias)"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "desloca a âncora por semana ou por mês"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "devolve o bloco imediatamente anterior com a mesma duração"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "a lista usa a janela do mês"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "turnosCalendario · rótulos"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "formata o intervalo da semana no mesmo mês e virando o mês"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "formata o mês por extenso"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "encurta o dia da semana e a data"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "rotula proximidade nas próximas escalas"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "reconhece o dia de hoje"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "lê a chave como data local (sem deslocar um dia)"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "turnosCalendario · recorrência"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "não repete quando a recorrência é única"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "gera dias seguidos na recorrência diária"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "gera semanas seguidas na recorrência semanal"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+    "name": "limita a quantidade de ocorrências e ignora data inválida"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCores.test.ts",
+    "name": "turnosCores"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCores.test.ts",
+    "name": "normaliza hex curto, sem cerquilha e maiúsculo"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCores.test.ts",
+    "name": "cai na cor padrão quando a cor é ausente ou inválida"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCores.test.ts",
+    "name": "converte para rgba com o alfa pedido"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCores.test.ts",
+    "name": "limita o alfa ao intervalo [0, 1]"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCores.test.ts",
+    "name": "faz a ida e volta hex ⇄ HSV sem alterar a cor"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCores.test.ts",
+    "name": "descreve a cor em matiz/saturação/brilho"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosCores.test.ts",
+    "name": "limita saturação/brilho fora da faixa e aceita matiz negativa"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "turnosMetricas · horários"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "converte HH:MM em minutos e rejeita valor inválido"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "faz o turno virar o dia quando a saída é menor que a entrada"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "desconta o intervalo da duração líquida"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "formata intervalo e faixa horária"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "não considera sobreposição quando um turno começa quando o outro termina"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "turnosMetricas · conflitos"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "acusa sobreposição do mesmo colaborador no mesmo dia"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "não acusa turnos que apenas se encostam nem colaboradores diferentes"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "acusa registro duplicado do mesmo turno no mesmo dia"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "usa o turno embutido da escala quando o catálogo não tem o turno"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "ordena os conflitos por data e depois por nome"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "turnosMetricas · agregações"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "conta escalas por dia do período"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "distribui por turno em ordem decrescente"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "inclui escala de turno fora do catálogo sem perder o total"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "lista próximas datas a partir de hoje, ordenadas e limitadas"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "calcula variação percentual só quando há base"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "conta turnos existentes até uma data"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "turnosMetricas · filtros e linhas do calendário"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "normaliza texto para busca sem acento e sem caixa"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "combina busca, turno, status e departamento"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "lista departamentos e status existentes"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "monta as linhas com escala por dia e quem tem escala primeiro"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "esconde quem não tem escala quando o filtro pede"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "conta os filtros avançados ativos"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "reconhece folga explícita"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "turnosMetricas · KPI cards"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "consolida os quatro indicadores a partir dos dados"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "devolve percentual nulo quando não há equipe carregada"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "conta só colaboradores da equipe no percentual e nunca passa de 100%"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "turnosMetricas · agrupamento por dia"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "agrupa por data em ordem crescente e por nome dentro do dia"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "descarta o que está antes da data de corte"
+   },
+   {
+    "file": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+    "name": "devolve lista vazia quando não há escalas"
    },
    {
     "file": "src/components/ui/__tests__/data-table-toolbar.test.tsx",
@@ -236197,6 +236875,14 @@
     "limit": "1"
    },
    {
+    "file": "src/services/turnoService.ts",
+    "limit": "1000"
+   },
+   {
+    "file": "src/services/turnoService.ts",
+    "limit": "5000"
+   },
+   {
     "file": "src/services/vinculoService.ts",
     "limit": "1"
    },
@@ -239182,10 +239868,13 @@
       "compara:src/components/treinamentos/treinamentosDerivacoes.ts",
       "compara:src/components/treinamentos/trilhasDerivacoes.ts",
       "compara:src/components/treinamentos/turmasDerivacoes.ts",
+      "compara:src/components/turnos/BarraFiltrosEscalas.tsx",
+      "compara:src/components/turnos/turnosMetricas.ts",
       "compara:src/pages/ContratosGeradosPage.tsx",
       "compara:supabase/functions/relatorio/index.ts",
       "escreve:src/components/premiacoes/pagamentosComum.ts",
-      "escreve:src/components/premiacoes/premiacoesComum.ts"
+      "escreve:src/components/premiacoes/premiacoesComum.ts",
+      "escreve:src/components/turnos/turnosMetricas.ts"
      ],
      "ativos": [
       "compara:src/components/admissoes/GestaoKits.tsx"
@@ -239510,6 +240199,7 @@
       "filtra:src/pages/ValesPage.tsx",
       "filtra:src/services/afastamentoService.ts",
       "filtra:src/services/folha/calculoLoteService.ts",
+      "filtra:src/services/turnoService.ts",
       "filtra:supabase/functions/alertas-dp/index.ts",
       "filtra:supabase/functions/alertas-preditivos/index.ts",
       "filtra:supabase/functions/calcular-folha/index.ts",
@@ -239725,6 +240415,10 @@
      "inativa": [
       "compara:src/components/treinamentos/TrilhaCard.tsx"
      ],
+     "agendado": [
+      "compara:src/pages/AdminAgendamentoExamesPage.tsx",
+      "escreve:src/components/turnos/DialogoNovaEscala.tsx"
+     ],
      "expirado": [
       "compara:src/hooks/useAssinaturas.ts"
      ],
@@ -239783,9 +240477,6 @@
      ],
      "reagendado": [
       "escreve:src/pages/AdminAgendamentoExamesPage.tsx"
-     ],
-     "agendado": [
-      "compara:src/pages/AdminAgendamentoExamesPage.tsx"
      ],
      "emitido_clinica": [
       "compara:src/pages/AdminAsoWorkflowPage.tsx"
@@ -296917,6 +297608,670 @@
     "intercala a entrada: 1º de cada coluna, depois o 2º"
    ]
   },
+  "src/components/turnos/BarraFiltrosEscalas.tsx": {
+   "path": "src/components/turnos/BarraFiltrosEscalas.tsx",
+   "lines": 239,
+   "exports": [
+    "interface BarraFiltrosEscalasProps",
+    "function BarraFiltrosEscalas"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    }
+   ]
+  },
+  "src/components/turnos/CabecalhoTurnos.tsx": {
+   "path": "src/components/turnos/CabecalhoTurnos.tsx",
+   "lines": 176,
+   "exports": [
+    "interface CabecalhoTurnosProps",
+    "function CabecalhoTurnos"
+   ],
+   "rule_comments": [
+    "* Permissão de escrita (criar/editar turnos e escalas). */"
+   ]
+  },
+  "src/components/turnos/CalendarioMensal.tsx": {
+   "path": "src/components/turnos/CalendarioMensal.tsx",
+   "lines": 205,
+   "exports": [
+    "interface CalendarioMensalProps",
+    "function CalendarioMensal"
+   ]
+  },
+  "src/components/turnos/CalendarioSemanal.tsx": {
+   "path": "src/components/turnos/CalendarioSemanal.tsx",
+   "lines": 530,
+   "exports": [
+    "interface CalendarioSemanalProps",
+    "function CelulaVazia",
+    "function CalendarioSemanal"
+   ],
+   "params": [
+    {
+     "name": "LINHAS_POR_PAGINA",
+     "value": "20"
+    },
+    {
+     "name": "LARGURA_MAX_GRADE",
+     "value": "'max-w-[78.5rem]'"
+    },
+    {
+     "name": "RAIO_CELULA",
+     "value": "'rounded-[6px]'"
+    },
+    {
+     "name": "ALTURA_CELULA",
+     "value": "'h-full min-h-[2.4rem]'"
+    }
+   ],
+   "rule_comments": [
+    "colaborador e data preenchidos (quando há permissão de escrita). O hover só",
+    "células (~117px por dia — o mínimo em que o nome do turno mais longo,",
+    "mas o texto diz o que é — nada de \"Folga\" inventada. Com permissão de"
+   ],
+   "percents": [
+    "temas; 80% do texto principal mantém a hierarquia (horário"
+   ]
+  },
+  "src/components/turnos/ColunaLateralTurnos.tsx": {
+   "path": "src/components/turnos/ColunaLateralTurnos.tsx",
+   "lines": 357,
+   "exports": [
+    "interface ColunaLateralTurnosProps",
+    "function ColunaLateralTurnos"
+   ],
+   "percents": [
+    "// terminou (o arco precisa desenhar 100% visível) e com dados na mão."
+   ]
+  },
+  "src/components/turnos/DialogoConflitos.tsx": {
+   "path": "src/components/turnos/DialogoConflitos.tsx",
+   "lines": 128,
+   "exports": [
+    "interface DialogoConflitosProps",
+    "function DialogoConflitos"
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "3"
+    }
+   ],
+   "rule_comments": [
+    "colaborador em que DUAS escalas se sobrepõem (regra em `detectarConflitos` —",
+    "sobreposição de horários, não regra trabalhista) e oferece a única correção"
+   ]
+  },
+  "src/components/turnos/DialogoDetalhesEscala.tsx": {
+   "path": "src/components/turnos/DialogoDetalhesEscala.tsx",
+   "lines": 208,
+   "exports": [
+    "interface DialogoDetalhesEscalaProps",
+    "function DialogoDetalhesEscala"
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "4"
+    }
+   ]
+  },
+  "src/components/turnos/DialogoDiaEscalas.tsx": {
+   "path": "src/components/turnos/DialogoDiaEscalas.tsx",
+   "lines": 171,
+   "exports": [
+    "interface DialogoDiaEscalasProps",
+    "function DialogoDiaEscalas"
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "3"
+    }
+   ]
+  },
+  "src/components/turnos/DialogoGerenciarTurnos.tsx": {
+   "path": "src/components/turnos/DialogoGerenciarTurnos.tsx",
+   "lines": 240,
+   "exports": [
+    "interface DialogoGerenciarTurnosProps",
+    "function DialogoGerenciarTurnos"
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "4"
+    }
+   ]
+  },
+  "src/components/turnos/DialogoNovaEscala.tsx": {
+   "path": "src/components/turnos/DialogoNovaEscala.tsx",
+   "lines": 357,
+   "exports": [
+    "interface DialogoNovaEscalaProps",
+    "function DialogoNovaEscala"
+   ],
+   "errors": [
+    "Empresa não selecionada."
+   ],
+   "html_constraints": [
+    {
+     "field": "nova-escala-data",
+     "rules": "type=date"
+    },
+    {
+     "field": "nova-escala-ocorrencias",
+     "rules": "type=number, min=1, max=MAX_OCORRENCIAS_ESCALA"
+    }
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "5"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "agendado",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "avisa antes de confirmar (a regra é a mesma de `detectarConflitos`).",
+    "* Nada de validação trabalhista: o aviso é de SOBREPOSIÇÃO de horários, que é"
+   ]
+  },
+  "src/components/turnos/DialogoProximasEscalas.tsx": {
+   "path": "src/components/turnos/DialogoProximasEscalas.tsx",
+   "lines": 133,
+   "exports": [
+    "interface DialogoProximasEscalasProps",
+    "function DialogoProximasEscalas"
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "3"
+    }
+   ]
+  },
+  "src/components/turnos/DialogoTurno.tsx": {
+   "path": "src/components/turnos/DialogoTurno.tsx",
+   "lines": 296,
+   "exports": [
+    "interface DialogoTurnoProps",
+    "function DialogoTurno"
+   ],
+   "errors": [
+    "Empresa não selecionada.",
+    "Turno não selecionado."
+   ],
+   "html_constraints": [
+    {
+     "field": "turno-intervalo",
+     "rules": "type=number, min=0"
+    }
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "4"
+    }
+   ],
+   "rule_comments": [
+    "`turnos.cor` — validação, payload e serviço não mudaram."
+   ]
+  },
+  "src/components/turnos/ListaEscalas.tsx": {
+   "path": "src/components/turnos/ListaEscalas.tsx",
+   "lines": 218,
+   "exports": [
+    "interface ListaEscalasProps",
+    "function ListaEscalas"
+   ]
+  },
+  "src/components/turnos/SeletorCor.tsx": {
+   "path": "src/components/turnos/SeletorCor.tsx",
+   "lines": 493,
+   "exports": [
+    "interface SeletorCorProps",
+    "function SeletorCor"
+   ],
+   "rule_comments": [
+    "na validação. A peça é composta de:"
+   ],
+   "calc_fns": [
+    {
+     "name": "aplicarCor",
+     "params": "hex: string",
+     "body": "const normalizado = normalizarHex(hex); setAssinatura(normalizado); setTexto(normalizado); setHsv(hexParaHsv(normalizado)); onValor(normalizado);"
+    },
+    {
+     "name": "aplicarHsv",
+     "params": "parcial: Partial<CorHsv>",
+     "body": "const proximo = { ...hsv, ...parcial }; const hex = hsvParaHex(proximo); setHsv(proximo); setAssinatura(hex); setTexto(hex); onValor(hex);"
+    }
+   ],
+   "percents": [
+    "* TURNOS & ESCALAS — SELETOR DE COR DO TURNO (100% dark, sem UI nativa)."
+   ]
+  },
+  "src/components/turnos/TurnosConteudo.tsx": {
+   "path": "src/components/turnos/TurnosConteudo.tsx",
+   "lines": 418,
+   "exports": [
+    "function TurnosConteudo"
+   ],
+   "errors": [
+    "Empresa não selecionada."
+   ],
+   "rule_comments": [
+    "* ── PERMISSÃO DE ESCRITA ────────────────────────────────────────────────────",
+    "semeada). Sem permissão, a tela continua 100% navegável: calendário, mês,"
+   ],
+   "temporal": [
+    "const fim = new Date(agora.getTime() + DIAS_PROXIMAS_ESCALAS * 24 * 60 * 60 * 1000);"
+   ],
+   "percents": [
+    "* semeada). Sem permissão, a tela continua 100% navegável: calendário, mês,"
+   ]
+  },
+  "src/components/turnos/TurnosKpiCards.tsx": {
+   "path": "src/components/turnos/TurnosKpiCards.tsx",
+   "lines": 230,
+   "exports": [
+    "interface TurnosKpiCardsProps",
+    "function TurnosKpiCards"
+   ],
+   "params": [
+    {
+     "name": "ROTULO",
+     "value": "'text-[11px] leading-snug text-muted-foreground'"
+    }
+   ],
+   "percents": [
+    "* `px-3 py-2.5` + `gap-1` + ícone `h-6` — o mesmo desenho, ~24% mais baixo"
+   ]
+  },
+  "src/components/turnos/turnosAnimacoes.ts": {
+   "path": "src/components/turnos/turnosAnimacoes.ts",
+   "lines": 91,
+   "exports": [
+    "const CASCATA_CALENDARIO",
+    "function atrasoDaLinha",
+    "function atrasoDaCelula",
+    "const variantesLinhaCalendario",
+    "const variantesCelulaCalendario"
+   ],
+   "rule_comments": [
+    "* A animação roda só na MONTAGEM da grade (a `key` do bloco muda apenas quando"
+   ]
+  },
+  "src/components/turnos/turnosCalendario.ts": {
+   "path": "src/components/turnos/turnosCalendario.ts",
+   "lines": 204,
+   "exports": [
+    "type ModoPeriodo",
+    "type VisualizacaoTurnos",
+    "function modoDaVisualizacao",
+    "interface IntervaloPeriodo",
+    "function chaveData",
+    "function dataDaChave",
+    "function intervaloDoPeriodo",
+    "function deslocarAncora",
+    "function periodoAnterior",
+    "function rotuloDoPeriodo",
+    "function rotuloDiaSemana",
+    "function rotuloDiaSemanaCompleto",
+    "function rotuloDiaMes",
+    "function rotuloDataCompleta",
+    "function ehHoje",
+    "function rotuloProximidade",
+    "function dentroDoIntervalo",
+    "type RecorrenciaEscala",
+    "const MAX_OCORRENCIAS_ESCALA",
+    "function gerarDatasRecorrentes"
+   ],
+   "enums": [
+    {
+     "name": "ModoPeriodo",
+     "values": "semana | mes"
+    },
+    {
+     "name": "VisualizacaoTurnos",
+     "values": "semana | mes | lista"
+    },
+    {
+     "name": "RecorrenciaEscala",
+     "values": "unica | diaria | semanal"
+    }
+   ],
+   "params": [
+    {
+     "name": "MAX_OCORRENCIAS_ESCALA",
+     "value": "30"
+    }
+   ],
+   "calc_fns": [
+    {
+     "name": "gerarDatasRecorrentes",
+     "params": "data: string, recorrencia: RecorrenciaEscala, ocorrencias: number",
+     "body": "const base = data.slice(0, 10); if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(base)) return []; if (recorrencia === 'unica') return [base]; const total = Math.min(Math.max(Math.round(ocorrencias) || 1, 1), MAX_OCORRENCIAS_ESCALA); const passoDias = recorrencia === 'semanal' ? 7 : 1; const referencia = dataDaChave(base); const datas: string[] = []; for (let indice = 0; indice < total; indice += 1) { datas.push(chaveData(addDays(referencia, indice * passoDias))); } return datas;"
+    }
+   ],
+   "temporal": [
+    "const amanha = chaveData(addDays(referencia, 1));",
+    "const fimDate = modo === 'semana' ? addDays(inicioDate, 6) : endOfMonth(ancora);",
+    "return modo === 'semana' ? addDays(ancora, 7 * passo) : addMonths(ancora, passo);"
+   ]
+  },
+  "src/components/turnos/turnosCores.ts": {
+   "path": "src/components/turnos/turnosCores.ts",
+   "lines": 113,
+   "exports": [
+    "const COR_TURNO_PADRAO",
+    "function normalizarHex",
+    "interface CorHsv",
+    "function hexParaHsv",
+    "function hsvParaHex",
+    "function hexParaRgba"
+   ],
+   "params": [
+    {
+     "name": "COR_TURNO_PADRAO",
+     "value": "'#64748b'"
+    }
+   ]
+  },
+  "src/components/turnos/turnosMetricas.ts": {
+   "path": "src/components/turnos/turnosMetricas.ts",
+   "lines": 611,
+   "exports": [
+    "interface TurnoRegistro",
+    "interface EscalaRegistro",
+    "interface MembroEquipe",
+    "interface FiltrosEscalas",
+    "const FILTROS_ESCALAS_INICIAIS",
+    "function minutosDoHorario",
+    "interface JanelaTurno",
+    "function janelaDoTurno",
+    "function duracaoLiquidaMinutos",
+    "function formatarDuracaoMinutos",
+    "function formatarIntervaloMinutos",
+    "function formatarHorario",
+    "function faixaHoraria",
+    "function faixaHorariaCompacta",
+    "function janelasSeSobrepoem",
+    "function escalaEhFolga",
+    "function nomeDoColaborador",
+    "interface ConflitoEscala",
+    "function detectarConflitos",
+    "interface PontoSerieDiaria",
+    "function contarEscalasPorDia",
+    "interface FatiaTurno",
+    "function distribuicaoPorTurno",
+    "interface DiaComEscalas",
+    "function proximasDatasComEscalas",
+    "interface GrupoDiaEscalas",
+    "function agruparEscalasPorDia",
+    "function variacaoPercentual",
+    "function turnosCriadosAte",
+    "function normalizarTexto",
+    "function filtrarEscalas",
+    "function departamentosDaEquipe",
+    "function statusDasEscalas",
+    "function contarFiltrosAvancados",
+    "interface LinhaCalendario",
+    "function montarLinhasCalendario",
+    "interface MetricasPainelTurnos",
+    "function calcularMetricasPainel"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "se sobrepõem. É a única regra aplicada, e ela é de consistência de dados",
+    "validação trabalhista — o sistema não tem, e este módulo não inventa,",
+    "regras de descanso/limite legal;",
+    "regra é sobreposição, não quantidade.",
+    "botão \"Mais filtros\". Mora aqui (e não na barra) porque é regra de estado,",
+    "* `escalasPeriodoAnterior` já deve vir com os MESMOS filtros aplicados"
+   ]
+  },
+  "src/components/turnos/turnosSuperficies.ts": {
+   "path": "src/components/turnos/turnosSuperficies.ts",
+   "lines": 39,
+   "exports": [
+    "const FUNDO_CARD",
+    "const FUNDO_CARD_OPACO"
+   ],
+   "params": [
+    {
+     "name": "FUNDO_CARD",
+     "value": "'bg-card/40'"
+    }
+   ],
+   "rule_comments": [
+    "primeira coluna é `sticky` (o nome não pode sair de vista na rolagem",
+    "* Regra de convivência: quem pinta uma célula fixa sobre estes cards usa"
+   ]
+  },
+  "src/components/turnos/useTurnosEscalas.ts": {
+   "path": "src/components/turnos/useTurnosEscalas.ts",
+   "lines": 156,
+   "exports": [
+    "const DIAS_PROXIMAS_ESCALAS",
+    "interface UseTurnosEscalasArgs",
+    "interface UseTurnosEscalasResult",
+    "function useTurnosEscalas"
+   ],
+   "params": [
+    {
+     "name": "DIAS_PROXIMAS_ESCALAS",
+     "value": "60"
+    },
+    {
+     "name": "STALE_TIME",
+     "value": "60"
+    }
+   ],
+   "hooks": [
+    "useTurnosEscalas"
+   ],
+   "temporal": [
+    "const fimProximas = chaveData(new Date(agora + DIAS_PROXIMAS_ESCALAS * 24 * 60 * 60 * 1000));"
+   ]
+  },
+  "src/components/turnos/__tests__/CalendarioMensal.test.tsx": {
+   "path": "src/components/turnos/__tests__/CalendarioMensal.test.tsx",
+   "lines": 154,
+   "is_test": true,
+   "rule_comments": [
+    "GRADE MENSAL — o que o refinamento não pode perder."
+   ],
+   "tests": [
+    "CalendarioMensal — células e abertura do dia",
+    "desenha um botão por dia do mês e abre o dia escolhido no clique",
+    "distingue dia com escala de dia sem escala sem depender só da cor",
+    "marca o dia de hoje com etiqueta própria, além da cor",
+    "marca o dia aberto no modal com anel e ",
+    "não renderiza lista de detalhes abaixo da grade"
+   ]
+  },
+  "src/components/turnos/__tests__/CalendarioSemanal.test.tsx": {
+   "path": "src/components/turnos/__tests__/CalendarioSemanal.test.tsx",
+   "lines": 199,
+   "is_test": true,
+   "rule_comments": [
+    "GRADE SEMANAL — o que o refino visual NÃO pode perder."
+   ],
+   "tests": [
+    "CalendarioSemanal — grade compacta",
+    "mostra o card do turno com a faixa completa de horário",
+    "pinta a bolinha do card com a cor cadastrada do turno",
+    "distingue folga explícita de célula sem escala e mantém a MESMA altura",
+    "marca o dia com mais de uma escala com o selo de excedente",
+    "pinta o card em três camadas com os alfas da cor cadastrada do turno",
+    "acende fundo e borda no hover por alfa, com transição curta (sem mover a grade)",
+    "distribui o miolo em duas linhas: nome em destaque e horário na coluna do nome",
+    "mantém a célula sem escala neutra, centrada e sem tinta de turno"
+   ]
+  },
+  "src/components/turnos/__tests__/ListaEscalas.test.tsx": {
+   "path": "src/components/turnos/__tests__/ListaEscalas.test.tsx",
+   "lines": 106,
+   "is_test": true,
+   "rule_comments": [
+    "O conteúdo NÃO pode ditar a altura da linha da grade (`contain: size`)."
+   ],
+   "tests": [
+    "ListaEscalas — altura controlada",
+    "deixa o card ocupar a coluna e rola só o miolo",
+    "mantém o cabeçalho fixo no topo da rolagem",
+    "desenha uma linha por escala com as colunas alinhadas",
+    "abre os detalhes com a data e a escala da linha",
+    "mostra o estado vazio quando o período não tem escala"
+   ]
+  },
+  "src/components/turnos/__tests__/SeletorCor.test.tsx": {
+   "path": "src/components/turnos/__tests__/SeletorCor.test.tsx",
+   "lines": 121,
+   "is_test": true,
+   "rule_comments": [
+    "* O cadastro de turnos não pode mais depender do `input type=\"color\"` (janela"
+   ],
+   "tests": [
+    "SeletorCor",
+    "mostra a cor atual e não usa o seletor nativo do navegador",
+    "publica a cor normalizada ao escolher um atalho da paleta",
+    "publica hexadecimal completo na digitação, consolida o curto no blur e ignora lixo",
+    "ressincroniza quando a cor chega de fora (outro turno no modal)",
+    "expõe área de saturação e faixa de matiz como sliders acessíveis"
+   ]
+  },
+  "src/components/turnos/__tests__/TurnosConteudo.test.tsx": {
+   "path": "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
+   "lines": 202,
+   "is_test": true,
+   "tests": [
+    "TurnosConteudo",
+    "abre na visão Semana com o cabeçalho e os KPI Cards alimentados pelos dados",
+    "desenha a grade semanal com a célula do turno e a célula vazia",
+    "filtra o calendário pela busca por colaborador",
+    "troca para a visão Lista mantendo os mesmos dados",
+    "abre os detalhes ao clicar numa célula com escala",
+    "lista as próximas escalas com a contagem real e navega ao clicar",
+    "mostra o resumo do período com o total de escalas no centro da rosca",
+    "abre o modal do dia ao clicar numa célula do mês (sem empilhar seção na página)",
+    "abre o modal "
+   ]
+  },
+  "src/components/turnos/__tests__/turnosCalendario.test.ts": {
+   "path": "src/components/turnos/__tests__/turnosCalendario.test.ts",
+   "lines": 129,
+   "is_test": true,
+   "tests": [
+    "turnosCalendario · período",
+    "monta a semana de segunda a domingo a partir de qualquer dia dela",
+    "monta o mês inteiro (28 a 31 dias)",
+    "desloca a âncora por semana ou por mês",
+    "devolve o bloco imediatamente anterior com a mesma duração",
+    "a lista usa a janela do mês",
+    "turnosCalendario · rótulos",
+    "formata o intervalo da semana no mesmo mês e virando o mês",
+    "formata o mês por extenso",
+    "encurta o dia da semana e a data",
+    "rotula proximidade nas próximas escalas",
+    "reconhece o dia de hoje",
+    "lê a chave como data local (sem deslocar um dia)",
+    "turnosCalendario · recorrência",
+    "não repete quando a recorrência é única",
+    "gera dias seguidos na recorrência diária",
+    "gera semanas seguidas na recorrência semanal",
+    "limita a quantidade de ocorrências e ignora data inválida"
+   ]
+  },
+  "src/components/turnos/__tests__/turnosCores.test.ts": {
+   "path": "src/components/turnos/__tests__/turnosCores.test.ts",
+   "lines": 65,
+   "is_test": true,
+   "tests": [
+    "turnosCores",
+    "normaliza hex curto, sem cerquilha e maiúsculo",
+    "cai na cor padrão quando a cor é ausente ou inválida",
+    "converte para rgba com o alfa pedido",
+    "limita o alfa ao intervalo [0, 1]",
+    "faz a ida e volta hex ⇄ HSV sem alterar a cor",
+    "descreve a cor em matiz/saturação/brilho",
+    "limita saturação/brilho fora da faixa e aceita matiz negativa"
+   ]
+  },
+  "src/components/turnos/__tests__/turnosMetricas.test.ts": {
+   "path": "src/components/turnos/__tests__/turnosMetricas.test.ts",
+   "lines": 512,
+   "is_test": true,
+   "rule_comments": [
+    "* Regra de conflito coberta aqui: MESMO colaborador + MESMO dia + horários que",
+    "se sobrepõem. Nada de regra trabalhista — o teste garante exatamente o que o",
+    "sistema promete, e que turnos que apenas se encostam (08–14 e 14–22) e turnos"
+   ],
+   "tests": [
+    "turnosMetricas · horários",
+    "converte HH:MM em minutos e rejeita valor inválido",
+    "faz o turno virar o dia quando a saída é menor que a entrada",
+    "desconta o intervalo da duração líquida",
+    "formata intervalo e faixa horária",
+    "não considera sobreposição quando um turno começa quando o outro termina",
+    "turnosMetricas · conflitos",
+    "acusa sobreposição do mesmo colaborador no mesmo dia",
+    "não acusa turnos que apenas se encostam nem colaboradores diferentes",
+    "acusa registro duplicado do mesmo turno no mesmo dia",
+    "usa o turno embutido da escala quando o catálogo não tem o turno",
+    "ordena os conflitos por data e depois por nome",
+    "turnosMetricas · agregações",
+    "conta escalas por dia do período",
+    "distribui por turno em ordem decrescente",
+    "inclui escala de turno fora do catálogo sem perder o total",
+    "lista próximas datas a partir de hoje, ordenadas e limitadas",
+    "calcula variação percentual só quando há base",
+    "conta turnos existentes até uma data",
+    "turnosMetricas · filtros e linhas do calendário",
+    "normaliza texto para busca sem acento e sem caixa",
+    "combina busca, turno, status e departamento",
+    "lista departamentos e status existentes",
+    "monta as linhas com escala por dia e quem tem escala primeiro",
+    "esconde quem não tem escala quando o filtro pede",
+    "conta os filtros avançados ativos",
+    "reconhece folga explícita",
+    "turnosMetricas · KPI cards",
+    "consolida os quatro indicadores a partir dos dados",
+    "devolve percentual nulo quando não há equipe carregada",
+    "conta só colaboradores da equipe no percentual e nunca passa de 100%",
+    "turnosMetricas · agrupamento por dia",
+    "agrupa por data em ordem crescente e por nome dentro do dia",
+    "descarta o que está antes da data de corte",
+    "devolve lista vazia quando não há escalas"
+   ]
+  },
   "src/components/ui/alert-dialog.tsx": {
    "path": "src/components/ui/alert-dialog.tsx",
    "lines": 87
@@ -311165,14 +312520,9 @@
   },
   "src/pages/TurnosPage.tsx": {
    "path": "src/pages/TurnosPage.tsx",
-   "lines": 324,
+   "lines": 33,
    "exports": [
     "function TurnosPage"
-   ],
-   "errors": [
-    "Erro ao atualizar turno",
-    "Erro ao criar turno",
-    "Erro ao excluir turno"
    ]
   },
   "src/pages/UsuariosPage.tsx": {
@@ -318549,9 +319899,11 @@
   },
   "src/services/turnoService.ts": {
    "path": "src/services/turnoService.ts",
-   "lines": 125,
+   "lines": 172,
    "exports": [
     "type EscalaDoDia",
+    "type EscalaDoPeriodo",
+    "type MembroDaEquipe",
     "const turnoService"
    ],
    "tables": [
@@ -318590,6 +319942,14 @@
     {
      "table": "escalas_trabalho",
      "op": "select,update"
+    },
+    {
+     "table": "escalas_trabalho",
+     "op": "select"
+    },
+    {
+     "table": "colaboradores",
+     "op": "select"
     }
    ],
    "table_cols": {
@@ -318601,19 +319961,40 @@
      "colaborador_id",
      "data",
      "empresa_id",
-     "id"
+     "id",
+     "status",
+     "turno_id"
+    ],
+    "colaboradores": [
+     "departamento",
+     "empresa_id",
+     "id",
+     "nome_completo",
+     "status"
     ]
    },
    "errors": [
     "Nenhum registro de escala foi retornado.",
     "Nenhum registro de turno foi retornado.",
+    "empresa_id obrigatorio para isolamento de tenant",
     "empresa_id obrigatório para isolamento de tenant"
    ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "ativo",
+     "kind": "filtra"
+    }
+   ],
    "rule_comments": [
-    "o fluxo de salvar deve fazer UPDATE (linha já existe) ou INSERT (ainda"
+    "* Colaborador ativo, no minimo que a grade de Turnos precisa (sem PII). */",
+    "o fluxo de salvar deve fazer UPDATE (linha já existe) ou INSERT (ainda",
+    "`limit(5000)` e teto de seguranca: 300 pessoas x 31 dias ~ 9.300 linhas,"
    ],
    "pagination": [
-    "1"
+    "1",
+    "1000",
+    "5000"
    ]
   },
   "src/services/vinculoService.ts": {
@@ -341172,10 +342553,51 @@
   }
  },
  "git": {
-  "sha": "4046e24de099152e0ccf3e63c4325d8c53800949",
+  "sha": "2a62b11242998afe8e44ad6ea4cdc2923ffb7506",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2a62b11",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: resgata a tela de Turnos do agente Muri (calendario, escalas e dialogos) (#875)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/components/turnos/BarraFiltrosEscalas.tsx",
+     "src/components/turnos/CabecalhoTurnos.tsx",
+     "src/components/turnos/CalendarioMensal.tsx",
+     "src/components/turnos/CalendarioSemanal.tsx",
+     "src/components/turnos/ColunaLateralTurnos.tsx",
+     "src/components/turnos/DialogoConflitos.tsx",
+     "src/components/turnos/DialogoDetalhesEscala.tsx",
+     "src/components/turnos/DialogoDiaEscalas.tsx",
+     "src/components/turnos/DialogoGerenciarTurnos.tsx",
+     "src/components/turnos/DialogoNovaEscala.tsx",
+     "src/components/turnos/DialogoProximasEscalas.tsx",
+     "src/components/turnos/DialogoTurno.tsx",
+     "src/components/turnos/ListaEscalas.tsx",
+     "src/components/turnos/SeletorCor.tsx",
+     "src/components/turnos/TurnosConteudo.tsx",
+     "src/components/turnos/TurnosKpiCards.tsx",
+     "src/components/turnos/__tests__/CalendarioMensal.test.tsx",
+     "src/components/turnos/__tests__/CalendarioSemanal.test.tsx",
+     "src/components/turnos/__tests__/ListaEscalas.test.tsx",
+     "src/components/turnos/__tests__/SeletorCor.test.tsx",
+     "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
+     "src/components/turnos/__tests__/turnosCalendario.test.ts",
+     "src/components/turnos/__tests__/turnosCores.test.ts",
+     "src/components/turnos/__tests__/turnosMetricas.test.ts",
+     "src/components/turnos/turnosAnimacoes.ts",
+     "src/components/turnos/turnosCalendario.ts",
+     "src/components/turnos/turnosCores.ts",
+     "src/components/turnos/turnosMetricas.ts",
+     "src/components/turnos/turnosSuperficies.ts",
+     "src/components/turnos/useTurnosEscalas.ts",
+     "src/pages/TurnosPage.tsx",
+     "src/services/turnoService.ts"
+    ]
+   },
    {
     "sha": "4046e24",
     "date": "2026-11-25",
@@ -341831,18 +343253,6 @@
     "files": [
      "src/services/workflowService.ts"
     ]
-   },
-   {
-    "sha": "ee4d2de",
-    "date": "2026-11-23",
-    "author": "github-actions[bot]",
-    "subject": "chore: inventario do estado real [auto] (#842)",
-    "files": [
-     "inventario/estado/banco.json",
-     "inventario/estado/edges.json",
-     "inventario/estado/funcionalidades.json",
-     "inventario/estado/rotas.json"
-    ]
    }
   ],
   "hot_files": [
@@ -341861,6 +343271,10 @@
    [
     "supabase/functions/alertas-dp/index.ts",
     3
+   ],
+   [
+    "scripts/.bundle-budget.json",
+    2
    ],
    [
     "supabase/migrations/20260719170000_security_indexes_constraints.verify.sql",
@@ -341891,39 +343305,35 @@
     2
    ],
    [
-    "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.sql",
+    "src/components/turnos/BarraFiltrosEscalas.tsx",
     1
    ],
    [
-    "supabase/migrations/20260725100000_p3_060_backup_logs.sql",
+    "src/components/turnos/CabecalhoTurnos.tsx",
     1
    ],
    [
-    "supabase/migrations/20261125120000_secdef_refresh_dashboard_views_revoke.sql",
+    "src/components/turnos/CalendarioMensal.tsx",
     1
    ],
    [
-    "supabase/migrations/20261125120000_secdef_refresh_dashboard_views_revoke.verify.sql",
+    "src/components/turnos/CalendarioSemanal.tsx",
     1
    ],
    [
-    "supabase/migrations/20260719190000_audit_delete_trigger.verify.sql",
+    "src/components/turnos/ColunaLateralTurnos.tsx",
     1
    ],
    [
-    "supabase/migrations/20260719193000_security_monitoring_views.verify.sql",
+    "src/components/turnos/DialogoConflitos.tsx",
     1
    ],
    [
-    "supabase/migrations/20260724140000_p4_072_mv_dashboards.verify.sql",
+    "src/components/turnos/DialogoDetalhesEscala.tsx",
     1
    ],
    [
-    "supabase/migrations/20260725100000_p3_060_backup_logs.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20260804000000_p0_010_write_policies_provisoes.verify.sql",
+    "src/components/turnos/DialogoDiaEscalas.tsx",
     1
    ]
   ]
