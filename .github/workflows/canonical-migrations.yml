@@ -246,6 +246,21 @@ jobs:
           # tabelas depois que a Edge nova estiver publicada.
           # 24/11/2026: 20261123180000_dreno_fila_notificacoes_cron.sql aplicada e no
           # ledger, saiu daqui. A correcao do search_path dela vem na 20261124120000.
+          # 24/11/2026: lote aditivo de observabilidade. Os 7 arquivos abaixo existem
+          # no repo desde julho/agosto mas nunca chegaram ao canonico (nao estao no
+          # ledger): views de seguranca, 4 MVs de dashboard, indices compostos, a
+          # tabela backup_logs e as policies de provisoes_folha. Todos aditivos e
+          # idempotentes (IF NOT EXISTS / to_regclass / DO+EXCEPTION).
+          # LOTE ADITIVO DE OBSERVABILIDADE (24/11/2026): 7 migrations que
+          # existem no repo desde jul/ago mas nunca estiveram nesta lista.
+          # Diagnostico read-only no canonico (run 45461193100): idx_seg=f,
+          # backup_logs=f, mv_headcount=f, mv_turnover=f, v_sec=f,
+          # fn_audit_del=0, provisoes_folha=t. As write policies de
+          # provisoes_folha tambem faltam: o catalogo so tem
+          # provisoes_folha_rh_read (SELECT). A 20261124150000 fecha o RLS da
+          # backup_logs - a 20260725100000 cria a tabela sem RLS nem policy e,
+          # com os GRANTs default do Supabase, ela ficaria legivel por
+          # anon/authenticated sem filtro de empresa.
           for migration in \
             20261123090000_ponto_rep_converter_batidas.sql \
             20261122090000_recibos_ferias_criar_tabela_ausente.sql \
@@ -254,7 +269,15 @@ jobs:
             20261122130000_indices_fk_join_ponto_pix.sql \
             20261123150000_ponto_rep_feriados_horarios.sql \
             20261122041500_guias_fgts_digital_rls_por_empresa.sql \
-            20261124120000_dreno_search_path_extensao.sql
+            20261124120000_dreno_search_path_extensao.sql \
+            20260719170000_security_indexes_constraints.sql \
+            20260719190000_audit_delete_trigger.sql \
+            20260719193000_security_monitoring_views.sql \
+            20260724140000_p4_072_mv_dashboards.sql \
+            20260725100000_p3_060_backup_logs.sql \
+            20260804000000_p0_010_write_policies_provisoes.sql \
+            20260817000000_p4_071_indices_compostos_top20.sql \
+            20261124150000_backup_logs_rls_policy.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then

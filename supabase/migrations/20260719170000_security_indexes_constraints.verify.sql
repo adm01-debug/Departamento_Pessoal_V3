@@ -1,0 +1,1 @@
+SELECT CASE WHEN to_regclass('public.idx_audit_log_tabela_acao_created') IS NOT NULL AND to_regclass('public.idx_login_attempts_email_created') IS NOT NULL AND to_regclass('public.idx_rate_limit_logs_expires') IS NOT NULL THEN 'ok' ELSE 'FALHOU: indice de seguranca ausente' END;
