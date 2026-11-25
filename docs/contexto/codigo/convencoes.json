@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (714)",
+   "co-localizado (__tests__) (715)",
    "co-localizado (*.test) (78)",
    "e2e/ (33)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: formulario de vaga coleta cargo, contrato, faixa e beneficios (#887)",
    "feat: resgata os cards de resumo do ponto (indicadores, equipe, pendencias e fechamento) (#886)",
    "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)",
    "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)",
-   "feat: resgata a tela de pesquisas de clima do port do Muri (#885)",
-   "feat: resgata a tela de solicitacoes de horas extras do port do Muri (#884)"
+   "feat: resgata a tela de pesquisas de clima do port do Muri (#885)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

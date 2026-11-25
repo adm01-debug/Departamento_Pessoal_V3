@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 851,
+ "total": 852,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 806
+  "unit": 807
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 714
+   "arquivos": 715
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -4204,23 +4204,23 @@
   {
    "arquivo": "src/components/recrutamento/__tests__/VagaCard.test.tsx",
    "tipo": "unit",
-   "linhas": 222,
+   "linhas": 254,
    "testa": [
     "src/components/recrutamento/VagaCard.tsx",
     "src/components/recrutamento/vagasComum.ts",
     "src/types/recrutamento.ts"
    ],
-   "casos": 8
+   "casos": 10
   },
   {
    "arquivo": "src/components/recrutamento/__tests__/vagasComum.test.ts",
    "tipo": "unit",
-   "linhas": 230,
+   "linhas": 251,
    "testa": [
     "src/components/recrutamento/vagasComum.ts",
     "src/types/recrutamento.ts"
    ],
-   "casos": 10
+   "casos": 12
   },
   {
    "arquivo": "src/components/recrutamento/__tests__/vagasGradients.test.ts",
@@ -6000,6 +6000,15 @@
     "src/services/premiacoesService.ts"
    ],
    "casos": 5
+  },
+  {
+   "arquivo": "src/pages/__tests__/RecrutamentoPage.vagaForm.test.tsx",
+   "tipo": "unit",
+   "linhas": 117,
+   "testa": [
+    "src/pages/RecrutamentoPage.tsx"
+   ],
+   "casos": 2
   },
   {
    "arquivo": "src/pages/__tests__/SegurosVidaPage.test.tsx",
@@ -8489,6 +8498,7 @@
   "src/pages/PlanosSaudePage.tsx": 1,
   "src/pages/PontoKioskPage.tsx": 1,
   "src/pages/PremiacoesPage.tsx": 1,
+  "src/pages/RecrutamentoPage.tsx": 1,
   "src/pages/SegurosVidaPage.tsx": 1,
   "src/pages/UsuariosPage.tsx": 1,
   "src/pages/ValesPage.tsx": 1,
@@ -8757,7 +8767,6 @@
    "src/pages/PortalPage.tsx",
    "src/pages/PromoBrindesPage.tsx",
    "src/pages/ProvisoesPage.tsx",
-   "src/pages/RecrutamentoPage.tsx",
    "src/pages/RelatoriosPage.tsx",
    "src/pages/RubricasPage.tsx",
    "src/pages/SSTPage.tsx",

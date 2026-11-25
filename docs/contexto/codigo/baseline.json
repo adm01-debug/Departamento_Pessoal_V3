@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "58dd46c64783d21d8596ffece4aed9f5825f6924",
+  "commit": "08dd398c3f572899c4d76f53d19e23c09597dfae",
   "branch": "main",
-  "data_commit": "2026-11-25T13:46:23-03:00",
+  "data_commit": "2026-11-25T13:58:28-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "08dd398",
+    "data": "2026-11-25",
+    "assunto": "feat: formulario de vaga coleta cargo, contrato, faixa e beneficios (#887)"
+   },
    {
     "sha": "58dd46c",
     "data": "2026-11-25",
@@ -126,14 +131,9 @@
     "sha": "347a2ba",
     "data": "2026-11-24",
     "assunto": "chore(security): pina node:22-alpine e nginx:alpine por digest (#859)"
-   },
-   {
-    "sha": "fb2d3e0",
-    "data": "2026-11-23",
-    "assunto": "chore(deps): bump the minor-patch group across 1 directory with 3 updates (#858)"
    }
   ],
-  "arquivos_mudados_7d": 756,
+  "arquivos_mudados_7d": 762,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -169,7 +169,7 @@
    },
    {
     "pasta": "src/components/recrutamento",
-    "mudancas": 44
+    "mudancas": 48
    },
    {
     "pasta": "src/components/layout",
@@ -189,7 +189,7 @@
    },
    {
     "pasta": "src/pages/__tests__",
-    "mudancas": 34
+    "mudancas": 35
    },
    {
     "pasta": "src/utils/__tests__",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4180,
-  "arquivos_codigo": 2265,
-  "linhas_codigo": 456885,
+  "arquivos_total": 4181,
+  "arquivos_codigo": 2266,
+  "linhas_codigo": 457271,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 438,
   "migrations": 1261,
   "cron_jobs": 43,
-  "testes": 851,
+  "testes": 852,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 347
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 1114,
-   "linhas": 210753
+   "linhas": 210876
   },
   "src/constants": {
    "arquivos": 7,
@@ -683,8 +683,8 @@
    "linhas": 3978
   },
   "src/pages": {
-   "arquivos": 145,
-   "linhas": 51696
+   "arquivos": 146,
+   "linhas": 51959
   },
   "src/providers": {
    "arquivos": 4,
@@ -994,7 +994,7 @@
   },
   {
    "arquivo": "src/pages/RecrutamentoPage.tsx",
-   "linha": 102,
+   "linha": 137,
    "tipo": "TODO",
    "texto": "o processo — sem esta leitura separada, filtrar o Pipeline mudava os"
   },

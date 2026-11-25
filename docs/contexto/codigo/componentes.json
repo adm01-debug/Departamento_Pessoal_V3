@@ -6749,7 +6749,7 @@
     "VagaCardProps"
    ],
    "export_default": null,
-   "linhas": 318,
+   "linhas": 353,
    "dominio": "components/recrutamento",
    "hooks_locais": [],
    "tabelas": [],
@@ -9110,7 +9110,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 52,
+   "usado_por": 53,
    "orfao": false
   },
   {
@@ -11063,7 +11063,7 @@
     "RecrutamentoPage"
    ],
    "export_default": "RecrutamentoPage",
-   "linhas": 676,
+   "linhas": 822,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas",

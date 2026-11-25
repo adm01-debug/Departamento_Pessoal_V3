@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `58dd46c647` · branch `main` · 2026-11-25 16:47 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `08dd398c3f` · branch `main` · 2026-11-25 16:59 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1883,6 +1883,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | TomStatusCard | success \| info \| warning \| chart-4 \| chart-5 | `src/components/recrutamento/pipelineEtapas.ts` |
 | FiltroStatusVaga | todas \| aberta \| fechada | `src/components/recrutamento/vagasComum.ts` |
 | OrdenacaoVaga | recentes \| antigas \| candidatos \| titulo | `src/components/recrutamento/vagasComum.ts` |
+| OPCOES_TIPO_CONTRATO | { valor: 'clt', rotulo: 'CLT' }, { valor: 'pj', rotulo: 'PJ' }, { valor: 'estagiario', rotulo: 'Estágio' }, { valor: 'temporario', rotulo: 'Temporário' }, { valor: 'intermitente', rotulo: 'Intermitente' }, { valor: 'aprendiz', rotulo: 'Aprendiz' }, | `src/components/recrutamento/vagasComum.ts` |
 | ReportScheduleFrequency | diario \| semanal \| mensal | `src/components/relatorios/reportScheduleContract.ts` |
 | REPORT_SCHEDULE_TYPES | 'lista_colaboradores', 'folha_resumo', 'ferias_proximas', 'afastamentos_ativos', 'indicadores_dp', | `src/components/relatorios/reportScheduleContract.ts` |
 | SituacaoCertificado | todos \| valido \| a_vencer \| vencido \| vitalicio | `src/components/treinamentos/certificadosDerivacoes.ts` |
@@ -4902,7 +4903,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `SIDEBAR_COOKIE_MAX_AGE` | `60` | `src/components/ui/sidebar.tsx` |
 | `SIDEBAR_WIDTH` | `'16rem'` | `src/components/ui/sidebar.tsx` |
 | `SIDEBAR_WIDTH_MOBILE` | `'18rem'` | `src/components/ui/sidebar.tsx` |
-| … +207 linhas — lista completa em `context.json` | | |
+| … +208 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5634,7 +5635,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (10260 testes em 806 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10267 testes em 807 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5851,6 +5852,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/layout.test.tsx` | 14 | PageHeader · renders title · renders description when provided · does not render description when omitted … |
 | `src/components/__tests__/trilhaReveal.test.ts` | 14 | trilhaReveal — preset do Organograma · reusa curva e deslocamento do Organograma (só o ritmo é local) · usa a calibração local de ritmo (700ms por bloco, 150ms de passo) · o passo é menor que a duração: há SOBREPOSIÇÃO entre os eventos … |
 | `src/components/colaborador-detalhes/__tests__/SSTResumoTab.test.tsx` | 14 | SSTResumoTab · mostra skeleton enquanto qualquer consulta carrega, sem estado vazio · sem nenhum registro mostra o vazio honesto, não conformidade · consulta ainda não resolvida (hook desabilitado) não vira  … |
+| `src/components/recrutamento/__tests__/vagasComum.test.ts` | 14 | vagasComum — contadores, identidade e datas · conta todas/abertas/fechadas pelos status reais · resolve a identidade por departamento e especialidade de dados · preserva YYYY-MM-DD no fuso local e retorna null para data inválida … |
 | `src/lib/__tests__/circuitBreaker.test.ts` | 14 | CircuitBreaker · starts in CLOSED state · executes fn and returns its result when CLOSED · propagates errors thrown by fn when CLOSED … |
 | `src/lib/__tests__/retry.test.ts` | 14 | retryWithIdempotency · retorna na primeira tentativa sem retry · repassa idempotencyKey no resultado · faz retry em erro 5xx e devolve o sucesso seguinte … |
 | `src/services/__tests__/documentoService.test.ts` | 14 | documentoService.listarDocumentos · returns documents without filters · returns empty array when data is null · filters by empresa_id when provided … |
@@ -5894,7 +5896,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/NovoDesligamentoDialog.test.tsx` | 12 | NovoDesligamentoDialog · renders Novo Desligamento title · renders dialog description · renders Colaborador * label … |
 | `src/components/__tests__/RelogiosPanel.test.tsx` | 12 | statusColetor · classifica online, atrasado, nunca e revogado · RelogiosPanel · mostra carregando e depois a lista de coletores com status … |
 | `src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx` | 12 | CamposCustomizadosTab · mostra carregando enquanto as consultas não respondem · mostra falha de consulta sem inventar ausência de dados · mostra estado vazio honesto quando a empresa não definiu campos … |
-| `src/components/recrutamento/__tests__/vagasComum.test.ts` | 12 | vagasComum — contadores, identidade e datas · conta todas/abertas/fechadas pelos status reais · resolve a identidade por departamento e especialidade de dados · preserva YYYY-MM-DD no fuso local e retorna null para data inválida … |
 | `src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx` | 12 | MaisTurmasCard · renderiza ícone de grupo, título e descrição da referência · usa borda tracejada, raio de 12px e altura da referência (sem largura fixa) · não apresenta botão quando não existe fluxo real de criação … |
 | `src/hooks/__tests__/useCalcular13Salario.test.tsx` | 12 | useCalcular13Salario · initial state: loading=false, resultado=null · exposes calcular function · sets loading=true while calculating … |
 | `src/hooks/__tests__/useGenericCrud.test.ts` | 12 | useGenericCrud · passes queryKey and queryFn to useQuery · exposes items from query data · exposes total from query data … |
@@ -5927,6 +5928,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/QuickActionsGrid.test.tsx` | 11 | QuickActionsGrid · renders Ações Rápidas heading · renders Novo Colaborador action · renders Lançar Ponto action … |
 | `src/components/__tests__/auditoriaDerivacoes.test.ts` | 11 | auditoriaDerivacoes · conta os status e as fatias do resumo (nunca NaN) · conta os eventos dos últimos 30 dias · detecta filtros ativos (inclusive os do painel avançado) … |
 | `src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx` | 11 | CandidatoDetalhesDialog · mostra identificação, cargo, departamento e etapa atual · destaca SOMENTE a etapa efetiva do candidato no indicador · não inventa contato ausente (nem  … |
+| `src/components/recrutamento/__tests__/VagaCard.test.tsx` | 11 | VagaCard — identidade, funil e ações reais · mostra título, departamento, modalidade, competências e o funil completo · abre o Pipeline pelo botão Gerenciar Vaga · mantém apenas ações reais e não duplica Gerenciar no menu … |
 | `src/components/recrutamento/__tests__/pipelineEtapas.test.ts` | 11 | pipelineEtapas — configuração e leitura do board · define as cinco etapas na ordem do processo com tokens distintos · normaliza o vocabulário REAL do banco e isola o desconhecido em  · resolve a etapa visual pelos aliases do banco … |
 | `src/components/treinamentos/__tests__/CertificadoCard.test.tsx` | 11 | CertificadoCard — bloco Emissão / Validade / Código · usa três colunas proporcionais com labels, valores e complemento alinhados · exibe emissão e validade reais no formato dd/MM/yyyy · mostra o aviso âmbar de certificado a vencer … |
 | `src/components/treinamentos/__tests__/TurmaCard.test.tsx` | 11 | TurmaCard — composição compacta · coloca título e categoria DENTRO do cabeçalho da imagem · sem inscritos reais não inventa barra/percentual · com inscritos reais calcula e exibe ocupação + barra … |
@@ -5937,8 +5939,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/bancoHorasConfigService.test.ts` | 11 | bancoHorasConfigService.buscar · returns config for empresa · returns null when no config exists · filters by empresa_id … |
 | `src/services/__tests__/colaboradorService.recontratacao.test.ts` | 11 | colaboradorService.recontratar · exige empresaId (isolamento de tenant) · exige data_admissao · atualiza o MESMO colaborador.id (status ativo, data_desligamento null) e cria vínculo tipo  … |
 | `src/services/__tests__/pontoMonitorService.test.ts` | 11 | pontoMonitorService.logEvent · inserts event into ponto_auditoria · includes usuario_id from auth.getUser · swallows DB errors silently (no throw) … |
-| `src/utils/__tests__/regrasSolicitacaoFerias.test.ts` | 11 | resumirUsoPorPeriodo · soma gozo, abono e partes; rejeitadas/canceladas contam só como parte · validarSaldoFerias · aceita 30 dias sem abono e 20 + 10 de abono … |
-| … +506 linhas — lista completa em `context.json` | | |
+| … +507 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
