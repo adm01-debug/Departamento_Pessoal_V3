@@ -47,6 +47,8 @@ BEGIN
 END $$;
 
 DO $$
+DECLARE
+  v_nome text;
 BEGIN
   IF to_regclass('public.historico_calculos_folha') IS NULL
      OR to_regprocedure('public.pertence_a_empresa(uuid)') IS NULL THEN
@@ -59,20 +61,33 @@ BEGIN
     FOR SELECT TO authenticated
     USING (public.pertence_a_empresa(empresa_id));
 
-  DROP POLICY IF EXISTS "Insercao por empresa historico" ON public.historico_calculos_folha;
-  CREATE POLICY "Insercao por empresa historico" ON public.historico_calculos_folha
-    FOR INSERT TO authenticated
-    WITH CHECK (public.pertence_a_empresa(empresa_id));
+  -- A policy de INSERT tem cedilha/til no nome no banco real. O nome e lido do
+  -- catalogo em vez de escrito aqui, para o DROP casar byte a byte
+  -- independentemente da codificacao do cliente que roda a migration.
+  SELECT p.policyname INTO v_nome
+  FROM pg_policies p
+  WHERE p.schemaname = 'public'
+    AND p.tablename = 'historico_calculos_folha'
+    AND p.cmd = 'INSERT'
+  LIMIT 1;
+
+  IF v_nome IS NOT NULL THEN
+    EXECUTE format('DROP POLICY %I ON public.historico_calculos_folha', v_nome);
+    EXECUTE format(
+      'CREATE POLICY %I ON public.historico_calculos_folha FOR INSERT TO authenticated '
+      'WITH CHECK (public.pertence_a_empresa(empresa_id))', v_nome);
+  END IF;
 
   DROP POLICY IF EXISTS "historico_calculos_delete" ON public.historico_calculos_folha;
   CREATE POLICY "historico_calculos_delete" ON public.historico_calculos_folha
     FOR DELETE TO authenticated
     USING (public.pertence_a_empresa(empresa_id) AND public.is_admin(auth.uid()));
 
+  -- fail-closed: exatamente uma policy por comando (SELECT/INSERT/DELETE).
   IF (SELECT count(*) FROM pg_policies
       WHERE schemaname = 'public'
         AND tablename = 'historico_calculos_folha'
-        AND policyname IN ('Acesso por empresa historico','Insercao por empresa historico','historico_calculos_delete')) <> 3 THEN
+        AND policyname IN ('Acesso por empresa historico', v_nome, 'historico_calculos_delete')) <> 3 THEN
     RAISE EXCEPTION 'policies de historico_calculos_folha nao foram recriadas';
   END IF;
 END $$;
