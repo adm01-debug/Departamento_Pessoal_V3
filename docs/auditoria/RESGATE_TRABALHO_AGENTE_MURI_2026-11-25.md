@@ -376,3 +376,119 @@ Seis branches `claude/*` existem só para guardar o estado do port (nenhuma tem 
 `chore-preserva-wip-medicao-muri` e `feat-resgata-ui-muri`. O conteúdo exclusivo delas é exatamente o que as
 tabelas do §12.3 e do §12.5 já cobrem (port + `docs/` + testes do port). Nenhuma branch foi apagada nesta rodada:
 apagar é irreversível e o ganho seria zero.
+
+## 13. Causa raiz do E2E autenticado vermelho na `main` — gatilho comparando uuid com texto (#897)
+
+O `E2E Tests (Playwright)` estava vermelho na `main` desde 23/11/2026, sempre no passo
+*"Garantir fixtures do E2E autenticado"*, e a falha vinha sendo tratada como infraestrutura. Não era.
+
+### 13.1 Sintoma
+
+`scripts/e2e/ensure-fixtures.mjs` aborta com:
+
+```
+code: '22P02', message: 'invalid input syntax for type uuid: ""'
+```
+
+O script só usa `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `E2E_USER_EMAIL` e `E2E_USER_PASSWORD`; as variáveis
+`MAILOSAUR_*` vazias no log são irrelevantes para esse passo (hipótese inicial descartada).
+
+### 13.2 Causa raiz, com reprodução
+
+`supabase/migrations/20260719170000_security_indexes_constraints.sql:52-60` criou:
+
+```sql
+IF NEW.empresa_id IS NOT NULL AND NEW.empresa_id = '' THEN
+```
+
+`empresa_id` é `uuid`. O Postgres resolve `''::uuid` em tempo de plano e levanta `22P02` **em toda**
+escrita das seis tabelas que receberam o gatilho `trg_prevent_empty_empresa_*`: `colaboradores`,
+`folhas_pagamento`, `despesas`, `batidas_ponto`, `registros_ponto` e `admissoes`.
+
+Reproduzido no canônico com sessão autenticada real (usuário de diagnóstico, role `admin`, vínculo às duas
+empresas de teste):
+
+```
+GET    /rest/v1/colaboradores            -> 200
+GET    /rest/v1/folhas_pagamento         -> 200
+PATCH  /rest/v1/colaboradores?id=eq....  -> 400 {"code":"22P02","message":"invalid input syntax for type uuid: \"\""}
+POST   /rest/v1/folhas_pagamento         -> 400 {"code":"22P02","message":"invalid input syntax for type uuid: \"\""}
+```
+
+Leitura funciona, escrita nunca. É exatamente o par que o script de fixtures executa.
+
+O próprio repositório já documentava o defeito em
+`supabase/migrations/20261118160000_empresa_id_not_null_rh.sql:176-181` ("levanta 22P02 em TODA escrita das
+tabelas onde ela instala o gatilho"), mas a correção nunca chegou ao banco: a `20260719170000` já estava no
+ledger canônico, então nada a reaplicava e nada a corrigia.
+
+### 13.3 Correção aplicada
+
+`supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql` faz `CREATE OR REPLACE
+FUNCTION public.prevent_empty_empresa_id()` comparando em texto (`NEW.empresa_id::text = ''`). O gatilho
+continua instalado nas seis tabelas e a garantia original segue coberta pelo `NOT NULL` da
+`20261118160000_empresa_id_not_null_rh`. Sidecar `….verify.sql` devolve `ok` só quando a comparação crua
+desapareceu.
+
+Lote canônico (`.github/workflows/canonical-migrations.yml`, lista fechada), na `main`:
+
+| Etapa  | Run         | Resultado                                                          |
+| ------ | ----------- | ------------------------------------------------------------------ |
+| PR     | #897        | mergeada (`8697240d1`)                                             |
+| validate | 45711887210 | `CANONICAL_MIGRATION_DRY_RUN_OK`, 1 asserção de sidecar, todas ok  |
+| apply  | 45712098258 | `CANONICAL_SIDECARS_OK` + `CANONICAL_SCHEMA_INVARIANTS_OK`         |
+
+As outras 20 migrações da lista foram puladas pelo ledger (todas já registradas), então só a correção rodou.
+
+### 13.4 Prova em produção
+
+Mesmas chamadas que retornavam 400, agora com o mesmo usuário, segundos após o `apply`:
+
+```
+PATCH /rest/v1/colaboradores?id=eq.d05818dd-...  -> 200
+POST  /rest/v1/folhas_pagamento                  -> 201 {"id":"1c3de86b-...","competencia":"2026-11"}
+```
+
+Depois disso o `E2E Tests (Playwright)` da `main` no commit do merge ficou **verde** (`run 45713049875` no
+`workflow_dispatch` autenticado e o run do push `8697240d1`), junto com o `Continuous Integration &
+Delivery` do mesmo commit.
+
+### 13.5 Impacto medido no banco
+
+Contagem de linhas criadas desde 20/11/2026 nas seis tabelas com o gatilho, no canônico:
+
+| Tabela             | Criadas desde 20/11 | Total |
+| ------------------ | ------------------- | ----- |
+| `colaboradores`    | 0                   | 16    |
+| `admissoes`        | 0                   | 8     |
+| `despesas`         | 0                   | 8     |
+| `folhas_pagamento` | 1 (do próprio E2E)  | 5     |
+| `batidas_ponto`    | 1                   | 1     |
+| `registros_ponto`  | 1                   | 121   |
+
+Nenhum cadastro de colaborador entrou no período em que o gatilho quebrado esteve ativo. Não há dado
+corrompido a recuperar: as escritas falhavam inteiras (transação abortada), não gravavam pela metade.
+
+### 13.6 `src/components/turnos` — dívida antiga encerrada
+
+O item "resgatar turnos: 30 componentes + `turnoService` sem consumidor" do checkpoint anterior está
+superado. Comparação direta:
+
+```
+git diff --stat 296a01873 origin/main -- src/components/turnos src/services/turnoService.ts \
+  src/services/__tests__/turnoService.test.ts src/pages/TurnosPage.tsx
+(sem saída)
+```
+
+Diff vazio e os 8 testes de `src/components/turnos/__tests__` existem na `main`. A rota `turnos` está em
+`src/App.tsx:466` e `TurnosPage` consome `turnoService`. Não há trabalho a resgatar nessa fatia.
+
+### 13.7 Limpeza do ambiente de diagnóstico
+
+O usuário `e2e-repro-diagnostico@teste.local` criado para a reprodução foi neutralizado: vínculos de
+`user_roles` (role `admin`) e `user_empresas` removidos e conta banida até 2126 (`login` → `400 user_banned`).
+O `DELETE` do registro em `auth.users` pela Admin API devolve `P0001 "Trilha de auditoria é append-only"`,
+porque o cascade tenta apagar linhas de `audit_log` — proteção deliberada, mantida como está. A linha
+criada em `folhas_pagamento` pela prova foi apagada (`DELETE` → 200) e o `PATCH` de prova tocou apenas
+`updated_at` de um colaborador real.
+
