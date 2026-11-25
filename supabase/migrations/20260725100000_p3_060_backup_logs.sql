@@ -142,8 +142,16 @@ COMMENT ON COLUMN public.backup_logs.started_at IS
 -- ── 5. Integração com lgpd_purge_log (P3-065) ───────────────
 -- backup_logs também é limpo pelo purge de LGPD se necessário.
 -- Adicionar a config_retencao se for uma tabela de log:
-INSERT INTO public.config_retencao (tabela, dias, ativo, batch_size)
-VALUES ('backup_logs', 90, true, 1000)
-ON CONFLICT (tabela) DO NOTHING;
+-- A tabela config_retencao nasce na 20260724130000 (P3-065). No canonico ela
+-- ainda nao foi aplicada (validate 2026-11-25 falhou aqui), entao o registro da
+-- retencao so acontece quando a tabela existe; sem ela, nada a registrar.
+DO $$
+BEGIN
+  IF to_regclass('public.config_retencao') IS NOT NULL THEN
+    INSERT INTO public.config_retencao (tabela, dias, ativo, batch_size)
+    VALUES ('backup_logs', 90, true, 1000)
+    ON CONFLICT (tabela) DO NOTHING;
+  END IF;
+END $$;
 
 COMMIT;
