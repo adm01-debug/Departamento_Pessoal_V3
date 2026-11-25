@@ -4,10 +4,12 @@ import {
   contarVagas,
   dataDaVaga,
   filtrarVagas,
+  formatarFaixaSalarial,
   montarVagasResumo,
   normalizarVaga,
   opcoesDepartamento,
   opcoesModalidade,
+  rotuloTipoContrato,
   type FiltrosVaga,
 } from '../vagasComum';
 
@@ -225,5 +227,24 @@ describe('vagasComum — filtros e ordenação', () => {
     ];
     expect(opcoesDepartamento(lista)).toEqual(['Comercial', 'Tecnologia']);
     expect(opcoesModalidade(lista)).toEqual(['Híbrido', 'Remoto']);
+  });
+
+  it('formata a faixa salarial nos quatro casos possíveis', () => {
+    // `Intl` usa espaço não separável (U+00A0) entre símbolo e valor; o teste
+    // compara o conteúdo, não o tipo de espaço.
+    const semEspacoEspecial = (valor: string | null) => valor?.replace(/\u00a0/g, ' ') ?? null;
+    expect(semEspacoEspecial(formatarFaixaSalarial(4500, 6000))).toBe('R$ 4.500 – R$ 6.000');
+    expect(semEspacoEspecial(formatarFaixaSalarial(4500, null))).toBe('A partir de R$ 4.500');
+    expect(semEspacoEspecial(formatarFaixaSalarial(null, 6000))).toBe('Até R$ 6.000');
+    expect(formatarFaixaSalarial(null, null)).toBeNull();
+    expect(formatarFaixaSalarial(0, 0)).toBeNull();
+  });
+
+  it('traduz o tipo de contrato e preserva texto fora da lista conhecida', () => {
+    expect(rotuloTipoContrato('clt')).toBe('CLT');
+    expect(rotuloTipoContrato('ESTAGIARIO')).toBe('Estágio');
+    expect(rotuloTipoContrato('Cooperado')).toBe('Cooperado');
+    expect(rotuloTipoContrato('   ')).toBeNull();
+    expect(rotuloTipoContrato(null)).toBeNull();
   });
 });
