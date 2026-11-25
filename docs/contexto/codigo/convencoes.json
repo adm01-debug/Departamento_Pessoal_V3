@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra: leva 7 migrations aditivas de observabilidade ao canônico + sidecars .verify (#869)",
    "feat: banco de horas com extrato filtravel, KPIs e exportacao CSV (#873)",
    "feat(avaliacao): Ver todos dos Talentos em destaque abre a janela completa (resgate do trabalho do Muri) (#870)",
    "docs(auditoria): registra o resgate do trabalho do agente Muri e a regra que evita regressao (#871)",
-   "chore: placeholders no-op para as 316 versoes do ledger sem fonte local (#865)",
-   "fix: guard to_regclass nas policies de backup_logs (apply abortava) (#867)"
+   "chore: placeholders no-op para as 316 versoes do ledger sem fonte local (#865)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

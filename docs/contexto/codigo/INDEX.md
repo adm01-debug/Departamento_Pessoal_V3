@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ce83bb09db43457e17167e0cae7fb3e9cd001681` (2026-11-24T20:26:11-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d30e8fb26c45aca02afe664b4ab351d2a18311fd` (2026-11-25T07:27:04-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2034), SQL (1324), Markdown (346), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2034), SQL (1333), Markdown (346), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 4080 |
+| arquivos_total | 4089 |
 | arquivos_codigo | 2177 |
 | linhas_codigo | 437147 |
 | rotas | 116 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 123 |
 | edge_functions | 68 |
 | tabelas | 438 |
-| migrations | 1250 |
+| migrations | 1259 |
 | cron_jobs | 43 |
 | testes | 818 |
 | workflows | 21 |
@@ -400,15 +400,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28903 nós · 64578 arestas · 2748 comunidades · grafo do commit `ce83bb09`
+- 28912 nós · 64578 arestas · 2757 comunidades · grafo do commit `d30e8fb2`
 - comunidades maiores: react (693), useEmpresas (526), lucide-react (523), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (408), client.ts (382), table.tsx (272), ColaboradorDetalhesPage.tsx (227), "public"."empresas" (164), TreinamentosPage.tsx (163), contract.ts (160)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (34)
-- inventario/estado/rotas.json (21)
+- .github/workflows/canonical-migrations.yml (35)
 - scripts/canonical-invariants.sql (21)
+- inventario/estado/rotas.json (20)
 - docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
 - src/integrations/supabase/types.ts (12)
 - package.json (11)
@@ -658,6 +658,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-25 `d30e8fb` infra: leva 7 migrations aditivas de observabilidade ao canônico + sidecars .verify (#869)
 - 2026-11-24 `ce83bb0` feat: banco de horas com extrato filtravel, KPIs e exportacao CSV (#873)
 - 2026-11-24 `2669333` feat(avaliacao): Ver todos dos Talentos em destaque abre a janela completa (resgate do trabalho do Muri) (#870)
 - 2026-11-24 `a19e496` docs(auditoria): registra o resgate do trabalho do agente Muri e a regra que evita regressao (#871)
@@ -672,7 +673,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `347a2ba` chore(security): pina node:22-alpine e nginx:alpine por digest (#859)
 - 2026-11-23 `fb2d3e0` chore(deps): bump the minor-patch group across 1 directory with 3 updates (#858)
 - 2026-11-23 `0cec124` chore(deps): bump minor-patch group (18 updates, resgate da #846) (#857)
-- 2026-11-23 `c058153` chore(deps-dev): bump the testing group with 2 updates (#845)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

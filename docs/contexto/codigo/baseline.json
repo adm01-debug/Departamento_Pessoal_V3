@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ce83bb09db43457e17167e0cae7fb3e9cd001681",
+  "commit": "d30e8fb26c45aca02afe664b4ab351d2a18311fd",
   "branch": "main",
-  "data_commit": "2026-11-24T20:26:11-03:00",
+  "data_commit": "2026-11-25T07:27:04-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "d30e8fb",
+    "data": "2026-11-25",
+    "assunto": "infra: leva 7 migrations aditivas de observabilidade ao canônico + sidecars .verify (#869)"
+   },
    {
     "sha": "ce83bb0",
     "data": "2026-11-24",
@@ -126,14 +131,9 @@
     "sha": "9924630",
     "data": "2026-11-23",
     "assunto": "fix: usa enum valido no tipo de notificacao de workflow (#847)"
-   },
-   {
-    "sha": "81693b2",
-    "data": "2026-11-23",
-    "assunto": "feat: notificacoes de workflow por e-mail e in-app (#843)"
    }
   ],
-  "arquivos_mudados_7d": 699,
+  "arquivos_mudados_7d": 665,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -181,7 +181,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 34
+    "mudancas": 35
    },
    {
     "pasta": "src/pages/__tests__",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 34
-   },
-   {
-    "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 21
+    "mudancas": 35
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 21
+   },
+   {
+    "arquivo": "inventario/estado/rotas.json",
+    "mudancas": 20
    },
    {
     "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
@@ -266,10 +266,6 @@
     "mudancas": 6
    },
    {
-    "arquivo": "src/App.tsx",
-    "mudancas": 6
-   },
-   {
     "arquivo": "src/components/colaborador-detalhes/index.ts",
     "mudancas": 6
    },
@@ -296,6 +292,10 @@
    {
     "arquivo": "docs/prod-readiness.md",
     "mudancas": 5
+   },
+   {
+    "arquivo": "src/App.tsx",
+    "mudancas": 5
    }
   ],
   "autores_30d": [
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4080,
+  "arquivos_total": 4089,
   "arquivos_codigo": 2177,
   "linhas_codigo": 437147,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 123,
   "edge_functions": 68,
   "tabelas": 438,
-  "migrations": 1250,
+  "migrations": 1259,
   "cron_jobs": 43,
   "testes": 818,
   "workflows": 21,
