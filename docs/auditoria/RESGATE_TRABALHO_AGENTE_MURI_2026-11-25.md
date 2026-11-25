@@ -52,11 +52,12 @@ Divergentes por pasta: 713 `src/components`, 163 `src/services`, 137 `src/hooks`
 
 ## 6. Fila de resgate (valor × risco)
 
-1. **Ponto / geofencing** — `src/utils/pontoGeofencing.ts`, `src/hooks/usePontoGeofencing.ts`, `PontoGeofencingPainel`, `PontoGeoMapa`, `PontoGeoRegistros` + testes. Entra junto com os consumidores; isolado vira código morto.
+1. **~~Ponto / geofencing~~ — RESGATADO na #883.** `src/utils/pontoGeofencing.ts`, `src/hooks/usePontoGeofencing.ts`, `PontoGeofencingPainel`, `PontoGeoMapa`, `PontoGeoRegistros` entraram com os consumidores (painel com mapa real na aba Ponto).
 2. **~~Turnos~~ — RESGATADO na #875.** `src/components/turnos/*` (30 arquivos) + `turnoService`, página e rota.
 3. **~~Banco de horas~~ — RESGATADO na #873.** `src/components/banco-horas/*` (11 arquivos) + `exportarBancoHoras` + os primitivos de UI do port que a página consome (`tooltipGrafico`, `revelacaoGrafico`, `entradaGlobal`, `progressMotion`, `donutMotion`, `estruturaAnimacoes`, `linha-tabela-hover`, `useEntradaCardConcluida`, `horasExtrasComum`, `FiltroSelectConteudo`).
-4. **Horas extras** — refatora `HorasExtrasPage` em componentes (`horas-extras/*`, 19 arquivos com 14 testes). Exige revisar a página modificada, não substituí-la.
-5. **`supabase/migrations` divergentes** — DDL: exige autorização explícita antes de qualquer `apply` (as 316 versões do ledger sem fonte local já têm placeholder no-op desde a #865). O lote curado de 17 arquivos foi aplicado e verificado no canônico em 25/11/2026 — ver item 9.
+4. **~~Horas extras~~ — RESGATADO na #884.** `horas-extras/*` (19 arquivos, 14 testes) com `HorasExtrasPage` revisada e não substituída; a tela de solicitações entrou inteira.
+5. **~~Pesquisas de clima~~ — RESGATADO na #885.**
+6. **`supabase/migrations` divergentes** — DDL: exige autorização explícita antes de qualquer `apply` (as 316 versões do ledger sem fonte local já têm placeholder no-op desde a #865). O lote curado de 17 arquivos foi aplicado e verificado no canônico em 25/11/2026 — ver item 9.
 
 ## 7. Auditoria das refs remotas
 
@@ -121,9 +122,11 @@ mergear e aplicar.
 
 ### Fila restante do port do Muri
 
-1. **Ponto / geofencing** — `src/utils/pontoGeofencing.ts`, `src/hooks/usePontoGeofencing.ts`,
-   `PontoGeofencingPainel`, `PontoGeoMapa`, `PontoGeoRegistros` + testes (entra com os consumidores).
-2. **Horas extras** — `horas-extras/*` (19 arquivos, 14 testes); a página foi modificada, não substituída.
+1. **~~Ponto / geofencing~~ — RESGATADO na #883.** `src/utils/pontoGeofencing.ts`,
+   `src/hooks/usePontoGeofencing.ts`, `PontoGeofencingPainel`, `PontoGeoMapa`, `PontoGeoRegistros`
+   entraram com os consumidores.
+2. **~~Horas extras~~ — RESGATADO na #884.** `horas-extras/*` (19 arquivos, 14 testes); a página foi
+   revisada, não substituída.
 3. **Demais páginas do port** — cada uma exige comparação funcional (todas têm deleções, nenhuma é
    superconjunto puro da main).
 
@@ -134,9 +137,83 @@ mergear e aplicar.
 | Ponto / dashboard                                    | #886 (merge `58dd46c64`) | 5 cards de resumo (`PontoIndicadoresKpi`, `PontoEquipeStatusCard`, `PontoBancoHorasCard`, `PontoPendenciasCard`, `PontoFechamentoCard`), `indicadoresPonto`, `usePontoDashboard`, `pontoDuracao`, `pontoEquipe` + abas controladas na `PontoPage`                                                                         | 50 testes de `src/components/ponto`; suíte completa 8350; deploy Production `8063649559` success                                                                                                                                              |
 | Formulário de vaga                                   | #887 (merge `08dd398c3`) | a vaga criada pela UI passou a gravar cargo, tipo de contrato, faixa mín/máx, descrição e benefícios (antes só título/departamento/modalidade/quantidade/requisitos)                                                                                                                                                      | `RecrutamentoPage.vagaForm.test.tsx` (payload real completo + bloqueio de faixa invertida); deploy Production `8063907122` success                                                                                                            |
 | Janela "Ver todas" do desempenho por vaga            | #888 (merge `ced6c84aa`) | `DesempenhoVagasDialog` (36 KB, estava sem consumidor), `analyticsVisual`, `analyticsVagasFiltros`, `barraProgressoAnalytics`, `animacaoDetalheVaga`, `ui/interacao-cards` e `detalhes`/`SituacaoVaga`/`DetalheVaga`/`construirDetalheVagas`/`resumirDesempenhoVagas` em `analyticsComum`                                 | `desempenhoVagasModal.test.tsx` (do port: KPIs, filtros, ordem, teclado, foco) + 1 caso em `analyticsComum.test.ts`; suíte completa 8373 passed                                                                                               |
-| Recorte (período/vaga) e exportação CSV da Analytics | esta PR                  | `analyticsFiltros` (período `tudo/30/90/180/365` ancorado na data de referência da base + filtro por vaga), `analyticsRelatorio` (CSV com BOM) e `AnalyticsBarraFiltros` na aba Analytics; `--transition-duration-slower` no `@theme` do `index.css` e "Sincronizar" migrado para `FlowHoverButton` (paridade com o port) | `analyticsFiltros.test.ts` + `analyticsRelatorio.test.ts` + `analyticsExportarAnimacao.test.tsx` (do port) + `AnalyticsRecrutamento.recorte.test.tsx` (barra e CSV no nível da aba); suíte `recrutamento`+`dashboard` 159 passed; `tsc` limpo |
+| Recorte (período/vaga) e exportação CSV da Analytics | #891 (merge `c697595dd`) | `analyticsFiltros` (período `tudo/30/90/180/365` ancorado na data de referência da base + filtro por vaga), `analyticsRelatorio` (CSV com BOM) e `AnalyticsBarraFiltros` na aba Analytics; `--transition-duration-slower` no `@theme` do `index.css` e "Sincronizar" migrado para `FlowHoverButton` (paridade com o port) | `analyticsFiltros.test.ts` + `analyticsRelatorio.test.ts` + `analyticsExportarAnimacao.test.tsx` (do port) + `AnalyticsRecrutamento.recorte.test.tsx` (barra e CSV no nível da aba); suíte `recrutamento`+`dashboard` 159 passed; `tsc` limpo |
+| Editar a escala do dia pelo card Hoje                | #892 (merge `58eab8d32`) | `EditarEscalaDialog` (130 linhas, estava sem consumidor no port) ligado ao `PontoTodayCard` por um lápis; grava por `turnoService.criarEscala`/`atualizarEscala` conforme já exista escala do dia, com link para Turnos & Escalas quando a empresa não tem turno cadastrado | `EditarEscalaDialog.test.tsx` (3 casos: sem turnos; INSERT com `{empresa_id, colaborador_id, turno_id, data, status:'agendado'}`; UPDATE sem duplicar) + 1 caso no `PontoTodayCard.test.tsx` (lápis só com colaborador e empresa); 364 testes em `ponto`/`pages` passed; `tsc` limpo |
 
 Descartes conferidos nesta rodada (trabalho parcial que **não** foi resgatado, por falta de consumidor real ou
 por duplicar regra já existente): `NovaVagaDialog` (wizard de 1324 linhas + `novaVagaRascunho`) — o formulário
 existente foi completado em vez de trocar o fluxo; `PROXIMOS_PASSOS_UI_RECRUTAMENTO`, `roadmap` de analytics e
 os mocks `pontoFluxoMock`/`auditoriaMock`/`dashboardMockData`/`admissoesMock`/`desligamentosMock`.
+
+## 10. Mapa final do port — o que continua fora da `main` e por quê (25/11/2026)
+
+Depois das fatias #870, #873, #875, #881, #886, #887, #888, #890, #891 e #892, refiz a varredura
+completa das três branches do port que ainda têm arquivos ausentes na `main`
+(`feat-ponto-utils-resgate` `8bdf70d5e`, `feat-integracao-trabalho-muri` `c1fc5a6cb`,
+`feat-resgata-ui-muri` `fbc3dc010`): **601 arquivos novos** que não existem na `main`. Destes,
+**71 são de produção** (`src/**`, descontando `mocks/`, `__tests__/` e assets). Cada um passou por
+três provas independentes:
+
+1. **Vive no port?** `git grep -l <basename>` na árvore do port, ignorando o próprio arquivo e
+   `__tests__/`. Zero consumidores significa que o arquivo nunca é carregado.
+2. **Já existe na `main`?** `git grep -l <símbolo exportado>` na árvore de `origin/main`.
+3. **É idêntico?** `git diff origin/main fbc3dc010 -- <path>`.
+
+Resultado: **31 mortos no port** e **40 vivos** — e nenhum dos vivos é funcionalidade ausente:
+todos têm equivalente na `main`, ou aparecem apenas em comentário (a `main` registra o que veio de
+onde), ou são uma segunda redação da mesma tela.
+
+### 10.1 Mortos no port — 31 arquivos (0 consumidores fora de teste)
+
+`calculadoraRescisao/ResultadoRescisao.tsx` (641) · `calculadoraRescisao/rescisaoView.ts` (242) ·
+`lib/detectorReactDuplicado.ts` (422) · `services/dominioAlterdataService.ts` (400) ·
+`ponto/centralAuditoria.ts` (733, só consumido pelo próprio conjunto morto) ·
+`metabase/MetabaseEmbed.tsx` (424) · `services/metabaseService.ts` (155) ·
+`ui/timelineReveal.ts` (164) · `lib/useTracing.ts` (155) · `lib/tracedService.ts` (79) ·
+`calculators/folhaCompleta.ts` (152) · `services/automacaoService.ts` (130) ·
+`dashboard/anelDonut.tsx` (146) · `premiacoes/PainelAuditoriaRoi.tsx` (169) ·
+`ponto/PontoHorasSemanaCard.tsx` (320) · `ponto/PontoUltimasBatidasCard.tsx` (258) ·
+`ponto/CentralAjustesTabela.tsx` (344) · `ponto/CentralAjustesDetalhesDialog.tsx` (290) ·
+`ponto/CentralAjustesKpis.tsx` (117) · `ponto/jornadaEtapas.ts` (61) ·
+`ponto/PontoFluxoEntradasDica.tsx` (117) · `ponto/acoesCabecalhoPonto.ts` (174) ·
+`recrutamento/analyticsFunilAnimacao.ts` (238) · `recrutamento/AnalyticsVariacao.tsx` (61) ·
+`recrutamento/OrigemLogotipo.tsx` (76) · `admissoes/ChipFiltroAuditoria.tsx` (96) ·
+`dashboard/AlertasProximasCard.tsx` (31) · `hooks/useFeriasCursor.ts` (107) ·
+`hooks/useCalculoFeriasPreview.ts` (34) · `hooks/useActionStateHelper.ts` (114) ·
+`utils/esocialEventosSST.ts` (43) · `utils/esocialEventosPeriodicos.ts` (22) ·
+`validators/esocialValidators.ts` (9) · `services/cnabLayoutService.ts` (11) ·
+`pages/__MeasureTestPage.tsx` (24).
+
+Provas pontuais, para não repetir a varredura:
+
+- `DicaFluxoEntradas` e `acoesCabecalhoPonto` só aparecem em **comentários** — `PontoGeoMapa.tsx:27,240`
+  e `acoesCardsPonto.ts:43`.
+- `analyticsFunilAnimacao`, `folhaCompleta`, `MetabaseEmbed`, `dominioAlterdataService` e
+  `timelineReveal` têm como único consumidor o próprio arquivo de teste, fora da árvore de produção.
+- `src/components/esocial/ESocialAIInsights.tsx` é **proibido** pela `main`:
+  `src/components/__tests__/ESocialSemDadosFicticios.test.tsx:78` assere que o arquivo não existe.
+- `calculadoraRescisao/FormularioRescisao.tsx` + `ResultadoRescisao.tsx` são o estado anterior da
+  própria `CalculadoraRescisaoPage`: `git diff origin/main fbc3dc010 -- src/pages/CalculadoraRescisaoPage.tsx`
+  é **vazio** (0 linhas), e a `main` cita os dois arquivos em `CalculadoraRescisaoPage.tsx:53,405`.
+
+### 10.2 Vivos — onde a `main` já entrega a mesma coisa
+
+| Conjunto do port                            | Linhas | Consumidor no port              | O que existe na `main` no lugar                                                                                                     |
+| ------------------------------------------- | ------ | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `ponto/CentralAjustes*` (7) + `centralAjustes.ts` | 1.563 + 456 | `PontoPage` do port        | `PontoAdjustmentRequests` (563 linhas): tabela, filtros, seleção múltipla, export Portaria 671 e log de PII, na aba **Ajustes**      |
+| `ponto/CentralAuditoria*` (5) + `AuditoriaPonto.tsx` | 1.247 + 398 | `PontoPage` do port      | `PontoAuditTimeline` + a trilha `TrilhaAuditoriaPonto` dentro de `PontoAdjustmentRequests`, na aba **Auditoria**                     |
+| `dashboard/entradaDashboard.ts`             | 596    | `ui/entradaGlobal.ts` (port)    | `src/components/ui/entradaGlobal.ts` + `entrada-cards.tsx` da `main` (orquestração de entrada própria)                               |
+| `recrutamento/NovaVagaDialog.tsx` + `novaVagaRascunho.ts` | 1.324 + 307 | o próprio diálogo | `RecrutamentoPage` + formulário completado na **#887** (o wizard não grava `nova_vagas` do schema atual)                              |
+| `dashboard/HeadcountOverviewCard.tsx` (298), `DepartmentsCard.tsx` (107), `TipoVinculoCard.tsx` (182), `MapaEstruturaCard.tsx` (182), `QuickActionsMenu.tsx` (74), `SaudeResumoCard.tsx` (48), `arcoDonutMotion.ts` (94) | 1.343 | `DashboardExecutivoPage` do port | `AdmissoesDashboard` (1.581 linhas) cita `HeadcountOverviewCard`/`DepartmentsCard` como a **referência visual** já aplicada; `QuickActionsGrid.tsx:46` diz "atalhos resgatados do `QuickActionsMenu` da branch `muri`"; `estruturaAnimacoes.ts` e `ResumoOperacionalCard.tsx` absorveram `MapaEstruturaCard`/`TipoVinculoCard`/`SaudeResumoCard` |
+| `colaboradores/AnimatedDossieTabs.tsx` (110), `colaborador-detalhes/ComplianceTab.tsx` (65), `CampoInfo.tsx` (22) | 197 | `ColaboradorDetalhesPage` do port | `ColaboradorDetalhesPage.tsx:324` registra que "a muri trazia um componente NOVO; a main já" tinha o equivalente; `CampoInfo` existe em `DadosPessoaisTab.tsx:26` |
+
+### 10.3 Conclusão da rodada exaustiva
+
+- **Não há mais arquivo do port que possa entrar na `main` sozinho.** Resgatar qualquer um dos 31
+  mortos criaria código que nenhuma tela carrega; os 40 vivos são duplicatas de telas que já existem
+  com mais recursos do que o port (export PDF, PII, RLS, testes).
+- O único resgate de valor restante é um **redesign da aba Ajustes/Auditoria do Ponto** (trocar
+  `PontoAdjustmentRequests`/`PontoAuditTimeline` pela Central do port). É troca de tela, com risco de
+  perder export Portaria 671 e o log de PII — decisão de produto, registrada aqui e **não** executada.
+- As branches do port seguem preservadas no remoto (`296a01873`, `8bdf70d5e`, `c1fc5a6cb`, `fbc3dc010`,
+  `8ed98aaca`, `22aef52b3`) e nenhuma foi apagada.
