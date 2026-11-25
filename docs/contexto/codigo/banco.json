@@ -11,7 +11,7 @@
   "scripts/training-images-local/seed.sql"
  ],
  "avisos": [
-  "195 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
+  "199 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
  ],
  "extensoes": [
   "pg_cron",
@@ -7062,6 +7062,11 @@
     {
      "nome": "idx_auditoria_empresa_data",
      "colunas": "empresa_id, created_at DESC",
+     "unico": false
+    },
+    {
+     "nome": "idx_auditoria_entidade_registro",
+     "colunas": "entidade, entidade_id, created_at DESC",
      "unico": false
     },
     {
@@ -35548,6 +35553,11 @@
      "unico": false
     },
     {
+     "nome": "idx_holerites_pendentes",
+     "colunas": "created_at DESC",
+     "unico": false
+    },
+    {
      "nome": "idx_holerites_status",
      "colunas": "status",
      "unico": false
@@ -41039,7 +41049,7 @@
     },
     {
      "nome": "idx_notificacoes_usuario_status",
-     "colunas": "usuario_id, lida, created_at DESC",
+     "colunas": "user_id, lida, created_at DESC",
      "unico": false
     },
     {

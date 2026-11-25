@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "014b447dfc8174edcfb20f8cfb92a0a0801109d5",
+  "commit": "ced7abddddfcf3ef8d6fbde7ee39fb5ec44825f5",
   "branch": "main",
-  "data_commit": "2026-11-25T07:54:56-03:00",
+  "data_commit": "2026-11-25T08:33:30-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "ced7abd",
+    "data": "2026-11-25",
+    "assunto": "fix: p4_071 nao aborta mais o lote aditivo no canônico (#879)"
+   },
    {
     "sha": "014b447",
     "data": "2026-11-25",
@@ -126,14 +131,9 @@
     "sha": "20ff226",
     "data": "2026-11-23",
     "assunto": "fix: troca import dinamico de rateLimit por estatico nas edges que retornavam 500 (#849)"
-   },
-   {
-    "sha": "3fface7",
-    "data": "2026-11-23",
-    "assunto": "chore: registra notificacoes de workflow como resolvidas no doc (#848)"
    }
   ],
-  "arquivos_mudados_7d": 668,
+  "arquivos_mudados_7d": 669,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
