@@ -269,3 +269,69 @@ port tem o arquivo e não o monta) ficou intacta. Cinco abas → seis, com `Clip
 `ratchet-any` 1→1, `ratchet-any-tests` 0→0, `ratchet-warnings` OK · `format:check:changed` 29 arquivos OK ·
 `vitest run src/components src/pages` **458 arquivos / 4475 testes verdes** · `build` OK ·
 `js_total_kb 8460 → 8507`, `css_total_kb 401 → 404`, `js_max_chunk_kb 908` inalterado.
+
+## 12. Re-auditoria exaustiva do port e dos resgates (26/11/2026)
+
+Objetivo: provar, com evidência, que **nenhum** arquivo, PR ou branch do trabalho do agente Muri (e das
+sessões paralelas) ficou para trás — antes de considerar qualquer item obsoleto.
+
+### 12.1 Mapa do port (`296a01873`) contra a `main` (`1d76c0224`)
+
+- 138 arquivos de `src/**` existiam no port e não na `main`: 71 de produção (triados no §10: 31 mortos,
+  40 vivos/duplicatas) e 67 de mocks/testes/assets — esta fatia nunca havia sido triada.
+- **Camada de mocks do port é código morto.** `src/mocks/layoutMock/**`, `src/mocks/gestaoMock/**` e
+  `src/mocks/pontoFluxoMock.ts` são referenciados **apenas por si mesmos e pelos próprios testes**
+  (`git grep -ln "layoutMock\|gestaoMock" 296a01873 -- src` devolve só `src/mocks/**`). A `main` tem
+  outra camada de mocks — `colaboradoresMock`, `desempenhoMock`, `pesquisasClimaMock`, `pontoGeoMock`,
+  `pontoAuditoriaMock`, `treinamentosMock` — e cada uma dessas tem consumidor real em `src/`.
+- 1190 arquivos de produção **compartilhados** entre port e `main`: só 4 contêm símbolo exportado que
+  existe só no port, todos inertes/superados — `maskPixKey` (a `main` cobre `pix_chave|chave_pix` no
+  `PII_KEY` + `maskGeneric` e é mais estrita em `maskBankAccount`), `useOnMountWithDeps` e
+  `useStableCallback` (sem consumidor em nenhuma árvore) e `parametrosFiscaisService` (só o barrel e o
+  teste o citam) — além de `MiniStat`, cujo dado a `main` já renderiza com `QuickStat`
+  (`AnalyticsSection.tsx:692`).
+
+### 12.2 PRs fechadas sem merge
+
+- **#868** (`claude/feat-lote-aditivo-observabilidade-261124-1215`): `git diff --diff-filter=A --name-status
+origin/main <branch>` = **0 arquivos** — totalmente superada pela #869 (mergeada).
+- **#872** (`claude/feat-ponto-utils-resgate-261125-0100`): 45 arquivos exclusivos, todos do lote "camada 2"
+  do §10. Os dois únicos com valor real contra a `main` foram resgatados nesta rodada (§12.3); os outros 43
+  são mortos, duplicatas do §10 ou versões antigas já superadas.
+
+### 12.3 Testes do port que ainda faziam sentido na `main`
+
+Dos 8 arquivos de teste do port cujos imports resolviam na `main`, **6 não são portáveis** — falham contra a
+`main` por divergência real de implementação, não por detalhe de mock:
+
+| Arquivo                               | Motivo (evidência)                                                                        |
+| ------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `NineBoxCicloUnico.test.tsx`          | `NineBoxFiltrosProps` da `main` não tem `ciclos/cicloId/onCicloId` (TS2739 em 3 pontos)   |
+| `analyticsEvolucaoRevelacao.test.tsx` | `AnalyticsEvolucao` da `main` usa `Line` do recharts; o mock parcial do port não o define |
+| `TooltipGraficoRegua.test.tsx`        | a régua da `main` não fecha a conta de "38 tooltips / nenhum primitivo cru"               |
+| `HoleritesTab.test.tsx`               | 4/4 falham: markup e estados da `main` são outros                                         |
+| `SSTResumoTab.test.tsx`               | 2/2 falham: seções e props divergentes                                                    |
+| `TabelaCandidatosHover.test.tsx`      | 3/6 falham: a `main` não aplica a régua de hover do port no `<tr>`                        |
+
+Resgatar esses 6 exigiria **reescrever asserções para o código da `main`** — cobertura nova, não trabalho
+perdido; ficam fora de escopo por não serem funcionalidade.
+
+Os 2 restantes foram resgatados (17 testes verdes, sem `any` explícito):
+
+1. `src/components/__tests__/BancoHorasCabecalho.test.tsx` — 12 testes. A `main` **não tinha** nenhum teste
+   do cabeçalho de Banco de Horas (só `BancoHorasComum.test.ts`), então é cobertura nova de componente vivo:
+   botão Exportar em lime, Select de período com atalhos, painel de datas, "Mais filtros" com halo.
+2. `src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx` — 5 testes de **interação**
+   (prefill do valor salvo, `Salvar` só habilita após edição, salva só o campo tocado). A `main` já tinha
+   `CamposCustomizadosTab.test.tsx`, mas só com asserções estáticas (título, botão, cabeçalhos, vazio):
+   é complementar, não duplicata.
+
+Ajuste necessário para o gate `any`: o mock da Motion passou a usar `ElementType`/`ReactNode` no lugar de
+`any`, e os dublês de hook usam `as unknown as ReturnType<typeof hook>` (o mesmo `as unknown as` já
+adotado nos testes da `main`).
+
+### 12.4 Prova
+
+`typecheck` e `typecheck:tests` limpos · `audit:ratchet-any-tests` **0 → 0** (baseline intocado) ·
+`audit:ratchet-warnings` 1/1 · `prettier --check` OK · `vitest run` dos 2 arquivos: **2 arquivos / 17
+testes verdes** · `lint:ci` só com o warning pré-existente de `src/types/uiRecord.ts`.
