@@ -59,7 +59,7 @@
 | comando | DELETE |
 | tipo | PERMISSIVE |
 | roles | authenticated |
-| USING | `((empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid) AND is_admin(auth.uid()))` |
+| USING | `(pertence_a_empresa(empresa_id) AND is_admin(auth.uid()))` |
 | WITH CHECK |  |
 
 ### `provisoes_folha_insert`
@@ -70,7 +70,7 @@
 | tipo | PERMISSIVE |
 | roles | authenticated |
 | USING |  |
-| WITH CHECK | `(empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid)` |
+| WITH CHECK | `pertence_a_empresa(empresa_id)` |
 
 ### `provisoes_folha_rh_read`
 
@@ -89,8 +89,8 @@
 | comando | UPDATE |
 | tipo | PERMISSIVE |
 | roles | authenticated |
-| USING | `((empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid) AND (is_admin(auth.uid()) OR has_role(auth.uid(), 'rh'::app_role)))` |
-| WITH CHECK | `(empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid)` |
+| USING | `(pertence_a_empresa(empresa_id) AND (is_admin(auth.uid()) OR has_role(auth.uid(), 'rh'::app_role)))` |
+| WITH CHECK | `pertence_a_empresa(empresa_id)` |
 
 
 ## Triggers

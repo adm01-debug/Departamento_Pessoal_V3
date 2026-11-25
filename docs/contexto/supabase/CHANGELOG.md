@@ -2,6 +2,12 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-25 18:19 UTC
+
+- **functions** alterado (5): `public.get_auth_empresa_id()`, `public.has_role(_user_id uuid, _role app_role)`, `public.is_admin(_user_id uuid)`, `public.pertence_a_empresa(_empresa_id uuid)`, `public.record_backup_run(p_empresa_id uuid, p_status text, p_duration_ms integer, p_records integer, p_tables integer, p_error text, p_created_by uuid, p_metadata jsonb)`
+- **lints** removido (3): `policy_auth_fn_not_wrapped:public.historico_calculos_folha.Acesso por empresa historico`, `policy_auth_fn_not_wrapped:public.historico_calculos_folha.Inserção por empresa historico`, `rpc_anon_executable:public.record_backup_run(p_empresa_id uuid, p_status text, p_duration_ms integer, p_records integer, p_tables integer, p_error text, p_created_by uuid, p_metadata jsonb)`
+- **policies (RLS)** alterado (7): `public.backup_logs.backup_logs_tenant_all`, `public.historico_calculos_folha.Acesso por empresa historico`, `public.historico_calculos_folha.Inserção por empresa historico`, `public.historico_calculos_folha.historico_calculos_delete`, `public.provisoes_folha.provisoes_folha_delete`, `public.provisoes_folha.provisoes_folha_insert`, `public.provisoes_folha.provisoes_folha_update`
+
 ## 2026-11-25 12:21 UTC
 
 - **colunas** adicionado (13): `public.backup_logs.acao`, `public.backup_logs.created_by`, `public.backup_logs.duration_ms`, `public.backup_logs.empresa_id`, `public.backup_logs.error_message`, `public.backup_logs.finished_at`, `public.backup_logs.id`, `public.backup_logs.metadata`, `public.backup_logs.records_count`, `public.backup_logs.started_at`, `public.backup_logs.status`, `public.backup_logs.storage_path`, `public.backup_logs.tables_count`

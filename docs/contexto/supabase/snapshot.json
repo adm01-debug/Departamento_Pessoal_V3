@@ -99706,9 +99706,13 @@
             {
               "file": "supabase/migrations/20261124150000_backup_logs_rls_policy.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 27,
+          "code_total_files": 28,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -100734,7 +100738,7 @@
               "hits": 6
             }
           ],
-          "code_total_files": 82,
+          "code_total_files": 83,
           "cron": [],
           "db": [
             "public._is_admin_bypass",
@@ -101510,7 +101514,7 @@
               "hits": 2
             }
           ],
-          "code_total_files": 78,
+          "code_total_files": 79,
           "cron": [],
           "db": [
             "public.admin_associar_usuario_empresa",
@@ -103247,9 +103251,17 @@
             {
               "file": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.sql",
+              "hits": 10
+            },
+            {
+              "file": "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql",
+              "hits": 4
             }
           ],
-          "code_total_files": 27,
+          "code_total_files": 29,
           "cron": [],
           "db": [
             "public.clinicas_proximas",
@@ -105952,8 +105964,13 @@
       {
         "args": "p_empresa_id uuid, p_status text, p_duration_ms integer, p_records integer, p_tables integer, p_error text, p_created_by uuid, p_metadata jsonb",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 1,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -105965,8 +105982,8 @@
         ],
         "definition": null,
         "definition_sha": "150e53d3a2820fd6",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
         "language": "plpgsql",
@@ -143115,18 +143132,6 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.historico_calculos_folha.Acesso por empresa historico",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.historico_calculos_folha.Inserção por empresa historico",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.historico_calculos_folha.historico_calculos_delete",
         "severity": "BAIXA"
       },
@@ -145001,12 +145006,6 @@
         "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
         "object": "public.medida_verificar_ciencia_hash(p_hash text)",
         "severity": "INFO"
-      },
-      {
-        "code": "rpc_anon_executable",
-        "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
-        "object": "public.record_backup_run(p_empresa_id uuid, p_status text, p_duration_ms integer, p_records integer, p_tables integer, p_error text, p_created_by uuid, p_metadata jsonb)",
-        "severity": "INFO"
       }
     ],
     "migrations": null,
@@ -145488,8 +145487,8 @@
         ],
         "schema": "public",
         "table": "backup_logs",
-        "using": "(empresa_id = get_auth_empresa_id())",
-        "with_check": "(empresa_id = get_auth_empresa_id())"
+        "using": "pertence_a_empresa(empresa_id)",
+        "with_check": "pertence_a_empresa(empresa_id)"
       },
       {
         "cmd": "SELECT",
@@ -148392,7 +148391,7 @@
         ],
         "schema": "public",
         "table": "historico_calculos_folha",
-        "using": "(empresa_id = ((auth.jwt() ->> 'empresa_id'::text))::uuid)",
+        "using": "pertence_a_empresa(empresa_id)",
         "with_check": null
       },
       {
@@ -148405,7 +148404,7 @@
         "schema": "public",
         "table": "historico_calculos_folha",
         "using": null,
-        "with_check": "(empresa_id = ((auth.jwt() ->> 'empresa_id'::text))::uuid)"
+        "with_check": "pertence_a_empresa(empresa_id)"
       },
       {
         "cmd": "DELETE",
@@ -148416,7 +148415,7 @@
         ],
         "schema": "public",
         "table": "historico_calculos_folha",
-        "using": "((empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid) AND is_admin(auth.uid()))",
+        "using": "(pertence_a_empresa(empresa_id) AND is_admin(auth.uid()))",
         "with_check": null
       },
       {
@@ -150612,7 +150611,7 @@
         ],
         "schema": "public",
         "table": "provisoes_folha",
-        "using": "((empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid) AND is_admin(auth.uid()))",
+        "using": "(pertence_a_empresa(empresa_id) AND is_admin(auth.uid()))",
         "with_check": null
       },
       {
@@ -150625,7 +150624,7 @@
         "schema": "public",
         "table": "provisoes_folha",
         "using": null,
-        "with_check": "(empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid)"
+        "with_check": "pertence_a_empresa(empresa_id)"
       },
       {
         "cmd": "SELECT",
@@ -150648,8 +150647,8 @@
         ],
         "schema": "public",
         "table": "provisoes_folha",
-        "using": "((empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid) AND (is_admin(auth.uid()) OR has_role(auth.uid(), 'rh'::app_role)))",
-        "with_check": "(empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid)"
+        "using": "(pertence_a_empresa(empresa_id) AND (is_admin(auth.uid()) OR has_role(auth.uid(), 'rh'::app_role)))",
+        "with_check": "pertence_a_empresa(empresa_id)"
       },
       {
         "cmd": "ALL",

@@ -55,7 +55,7 @@
 | comando | SELECT |
 | tipo | PERMISSIVE |
 | roles | authenticated |
-| USING | `(empresa_id = ((auth.jwt() ->> 'empresa_id'::text))::uuid)` |
+| USING | `pertence_a_empresa(empresa_id)` |
 | WITH CHECK |  |
 
 ### `Inserção por empresa historico`
@@ -66,7 +66,7 @@
 | tipo | PERMISSIVE |
 | roles | authenticated |
 | USING |  |
-| WITH CHECK | `(empresa_id = ((auth.jwt() ->> 'empresa_id'::text))::uuid)` |
+| WITH CHECK | `pertence_a_empresa(empresa_id)` |
 
 ### `historico_calculos_delete`
 
@@ -75,7 +75,7 @@
 | comando | DELETE |
 | tipo | PERMISSIVE |
 | roles | authenticated |
-| USING | `((empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid) AND is_admin(auth.uid()))` |
+| USING | `(pertence_a_empresa(empresa_id) AND is_admin(auth.uid()))` |
 | WITH CHECK |  |
 
 

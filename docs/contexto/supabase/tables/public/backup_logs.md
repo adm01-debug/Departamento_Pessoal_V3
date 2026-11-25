@@ -59,8 +59,8 @@
 | comando | ALL |
 | tipo | PERMISSIVE |
 | roles | authenticated |
-| USING | `(empresa_id = get_auth_empresa_id())` |
-| WITH CHECK | `(empresa_id = get_auth_empresa_id())` |
+| USING | `pertence_a_empresa(empresa_id)` |
+| WITH CHECK | `pertence_a_empresa(empresa_id)` |
 
 
 ## Triggers
