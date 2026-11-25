@@ -54,6 +54,7 @@
 | idx_notificacoes_tipo | btree | tipo | não | sim |  | `CREATE INDEX idx_notificacoes_tipo ON public.notificacoes USING btree (tipo)` |
 | idx_notificacoes_user_id | btree | user_id | não | sim |  | `CREATE INDEX idx_notificacoes_user_id ON public.notificacoes USING btree (user_id)` |
 | idx_notificacoes_user_unread | btree | user_id, created_at | não | sim | `(lida = false)` | `CREATE INDEX idx_notificacoes_user_unread ON public.notificacoes USING btree (user_id, created_at DESC) WHERE (lida = false)` |
+| idx_notificacoes_usuario_status | btree | user_id, lida, created_at | não | sim | `(lida = false)` | `CREATE INDEX idx_notificacoes_usuario_status ON public.notificacoes USING btree (user_id, lida, created_at DESC) WHERE (lida = false)` |
 | notificacoes_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX notificacoes_pkey ON public.notificacoes USING btree (id)` |
 | uq_notif_ferias_d5_dia | btree | user_id, entidade_tipo, entidade_id, data_referencia | sim | sim | `(tipo = 'ferias_pagamento_d5'::text)` | `CREATE UNIQUE INDEX uq_notif_ferias_d5_dia ON public.notificacoes USING btree (user_id, entidade_tipo, entidade_id, data_referencia) WHERE (tipo = 'ferias_pagamento_d5'::text)` |
 

@@ -1,12 +1,14 @@
 # public.historico_calculos_folha
 
+> [P0-010] Histórico fiscal imutável (UPDATE bloqueado). DELETE só admin.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 3 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -66,6 +68,16 @@
 | USING |  |
 | WITH CHECK | `(empresa_id = ((auth.jwt() ->> 'empresa_id'::text))::uuid)` |
 
+### `historico_calculos_delete`
+
+| campo | valor |
+|---|---|
+| comando | DELETE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `((empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid) AND is_admin(auth.uid()))` |
+| WITH CHECK |  |
+
 
 ## Triggers
 
@@ -76,7 +88,7 @@ _nenhum_
 
 | role | privilégios |
 |---|---|
-| anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE |
+| authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE |
 | dp_mcp_role | SELECT |
 | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |

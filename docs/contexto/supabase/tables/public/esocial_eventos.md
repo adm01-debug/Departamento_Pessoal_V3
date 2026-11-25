@@ -65,7 +65,9 @@
 |---|---|---|---|---|---|---|
 | esocial_eventos_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX esocial_eventos_pkey ON public.esocial_eventos USING btree (id)` |
 | idx_esocial_eventos_empresa_id | btree | empresa_id | não | sim |  | `CREATE INDEX idx_esocial_eventos_empresa_id ON public.esocial_eventos USING btree (empresa_id)` |
+| idx_esocial_eventos_empresa_status | btree | empresa_id, status, created_at | não | sim | `(status = ANY (ARRAY['pendente'::text, 'erro'::text, 'rejeitado'::text]))` | `CREATE INDEX idx_esocial_eventos_empresa_status ON public.esocial_eventos USING btree (empresa_id, status, created_at DESC) WHERE (status = ANY (ARRAY['pendente'::text, 'erro'::text, 'rejeitado'::text]))` |
 | idx_esocial_eventos_medida | btree |  | não | sim | `(tipo_evento = ANY (ARRAY['S-2299'::text, 'S-2206'::text]))` | `CREATE INDEX idx_esocial_eventos_medida ON public.esocial_eventos USING btree (((dados ->> 'medida_id'::text))) WHERE (tipo_evento = ANY (ARRAY['S-2299'::text, 'S-2206'::text]))` |
+| idx_esocial_eventos_tipo_competencia | btree | tipo_evento, competencia | não | sim |  | `CREATE INDEX idx_esocial_eventos_tipo_competencia ON public.esocial_eventos USING btree (tipo_evento, competencia DESC)` |
 | idx_esocial_status_comp | btree | status, competencia | não | sim |  | `CREATE INDEX idx_esocial_status_comp ON public.esocial_eventos USING btree (status, competencia)` |
 | idx_esocial_tipo | btree | empresa_id, tipo_evento | não | sim |  | `CREATE INDEX idx_esocial_tipo ON public.esocial_eventos USING btree (empresa_id, tipo_evento)` |
 | uq_esocial_eventos_admissao_s2200 | btree | admissao_id | sim | sim | `((admissao_id IS NOT NULL) AND (tipo_evento = 'S-2200'::text))` | `CREATE UNIQUE INDEX uq_esocial_eventos_admissao_s2200 ON public.esocial_eventos USING btree (admissao_id) WHERE ((admissao_id IS NOT NULL) AND (tipo_evento = 'S-2200'::text))` |

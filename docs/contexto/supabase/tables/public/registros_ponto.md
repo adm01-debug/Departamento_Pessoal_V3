@@ -94,8 +94,11 @@
 | idx_registros_ponto_colab_data | btree | colaborador_id, data | não | sim |  | `CREATE INDEX idx_registros_ponto_colab_data ON public.registros_ponto USING btree (colaborador_id, data)` |
 | idx_registros_ponto_colaborador_data | btree | colaborador_id, data | não | sim |  | `CREATE INDEX idx_registros_ponto_colaborador_data ON public.registros_ponto USING btree (colaborador_id, data)` |
 | idx_registros_ponto_colaborador_id | btree | colaborador_id | não | sim |  | `CREATE INDEX idx_registros_ponto_colaborador_id ON public.registros_ponto USING btree (colaborador_id)` |
+| idx_registros_ponto_data_aberto | btree | data, empresa_id | não | sim | `(saida_1 IS NULL)` | `CREATE INDEX idx_registros_ponto_data_aberto ON public.registros_ponto USING btree (data, empresa_id) WHERE (saida_1 IS NULL)` |
+| idx_registros_ponto_empresa_colab_data | btree | empresa_id, colaborador_id, data | não | sim |  | `CREATE INDEX idx_registros_ponto_empresa_colab_data ON public.registros_ponto USING btree (empresa_id, colaborador_id, data DESC)` |
 | idx_registros_ponto_empresa_data | btree | empresa_id, data | não | sim |  | `CREATE INDEX idx_registros_ponto_empresa_data ON public.registros_ponto USING btree (empresa_id, data DESC)` |
 | idx_registros_ponto_empresa_id | btree | empresa_id | não | sim |  | `CREATE INDEX idx_registros_ponto_empresa_id ON public.registros_ponto USING btree (empresa_id)` |
+| idx_registros_ponto_sem_batida | btree | empresa_id, data | não | sim |  | `CREATE INDEX idx_registros_ponto_sem_batida ON public.registros_ponto USING btree (empresa_id, data DESC)` |
 | registros_ponto_colaborador_data_uq | btree | colaborador_id, data | sim | sim |  | `CREATE UNIQUE INDEX registros_ponto_colaborador_data_uq ON public.registros_ponto USING btree (colaborador_id, data)` |
 | registros_ponto_colaborador_id_data_key | btree | colaborador_id, data | sim | sim |  | `CREATE UNIQUE INDEX registros_ponto_colaborador_id_data_key ON public.registros_ponto USING btree (colaborador_id, data)` |
 | registros_ponto_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX registros_ponto_pkey ON public.registros_ponto USING btree (id)` |

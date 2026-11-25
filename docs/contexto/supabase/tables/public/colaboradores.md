@@ -327,10 +327,13 @@
 | idx_colaboradores_cpf | btree | cpf | não | sim | `(cpf IS NOT NULL)` | `CREATE INDEX idx_colaboradores_cpf ON public.colaboradores USING btree (cpf) WHERE (cpf IS NOT NULL)` |
 | idx_colaboradores_cpf_last4 | btree | cpf_last4 | não | sim | `(cpf_last4 IS NOT NULL)` | `CREATE INDEX idx_colaboradores_cpf_last4 ON public.colaboradores USING btree (cpf_last4) WHERE (cpf_last4 IS NOT NULL)` |
 | idx_colaboradores_created_by | btree | created_by | não | sim |  | `CREATE INDEX idx_colaboradores_created_by ON public.colaboradores USING btree (created_by)` |
+| idx_colaboradores_dep_cargo | btree | empresa_id, departamento, cargo | não | sim |  | `CREATE INDEX idx_colaboradores_dep_cargo ON public.colaboradores USING btree (empresa_id, departamento, cargo)` |
 | idx_colaboradores_empresa | btree | empresa_id | não | sim |  | `CREATE INDEX idx_colaboradores_empresa ON public.colaboradores USING btree (empresa_id)` |
 | idx_colaboradores_empresa_ativos | btree | empresa_id, created_at | não | sim | `(status = 'ativo'::status_colaborador)` | `CREATE INDEX idx_colaboradores_empresa_ativos ON public.colaboradores USING btree (empresa_id, created_at DESC) WHERE (status = 'ativo'::status_colaborador)` |
 | idx_colaboradores_empresa_created | btree | empresa_id, created_at | não | sim |  | `CREATE INDEX idx_colaboradores_empresa_created ON public.colaboradores USING btree (empresa_id, created_at DESC)` |
+| idx_colaboradores_empresa_pk | btree | empresa_id, id | não | sim |  | `CREATE INDEX idx_colaboradores_empresa_pk ON public.colaboradores USING btree (empresa_id, id)` |
 | idx_colaboradores_empresa_status | btree | empresa_id, status | não | sim |  | `CREATE INDEX idx_colaboradores_empresa_status ON public.colaboradores USING btree (empresa_id, status)` |
+| idx_colaboradores_empresa_status_admissao | btree | empresa_id, status, data_admissao | não | sim | `(status = 'ativo'::status_colaborador)` | `CREATE INDEX idx_colaboradores_empresa_status_admissao ON public.colaboradores USING btree (empresa_id, status, data_admissao DESC) WHERE (status = 'ativo'::status_colaborador)` |
 | idx_colaboradores_genero_documento_id | btree | genero_documento_id | não | sim |  | `CREATE INDEX idx_colaboradores_genero_documento_id ON public.colaboradores USING btree (genero_documento_id)` |
 | idx_colaboradores_gestor_ferias_id | btree | gestor_ferias_id | não | sim |  | `CREATE INDEX idx_colaboradores_gestor_ferias_id ON public.colaboradores USING btree (gestor_ferias_id)` |
 | idx_colaboradores_local_trabalho_id | btree | local_trabalho_id | não | sim |  | `CREATE INDEX idx_colaboradores_local_trabalho_id ON public.colaboradores USING btree (local_trabalho_id)` |

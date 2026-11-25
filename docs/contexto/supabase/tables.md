@@ -26,6 +26,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.auditoria_logs](tables/public/auditoria_logs.md) | table | sim | 4 | 12 | não |  |
 | [public.auth_gov_br_sessions](tables/public/auth_gov_br_sessions.md) | table | sim | 1 | 9 | não |  |
 | [public.automacao_logs](tables/public/automacao_logs.md) | table | sim | 1 | 7 | não |  |
+| [public.backup_logs](tables/public/backup_logs.md) | table | sim | 1 | 13 | não | Log de execucao de backup. RLS por empresa; backup global (empresa_id NULL) visivel apenas para service_role. |
 | [public.banco_horas](tables/public/banco_horas.md) | table | sim | 2 | 12 | não |  |
 | [public.banco_horas_config](tables/public/banco_horas_config.md) | table | sim | 2 | 9 | não |  |
 | [public.batidas_ponto](tables/public/batidas_ponto.md) | table | sim | 5 | 38 | não |  |
@@ -184,7 +185,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.guias_inss](tables/public/guias_inss.md) | table | sim | 1 | 12 | não |  |
 | [public.health_checks](tables/public/health_checks.md) | table | sim | 1 | 4 | não | Registro opcional de execuções de healthcheck (healthcheck/metrics). |
 | [public.historico_alertas](tables/public/historico_alertas.md) | table | sim | 2 | 7 | não |  |
-| [public.historico_calculos_folha](tables/public/historico_calculos_folha.md) | table | sim | 2 | 6 | não |  |
+| [public.historico_calculos_folha](tables/public/historico_calculos_folha.md) | table | sim | 3 | 6 | não | [P0-010] Histórico fiscal imutável (UPDATE bloqueado). DELETE só admin. |
 | [public.historico_cargo](tables/public/historico_cargo.md) | table | sim | 1 | 12 | não |  |
 | [public.historico_contratos](tables/public/historico_contratos.md) | table | sim | 1 | 15 | não |  |
 | [public.historico_ferias](tables/public/historico_ferias.md) | table | sim | 1 | 7 | não |  |
@@ -301,7 +302,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.provisao_auditoria](tables/public/provisao_auditoria.md) | table | sim | 1 | 8 | não |  |
 | [public.provisao_logs](tables/public/provisao_logs.md) | table | sim | 2 | 12 | não |  |
 | [public.provisoes_competencia_tributaria](tables/public/provisoes_competencia_tributaria.md) | table | sim | 1 | 7 | não | Contrato tributario da competencia: aliquota de encargos (bps) e retrato do regime usados no calculo daquele mes. Sobrevive a substituicao com lote vazio, que apaga as linhas de provisoes_mensais. Escrita exclusiva de replace_monthly_provisions. |
-| [public.provisoes_folha](tables/public/provisoes_folha.md) | table | sim | 1 | 9 | não |  |
+| [public.provisoes_folha](tables/public/provisoes_folha.md) | table | sim | 4 | 9 | não | [P0-010] INSERT/UPDATE/DELETE adicionados. Tenant isolation via app_metadata. |
 | [public.provisoes_mensais](tables/public/provisoes_mensais.md) | table | sim | 8 | 15 | não |  |
 | [public.push_subscriptions](tables/public/push_subscriptions.md) | table | sim | 2 | 7 | não |  |
 | [public.query_telemetry](tables/public/query_telemetry.md) | table | sim | 3 | 15 | não |  |

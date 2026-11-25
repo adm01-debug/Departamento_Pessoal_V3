@@ -45,6 +45,7 @@
 | contratos_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX contratos_pkey ON public.contratos USING btree (id)` |
 | idx_contratos_colaborador_id | btree | colaborador_id | não | sim |  | `CREATE INDEX idx_contratos_colaborador_id ON public.contratos USING btree (colaborador_id)` |
 | idx_contratos_empresa_id | btree | empresa_id | não | sim |  | `CREATE INDEX idx_contratos_empresa_id ON public.contratos USING btree (empresa_id)` |
+| idx_contratos_empresa_status_vcto | btree | empresa_id, status, data_fim | não | sim | `(status = ANY (ARRAY['ativo'::text, 'prorrogado'::text]))` | `CREATE INDEX idx_contratos_empresa_status_vcto ON public.contratos USING btree (empresa_id, status, data_fim) WHERE (status = ANY (ARRAY['ativo'::text, 'prorrogado'::text]))` |
 
 
 ## Policies (RLS)

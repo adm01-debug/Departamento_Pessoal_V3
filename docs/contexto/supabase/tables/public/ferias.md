@@ -125,11 +125,13 @@
 | idx_ferias_colab_status | btree | colaborador_id, status | não | sim |  | `CREATE INDEX idx_ferias_colab_status ON public.ferias USING btree (colaborador_id, status)` |
 | idx_ferias_colaborador_id | btree | colaborador_id | não | sim |  | `CREATE INDEX idx_ferias_colaborador_id ON public.ferias USING btree (colaborador_id)` |
 | idx_ferias_data_inicio | btree | data_inicio | não | sim |  | `CREATE INDEX idx_ferias_data_inicio ON public.ferias USING btree (data_inicio)` |
+| idx_ferias_empresa_colab_periodo | btree | empresa_id, colaborador_id, periodo_aquisitivo_fim | não | sim |  | `CREATE INDEX idx_ferias_empresa_colab_periodo ON public.ferias USING btree (empresa_id, colaborador_id, periodo_aquisitivo_fim DESC)` |
 | idx_ferias_empresa_id | btree | empresa_id | não | sim |  | `CREATE INDEX idx_ferias_empresa_id ON public.ferias USING btree (empresa_id)` |
 | idx_ferias_empresa_inicio | btree | empresa_id, data_inicio | não | sim |  | `CREATE INDEX idx_ferias_empresa_inicio ON public.ferias USING btree (empresa_id, data_inicio DESC)` |
 | idx_ferias_empresa_status | btree | empresa_id, status | não | sim |  | `CREATE INDEX idx_ferias_empresa_status ON public.ferias USING btree (empresa_id, status)` |
 | idx_ferias_pagamento_pend | btree | empresa_id, data_inicio | não | sim | `((pagamento_confirmado_em IS NULL) AND ((status)::text = ANY (ARRAY[('aprovada'::character varying)::text, ('programada'::character varying)::text])))` | `CREATE INDEX idx_ferias_pagamento_pend ON public.ferias USING btree (empresa_id, data_inicio) WHERE ((pagamento_confirmado_em IS NULL) AND ((status)::text = ANY (ARRAY[('aprovada'::character varying)::text, ('programada'::character varying)::text])))` |
 | idx_ferias_periodo_aquisitivo_id | btree | periodo_aquisitivo_id | não | sim |  | `CREATE INDEX idx_ferias_periodo_aquisitivo_id ON public.ferias USING btree (periodo_aquisitivo_id)` |
+| idx_ferias_vencendo | btree | data_fim | não | sim | `((status)::text <> ALL ((ARRAY['concluida'::character varying, 'cancelada'::character varying])::text[]))` | `CREATE INDEX idx_ferias_vencendo ON public.ferias USING btree (data_fim) WHERE ((status)::text <> ALL ((ARRAY['concluida'::character varying, 'cancelada'::character varying])::text[]))` |
 | uq_ferias_adiant13_ano | btree | colaborador_id, adiantamento_13_ano_exercicio | sim | sim | `((adiantamento_13o = true) AND (adiantamento_13_ano_exercicio IS NOT NULL))` | `CREATE UNIQUE INDEX uq_ferias_adiant13_ano ON public.ferias USING btree (colaborador_id, adiantamento_13_ano_exercicio) WHERE ((adiantamento_13o = true) AND (adiantamento_13_ano_exercicio IS NOT NULL))` |
 
 

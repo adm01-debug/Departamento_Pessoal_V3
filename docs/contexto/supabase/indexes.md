@@ -27,6 +27,8 @@ Uso e tamanho em `stats.md`.
 | public.afastamentos | idx_afastamentos_colaborador_id | btree | colaborador_id | não | sim |  |
 | public.afastamentos | idx_afastamentos_empresa_id | btree | empresa_id | não | sim |  |
 | public.afastamentos | idx_afastamentos_empresa_inicio | btree | empresa_id, data_inicio | não | sim |  |
+| public.afastamentos | idx_afastamentos_empresa_status_data | btree | empresa_id, status, data_inicio | não | sim | `(status = 'ativo'::status_afastamento)` |
+| public.afastamentos | idx_afastamentos_tipo_data | btree | tipo, data_inicio | não | sim | `((status = 'ativo'::status_afastamento) AND (tipo = ANY (ARRAY['doenca'::tipo_afastamento, 'acidente_trabalho'::tipo_afastamento, 'acidente_trajeto'::tipo_afastamento, 'licenca_maternidade'::tipo_afastamento])))` |
 | public.afd_geracoes | afd_geracoes_pkey | btree | id | sim | sim |  |
 | public.afd_geracoes | uq_afd_geracoes_hash | btree | empresa_id, periodo_inicio, periodo_fim, hash_sha256 | sim | sim |  |
 | public.afdt_divergencias | afdt_divergencias_pkey | btree | id | sim | sim |  |
@@ -86,7 +88,9 @@ Uso e tamanho em `stats.md`.
 | public.audit_logs | idx_audit_logs_user_id | btree | user_id | não | sim | `(user_id IS NOT NULL)` |
 | public.auditoria | auditoria_pkey | btree | id | sim | sim |  |
 | public.auditoria | idx_auditoria_created_at | btree | created_at | não | sim |  |
+| public.auditoria | idx_auditoria_empresa_data | btree | empresa_id, created_at | não | sim |  |
 | public.auditoria | idx_auditoria_entidade | btree | entidade, entidade_id | não | sim |  |
+| public.auditoria | idx_auditoria_entidade_registro | btree | entidade, entidade_id, created_at | não | sim |  |
 | public.auditoria | idx_auditoria_usuario_id | btree | usuario_id | não | sim | `(usuario_id IS NOT NULL)` |
 | public.auditoria_acesso_bancario | auditoria_acesso_bancario_pkey | btree | id | sim | sim |  |
 | public.auditoria_contratual | auditoria_contratual_pkey | btree | id | sim | sim |  |
@@ -103,6 +107,9 @@ Uso e tamanho em `stats.md`.
 | public.auth_gov_br_sessions | auth_gov_br_sessions_pkey | btree | id | sim | sim |  |
 | public.auth_gov_br_sessions | idx_auth_gov_br_sessions_user_id | btree | user_id | não | sim |  |
 | public.automacao_logs | automacao_logs_pkey | btree | id | sim | sim |  |
+| public.backup_logs | backup_logs_pkey | btree | id | sim | sim |  |
+| public.backup_logs | idx_backup_logs_empresa | btree | empresa_id, started_at | não | sim |  |
+| public.backup_logs | idx_backup_logs_started | btree | started_at | não | sim |  |
 | public.banco_horas | banco_horas_pkey | btree | id | sim | sim |  |
 | public.banco_horas | idx_banco_horas_colaborador_data | btree | colaborador_id, data | não | sim |  |
 | public.banco_horas | idx_banco_horas_colaborador_id | btree | colaborador_id | não | sim |  |
@@ -253,10 +260,13 @@ Uso e tamanho em `stats.md`.
 | public.colaboradores | idx_colaboradores_cpf | btree | cpf | não | sim | `(cpf IS NOT NULL)` |
 | public.colaboradores | idx_colaboradores_cpf_last4 | btree | cpf_last4 | não | sim | `(cpf_last4 IS NOT NULL)` |
 | public.colaboradores | idx_colaboradores_created_by | btree | created_by | não | sim |  |
+| public.colaboradores | idx_colaboradores_dep_cargo | btree | empresa_id, departamento, cargo | não | sim |  |
 | public.colaboradores | idx_colaboradores_empresa | btree | empresa_id | não | sim |  |
 | public.colaboradores | idx_colaboradores_empresa_ativos | btree | empresa_id, created_at | não | sim | `(status = 'ativo'::status_colaborador)` |
 | public.colaboradores | idx_colaboradores_empresa_created | btree | empresa_id, created_at | não | sim |  |
+| public.colaboradores | idx_colaboradores_empresa_pk | btree | empresa_id, id | não | sim |  |
 | public.colaboradores | idx_colaboradores_empresa_status | btree | empresa_id, status | não | sim |  |
+| public.colaboradores | idx_colaboradores_empresa_status_admissao | btree | empresa_id, status, data_admissao | não | sim | `(status = 'ativo'::status_colaborador)` |
 | public.colaboradores | idx_colaboradores_genero_documento_id | btree | genero_documento_id | não | sim |  |
 | public.colaboradores | idx_colaboradores_gestor_ferias_id | btree | gestor_ferias_id | não | sim |  |
 | public.colaboradores | idx_colaboradores_local_trabalho_id | btree | local_trabalho_id | não | sim |  |
@@ -328,6 +338,7 @@ Uso e tamanho em `stats.md`.
 | public.contratos | contratos_pkey | btree | id | sim | sim |  |
 | public.contratos | idx_contratos_colaborador_id | btree | colaborador_id | não | sim |  |
 | public.contratos | idx_contratos_empresa_id | btree | empresa_id | não | sim |  |
+| public.contratos | idx_contratos_empresa_status_vcto | btree | empresa_id, status, data_fim | não | sim | `(status = ANY (ARRAY['ativo'::text, 'prorrogado'::text]))` |
 | public.contratos_gerados | contratos_gerados_pkey | btree | id | sim | sim |  |
 | public.contratos_gerados | idx_contratos_gerados_admissao | btree | admissao_id | não | sim |  |
 | public.contratos_gerados | idx_contratos_gerados_colaborador | btree | colaborador_id | não | sim |  |
@@ -382,7 +393,9 @@ Uso e tamanho em `stats.md`.
 | public.desligamentos | idx_desligamentos_created_by | btree | created_by | não | sim |  |
 | public.desligamentos | idx_desligamentos_data | btree | empresa_id, data_desligamento | não | sim |  |
 | public.desligamentos | idx_desligamentos_empresa_created | btree | empresa_id, created_at | não | sim |  |
+| public.desligamentos | idx_desligamentos_empresa_data | btree | empresa_id, data_desligamento | não | sim |  |
 | public.desligamentos | idx_desligamentos_empresa_id | btree | empresa_id | não | sim |  |
+| public.desligamentos | idx_desligamentos_motivo_data | btree | motivo, data_desligamento | não | sim |  |
 | public.desligamentos | idx_desligamentos_status | btree | status | não | sim |  |
 | public.desligamentos | idx_desligamentos_tipo_aviso_previo_id | btree | tipo_aviso_previo_id | não | sim |  |
 | public.desligamentos | idx_desligamentos_tipo_desligamento_id | btree | tipo_desligamento_id | não | sim |  |
@@ -543,7 +556,9 @@ Uso e tamanho em `stats.md`.
 | public.escalas_trabalho | idx_escalas_trabalho_turno_id | btree | turno_id | não | sim |  |
 | public.esocial_eventos | esocial_eventos_pkey | btree | id | sim | sim |  |
 | public.esocial_eventos | idx_esocial_eventos_empresa_id | btree | empresa_id | não | sim |  |
+| public.esocial_eventos | idx_esocial_eventos_empresa_status | btree | empresa_id, status, created_at | não | sim | `(status = ANY (ARRAY['pendente'::text, 'erro'::text, 'rejeitado'::text]))` |
 | public.esocial_eventos | idx_esocial_eventos_medida | btree |  | não | sim | `(tipo_evento = ANY (ARRAY['S-2299'::text, 'S-2206'::text]))` |
+| public.esocial_eventos | idx_esocial_eventos_tipo_competencia | btree | tipo_evento, competencia | não | sim |  |
 | public.esocial_eventos | idx_esocial_status_comp | btree | status, competencia | não | sim |  |
 | public.esocial_eventos | idx_esocial_tipo | btree | empresa_id, tipo_evento | não | sim |  |
 | public.esocial_eventos | uq_esocial_eventos_admissao_s2200 | btree | admissao_id | sim | sim | `((admissao_id IS NOT NULL) AND (tipo_evento = 'S-2200'::text))` |
@@ -595,11 +610,13 @@ Uso e tamanho em `stats.md`.
 | public.ferias | idx_ferias_colab_status | btree | colaborador_id, status | não | sim |  |
 | public.ferias | idx_ferias_colaborador_id | btree | colaborador_id | não | sim |  |
 | public.ferias | idx_ferias_data_inicio | btree | data_inicio | não | sim |  |
+| public.ferias | idx_ferias_empresa_colab_periodo | btree | empresa_id, colaborador_id, periodo_aquisitivo_fim | não | sim |  |
 | public.ferias | idx_ferias_empresa_id | btree | empresa_id | não | sim |  |
 | public.ferias | idx_ferias_empresa_inicio | btree | empresa_id, data_inicio | não | sim |  |
 | public.ferias | idx_ferias_empresa_status | btree | empresa_id, status | não | sim |  |
 | public.ferias | idx_ferias_pagamento_pend | btree | empresa_id, data_inicio | não | sim | `((pagamento_confirmado_em IS NULL) AND ((status)::text = ANY (ARRAY[('aprovada'::character varying)::text, ('programada'::character varying)::text])))` |
 | public.ferias | idx_ferias_periodo_aquisitivo_id | btree | periodo_aquisitivo_id | não | sim |  |
+| public.ferias | idx_ferias_vencendo | btree | data_fim | não | sim | `((status)::text <> ALL ((ARRAY['concluida'::character varying, 'cancelada'::character varying])::text[]))` |
 | public.ferias | uq_ferias_adiant13_ano | btree | colaborador_id, adiantamento_13_ano_exercicio | sim | sim | `((adiantamento_13o = true) AND (adiantamento_13_ano_exercicio IS NOT NULL))` |
 | public.ferias_aprovacoes | ferias_aprovacoes_pkey | btree | id | sim | sim |  |
 | public.ferias_aprovacoes | idx_ferias_aprovacoes_ferias_id | btree | ferias_id | não | sim |  |
@@ -719,10 +736,12 @@ Uso e tamanho em `stats.md`.
 | public.holerites | idx_holerites_assinado | btree | assinado | não | sim | `(assinado = true)` |
 | public.holerites | idx_holerites_assinado_partial | btree | folha_id | não | sim | `(assinado = false)` |
 | public.holerites | idx_holerites_colab_created | btree | colaborador_id, created_at | não | sim |  |
+| public.holerites | idx_holerites_colaborador_competencia | btree | colaborador_id, folha_id | não | sim |  |
 | public.holerites | idx_holerites_colaborador_id | btree | colaborador_id | não | sim |  |
 | public.holerites | idx_holerites_folha | btree | folha_id | não | sim |  |
 | public.holerites | idx_holerites_folha_colab_covering | btree | folha_id, colaborador_id, liquido, total_proventos, total_descontos, assinado | não | sim |  |
 | public.holerites | idx_holerites_folha_id | btree | folha_id | não | sim |  |
+| public.holerites | idx_holerites_pendentes | btree | created_at | não | sim | `(assinado = false)` |
 | public.homologacoes_rescisao | homologacoes_rescisao_pkey | btree | id | sim | sim |  |
 | public.homologacoes_rescisao | idx_homologacoes_desligamento | btree | desligamento_id | não | sim |  |
 | public.homologacoes_rescisao | idx_homologacoes_rescisao_usuario_id | btree | usuario_id | não | sim |  |
@@ -757,7 +776,9 @@ Uso e tamanho em `stats.md`.
 | public.jornadas_horarios | jornadas_horarios_pkey | btree | id | sim | sim |  |
 | public.lancamentos_contabeis | idx_lancamentos_contabeis_conta_credito_id | btree | conta_credito_id | não | sim |  |
 | public.lancamentos_contabeis | idx_lancamentos_contabeis_conta_debito_id | btree | conta_debito_id | não | sim |  |
+| public.lancamentos_contabeis | idx_lancamentos_contabeis_empresa_data | btree | empresa_id, data_lancamento | não | sim |  |
 | public.lancamentos_contabeis | idx_lancamentos_contabeis_empresa_id | btree | empresa_id | não | sim |  |
+| public.lancamentos_contabeis | idx_lancamentos_contabeis_folha | btree | folha_id | não | sim | `(folha_id IS NOT NULL)` |
 | public.lancamentos_contabeis | idx_lancamentos_contabeis_folha_id | btree | folha_id | não | sim |  |
 | public.lancamentos_contabeis | lancamentos_contabeis_pkey | btree | id | sim | sim |  |
 | public.lancamentos_folha | idx_lancamentos_folha_holerite_id | btree | holerite_id | não | sim |  |
@@ -853,6 +874,7 @@ Uso e tamanho em `stats.md`.
 | public.notificacoes | idx_notificacoes_tipo | btree | tipo | não | sim |  |
 | public.notificacoes | idx_notificacoes_user_id | btree | user_id | não | sim |  |
 | public.notificacoes | idx_notificacoes_user_unread | btree | user_id, created_at | não | sim | `(lida = false)` |
+| public.notificacoes | idx_notificacoes_usuario_status | btree | user_id, lida, created_at | não | sim | `(lida = false)` |
 | public.notificacoes | notificacoes_pkey | btree | id | sim | sim |  |
 | public.notificacoes | uq_notif_ferias_d5_dia | btree | user_id, entidade_tipo, entidade_id, data_referencia | sim | sim | `(tipo = 'ferias_pagamento_d5'::text)` |
 | public.notificacoes_admissao | idx_notificacoes_admissao_admissao_id | btree | admissao_id | não | sim |  |
@@ -1051,6 +1073,7 @@ Uso e tamanho em `stats.md`.
 | public.provisao_logs | idx_provisao_logs_usuario_id | btree | usuario_id | não | sim |  |
 | public.provisao_logs | provisao_logs_pkey | btree | id | sim | sim |  |
 | public.provisoes_competencia_tributaria | provisoes_competencia_tributaria_pkey | btree | empresa_id, competencia | sim | sim |  |
+| public.provisoes_folha | idx_provisoes_colaborador_competencia | btree | colaborador_id, competencia | não | sim |  |
 | public.provisoes_folha | idx_provisoes_folha_colaborador_id | btree | colaborador_id | não | sim |  |
 | public.provisoes_folha | idx_provisoes_folha_empresa_id | btree | empresa_id | não | sim |  |
 | public.provisoes_folha | provisoes_folha_empresa_colaborador_competencia_key | btree | empresa_id, colaborador_id, competencia | sim | sim |  |
@@ -1095,8 +1118,11 @@ Uso e tamanho em `stats.md`.
 | public.registros_ponto | idx_registros_ponto_colab_data | btree | colaborador_id, data | não | sim |  |
 | public.registros_ponto | idx_registros_ponto_colaborador_data | btree | colaborador_id, data | não | sim |  |
 | public.registros_ponto | idx_registros_ponto_colaborador_id | btree | colaborador_id | não | sim |  |
+| public.registros_ponto | idx_registros_ponto_data_aberto | btree | data, empresa_id | não | sim | `(saida_1 IS NULL)` |
+| public.registros_ponto | idx_registros_ponto_empresa_colab_data | btree | empresa_id, colaborador_id, data | não | sim |  |
 | public.registros_ponto | idx_registros_ponto_empresa_data | btree | empresa_id, data | não | sim |  |
 | public.registros_ponto | idx_registros_ponto_empresa_id | btree | empresa_id | não | sim |  |
+| public.registros_ponto | idx_registros_ponto_sem_batida | btree | empresa_id, data | não | sim |  |
 | public.registros_ponto | registros_ponto_colaborador_data_uq | btree | colaborador_id, data | sim | sim |  |
 | public.registros_ponto | registros_ponto_colaborador_id_data_key | btree | colaborador_id, data | sim | sim |  |
 | public.registros_ponto | registros_ponto_pkey | btree | id | sim | sim |  |

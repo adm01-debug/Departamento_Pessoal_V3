@@ -4175,6 +4175,175 @@
         "nullable": false,
         "position": 1,
         "schema": "public",
+        "table": "backup_logs",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": true,
+        "position": 2,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": "'run'::text",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "acao",
+        "nullable": false,
+        "position": 3,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": "'success'::text",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "status",
+        "nullable": false,
+        "position": 4,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "text"
+      },
+      {
+        "comment": "Retenção: 90 dias. Backup de dados: política de storage do Supabase (30d padrão em Pro).",
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "started_at",
+        "nullable": false,
+        "position": 5,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "finished_at",
+        "nullable": true,
+        "position": 6,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "duration_ms",
+        "nullable": true,
+        "position": 7,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "records_count",
+        "nullable": true,
+        "position": 8,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "tables_count",
+        "nullable": true,
+        "position": 9,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "integer"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "error_message",
+        "nullable": true,
+        "position": 10,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "storage_path",
+        "nullable": true,
+        "position": 11,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "text"
+      },
+      {
+        "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "created_by",
+        "nullable": true,
+        "position": 12,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": "'{}'::jsonb",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "metadata",
+        "nullable": true,
+        "position": 13,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "jsonb"
+      },
+      {
+        "comment": null,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "id",
+        "nullable": false,
+        "position": 1,
+        "schema": "public",
         "table": "banco_horas",
         "type": "uuid"
       },
@@ -67847,6 +68016,40 @@
       },
       {
         "columns": [
+          "id"
+        ],
+        "deferrable": false,
+        "definition": "PRIMARY KEY (id)",
+        "name": "backup_logs_pkey",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "PRIMARY KEY",
+        "validated": true
+      },
+      {
+        "columns": [
+          "status"
+        ],
+        "deferrable": false,
+        "definition": "CHECK (status = ANY (ARRAY['success'::text, 'partial'::text, 'error'::text, 'skipped'::text]))",
+        "name": "backup_logs_status_check",
+        "on_delete": null,
+        "on_update": null,
+        "ref_columns": [],
+        "ref_schema": null,
+        "ref_table": null,
+        "schema": "public",
+        "table": "backup_logs",
+        "type": "CHECK",
+        "validated": true
+      },
+      {
+        "columns": [
           "colaborador_id"
         ],
         "deferrable": false,
@@ -92228,6 +92431,41 @@
         "volatility": "volatile"
       },
       {
+        "args": "",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20260725100000_p3_060_backup_logs.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "P3-060: Retorna empresas sem backup com sucesso há mais de 24h. Usar no healthcheck/alerta.",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "06803f4ae36c4716",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "alert_stale_backup",
+        "owner": "postgres",
+        "returns": "TABLE(empresa_id uuid, empresa_nome text, last_backup_at timestamp with time zone, hours_since integer, records_backup integer, tables_backup integer)",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "p_agora timestamp with time zone",
         "callers": {
           "code": [
@@ -105712,6 +105950,36 @@
         "volatility": "volatile"
       },
       {
+        "args": "p_empresa_id uuid, p_status text, p_duration_ms integer, p_records integer, p_tables integer, p_error text, p_created_by uuid, p_metadata jsonb",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "P3-060: Registra execução de backup. SECURITY DEFINER para permitir chamada via cron (anon).",
+        "config": [
+          "search_path=public"
+        ],
+        "definition": null,
+        "definition_sha": "150e53d3a2820fd6",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "record_backup_run",
+        "owner": "postgres",
+        "returns": "uuid",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
         "args": "",
         "callers": {
           "code": [
@@ -105951,8 +106219,8 @@
         ],
         "definition": null,
         "definition_sha": "62d474e45f8b6f2e",
-        "execute_api_roles": "anon, authenticated, service_role",
-        "execute_public": true,
+        "execute_api_roles": "service_role",
+        "execute_public": false,
         "is_trigger_fn": false,
         "kind": "function",
         "language": "plpgsql",
@@ -111951,6 +112219,18 @@
           "table": "automacao_logs"
         },
         {
+          "grantee": "dp_mcp_role",
+          "privileges": "SELECT",
+          "schema": "public",
+          "table": "backup_logs"
+        },
+        {
+          "grantee": "service_role",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "schema": "public",
+          "table": "backup_logs"
+        },
+        {
           "grantee": "anon",
           "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
           "schema": "public",
@@ -115690,13 +115970,13 @@
         },
         {
           "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE",
           "schema": "public",
           "table": "historico_calculos_folha"
         },
         {
           "grantee": "authenticated",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE",
           "schema": "public",
           "table": "historico_calculos_folha"
         },
@@ -122006,6 +122286,37 @@
       },
       {
         "columns": [
+          "empresa_id",
+          "status",
+          "data_inicio"
+        ],
+        "definition": "CREATE INDEX idx_afastamentos_empresa_status_data ON public.afastamentos USING btree (empresa_id, status, data_inicio DESC) WHERE (status = 'ativo'::status_afastamento)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_afastamentos_empresa_status_data",
+        "predicate": "(status = 'ativo'::status_afastamento)",
+        "schema": "public",
+        "table": "afastamentos"
+      },
+      {
+        "columns": [
+          "tipo",
+          "data_inicio"
+        ],
+        "definition": "CREATE INDEX idx_afastamentos_tipo_data ON public.afastamentos USING btree (tipo, data_inicio) WHERE ((status = 'ativo'::status_afastamento) AND (tipo = ANY (ARRAY['doenca'::tipo_afastamento, 'acidente_trabalho'::tipo_afastamento, 'acidente_trajeto'::tipo_afastamento, 'licenca_maternidade'::tipo_afastamento])))",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_afastamentos_tipo_data",
+        "predicate": "((status = 'ativo'::status_afastamento) AND (tipo = ANY (ARRAY['doenca'::tipo_afastamento, 'acidente_trabalho'::tipo_afastamento, 'acidente_trajeto'::tipo_afastamento, 'licenca_maternidade'::tipo_afastamento])))",
+        "schema": "public",
+        "table": "afastamentos"
+      },
+      {
+        "columns": [
           "id"
         ],
         "definition": "CREATE UNIQUE INDEX afd_geracoes_pkey ON public.afd_geracoes USING btree (id)",
@@ -122857,6 +123168,21 @@
       },
       {
         "columns": [
+          "empresa_id",
+          "created_at"
+        ],
+        "definition": "CREATE INDEX idx_auditoria_empresa_data ON public.auditoria USING btree (empresa_id, created_at DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_auditoria_empresa_data",
+        "predicate": null,
+        "schema": "public",
+        "table": "auditoria"
+      },
+      {
+        "columns": [
           "entidade",
           "entidade_id"
         ],
@@ -122866,6 +123192,22 @@
         "is_valid": true,
         "method": "btree",
         "name": "idx_auditoria_entidade",
+        "predicate": null,
+        "schema": "public",
+        "table": "auditoria"
+      },
+      {
+        "columns": [
+          "entidade",
+          "entidade_id",
+          "created_at"
+        ],
+        "definition": "CREATE INDEX idx_auditoria_entidade_registro ON public.auditoria USING btree (entidade, entidade_id, created_at DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_auditoria_entidade_registro",
         "predicate": null,
         "schema": "public",
         "table": "auditoria"
@@ -123095,6 +123437,49 @@
         "predicate": null,
         "schema": "public",
         "table": "automacao_logs"
+      },
+      {
+        "columns": [
+          "id"
+        ],
+        "definition": "CREATE UNIQUE INDEX backup_logs_pkey ON public.backup_logs USING btree (id)",
+        "is_primary": true,
+        "is_unique": true,
+        "is_valid": true,
+        "method": "btree",
+        "name": "backup_logs_pkey",
+        "predicate": null,
+        "schema": "public",
+        "table": "backup_logs"
+      },
+      {
+        "columns": [
+          "empresa_id",
+          "started_at"
+        ],
+        "definition": "CREATE INDEX idx_backup_logs_empresa ON public.backup_logs USING btree (empresa_id, started_at DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_backup_logs_empresa",
+        "predicate": null,
+        "schema": "public",
+        "table": "backup_logs"
+      },
+      {
+        "columns": [
+          "started_at"
+        ],
+        "definition": "CREATE INDEX idx_backup_logs_started ON public.backup_logs USING btree (started_at DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_backup_logs_started",
+        "predicate": null,
+        "schema": "public",
+        "table": "backup_logs"
       },
       {
         "columns": [
@@ -125244,6 +125629,22 @@
       },
       {
         "columns": [
+          "empresa_id",
+          "departamento",
+          "cargo"
+        ],
+        "definition": "CREATE INDEX idx_colaboradores_dep_cargo ON public.colaboradores USING btree (empresa_id, departamento, cargo)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_colaboradores_dep_cargo",
+        "predicate": null,
+        "schema": "public",
+        "table": "colaboradores"
+      },
+      {
+        "columns": [
           "empresa_id"
         ],
         "definition": "CREATE INDEX idx_colaboradores_empresa ON public.colaboradores USING btree (empresa_id)",
@@ -125289,6 +125690,21 @@
       {
         "columns": [
           "empresa_id",
+          "id"
+        ],
+        "definition": "CREATE INDEX idx_colaboradores_empresa_pk ON public.colaboradores USING btree (empresa_id, id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_colaboradores_empresa_pk",
+        "predicate": null,
+        "schema": "public",
+        "table": "colaboradores"
+      },
+      {
+        "columns": [
+          "empresa_id",
           "status"
         ],
         "definition": "CREATE INDEX idx_colaboradores_empresa_status ON public.colaboradores USING btree (empresa_id, status)",
@@ -125298,6 +125714,22 @@
         "method": "btree",
         "name": "idx_colaboradores_empresa_status",
         "predicate": null,
+        "schema": "public",
+        "table": "colaboradores"
+      },
+      {
+        "columns": [
+          "empresa_id",
+          "status",
+          "data_admissao"
+        ],
+        "definition": "CREATE INDEX idx_colaboradores_empresa_status_admissao ON public.colaboradores USING btree (empresa_id, status, data_admissao DESC) WHERE (status = 'ativo'::status_colaborador)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_colaboradores_empresa_status_admissao",
+        "predicate": "(status = 'ativo'::status_colaborador)",
         "schema": "public",
         "table": "colaboradores"
       },
@@ -126305,6 +126737,22 @@
       },
       {
         "columns": [
+          "empresa_id",
+          "status",
+          "data_fim"
+        ],
+        "definition": "CREATE INDEX idx_contratos_empresa_status_vcto ON public.contratos USING btree (empresa_id, status, data_fim) WHERE (status = ANY (ARRAY['ativo'::text, 'prorrogado'::text]))",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_contratos_empresa_status_vcto",
+        "predicate": "(status = ANY (ARRAY['ativo'::text, 'prorrogado'::text]))",
+        "schema": "public",
+        "table": "contratos"
+      },
+      {
+        "columns": [
           "id"
         ],
         "definition": "CREATE UNIQUE INDEX contratos_gerados_pkey ON public.contratos_gerados USING btree (id)",
@@ -127066,6 +127514,21 @@
       },
       {
         "columns": [
+          "empresa_id",
+          "data_desligamento"
+        ],
+        "definition": "CREATE INDEX idx_desligamentos_empresa_data ON public.desligamentos USING btree (empresa_id, data_desligamento DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_desligamentos_empresa_data",
+        "predicate": null,
+        "schema": "public",
+        "table": "desligamentos"
+      },
+      {
+        "columns": [
           "empresa_id"
         ],
         "definition": "CREATE INDEX idx_desligamentos_empresa_id ON public.desligamentos USING btree (empresa_id)",
@@ -127074,6 +127537,21 @@
         "is_valid": true,
         "method": "btree",
         "name": "idx_desligamentos_empresa_id",
+        "predicate": null,
+        "schema": "public",
+        "table": "desligamentos"
+      },
+      {
+        "columns": [
+          "motivo",
+          "data_desligamento"
+        ],
+        "definition": "CREATE INDEX idx_desligamentos_motivo_data ON public.desligamentos USING btree (motivo, data_desligamento DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_desligamentos_motivo_data",
         "predicate": null,
         "schema": "public",
         "table": "desligamentos"
@@ -129336,6 +129814,22 @@
         "table": "esocial_eventos"
       },
       {
+        "columns": [
+          "empresa_id",
+          "status",
+          "created_at"
+        ],
+        "definition": "CREATE INDEX idx_esocial_eventos_empresa_status ON public.esocial_eventos USING btree (empresa_id, status, created_at DESC) WHERE (status = ANY (ARRAY['pendente'::text, 'erro'::text, 'rejeitado'::text]))",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_esocial_eventos_empresa_status",
+        "predicate": "(status = ANY (ARRAY['pendente'::text, 'erro'::text, 'rejeitado'::text]))",
+        "schema": "public",
+        "table": "esocial_eventos"
+      },
+      {
         "columns": [],
         "definition": "CREATE INDEX idx_esocial_eventos_medida ON public.esocial_eventos USING btree (((dados ->> 'medida_id'::text))) WHERE (tipo_evento = ANY (ARRAY['S-2299'::text, 'S-2206'::text]))",
         "is_primary": false,
@@ -129344,6 +129838,21 @@
         "method": "btree",
         "name": "idx_esocial_eventos_medida",
         "predicate": "(tipo_evento = ANY (ARRAY['S-2299'::text, 'S-2206'::text]))",
+        "schema": "public",
+        "table": "esocial_eventos"
+      },
+      {
+        "columns": [
+          "tipo_evento",
+          "competencia"
+        ],
+        "definition": "CREATE INDEX idx_esocial_eventos_tipo_competencia ON public.esocial_eventos USING btree (tipo_evento, competencia DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_esocial_eventos_tipo_competencia",
+        "predicate": null,
         "schema": "public",
         "table": "esocial_eventos"
       },
@@ -130078,6 +130587,22 @@
       },
       {
         "columns": [
+          "empresa_id",
+          "colaborador_id",
+          "periodo_aquisitivo_fim"
+        ],
+        "definition": "CREATE INDEX idx_ferias_empresa_colab_periodo ON public.ferias USING btree (empresa_id, colaborador_id, periodo_aquisitivo_fim DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_ferias_empresa_colab_periodo",
+        "predicate": null,
+        "schema": "public",
+        "table": "ferias"
+      },
+      {
+        "columns": [
           "empresa_id"
         ],
         "definition": "CREATE INDEX idx_ferias_empresa_id ON public.ferias USING btree (empresa_id)",
@@ -130146,6 +130671,20 @@
         "method": "btree",
         "name": "idx_ferias_periodo_aquisitivo_id",
         "predicate": null,
+        "schema": "public",
+        "table": "ferias"
+      },
+      {
+        "columns": [
+          "data_fim"
+        ],
+        "definition": "CREATE INDEX idx_ferias_vencendo ON public.ferias USING btree (data_fim) WHERE ((status)::text <> ALL ((ARRAY['concluida'::character varying, 'cancelada'::character varying])::text[]))",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_ferias_vencendo",
+        "predicate": "((status)::text <> ALL ((ARRAY['concluida'::character varying, 'cancelada'::character varying])::text[]))",
         "schema": "public",
         "table": "ferias"
       },
@@ -131845,6 +132384,21 @@
       },
       {
         "columns": [
+          "colaborador_id",
+          "folha_id"
+        ],
+        "definition": "CREATE INDEX idx_holerites_colaborador_competencia ON public.holerites USING btree (colaborador_id, folha_id DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_holerites_colaborador_competencia",
+        "predicate": null,
+        "schema": "public",
+        "table": "holerites"
+      },
+      {
+        "columns": [
           "colaborador_id"
         ],
         "definition": "CREATE INDEX idx_holerites_colaborador_id ON public.holerites USING btree (colaborador_id)",
@@ -131901,6 +132455,20 @@
         "method": "btree",
         "name": "idx_holerites_folha_id",
         "predicate": null,
+        "schema": "public",
+        "table": "holerites"
+      },
+      {
+        "columns": [
+          "created_at"
+        ],
+        "definition": "CREATE INDEX idx_holerites_pendentes ON public.holerites USING btree (created_at DESC) WHERE (assinado = false)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_holerites_pendentes",
+        "predicate": "(assinado = false)",
         "schema": "public",
         "table": "holerites"
       },
@@ -132385,6 +132953,21 @@
       },
       {
         "columns": [
+          "empresa_id",
+          "data_lancamento"
+        ],
+        "definition": "CREATE INDEX idx_lancamentos_contabeis_empresa_data ON public.lancamentos_contabeis USING btree (empresa_id, data_lancamento DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_lancamentos_contabeis_empresa_data",
+        "predicate": null,
+        "schema": "public",
+        "table": "lancamentos_contabeis"
+      },
+      {
+        "columns": [
           "empresa_id"
         ],
         "definition": "CREATE INDEX idx_lancamentos_contabeis_empresa_id ON public.lancamentos_contabeis USING btree (empresa_id)",
@@ -132394,6 +132977,20 @@
         "method": "btree",
         "name": "idx_lancamentos_contabeis_empresa_id",
         "predicate": null,
+        "schema": "public",
+        "table": "lancamentos_contabeis"
+      },
+      {
+        "columns": [
+          "folha_id"
+        ],
+        "definition": "CREATE INDEX idx_lancamentos_contabeis_folha ON public.lancamentos_contabeis USING btree (folha_id) WHERE (folha_id IS NOT NULL)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_lancamentos_contabeis_folha",
+        "predicate": "(folha_id IS NOT NULL)",
         "schema": "public",
         "table": "lancamentos_contabeis"
       },
@@ -133756,6 +134353,22 @@
         "is_valid": true,
         "method": "btree",
         "name": "idx_notificacoes_user_unread",
+        "predicate": "(lida = false)",
+        "schema": "public",
+        "table": "notificacoes"
+      },
+      {
+        "columns": [
+          "user_id",
+          "lida",
+          "created_at"
+        ],
+        "definition": "CREATE INDEX idx_notificacoes_usuario_status ON public.notificacoes USING btree (user_id, lida, created_at DESC) WHERE (lida = false)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_notificacoes_usuario_status",
         "predicate": "(lida = false)",
         "schema": "public",
         "table": "notificacoes"
@@ -136586,6 +137199,21 @@
       },
       {
         "columns": [
+          "colaborador_id",
+          "competencia"
+        ],
+        "definition": "CREATE INDEX idx_provisoes_colaborador_competencia ON public.provisoes_folha USING btree (colaborador_id, competencia DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_provisoes_colaborador_competencia",
+        "predicate": null,
+        "schema": "public",
+        "table": "provisoes_folha"
+      },
+      {
+        "columns": [
           "colaborador_id"
         ],
         "definition": "CREATE INDEX idx_provisoes_folha_colaborador_id ON public.provisoes_folha USING btree (colaborador_id)",
@@ -137214,6 +137842,37 @@
       },
       {
         "columns": [
+          "data",
+          "empresa_id"
+        ],
+        "definition": "CREATE INDEX idx_registros_ponto_data_aberto ON public.registros_ponto USING btree (data, empresa_id) WHERE (saida_1 IS NULL)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_registros_ponto_data_aberto",
+        "predicate": "(saida_1 IS NULL)",
+        "schema": "public",
+        "table": "registros_ponto"
+      },
+      {
+        "columns": [
+          "empresa_id",
+          "colaborador_id",
+          "data"
+        ],
+        "definition": "CREATE INDEX idx_registros_ponto_empresa_colab_data ON public.registros_ponto USING btree (empresa_id, colaborador_id, data DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_registros_ponto_empresa_colab_data",
+        "predicate": null,
+        "schema": "public",
+        "table": "registros_ponto"
+      },
+      {
+        "columns": [
           "empresa_id",
           "data"
         ],
@@ -137237,6 +137896,21 @@
         "is_valid": true,
         "method": "btree",
         "name": "idx_registros_ponto_empresa_id",
+        "predicate": null,
+        "schema": "public",
+        "table": "registros_ponto"
+      },
+      {
+        "columns": [
+          "empresa_id",
+          "data"
+        ],
+        "definition": "CREATE INDEX idx_registros_ponto_sem_batida ON public.registros_ponto USING btree (empresa_id, data DESC)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_registros_ponto_sem_batida",
         "predicate": null,
         "schema": "public",
         "table": "registros_ponto"
@@ -142453,6 +143127,12 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.historico_calculos_folha.historico_calculos_delete",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.historico_cargo.tenant_historico_cargo",
         "severity": "BAIXA"
       },
@@ -143240,6 +143920,18 @@
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.provisoes_competencia_tributaria.provisoes_competencia_tributaria_tenant_select",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.provisoes_folha.provisoes_folha_delete",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.provisoes_folha.provisoes_folha_update",
         "severity": "BAIXA"
       },
       {
@@ -144313,7 +145005,7 @@
       {
         "code": "rpc_anon_executable",
         "detail": "SECURITY DEFINER chamável via RPC por anon (sem login): roda com privilégios do owner. Confirme que é intencional (Supabase dá EXECUTE a anon por padrão; revogue se não for API pública).",
-        "object": "public.refresh_dashboard_views()",
+        "object": "public.record_backup_run(p_empresa_id uuid, p_status text, p_duration_ms integer, p_records integer, p_tables integer, p_error text, p_created_by uuid, p_metadata jsonb)",
         "severity": "INFO"
       }
     ],
@@ -144786,6 +145478,18 @@
         "table": "automacao_logs",
         "using": "(auth.uid() IN ( SELECT user_roles.user_id\n   FROM user_roles\n  WHERE (user_roles.role = ANY (ARRAY['admin'::app_role, 'gestor'::app_role]))))",
         "with_check": null
+      },
+      {
+        "cmd": "ALL",
+        "name": "backup_logs_tenant_all",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "backup_logs",
+        "using": "(empresa_id = get_auth_empresa_id())",
+        "with_check": "(empresa_id = get_auth_empresa_id())"
       },
       {
         "cmd": "SELECT",
@@ -147704,6 +148408,18 @@
         "with_check": "(empresa_id = ((auth.jwt() ->> 'empresa_id'::text))::uuid)"
       },
       {
+        "cmd": "DELETE",
+        "name": "historico_calculos_delete",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "historico_calculos_folha",
+        "using": "((empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid) AND is_admin(auth.uid()))",
+        "with_check": null
+      },
+      {
         "cmd": "ALL",
         "name": "tenant_historico_cargo",
         "permissive": "PERMISSIVE",
@@ -149888,6 +150604,30 @@
         "with_check": null
       },
       {
+        "cmd": "DELETE",
+        "name": "provisoes_folha_delete",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "provisoes_folha",
+        "using": "((empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid) AND is_admin(auth.uid()))",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "provisoes_folha_insert",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "provisoes_folha",
+        "using": null,
+        "with_check": "(empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid)"
+      },
+      {
         "cmd": "SELECT",
         "name": "provisoes_folha_rh_read",
         "permissive": "PERMISSIVE",
@@ -149898,6 +150638,18 @@
         "table": "provisoes_folha",
         "using": "pode_gerir_rh(empresa_id)",
         "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "provisoes_folha_update",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "provisoes_folha",
+        "using": "((empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid) AND (is_admin(auth.uid()) OR has_role(auth.uid(), 'rh'::app_role)))",
+        "with_check": "(empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid)"
       },
       {
         "cmd": "ALL",
@@ -153328,6 +154080,21 @@
         "schema": "public"
       },
       {
+        "comment": "Log de execucao de backup. RLS por empresa; backup global (empresa_id NULL) visivel apenas para service_role.",
+        "from_extension": false,
+        "is_partition": false,
+        "kind": "table",
+        "name": "backup_logs",
+        "owner": "postgres",
+        "parent": null,
+        "partition_bound": null,
+        "partition_key": null,
+        "replica_identity": "default",
+        "rls_enabled": true,
+        "rls_forced": false,
+        "schema": "public"
+      },
+      {
         "comment": null,
         "from_extension": false,
         "is_partition": false,
@@ -155698,7 +156465,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "[P0-010] Histórico fiscal imutável (UPDATE bloqueado). DELETE só admin.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",
@@ -157453,7 +158220,7 @@
         "schema": "public"
       },
       {
-        "comment": null,
+        "comment": "[P0-010] INSERT/UPDATE/DELETE adicionados. Tenant isolation via app_metadata.",
         "from_extension": false,
         "is_partition": false,
         "kind": "table",

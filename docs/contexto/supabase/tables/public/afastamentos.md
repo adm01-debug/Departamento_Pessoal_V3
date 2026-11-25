@@ -84,6 +84,8 @@
 | idx_afastamentos_colaborador_id | btree | colaborador_id | não | sim |  | `CREATE INDEX idx_afastamentos_colaborador_id ON public.afastamentos USING btree (colaborador_id)` |
 | idx_afastamentos_empresa_id | btree | empresa_id | não | sim |  | `CREATE INDEX idx_afastamentos_empresa_id ON public.afastamentos USING btree (empresa_id)` |
 | idx_afastamentos_empresa_inicio | btree | empresa_id, data_inicio | não | sim |  | `CREATE INDEX idx_afastamentos_empresa_inicio ON public.afastamentos USING btree (empresa_id, data_inicio DESC)` |
+| idx_afastamentos_empresa_status_data | btree | empresa_id, status, data_inicio | não | sim | `(status = 'ativo'::status_afastamento)` | `CREATE INDEX idx_afastamentos_empresa_status_data ON public.afastamentos USING btree (empresa_id, status, data_inicio DESC) WHERE (status = 'ativo'::status_afastamento)` |
+| idx_afastamentos_tipo_data | btree | tipo, data_inicio | não | sim | `((status = 'ativo'::status_afastamento) AND (tipo = ANY (ARRAY['doenca'::tipo_afastamento, 'acidente_trabalho'::tipo_afastamento, 'acidente_trajeto'::tipo_afastamento, 'licenca_maternidade'::tipo_afastamento])))` | `CREATE INDEX idx_afastamentos_tipo_data ON public.afastamentos USING btree (tipo, data_inicio) WHERE ((status = 'ativo'::status_afastamento) AND (tipo = ANY (ARRAY['doenca'::tipo_afastamento, 'acidente_trabalho'::tipo_afastamento, 'acidente_trajeto'::tipo_afastamento, 'licenca_maternidade'::tipo_afastamento])))` |
 
 
 ## Policies (RLS)

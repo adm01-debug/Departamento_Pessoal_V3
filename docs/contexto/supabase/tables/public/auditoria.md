@@ -44,7 +44,9 @@
 |---|---|---|---|---|---|---|
 | auditoria_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX auditoria_pkey ON public.auditoria USING btree (id)` |
 | idx_auditoria_created_at | btree | created_at | não | sim |  | `CREATE INDEX idx_auditoria_created_at ON public.auditoria USING btree (created_at DESC)` |
+| idx_auditoria_empresa_data | btree | empresa_id, created_at | não | sim |  | `CREATE INDEX idx_auditoria_empresa_data ON public.auditoria USING btree (empresa_id, created_at DESC)` |
 | idx_auditoria_entidade | btree | entidade, entidade_id | não | sim |  | `CREATE INDEX idx_auditoria_entidade ON public.auditoria USING btree (entidade, entidade_id)` |
+| idx_auditoria_entidade_registro | btree | entidade, entidade_id, created_at | não | sim |  | `CREATE INDEX idx_auditoria_entidade_registro ON public.auditoria USING btree (entidade, entidade_id, created_at DESC)` |
 | idx_auditoria_usuario_id | btree | usuario_id | não | sim | `(usuario_id IS NOT NULL)` | `CREATE INDEX idx_auditoria_usuario_id ON public.auditoria USING btree (usuario_id) WHERE (usuario_id IS NOT NULL)` |
 
 

@@ -105,7 +105,9 @@
 | idx_desligamentos_created_by | btree | created_by | não | sim |  | `CREATE INDEX idx_desligamentos_created_by ON public.desligamentos USING btree (created_by)` |
 | idx_desligamentos_data | btree | empresa_id, data_desligamento | não | sim |  | `CREATE INDEX idx_desligamentos_data ON public.desligamentos USING btree (empresa_id, data_desligamento)` |
 | idx_desligamentos_empresa_created | btree | empresa_id, created_at | não | sim |  | `CREATE INDEX idx_desligamentos_empresa_created ON public.desligamentos USING btree (empresa_id, created_at DESC)` |
+| idx_desligamentos_empresa_data | btree | empresa_id, data_desligamento | não | sim |  | `CREATE INDEX idx_desligamentos_empresa_data ON public.desligamentos USING btree (empresa_id, data_desligamento DESC)` |
 | idx_desligamentos_empresa_id | btree | empresa_id | não | sim |  | `CREATE INDEX idx_desligamentos_empresa_id ON public.desligamentos USING btree (empresa_id)` |
+| idx_desligamentos_motivo_data | btree | motivo, data_desligamento | não | sim |  | `CREATE INDEX idx_desligamentos_motivo_data ON public.desligamentos USING btree (motivo, data_desligamento DESC)` |
 | idx_desligamentos_status | btree | status | não | sim |  | `CREATE INDEX idx_desligamentos_status ON public.desligamentos USING btree (status)` |
 | idx_desligamentos_tipo_aviso_previo_id | btree | tipo_aviso_previo_id | não | sim |  | `CREATE INDEX idx_desligamentos_tipo_aviso_previo_id ON public.desligamentos USING btree (tipo_aviso_previo_id)` |
 | idx_desligamentos_tipo_desligamento_id | btree | tipo_desligamento_id | não | sim |  | `CREATE INDEX idx_desligamentos_tipo_desligamento_id ON public.desligamentos USING btree (tipo_desligamento_id)` |

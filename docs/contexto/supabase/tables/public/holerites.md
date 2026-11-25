@@ -75,10 +75,12 @@
 | idx_holerites_assinado | btree | assinado | não | sim | `(assinado = true)` | `CREATE INDEX idx_holerites_assinado ON public.holerites USING btree (assinado) WHERE (assinado = true)` |
 | idx_holerites_assinado_partial | btree | folha_id | não | sim | `(assinado = false)` | `CREATE INDEX idx_holerites_assinado_partial ON public.holerites USING btree (folha_id) WHERE (assinado = false)` |
 | idx_holerites_colab_created | btree | colaborador_id, created_at | não | sim |  | `CREATE INDEX idx_holerites_colab_created ON public.holerites USING btree (colaborador_id, created_at DESC)` |
+| idx_holerites_colaborador_competencia | btree | colaborador_id, folha_id | não | sim |  | `CREATE INDEX idx_holerites_colaborador_competencia ON public.holerites USING btree (colaborador_id, folha_id DESC)` |
 | idx_holerites_colaborador_id | btree | colaborador_id | não | sim |  | `CREATE INDEX idx_holerites_colaborador_id ON public.holerites USING btree (colaborador_id)` |
 | idx_holerites_folha | btree | folha_id | não | sim |  | `CREATE INDEX idx_holerites_folha ON public.holerites USING btree (folha_id)` |
 | idx_holerites_folha_colab_covering | btree | folha_id, colaborador_id, liquido, total_proventos, total_descontos, assinado | não | sim |  | `CREATE INDEX idx_holerites_folha_colab_covering ON public.holerites USING btree (folha_id, colaborador_id) INCLUDE (liquido, total_proventos, total_descontos, assinado)` |
 | idx_holerites_folha_id | btree | folha_id | não | sim |  | `CREATE INDEX idx_holerites_folha_id ON public.holerites USING btree (folha_id)` |
+| idx_holerites_pendentes | btree | created_at | não | sim | `(assinado = false)` | `CREATE INDEX idx_holerites_pendentes ON public.holerites USING btree (created_at DESC) WHERE (assinado = false)` |
 
 
 ## Policies (RLS)

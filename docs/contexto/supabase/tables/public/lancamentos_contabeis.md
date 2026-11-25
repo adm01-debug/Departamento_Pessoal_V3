@@ -47,7 +47,9 @@
 |---|---|---|---|---|---|---|
 | idx_lancamentos_contabeis_conta_credito_id | btree | conta_credito_id | não | sim |  | `CREATE INDEX idx_lancamentos_contabeis_conta_credito_id ON public.lancamentos_contabeis USING btree (conta_credito_id)` |
 | idx_lancamentos_contabeis_conta_debito_id | btree | conta_debito_id | não | sim |  | `CREATE INDEX idx_lancamentos_contabeis_conta_debito_id ON public.lancamentos_contabeis USING btree (conta_debito_id)` |
+| idx_lancamentos_contabeis_empresa_data | btree | empresa_id, data_lancamento | não | sim |  | `CREATE INDEX idx_lancamentos_contabeis_empresa_data ON public.lancamentos_contabeis USING btree (empresa_id, data_lancamento DESC)` |
 | idx_lancamentos_contabeis_empresa_id | btree | empresa_id | não | sim |  | `CREATE INDEX idx_lancamentos_contabeis_empresa_id ON public.lancamentos_contabeis USING btree (empresa_id)` |
+| idx_lancamentos_contabeis_folha | btree | folha_id | não | sim | `(folha_id IS NOT NULL)` | `CREATE INDEX idx_lancamentos_contabeis_folha ON public.lancamentos_contabeis USING btree (folha_id) WHERE (folha_id IS NOT NULL)` |
 | idx_lancamentos_contabeis_folha_id | btree | folha_id | não | sim |  | `CREATE INDEX idx_lancamentos_contabeis_folha_id ON public.lancamentos_contabeis USING btree (folha_id)` |
 | lancamentos_contabeis_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX lancamentos_contabeis_pkey ON public.lancamentos_contabeis USING btree (id)` |
 

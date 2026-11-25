@@ -1,12 +1,14 @@
 # public.provisoes_folha
 
+> [P0-010] INSERT/UPDATE/DELETE adicionados. Tenant isolation via app_metadata.
+
 | propriedade | valor |
 |---|---|
 | tipo | table |
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 1 |
+| policies | 4 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -41,6 +43,7 @@
 
 | nome | método | colunas | único | válido | predicado | definição |
 |---|---|---|---|---|---|---|
+| idx_provisoes_colaborador_competencia | btree | colaborador_id, competencia | não | sim |  | `CREATE INDEX idx_provisoes_colaborador_competencia ON public.provisoes_folha USING btree (colaborador_id, competencia DESC)` |
 | idx_provisoes_folha_colaborador_id | btree | colaborador_id | não | sim |  | `CREATE INDEX idx_provisoes_folha_colaborador_id ON public.provisoes_folha USING btree (colaborador_id)` |
 | idx_provisoes_folha_empresa_id | btree | empresa_id | não | sim |  | `CREATE INDEX idx_provisoes_folha_empresa_id ON public.provisoes_folha USING btree (empresa_id)` |
 | provisoes_folha_empresa_colaborador_competencia_key | btree | empresa_id, colaborador_id, competencia | sim | sim |  | `CREATE UNIQUE INDEX provisoes_folha_empresa_colaborador_competencia_key ON public.provisoes_folha USING btree (empresa_id, colaborador_id, competencia)` |
@@ -48,6 +51,26 @@
 
 
 ## Policies (RLS)
+
+### `provisoes_folha_delete`
+
+| campo | valor |
+|---|---|
+| comando | DELETE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `((empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid) AND is_admin(auth.uid()))` |
+| WITH CHECK |  |
+
+### `provisoes_folha_insert`
+
+| campo | valor |
+|---|---|
+| comando | INSERT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING |  |
+| WITH CHECK | `(empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid)` |
 
 ### `provisoes_folha_rh_read`
 
@@ -58,6 +81,16 @@
 | roles | authenticated |
 | USING | `pode_gerir_rh(empresa_id)` |
 | WITH CHECK |  |
+
+### `provisoes_folha_update`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `((empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid) AND (is_admin(auth.uid()) OR has_role(auth.uid(), 'rh'::app_role)))` |
+| WITH CHECK | `(empresa_id = ((((current_setting('request.jwt.claims'::text, true))::jsonb -> 'app_metadata'::text) ->> 'empresa_id'::text))::uuid)` |
 
 
 ## Triggers
