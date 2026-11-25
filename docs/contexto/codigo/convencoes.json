@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(db): fecha record_backup_run para anon e tira backup_logs do claim de JWT (#890)",
    "fix: policies de escrita de provisoes_folha e historico_calculos_folha usam pertence_a_empresa (#881)",
    "feat: resgata a janela Ver todas do desempenho de vagas (port do Muri) (#888)",
    "feat: formulario de vaga coleta cargo, contrato, faixa e beneficios (#887)",
-   "feat: resgata os cards de resumo do ponto (indicadores, equipe, pendencias e fechamento) (#886)",
-   "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)"
+   "feat: resgata os cards de resumo do ponto (indicadores, equipe, pendencias e fechamento) (#886)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

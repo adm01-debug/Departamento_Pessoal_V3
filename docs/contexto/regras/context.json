@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c71a3913d4e5ac42e4c533d4a754de1874c2417f",
+  "sha": "43dd2de7f4192339d40542fdb4d8bc52c1255fed",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 17:48 UTC",
-  "files_total": 4204,
-  "code_files": 3608,
-  "code_lines": 533869
+  "generated_at": "2026-11-25 18:04 UTC",
+  "files_total": 4206,
+  "code_files": 3610,
+  "code_lines": 533957
  },
  "version": "1.3.2",
- "facts_hash": "2b3bd269634d722b",
+ "facts_hash": "db8585f565445b80",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 1337,
+   ".sql": 1339,
    ".tsx": 1116,
    ".ts": 1014,
    ".mjs": 110,
@@ -74050,6 +74050,8 @@
    "supabase/migrations/20261125120000_secdef_refresh_dashboard_views_revoke.verify.sql",
    "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.sql",
    "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.verify.sql",
+   "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql",
+   "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -106721,8 +106723,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 1263,
-   "lines": 87575,
+   "files": 1265,
+   "lines": 87663,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -251144,6 +251146,7 @@
    "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
    "supabase/migrations/20261124150000_backup_logs_rls_policy.sql",
    "supabase/migrations/20261125120000_secdef_refresh_dashboard_views_revoke.sql",
+   "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -346240,6 +346243,15 @@
    "path": "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.verify.sql",
    "lines": 38
   },
+  "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql": {
+   "path": "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql",
+   "lines": 62,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.verify.sql": {
+   "path": "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.verify.sql",
+   "lines": 26
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -346635,10 +346647,21 @@
   }
  },
  "git": {
-  "sha": "c71a3913d4e5ac42e4c533d4a754de1874c2417f",
+  "sha": "43dd2de7f4192339d40542fdb4d8bc52c1255fed",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "43dd2de",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix(db): fecha record_backup_run para anon e tira backup_logs do claim de JWT (#890)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql",
+     "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.verify.sql"
+    ]
+   },
    {
     "sha": "c71a391",
     "date": "2026-11-25",
@@ -347391,16 +347414,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "c058153",
-    "date": "2026-11-23",
-    "author": "dependabot[bot]",
-    "subject": "chore(deps-dev): bump the testing group with 2 updates (#845)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
@@ -347410,7 +347423,7 @@
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    5
+    6
    ],
    [
     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
@@ -347418,11 +347431,11 @@
    ],
    [
     "package-lock.json",
-    4
+    3
    ],
    [
     "package.json",
-    4
+    3
    ],
    [
     "src/pages/__tests__/RecrutamentoPage.vagaForm.test.tsx",
@@ -347447,6 +347460,14 @@
    [
     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql",
     2
+   ],
+   [
+    "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.verify.sql",
+    1
    ],
    [
     "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.sql",
@@ -347474,14 +347495,6 @@
    ],
    [
     "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
-    1
-   ],
-   [
-    "src/components/recrutamento/analyticsComum.ts",
-    1
-   ],
-   [
-    "src/components/recrutamento/analyticsVagasFiltros.ts",
     1
    ]
   ]
