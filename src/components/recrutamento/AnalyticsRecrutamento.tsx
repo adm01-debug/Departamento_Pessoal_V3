@@ -274,7 +274,7 @@ export function AnalyticsRecrutamento({
             <AnalyticsTempo tempos={analytics.tempos} index={7} />
             <AnalyticsAtencao atencao={analytics.atencao} index={8} />
             <div className="h-full md:col-span-2 xl:col-span-1">
-              <AnalyticsVagas vagas={analytics.vagas} index={9} />
+              <AnalyticsVagas vagas={analytics.vagas} detalhes={analytics.detalhes} index={9} />
             </div>
           </div>
 
