@@ -269,3 +269,110 @@ port tem o arquivo e não o monta) ficou intacta. Cinco abas → seis, com `Clip
 `ratchet-any` 1→1, `ratchet-any-tests` 0→0, `ratchet-warnings` OK · `format:check:changed` 29 arquivos OK ·
 `vitest run src/components src/pages` **458 arquivos / 4475 testes verdes** · `build` OK ·
 `js_total_kb 8460 → 8507`, `css_total_kb 401 → 404`, `js_max_chunk_kb 908` inalterado.
+
+## 12. Re-auditoria exaustiva do port e dos resgates (26/11/2026)
+
+Objetivo: provar, com evidência, que **nenhum** arquivo, PR ou branch do trabalho do agente Muri (e das
+sessões paralelas) ficou para trás — antes de considerar qualquer item obsoleto.
+
+### 12.1 Mapa do port (`296a01873`) contra a `main` (`1d76c0224`)
+
+- 138 arquivos de `src/**` existiam no port e não na `main`: 71 de produção (triados no §10: 31 mortos,
+  40 vivos/duplicatas) e 67 de mocks/testes/assets — esta fatia nunca havia sido triada.
+- **Camada de mocks do port é código morto.** `src/mocks/layoutMock/**`, `src/mocks/gestaoMock/**` e
+  `src/mocks/pontoFluxoMock.ts` são referenciados **apenas por si mesmos e pelos próprios testes**
+  (`git grep -ln "layoutMock\|gestaoMock" 296a01873 -- src` devolve só `src/mocks/**`). A `main` tem
+  outra camada de mocks — `colaboradoresMock`, `desempenhoMock`, `pesquisasClimaMock`, `pontoGeoMock`,
+  `pontoAuditoriaMock`, `treinamentosMock` — e cada uma dessas tem consumidor real em `src/`.
+- 1190 arquivos de produção **compartilhados** entre port e `main`: só 4 contêm símbolo exportado que
+  existe só no port, todos inertes/superados — `maskPixKey` (a `main` cobre `pix_chave|chave_pix` no
+  `PII_KEY` + `maskGeneric` e é mais estrita em `maskBankAccount`), `useOnMountWithDeps` e
+  `useStableCallback` (sem consumidor em nenhuma árvore) e `parametrosFiscaisService` (só o barrel e o
+  teste o citam) — além de `MiniStat`, cujo dado a `main` já renderiza com `QuickStat`
+  (`AnalyticsSection.tsx:692`).
+
+### 12.2 PRs fechadas sem merge
+
+- **#868** (`claude/feat-lote-aditivo-observabilidade-261124-1215`): `git diff --diff-filter=A --name-status
+origin/main <branch>` = **0 arquivos** — totalmente superada pela #869 (mergeada).
+- **#872** (`claude/feat-ponto-utils-resgate-261125-0100`): 45 arquivos exclusivos, todos do lote "camada 2"
+  do §10. Os dois únicos com valor real contra a `main` foram resgatados nesta rodada (§12.3); os outros 43
+  são mortos, duplicatas do §10 ou versões antigas já superadas.
+
+### 12.3 Testes do port que ainda faziam sentido na `main`
+
+Dos 8 arquivos de teste do port cujos imports resolviam na `main`, **6 não são portáveis** — falham contra a
+`main` por divergência real de implementação, não por detalhe de mock:
+
+| Arquivo                               | Motivo (evidência)                                                                        |
+| ------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `NineBoxCicloUnico.test.tsx`          | `NineBoxFiltrosProps` da `main` não tem `ciclos/cicloId/onCicloId` (TS2739 em 3 pontos)   |
+| `analyticsEvolucaoRevelacao.test.tsx` | `AnalyticsEvolucao` da `main` usa `Line` do recharts; o mock parcial do port não o define |
+| `TooltipGraficoRegua.test.tsx`        | a régua da `main` não fecha a conta de "38 tooltips / nenhum primitivo cru"               |
+| `HoleritesTab.test.tsx`               | 4/4 falham: markup e estados da `main` são outros                                         |
+| `SSTResumoTab.test.tsx`               | 2/2 falham: seções e props divergentes                                                    |
+| `TabelaCandidatosHover.test.tsx`      | 3/6 falham: a `main` não aplica a régua de hover do port no `<tr>`                        |
+
+Resgatar esses 6 exigiria **reescrever asserções para o código da `main`** — cobertura nova, não trabalho
+perdido; ficam fora de escopo por não serem funcionalidade.
+
+Os 2 restantes foram resgatados (17 testes verdes, sem `any` explícito):
+
+1. `src/components/__tests__/BancoHorasCabecalho.test.tsx` — 12 testes. A `main` **não tinha** nenhum teste
+   do cabeçalho de Banco de Horas (só `BancoHorasComum.test.ts`), então é cobertura nova de componente vivo:
+   botão Exportar em lime, Select de período com atalhos, painel de datas, "Mais filtros" com halo.
+2. `src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx` — 5 testes de **interação**
+   (prefill do valor salvo, `Salvar` só habilita após edição, salva só o campo tocado). A `main` já tinha
+   `CamposCustomizadosTab.test.tsx`, mas só com asserções estáticas (título, botão, cabeçalhos, vazio):
+   é complementar, não duplicata.
+
+Ajuste necessário para o gate `any`: o mock da Motion passou a usar `ElementType`/`ReactNode` no lugar de
+`any`, e os dublês de hook usam `as unknown as ReturnType<typeof hook>` (o mesmo `as unknown as` já
+adotado nos testes da `main`).
+
+### 12.4 Prova
+
+`typecheck` e `typecheck:tests` limpos · `audit:ratchet-any-tests` **0 → 0** (baseline intocado) ·
+`audit:ratchet-warnings` 1/1 · `prettier --check` OK · `vitest run` dos 2 arquivos: **2 arquivos / 17
+testes verdes** · `lint:ci` só com o warning pré-existente de `src/types/uiRecord.ts`.
+
+### 12.5 Fora de `src/` — as fatias que ainda não tinham sido cruzadas
+
+O mapa do §10 cobria só `src/`. O port tem 378 arquivos que a `main` não tem, assim distribuídos:
+
+| Pasta               | Exclusivos | Situação                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/`          | 158        | 152 são `_tmp-*`/`_medir-*` (diagnóstico de layout descartável). Os 6 sem `_` (`gerar-esquema-mock`, `limpar-cache-vite`, `postcss-escala-rem`, `sync-lockfiles.cjs/.sh`, `verificar-escala-global`) não são referenciados por nenhum código/CI da `main` — `gerar-esquema-mock` e `limpar-cache` têm 0 referências, e `escala-rem`/`escala-global`/`sync-lockfiles` só aparecem como nome de token CSS ou menção em documento antigo |
+| `src/`              | 138        | §10 (produção) + §12.3 (testes)                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `docs/`             | 60         | documentação da linhagem do port (ADR, `API_REFERENCE`, `ARCHITECTURE`); a `main` tem o próprio conjunto curado                                                                                                                                                                                                                                                                                                                       |
+| `supabase/`         | 18         | **todas com equivalente na `main`** — ver abaixo                                                                                                                                                                                                                                                                                                                                                                                      |
+| `e2e/`              | 4          | specs de cobertura (`audit-checklist`, `fuzz-testing`, `ninebox-aprovacao`, `premiacoes-auditoria`); exigem o ambiente autenticado que ainda está vermelho na `main`                                                                                                                                                                                                                                                                  |
+| `src/assets/banks/` | 14         | 13 logos + `SOURCES.md`, **excluídos de propósito**: `src/lib/bankBrand.ts` da `main` é byte a byte igual ao do port e documenta a medição que reprovou o `audit:bundle` com os PNGs embutidos (o fallback é sigla sobre a cor oficial)                                                                                                                                                                                               |
+
+As 18 do `supabase/` (14 migrations + 1 rollback + 3 arquivos de função) foram cruzadas uma a uma:
+
+| Migration do port                                                                  | Equivalente na `main`                                                       |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `20260724120000_atomic_rate_limit_rpc`                                             | `edge_rate_limit_check` presente                                            |
+| `20260724130000_codex_p1_function_overload_and_auth_gap`                           | `contrato_estender_expiracao` presente                                      |
+| `20260724140000_t007_backup_logs_rls`                                              | `backup_logs_select`/`_insert` presentes                                    |
+| `20260818000000_p2_037_deprecate_legacy_tables`                                    | `20260818000001_p2_037_deprecate_legacy_tables.sql`                         |
+| `20260819000000_p0_fix_user_empresa_id_rls`                                        | `user_empresa_id` presente                                                  |
+| `20260820000000_p0_fix_auditoria_rpc`                                              | `listar_auditoria`/`registrar_auditoria` presentes                          |
+| `20260821000000_p0_rls_dashboard_audit`                                            | `20260912190000_p0_identity_rls_authz.sql` (+ fortificações posteriores)    |
+| `20260925120000_document_upload_storage_columns`                                   | `20261117170300_documentos_colunas_storage.sql`                             |
+| `20260925130000_storage_documentos_delete_tenant_scope`                            | `20261117170000_storage_documentos_delete_tenant_scope.sql` + `.verify.sql` |
+| `20261005000000_onboarding_kits_rls_additive` / `…010000_onboarding_audit_trigger` | `audit_tarefas_onboarding` presente                                         |
+| `20261005020000_onboarding_modelo_b_convergencia`                                  | `20261119170000_onboarding_converge_modelo_b.sql` + `.verify.sql`           |
+| `20261026090000_ciclos_exclusao_autorizada`                                        | `bloquear_exclusao_ciclo_com_dependencias` presente                         |
+
+Dos 3 arquivos de função: `enviar-esocial/signer.ts` é cópia órfã — a `main` já importa `./utils/signer.ts`;
+`external-db-bridge/debug-test.ts` e `metricas/contract_test.ts` são scripts de teste soltos.
+
+### 12.6 Branches de preservação (sem PR)
+
+Seis branches `claude/*` existem só para guardar o estado do port (nenhuma tem PR): `feat-resgata-trabalho-muri`
+(= o próprio `296a01873`), `chore-preserva-stash-muri`, `feat-integracao-trabalho-muri`, `feat-integracao-muri-3way`,
+`chore-preserva-wip-medicao-muri` e `feat-resgata-ui-muri`. O conteúdo exclusivo delas é exatamente o que as
+tabelas do §12.3 e do §12.5 já cobrem (port + `docs/` + testes do port). Nenhuma branch foi apagada nesta rodada:
+apagar é irreversível e o ganho seria zero.
