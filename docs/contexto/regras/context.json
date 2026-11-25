@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ced7abddddfcf3ef8d6fbde7ee39fb5ec44825f5",
+  "sha": "4046e24de099152e0ccf3e63c4325d8c53800949",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 11:35 UTC",
+  "generated_at": "2026-11-25 12:01 UTC",
   "files_total": 4105,
   "code_files": 3510,
-  "code_lines": 511377
+  "code_lines": 511465
  },
  "version": "1.3.2",
- "facts_hash": "b12aa71702bb1f4c",
+ "facts_hash": "b2512cf8d7259cbc",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -106708,7 +106708,7 @@
   {
    "module": "supabase/migrations",
    "files": 1261,
-   "lines": 87355,
+   "lines": 87443,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -337841,7 +337841,7 @@
   },
   "supabase/migrations/20260719170000_security_indexes_constraints.verify.sql": {
    "path": "supabase/migrations/20260719170000_security_indexes_constraints.verify.sql",
-   "lines": 2
+   "lines": 20
   },
   "supabase/migrations/20260719180000_security_data_retention_policies.sql": {
    "path": "supabase/migrations/20260719180000_security_data_retention_policies.sql",
@@ -339474,7 +339474,7 @@
   },
   "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.verify.sql": {
    "path": "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.verify.sql",
-   "lines": 2
+   "lines": 72
   },
   "supabase/migrations/20260817010000_p4_072_materialized_views_dashboards.sql": {
    "path": "supabase/migrations/20260817010000_p4_072_materialized_views_dashboards.sql",
@@ -341172,10 +341172,20 @@
   }
  },
  "git": {
-  "sha": "ced7abddddfcf3ef8d6fbde7ee39fb5ec44825f5",
+  "sha": "4046e24de099152e0ccf3e63c4325d8c53800949",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "4046e24",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)",
+    "files": [
+     "supabase/migrations/20260719170000_security_indexes_constraints.verify.sql",
+     "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.verify.sql"
+    ]
+   },
    {
     "sha": "ced7abd",
     "date": "2026-11-25",
@@ -341833,22 +341843,12 @@
      "inventario/estado/funcionalidades.json",
      "inventario/estado/rotas.json"
     ]
-   },
-   {
-    "sha": "127ccc8",
-    "date": "2026-11-22",
-    "author": "adm01-debug",
-    "subject": "infra: registra 20261123090000 no lote do canonical-migrations (#840)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/canonical-invariants.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     ".github/workflows/canonical-migrations.yml",
-    5
+    4
    ],
    [
     "package-lock.json",
@@ -341861,6 +341861,14 @@
    [
     "supabase/functions/alertas-dp/index.ts",
     3
+   ],
+   [
+    "supabase/migrations/20260719170000_security_indexes_constraints.verify.sql",
+    2
+   ],
+   [
+    "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.verify.sql",
+    2
    ],
    [
     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
@@ -341899,10 +341907,6 @@
     1
    ],
    [
-    "supabase/migrations/20260719170000_security_indexes_constraints.verify.sql",
-    1
-   ],
-   [
     "supabase/migrations/20260719190000_audit_delete_trigger.verify.sql",
     1
    ],
@@ -341920,10 +341924,6 @@
    ],
    [
     "supabase/migrations/20260804000000_p0_010_write_policies_provisoes.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.verify.sql",
     1
    ]
   ]

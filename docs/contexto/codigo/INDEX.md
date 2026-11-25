@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ced7abddddfcf3ef8d6fbde7ee39fb5ec44825f5` (2026-11-25T08:33:30-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4046e24de099152e0ccf3e63c4325d8c53800949` (2026-11-25T09:00:10-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -400,7 +400,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 28907 nós · 64565 arestas · 2842 comunidades · grafo do commit `ced7abdd`
+- 28907 nós · 64565 arestas · 2842 comunidades · grafo do commit `4046e24d`
 - comunidades maiores: 20260831_corrected_public.sql (485), canonical_schema.sql (481), card.tsx (425), react (421), useEmpresas (418), client.ts (387), vitest (366), cn (353), App.tsx (189), supabase/types.ts (177), "public"."empresas" (164), "public"."empresas" (158)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -658,6 +658,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-25 `4046e24` fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)
 - 2026-11-25 `ced7abd` fix: p4_071 nao aborta mais o lote aditivo no canônico (#879)
 - 2026-11-25 `014b447` fix: lote aditivo aplica no canônico, sem EXECUTE anon em refresh_dashboard_views e validate que reverte (#877)
 - 2026-11-25 `d30e8fb` infra: leva 7 migrations aditivas de observabilidade ao canônico + sidecars .verify (#869)
@@ -672,7 +673,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-24 `084b528` chore: pina por hash os tres pip install sinalizados pelo Scorecard (#861)
 - 2026-11-24 `7245d10` infra: inclui a migration do cron do dreno no lote canonico (#860)
 - 2026-11-24 `7069f54` infra: agenda o dreno da fila de notificacoes quando os segredos existirem (#855)
-- 2026-11-24 `347a2ba` chore(security): pina node:22-alpine e nginx:alpine por digest (#859)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

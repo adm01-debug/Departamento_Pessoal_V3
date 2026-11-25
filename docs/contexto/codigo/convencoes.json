@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)",
    "fix: p4_071 nao aborta mais o lote aditivo no canônico (#879)",
    "fix: lote aditivo aplica no canônico, sem EXECUTE anon em refresh_dashboard_views e validate que reverte (#877)",
    "infra: leva 7 migrations aditivas de observabilidade ao canônico + sidecars .verify (#869)",
-   "feat: banco de horas com extrato filtravel, KPIs e exportacao CSV (#873)",
-   "feat(avaliacao): Ver todos dos Talentos em destaque abre a janela completa (resgate do trabalho do Muri) (#870)"
+   "feat: banco de horas com extrato filtravel, KPIs e exportacao CSV (#873)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

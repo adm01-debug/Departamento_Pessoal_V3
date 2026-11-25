@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ced7abddddfcf3ef8d6fbde7ee39fb5ec44825f5",
+  "commit": "4046e24de099152e0ccf3e63c4325d8c53800949",
   "branch": "main",
-  "data_commit": "2026-11-25T08:33:30-03:00",
+  "data_commit": "2026-11-25T09:00:10-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "4046e24",
+    "data": "2026-11-25",
+    "assunto": "fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)"
+   },
    {
     "sha": "ced7abd",
     "data": "2026-11-25",
@@ -126,11 +131,6 @@
     "sha": "bd79c79",
     "data": "2026-11-23",
     "assunto": "fix: filtra destinatarios orfaos em alertas-dp para nao violar FK (#850)"
-   },
-   {
-    "sha": "20ff226",
-    "data": "2026-11-23",
-    "assunto": "fix: troca import dinamico de rateLimit por estatico nas edges que retornavam 500 (#849)"
    }
   ],
   "arquivos_mudados_7d": 669,
