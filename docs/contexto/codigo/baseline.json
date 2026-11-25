@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d30e8fb26c45aca02afe664b4ab351d2a18311fd",
+  "commit": "014b447dfc8174edcfb20f8cfb92a0a0801109d5",
   "branch": "main",
-  "data_commit": "2026-11-25T07:27:04-03:00",
+  "data_commit": "2026-11-25T07:54:56-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "014b447",
+    "data": "2026-11-25",
+    "assunto": "fix: lote aditivo aplica no canônico, sem EXECUTE anon em refresh_dashboard_views e validate que reverte (#877)"
+   },
    {
     "sha": "d30e8fb",
     "data": "2026-11-25",
@@ -126,14 +131,9 @@
     "sha": "3fface7",
     "data": "2026-11-23",
     "assunto": "chore: registra notificacoes de workflow como resolvidas no doc (#848)"
-   },
-   {
-    "sha": "9924630",
-    "data": "2026-11-23",
-    "assunto": "fix: usa enum valido no tipo de notificacao de workflow (#847)"
    }
   ],
-  "arquivos_mudados_7d": 665,
+  "arquivos_mudados_7d": 668,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -181,7 +181,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 35
+    "mudancas": 36
    },
    {
     "pasta": "src/pages/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 35
+    "mudancas": 36
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4089,
+  "arquivos_total": 4091,
   "arquivos_codigo": 2177,
   "linhas_codigo": 437147,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 123,
   "edge_functions": 68,
   "tabelas": 438,
-  "migrations": 1259,
+  "migrations": 1261,
   "cron_jobs": 43,
   "testes": 818,
   "workflows": 21,
