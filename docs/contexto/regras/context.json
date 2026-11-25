@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1d76c0224d1550c19f724ba5219e782a99110c0b",
+  "sha": "3c8c48466af1b36cb76dcdea1ae6acb1432c1b56",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 20:56 UTC",
-  "files_total": 4242,
-  "code_files": 3646,
-  "code_lines": 542511
+  "generated_at": "2026-11-25 21:28 UTC",
+  "files_total": 4244,
+  "code_files": 3648,
+  "code_lines": 542927
  },
  "version": "1.3.2",
- "facts_hash": "c1a9e74e9b4ef83b",
+ "facts_hash": "7dc233a583ecef88",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1339,
-   ".tsx": 1141,
+   ".tsx": 1143,
    ".ts": 1025,
    ".mjs": 110,
    ".js": 15,
@@ -103059,7 +103059,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1156,
+  "components_count": 1158,
   "hooks": [
    {
     "name": "useContacts",
@@ -104734,8 +104734,8 @@
   },
   {
    "module": "src/components",
-   "files": 1156,
-   "lines": 221246,
+   "files": 1158,
+   "lines": 221662,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -104924,6 +104924,7 @@
     "src/components/__tests__/AuditoriaFeedback.test.tsx",
     "src/components/__tests__/AuditoriaPonto.test.tsx",
     "src/components/__tests__/AuditoriaTab.test.tsx",
+    "src/components/__tests__/BancoHorasCabecalho.test.tsx",
     "src/components/__tests__/BancoHorasComum.test.ts",
     "src/components/__tests__/BarChartWidget.test.tsx",
     "src/components/__tests__/BeneficioHistorico.test.tsx",
@@ -104944,6 +104945,7 @@
     "src/components/__tests__/CascadeSaidaPerfis.test.ts",
     "src/components/__tests__/CascadeSaidaRapidaAnimacao.test.tsx",
     "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
+    "src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx",
     "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
     "src/components/__tests__/ColaboradorDocuments.test.tsx",
     "src/components/__tests__/ColaboradorFilters.test.tsx",
@@ -104959,9 +104961,7 @@
     "src/components/__tests__/ContratosAssinaturaKPICard.test.tsx",
     "src/components/__tests__/ContratosVencendoPanel.test.tsx",
     "src/components/__tests__/CriacaoFeedbackIntegracao.test.ts",
-    "src/components/__tests__/CurrencyInput.test.tsx",
-    "src/components/__tests__/DarfTab.test.tsx",
-    "src/components/__tests__/DashboardHeader.test.tsx"
+    "src/components/__tests__/CurrencyInput.test.tsx"
    ]
   },
   {
@@ -175321,6 +175321,62 @@
     "name": "exibe skeleton durante o carregamento e erro com tentativa novamente"
    },
    {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "cabeçalho de Banco de Horas — Exportar em lime"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "é a única ação preenchida: lime, texto escuro e ícone herdando a cor"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "hover realça o lime (token oficial) e acende o halo discreto; pressão reduz 2%"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "continua chamando a exportação da página"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "cabeçalho de Banco de Horas — período no Select padronizado"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "nasce em "
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "abre o menu com os atalhos e aplica o período escolhido"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "volta para "
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "mostra as próprias datas quando o recorte é livre (nunca mente sobre o período)"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "cabeçalho de Banco de Horas — "
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "fica escuro no repouso (sem lime e sem halo)"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "acende borda lime + halo só no hover, com transição de 220 ms"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "usa o estado padronizado de filtro ativo quando há recorte aplicado"
+   },
+   {
+    "file": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    "name": "continua abrindo o painel de filtros avançados com as datas"
+   },
+   {
     "file": "src/components/__tests__/BancoHorasComum.test.ts",
     "name": "leitura de um lançamento"
    },
@@ -176227,6 +176283,30 @@
    {
     "file": "src/components/__tests__/ColaboradorActiveFilterChips.test.tsx",
     "name": "cada X tem rótulo acessível com o nome do filtro"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx",
+    "name": "CamposCustomizadosTab (Dossiê do Colaborador)"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx",
+    "name": "shows spinner while loading"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx",
+    "name": "shows empty state when the company has no active custom fields"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx",
+    "name": "renders one input per active custom field and prefills the saved value"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx",
+    "name": "keeps Salvar disabled until a field is actually edited"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx",
+    "name": "saves only the fields that were actually touched"
    },
    {
     "file": "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx",
@@ -279040,6 +279120,30 @@
     "exibe skeleton durante o carregamento e erro com tentativa novamente"
    ]
   },
+  "src/components/__tests__/BancoHorasCabecalho.test.tsx": {
+   "path": "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+   "lines": 287,
+   "is_test": true,
+   "rule_comments": [
+    "* Mock parcial e mínimo da Motion — o mesmo de `BancoHorasCards.test.tsx` /"
+   ],
+   "tests": [
+    "cabeçalho de Banco de Horas — Exportar em lime",
+    "é a única ação preenchida: lime, texto escuro e ícone herdando a cor",
+    "hover realça o lime (token oficial) e acende o halo discreto; pressão reduz 2%",
+    "continua chamando a exportação da página",
+    "cabeçalho de Banco de Horas — período no Select padronizado",
+    "nasce em ",
+    "abre o menu com os atalhos e aplica o período escolhido",
+    "volta para ",
+    "mostra as próprias datas quando o recorte é livre (nunca mente sobre o período)",
+    "cabeçalho de Banco de Horas — ",
+    "fica escuro no repouso (sem lime e sem halo)",
+    "acende borda lime + halo só no hover, com transição de 220 ms",
+    "usa o estado padronizado de filtro ativo quando há recorte aplicado",
+    "continua abrindo o painel de filtros avançados com as datas"
+   ]
+  },
   "src/components/__tests__/BancoHorasComum.test.ts": {
    "path": "src/components/__tests__/BancoHorasComum.test.ts",
    "lines": 418,
@@ -279445,6 +279549,19 @@
     "mostra um chip por filtro ativo",
     "o X de cada chip remove só aquele filtro",
     "cada X tem rótulo acessível com o nome do filtro"
+   ]
+  },
+  "src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx": {
+   "path": "src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx",
+   "lines": 129,
+   "is_test": true,
+   "tests": [
+    "CamposCustomizadosTab (Dossiê do Colaborador)",
+    "shows spinner while loading",
+    "shows empty state when the company has no active custom fields",
+    "renders one input per active custom field and prefills the saved value",
+    "keeps Salvar disabled until a field is actually edited",
+    "saves only the fields that were actually touched"
    ]
   },
   "src/components/__tests__/ColaboradorDirectoryGridPii.test.tsx": {
@@ -348763,10 +348880,21 @@
   }
  },
  "git": {
-  "sha": "1d76c0224d1550c19f724ba5219e782a99110c0b",
+  "sha": "3c8c48466af1b36cb76dcdea1ae6acb1432c1b56",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "3c8c484",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "chore: resgata testes do port que ainda valem na main e fecha a re-auditoria do resgate (#896)",
+    "files": [
+     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+     "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+     "src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx"
+    ]
+   },
    {
     "sha": "1d76c02",
     "date": "2026-11-25",
@@ -349566,18 +349694,6 @@
     "files": [
      "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
     ]
-   },
-   {
-    "sha": "084b528",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "chore: pina por hash os tres pip install sinalizados pelo Scorecard (#861)",
-    "files": [
-     ".claude/hooks/session-start.sh",
-     ".github/workflows/contexto.yml",
-     "scripts/supabase_snapshot/requirements.txt",
-     "scripts/uv-pin.txt"
-    ]
    }
   ],
   "hot_files": [
@@ -349587,7 +349703,7 @@
    ],
    [
     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-    7
+    8
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -349616,6 +349732,14 @@
    [
     "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.verify.sql",
     2
+   ],
+   [
+    "src/components/__tests__/BancoHorasCabecalho.test.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx",
+    1
    ],
    [
     "src/components/__tests__/AuditoriaPonto.test.tsx",
@@ -349651,14 +349775,6 @@
    ],
    [
     "src/components/dashboard/MetricCard.tsx",
-    1
-   ],
-   [
-    "src/components/ponto/AuditoriaPonto.tsx",
-    1
-   ],
-   [
-    "src/components/ponto/CentralAjustesBuscaFiltros.tsx",
     1
    ]
   ]

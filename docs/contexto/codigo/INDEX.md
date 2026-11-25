@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1d76c0224d1550c19f724ba5219e782a99110c0b` (2026-11-25T17:55:12-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3c8c48466af1b36cb76dcdea1ae6acb1432c1b56` (2026-11-25T18:26:47-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2166), SQL (1339), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2168), SQL (1339), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 4228 |
-| arquivos_codigo | 2309 |
-| linhas_codigo | 467973 |
+| arquivos_total | 4230 |
+| arquivos_codigo | 2311 |
+| linhas_codigo | 468389 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 438 |
 | migrations | 1265 |
 | cron_jobs | 43 |
-| testes | 868 |
+| testes | 870 |
 | workflows | 21 |
 | scripts | 138 |
 | docs_md | 347 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (595), src/pages (110), src/contexts (3)
 - hooks: src/hooks (105), src/components (12), src/contexts (4)
 - servicos_logica: src/services (100), src/utils (39), src/schemas (25)
-- testes: co-localizado (__tests__) (731), co-localizado (*.test) (78), e2e/ (33)
+- testes: co-localizado (__tests__) (733), co-localizado (*.test) (78), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -404,8 +404,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 29883 nós · 68135 arestas · 2839 comunidades · grafo do commit `1d76c022`
-- comunidades maiores: useEmpresas (608), lucide-react (532), button.tsx (497), 20260831_corrected_public.sql (493), canonical_schema.sql (481), cn (429), vitest (240), App.tsx (215), contract.ts (210), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
+- 29903 nós · 68180 arestas · 2763 comunidades · grafo do commit `3c8c4846`
+- comunidades maiores: @tanstack/react-query (512), 20260831_corrected_public.sql (493), canonical_schema.sql (481), lucide-react (467), useEmpresas (380), vitest (365), react (350), App.tsx (208), analyticsComum.ts (203), contract.ts (190), PagamentosTab.tsx (180), cn (180)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), formatDateLocalISO() (src/utils/dateLocal.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -419,10 +419,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
 - package-lock.json (10)
-- scripts/automation.config.json (10)
+- scripts/automation.config.json (9)
 - src/index.css (9)
 - src/schemas/tableColumns.ts (9)
-- docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md (7)
+- docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md (8)
 - docs/auditoria/sql-preservado/README.md (7)
 - src/pages/CalculadoraRescisaoPage.tsx (7)
 
@@ -663,6 +663,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-25 `3c8c484` chore: resgata testes do port que ainda valem na main e fecha a re-auditoria do resgate (#896)
 - 2026-11-25 `1d76c02` feat: resgata Central de Ajustes e Auditoria do Ponto do port do Muri (#895)
 - 2026-11-25 `7a0aee8` feat: resgata a ordem aprovada da coluna de Feedbacks e os ajustes de login do port do Muri (#894)
 - 2026-11-25 `c87122f` docs(auditoria): fecha o mapa do port do Muri com a escala do dia (#892) e a fila ja resgatada (#893)
@@ -677,7 +678,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `3cb33da` docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)
 - 2026-11-25 `05b201e` feat: resgata a tela de pesquisas de clima do port do Muri (#885)
 - 2026-11-25 `61145b4` feat: resgata a tela de solicitacoes de horas extras do port do Muri (#884)
-- 2026-11-25 `645def6` feat: resgata o painel de geofencing do ponto com mapa real (#883)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

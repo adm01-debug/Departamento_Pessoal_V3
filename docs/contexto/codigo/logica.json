@@ -5346,7 +5346,7 @@
     "utils",
     "utils/importacao"
    ],
-   "coberto_por_testes": 9,
+   "coberto_por_testes": 10,
    "orfao": false
   },
   {

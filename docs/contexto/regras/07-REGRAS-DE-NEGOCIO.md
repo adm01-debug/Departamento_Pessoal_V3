@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1d76c0224d` · branch `main` · 2026-11-25 20:56 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3c8c48466a` · branch `main` · 2026-11-25 21:28 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5664,7 +5664,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (10464 testes em 823 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10484 testes em 825 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5875,6 +5875,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/sanitizeHtml.test.ts` | 15 | sanitizeHtml — baseline hardened profile · strips <script> entirely · preserves safe anchors (http, mailto, tel, hash) · forces rel= … |
 | `src/components/__tests__/AfastamentoForm.test.tsx` | 14 | AfastamentoForm · renders Colaborador label · renders Motivo do Afastamento label · renders Data de Início label … |
 | `src/components/__tests__/AlertasPreditivosWidget.test.tsx` | 14 | AlertasPreditivosWidget · nega a análise para quem não é RH nem admin · libera para admin mesmo sem o papel de rh · pede uma empresa específica quando está no modo consolidado … |
+| `src/components/__tests__/BancoHorasCabecalho.test.tsx` | 14 | cabeçalho de Banco de Horas — Exportar em lime · é a única ação preenchida: lime, texto escuro e ícone herdando a cor · hover realça o lime (token oficial) e acende o halo discreto; pressão reduz 2% · continua chamando a exportação da página … |
 | `src/components/__tests__/CampaignWizard.test.tsx` | 14 | CampaignWizard · renders dialog title · renders dialog description · renders Nome da Campanha label on step 1 … |
 | `src/components/__tests__/ContasBancariasTab.test.tsx` | 14 | ContasBancariasTab · shows spinner when loading · renders Contas Bancárias title · renders Adicionar button … |
 | `src/components/__tests__/ESocialDesligamentoCDP.test.tsx` | 14 | S2299Desligamento · renders CPF do trabalhador · renders data do desligamento · renders motivo do desligamento … |
@@ -5967,8 +5968,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx` | 11 | CandidatoDetalhesDialog · mostra identificação, cargo, departamento e etapa atual · destaca SOMENTE a etapa efetiva do candidato no indicador · não inventa contato ausente (nem  … |
 | `src/components/recrutamento/__tests__/VagaCard.test.tsx` | 11 | VagaCard — identidade, funil e ações reais · mostra título, departamento, modalidade, competências e o funil completo · abre o Pipeline pelo botão Gerenciar Vaga · mantém apenas ações reais e não duplica Gerenciar no menu … |
 | `src/components/recrutamento/__tests__/pipelineEtapas.test.ts` | 11 | pipelineEtapas — configuração e leitura do board · define as cinco etapas na ordem do processo com tokens distintos · normaliza o vocabulário REAL do banco e isola o desconhecido em  · resolve a etapa visual pelos aliases do banco … |
-| `src/components/treinamentos/__tests__/CertificadoCard.test.tsx` | 11 | CertificadoCard — bloco Emissão / Validade / Código · usa três colunas proporcionais com labels, valores e complemento alinhados · exibe emissão e validade reais no formato dd/MM/yyyy · mostra o aviso âmbar de certificado a vencer … |
-| … +523 linhas — lista completa em `context.json` | | |
+| … +525 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

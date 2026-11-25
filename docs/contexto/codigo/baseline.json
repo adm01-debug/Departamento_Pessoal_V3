@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1d76c0224d1550c19f724ba5219e782a99110c0b",
+  "commit": "3c8c48466af1b36cb76dcdea1ae6acb1432c1b56",
   "branch": "main",
-  "data_commit": "2026-11-25T17:55:12-03:00",
+  "data_commit": "2026-11-25T18:26:47-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3c8c484",
+    "data": "2026-11-25",
+    "assunto": "chore: resgata testes do port que ainda valem na main e fecha a re-auditoria do resgate (#896)"
+   },
    {
     "sha": "1d76c02",
     "data": "2026-11-25",
@@ -126,18 +131,13 @@
     "sha": "a19e496",
     "data": "2026-11-24",
     "assunto": "docs(auditoria): registra o resgate do trabalho do agente Muri e a regra que evita regressao (#871)"
-   },
-   {
-    "sha": "252cc80",
-    "data": "2026-11-24",
-    "assunto": "chore: placeholders no-op para as 316 versoes do ledger sem fonte local (#865)"
    }
   ],
-  "arquivos_mudados_7d": 793,
+  "arquivos_mudados_7d": 795,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 393
+    "mudancas": 395
    },
    {
     "pasta": "src/components/ui",
@@ -235,7 +235,7 @@
    },
    {
     "arquivo": "scripts/automation.config.json",
-    "mudancas": 10
+    "mudancas": 9
    },
    {
     "arquivo": "src/index.css",
@@ -247,7 +247,7 @@
    },
    {
     "arquivo": "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-    "mudancas": 7
+    "mudancas": 8
    },
    {
     "arquivo": "docs/auditoria/sql-preservado/README.md",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4228,
-  "arquivos_codigo": 2309,
-  "linhas_codigo": 467973,
+  "arquivos_total": 4230,
+  "arquivos_codigo": 2311,
+  "linhas_codigo": 468389,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 438,
   "migrations": 1265,
   "cron_jobs": 43,
-  "testes": 868,
+  "testes": 870,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 347
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1156,
-   "linhas": 221246
+   "arquivos": 1158,
+   "linhas": 221662
   },
   "src/constants": {
    "arquivos": 7,
