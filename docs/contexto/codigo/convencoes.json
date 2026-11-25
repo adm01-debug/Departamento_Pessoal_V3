@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (577)",
+   "src/components (579)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (715)",
+   "co-localizado (__tests__) (716)",
    "co-localizado (*.test) (78)",
    "e2e/ (33)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (695)"
+  ".tsx (697)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: resgata a janela Ver todas do desempenho de vagas (port do Muri) (#888)",
    "feat: formulario de vaga coleta cargo, contrato, faixa e beneficios (#887)",
    "feat: resgata os cards de resumo do ponto (indicadores, equipe, pendencias e fechamento) (#886)",
    "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)",
-   "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)",
-   "feat: resgata a tela de pesquisas de clima do port do Muri (#885)"
+   "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

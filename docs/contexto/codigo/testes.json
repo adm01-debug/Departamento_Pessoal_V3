@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 852,
+ "total": 853,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 807
+  "unit": 808
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 715
+   "arquivos": 716
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -4109,12 +4109,12 @@
   {
    "arquivo": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
    "tipo": "unit",
-   "linhas": 334,
+   "linhas": 341,
    "testa": [
     "src/components/recrutamento/analyticsComum.ts",
     "src/types/recrutamento.ts"
    ],
-   "casos": 17
+   "casos": 18
   },
   {
    "arquivo": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
@@ -4171,6 +4171,19 @@
     "src/components/recrutamento/competenciasComum.ts"
    ],
    "casos": 5
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+   "tipo": "unit",
+   "linhas": 381,
+   "testa": [
+    "src/components/recrutamento/AnalyticsVagas.tsx",
+    "src/components/recrutamento/DesempenhoVagasDialog.tsx",
+    "src/components/recrutamento/analyticsComum.ts",
+    "src/components/recrutamento/analyticsVagasFiltros.ts",
+    "src/types/recrutamento.ts"
+   ],
+   "casos": 17
   },
   {
    "arquivo": "src/components/recrutamento/__tests__/PipelineBoard.test.tsx",
@@ -6004,7 +6017,7 @@
   {
    "arquivo": "src/pages/__tests__/RecrutamentoPage.vagaForm.test.tsx",
    "tipo": "unit",
-   "linhas": 117,
+   "linhas": 123,
    "testa": [
     "src/pages/RecrutamentoPage.tsx"
    ],
@@ -8261,13 +8274,16 @@
   "src/components/premiacoes/premiacoesComum.ts": 5,
   "src/components/premiacoes/simuladorRoiComum.ts": 1,
   "src/components/recrutamento/AnalyticsRecrutamento.tsx": 1,
+  "src/components/recrutamento/AnalyticsVagas.tsx": 1,
   "src/components/recrutamento/CandidatoDetalhesDialog.tsx": 1,
   "src/components/recrutamento/CandidatoTimeline.tsx": 1,
   "src/components/recrutamento/CandidatosPainel.tsx": 1,
+  "src/components/recrutamento/DesempenhoVagasDialog.tsx": 1,
   "src/components/recrutamento/PipelineBoard.tsx": 1,
   "src/components/recrutamento/VagaCard.tsx": 1,
   "src/components/recrutamento/VagasPainel.tsx": 1,
-  "src/components/recrutamento/analyticsComum.ts": 1,
+  "src/components/recrutamento/analyticsComum.ts": 2,
+  "src/components/recrutamento/analyticsVagasFiltros.ts": 1,
   "src/components/recrutamento/candidatosComum.ts": 1,
   "src/components/recrutamento/competenciasComum.ts": 1,
   "src/components/recrutamento/pipelineDragDrop.ts": 1,
@@ -8604,7 +8620,7 @@
   "src/types/entities.ts": 8,
   "src/types/medidasDisciplinares.ts": 6,
   "src/types/pcs.ts": 1,
-  "src/types/recrutamento.ts": 8,
+  "src/types/recrutamento.ts": 9,
   "src/types/timelineEvent.ts": 1,
   "src/utils/afastamentoPDF.ts": 1,
   "src/utils/auditLogger.ts": 2,

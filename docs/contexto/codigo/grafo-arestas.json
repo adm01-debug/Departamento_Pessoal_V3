@@ -3995,7 +3995,9 @@
   ],
   "src/components/recrutamento/AnalyticsVagas.tsx": [
    "src/components/recrutamento/AnalyticsPainel.tsx",
+   "src/components/recrutamento/DesempenhoVagasDialog.tsx",
    "src/components/recrutamento/analyticsComum.ts",
+   "src/components/recrutamento/analyticsVisual.ts",
    "src/lib/utils.ts"
   ],
   "src/components/recrutamento/CandidatoDetalhesDialog.tsx": [
@@ -4029,6 +4031,22 @@
    "src/lib/utils.ts",
    "src/types/recrutamento.ts",
    "src/utils/format.ts"
+  ],
+  "src/components/recrutamento/DesempenhoVagasDialog.tsx": [
+   "src/components/recrutamento/analyticsComum.ts",
+   "src/components/recrutamento/analyticsVagasFiltros.ts",
+   "src/components/recrutamento/analyticsVisual.ts",
+   "src/components/recrutamento/animacaoDetalheVaga.ts",
+   "src/components/recrutamento/barraProgressoAnalytics.tsx",
+   "src/components/recrutamento/pipelineEtapas.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/input.tsx",
+   "src/components/ui/interacao-cards.ts",
+   "src/components/ui/select.tsx",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
   ],
   "src/components/recrutamento/PipelineBoard.tsx": [
    "src/components/recrutamento/PipelineCard.tsx",
@@ -4095,6 +4113,14 @@
   "src/components/recrutamento/analyticsComum.ts": [
    "src/components/recrutamento/pipelineEtapas.ts",
    "src/types/recrutamento.ts"
+  ],
+  "src/components/recrutamento/analyticsVagasFiltros.ts": [
+   "src/components/recrutamento/analyticsComum.ts",
+   "src/components/recrutamento/pipelineEtapas.ts"
+  ],
+  "src/components/recrutamento/barraProgressoAnalytics.tsx": [
+   "src/components/ui/progressMotion.ts",
+   "src/lib/utils.ts"
   ],
   "src/components/recrutamento/candidatosComum.ts": [
    "src/components/recrutamento/pipelineEtapas.ts",

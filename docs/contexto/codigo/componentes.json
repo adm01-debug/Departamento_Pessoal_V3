@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 695,
+ "total": 697,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -6620,7 +6620,21 @@
     "AnalyticsVagas"
    ],
    "export_default": null,
-   "linhas": 113,
+   "linhas": 159,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/barraProgressoAnalytics.tsx",
+   "exports": [
+    "PreenchimentoBarraAnalytics"
+   ],
+   "export_default": null,
+   "linhas": 94,
    "dominio": "components/recrutamento",
    "hooks_locais": [],
    "tabelas": [],
@@ -6672,6 +6686,23 @@
     "recrutamento_entrevistas",
     "recrutamento_testes"
    ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/DesempenhoVagasDialog.tsx",
+   "exports": [
+    "DesempenhoVagasDialog",
+    "DesempenhoVagasDialogProps"
+   ],
+   "export_default": null,
+   "linhas": 748,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
    "edges": [],
    "usado_por": 1,
    "orfao": false
@@ -8217,7 +8248,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 393,
+   "usado_por": 394,
    "orfao": false
   },
   {
@@ -8267,7 +8298,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 22,
+   "usado_por": 23,
    "orfao": false
   },
   {
@@ -8628,7 +8659,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 184,
+   "usado_por": 185,
    "orfao": false
   },
   {
@@ -8836,7 +8867,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 138,
+   "usado_por": 139,
    "orfao": false
   },
   {

@@ -3445,7 +3445,7 @@
     "useReducedMotion"
    ],
    "canais_realtime": [],
-   "usado_por": 31,
+   "usado_por": 32,
    "usado_por_arquivos": [
     "src/components/avaliacao/AnaliticosDesempenho.tsx",
     "src/components/avaliacao/CicloAtivoPanel.tsx",
@@ -3468,6 +3468,7 @@
     "src/components/ponto/PontoFechamentoCard.tsx",
     "src/components/ponto/PontoGeofencingPainel.tsx",
     "src/components/premiacoes/AuditoriaTab.tsx",
+    "src/components/recrutamento/DesempenhoVagasDialog.tsx",
     "src/components/recrutamento/TabelaCandidatos.tsx",
     "src/components/treinamentos/InscricoesPainel.tsx",
     "src/components/turnos/CalendarioMensal.tsx",
@@ -3475,8 +3476,7 @@
     "src/components/turnos/ColunaLateralTurnos.tsx",
     "src/components/ui/command.tsx",
     "src/pages/PesquisasClimaPage.tsx",
-    "src/pages/PremiacoesPage.tsx",
-    "src/pages/RecrutamentoPage.tsx"
+    "src/pages/PremiacoesPage.tsx"
    ],
    "coberto_por_testes": 1
   },

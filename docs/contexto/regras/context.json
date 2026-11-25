@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "08dd398c3f572899c4d76f53d19e23c09597dfae",
+  "sha": "ced6c84aa78d795fc580cdd12544f04e0aab3b7a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 16:59 UTC",
-  "files_total": 4195,
-  "code_files": 3599,
-  "code_lines": 531589
+  "generated_at": "2026-11-25 17:37 UTC",
+  "files_total": 4202,
+  "code_files": 3606,
+  "code_lines": 533737
  },
  "version": "1.3.2",
- "facts_hash": "ac75ba1e6fdb7c0b",
+ "facts_hash": "9e1112a1f5ee5c66",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,8 +388,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1335,
-   ".tsx": 1113,
-   ".ts": 1010,
+   ".tsx": 1116,
+   ".ts": 1014,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -98281,7 +98281,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 247
+    "deps_count": 253
    },
    {
     "path": "",
@@ -103056,7 +103056,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1114,
+  "components_count": 1121,
   "hooks": [
    {
     "name": "useContacts",
@@ -104731,8 +104731,8 @@
   },
   {
    "module": "src/components",
-   "files": 1114,
-   "lines": 210876,
+   "files": 1121,
+   "lines": 213018,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105436,7 +105436,7 @@
   {
    "module": "src/pages",
    "files": 146,
-   "lines": 51959,
+   "lines": 51965,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -116636,6 +116636,21 @@
     "values": "alta | media | baixa"
    },
    {
+    "file": "src/components/recrutamento/analyticsComum.ts",
+    "name": "SituacaoVaga",
+    "values": "aberta | pausada | encerrada | indefinida"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsVagasFiltros.ts",
+    "name": "FiltroSituacao",
+    "values": "todas | aberta | pausada | encerrada"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsVagasFiltros.ts",
+    "name": "OrdenacaoDesempenho",
+    "values": "candidatos | maior-conversao | menor-conversao | titulo"
+   },
+   {
     "file": "src/components/recrutamento/candidatosComum.ts",
     "name": "SituacaoCandidato",
     "values": "todas | em_processo | contratados | reprovados | arquivados"
@@ -124010,6 +124025,22 @@
     "text": "Quem já conta como contratado não pode somar de novo no denominador."
    },
    {
+    "file": "src/components/recrutamento/analyticsVisual.ts",
+    "text": "deve crescer com o conteúdo. Ver `AnalyticsBarraFiltros`."
+   },
+   {
+    "file": "src/components/recrutamento/analyticsVisual.ts",
+    "text": "* A regra nasceu no card \"Desempenho por vaga\" e passou a ser consumida também"
+   },
+   {
+    "file": "src/components/recrutamento/animacaoDetalheVaga.ts",
+    "text": "anima lê daqui (mesma regra de `analyticsFunilAnimacao.ts` para o funil e de"
+   },
+   {
+    "file": "src/components/recrutamento/animacaoDetalheVaga.ts",
+    "text": "sistema (regra de `lib/motionMode.ts`)."
+   },
+   {
     "file": "src/components/recrutamento/pipelineDragDrop.ts",
     "text": "decisão registrada: o Drag & Drop não pode recolocar a pessoa no processo"
    },
@@ -124388,6 +124419,10 @@
    {
     "file": "src/components/ui/filter-chip.tsx",
     "text": "estados (a barra de filtros nunca quebra, então não pode haver"
+   },
+   {
+    "file": "src/components/ui/interacao-cards.ts",
+    "text": "* O QUE NÃO EXISTE AQUI (e por isso não deve ser inventado em nenhum módulo):"
    },
    {
     "file": "src/components/ui/linha-tabela-hover.ts",
@@ -152207,9 +152242,24 @@
     "value": "0.06"
    },
    {
+    "file": "src/components/recrutamento/AnalyticsVagas.tsx",
+    "name": "VAGAS_VISIVEIS",
+    "value": "4"
+   },
+   {
     "file": "src/components/recrutamento/CandidatoDetalhesDialog.tsx",
     "name": "BLOCOS_CASCATA",
     "value": "5"
+   },
+   {
+    "file": "src/components/recrutamento/DesempenhoVagasDialog.tsx",
+    "name": "BLOCOS_CASCATA",
+    "value": "5"
+   },
+   {
+    "file": "src/components/recrutamento/DesempenhoVagasDialog.tsx",
+    "name": "CELULA_NUMERO",
+    "value": "'px-2 py-2.5 text-right align-middle text-[12px] tabular-nums'"
    },
    {
     "file": "src/components/recrutamento/analyticsComum.ts",
@@ -152230,6 +152280,66 @@
     "file": "src/components/recrutamento/analyticsComum.ts",
     "name": "DIA_MS",
     "value": "24"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsVisual.ts",
+    "name": "SUPERFICIE_INTERNA",
+    "value": "'border border-border/50 bg-[hsl(var(--foreground)/0.045)]'"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsVisual.ts",
+    "name": "TRILHA_BARRA",
+    "value": "'block h-1.5 overflow-hidden rounded-full bg-border/40'"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsVisual.ts",
+    "name": "TRILHA_BARRA_VAGA",
+    "value": "'block h-[8px] overflow-hidden rounded-full bg-border/40'"
+   },
+   {
+    "file": "src/components/recrutamento/animacaoDetalheVaga.ts",
+    "name": "DOBRA_DURACAO_S",
+    "value": "0.3"
+   },
+   {
+    "file": "src/components/recrutamento/animacaoDetalheVaga.ts",
+    "name": "DOBRA_CONTEUDO_ATRASO_S",
+    "value": "0.06"
+   },
+   {
+    "file": "src/components/recrutamento/animacaoDetalheVaga.ts",
+    "name": "DOBRA_CONTEUDO_DURACAO_S",
+    "value": "0.2"
+   },
+   {
+    "file": "src/components/recrutamento/animacaoDetalheVaga.ts",
+    "name": "DOBRA_SAIDA_DURACAO_S",
+    "value": "0.18"
+   },
+   {
+    "file": "src/components/recrutamento/animacaoDetalheVaga.ts",
+    "name": "ETAPA_DESLOCAMENTO_PX",
+    "value": "6"
+   },
+   {
+    "file": "src/components/recrutamento/animacaoDetalheVaga.ts",
+    "name": "ETAPA_ATRASO_S",
+    "value": "0.06"
+   },
+   {
+    "file": "src/components/recrutamento/animacaoDetalheVaga.ts",
+    "name": "ETAPA_PASSO_S",
+    "value": "0.028"
+   },
+   {
+    "file": "src/components/recrutamento/animacaoDetalheVaga.ts",
+    "name": "ETAPA_DURACAO_S",
+    "value": "0.14"
+   },
+   {
+    "file": "src/components/recrutamento/animacaoDetalheVaga.ts",
+    "name": "DOBRA_DURACAO_REDUZIDA_S",
+    "value": "0.15"
    },
    {
     "file": "src/components/recrutamento/candidatosComum.ts",
@@ -152480,6 +152590,11 @@
     "file": "src/components/ui/entradaGlobal.ts",
     "name": "ATTR_ESCOPO_ENTRADA",
     "value": "'data-entrada-escopo'"
+   },
+   {
+    "file": "src/components/ui/interacao-cards.ts",
+    "name": "CARD_INTERACAO",
+    "value": "'card-interacao hover:border-primary/40'"
    },
    {
     "file": "src/components/ui/progressMotion.ts",
@@ -157692,6 +157807,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/recrutamento/DesempenhoVagasDialog.tsx",
+    "field": "situacao",
+    "value": "aberta",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/recrutamento/PipelineBoard.tsx",
     "field": "etapa",
     "value": "outras",
@@ -157755,6 +157876,18 @@
     "file": "src/components/recrutamento/analyticsComum.ts",
     "field": "status",
     "value": "aberta",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsVagasFiltros.ts",
+    "field": "situacao",
+    "value": "todas",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsVagasFiltros.ts",
+    "field": "situacao",
+    "value": "todas",
     "kind": "compara"
    },
    {
@@ -170050,12 +170183,32 @@
     "line": "limite de altura; ocupa 100% da largura útil do modal. */}"
    },
    {
+    "file": "src/components/recrutamento/DesempenhoVagasDialog.tsx",
+    "line": "do card) + percentual com a cor semântica. O piso de 6%"
+   },
+   {
     "file": "src/components/recrutamento/PipelineBoard.tsx",
     "line": "* (`useDroppable` com o id da etapa). O card de origem fica em 30% e o"
    },
    {
     "file": "src/components/recrutamento/analyticsComum.ts",
     "line": "// quando ALGUÉM chegou à etapa seguinte — 0% por amostra vazia não é alerta."
+   },
+   {
+    "file": "src/components/recrutamento/analyticsVisual.ts",
+    "line": "* `hover:bg-primary/5` ........... o véu de 5% que acompanha a onda;"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsVisual.ts",
+    "line": "* before:rounded-[100%]` com `before:transition-transform"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsVisual.ts",
+    "line": "* vaga (`TRILHA_BARRA_VAGA`). Com 6px de projeto a barra de 20% virava um traço"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsVisual.ts",
+    "line": "* • altura `h-[35px]` — 35px de projeto = 43,75px reais na base de 125%,"
    },
    {
     "file": "src/components/relatorios/RelatoriosAgendadosTab.tsx",
@@ -189761,6 +189914,10 @@
    },
    {
     "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+    "name": "expõe o detalhamento sobre a MESMA base do card (janela "
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
     "name": "entrega os quatro indicadores gerais com as réguas declaradas"
    },
    {
@@ -189898,6 +190055,90 @@
    {
     "file": "src/components/recrutamento/__tests__/competenciasComum.test.ts",
     "name": "nenhum tema carrega glow, sombra ou gradiente"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "filtros da tabela de desempenho"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "busca por vaga, departamento e situação, sem acento e sem caixa"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "recorta por situação e ordena pelas quatro opções"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "só considera filtro ativo o que sai do padrão"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "DesempenhoVagasDialog"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "abre com cabeçalho, quatro KPIs e a tabela completa do recorte"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "filtra pela busca e só então o "
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "detalha a vaga dentro da própria linha, sem abrir outra janela"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "mantém o detalhe aberto quando a tabela é filtrada de novo"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "anima a dobra num recorte com altura própria, sem tocar na tabela"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "mostra "
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "fecha pelo botão do rodapé, devolvendo o pedido ao card"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "não renderiza nada com a janela fechada"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "construirDetalheVagas"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "mantém os números do card e acrescenta o que a janela precisa"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "distribui as candidaturas nas etapas configuradas do pipeline"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "não inventa tempo médio para vaga sem candidatura"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "classifica o status real da vaga (aberta, pausada, encerrada)"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "resume os quatro KPIs sobre a base inteira do recorte"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "AnalyticsVagas — resumo do card"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "name": "mantém quatro vagas no resumo e abre a janela completa pelo "
    },
    {
     "file": "src/components/recrutamento/__tests__/pipelineDragDrop.test.ts",
@@ -242992,8 +243233,13 @@
      "encerrada": [
       "escreve:src/components/premiacoes/premiacoesComum.ts"
      ],
+     "aberta": [
+      "compara:src/components/recrutamento/DesempenhoVagasDialog.tsx"
+     ],
      "todas": [
+      "compara:src/components/recrutamento/analyticsVagasFiltros.ts",
       "compara:src/components/recrutamento/candidatosComum.ts",
+      "escreve:src/components/recrutamento/analyticsVagasFiltros.ts",
       "escreve:src/components/recrutamento/candidatosComum.ts"
      ],
      "reprovados": [
@@ -297352,9 +297598,15 @@
   },
   "src/components/recrutamento/AnalyticsVagas.tsx": {
    "path": "src/components/recrutamento/AnalyticsVagas.tsx",
-   "lines": 113,
+   "lines": 159,
    "exports": [
     "function AnalyticsVagas"
+   ],
+   "params": [
+    {
+     "name": "VAGAS_VISIVEIS",
+     "value": "4"
+    }
    ],
    "status_values": [
     {
@@ -297541,6 +297793,34 @@
     }
    ]
   },
+  "src/components/recrutamento/DesempenhoVagasDialog.tsx": {
+   "path": "src/components/recrutamento/DesempenhoVagasDialog.tsx",
+   "lines": 748,
+   "exports": [
+    "interface DesempenhoVagasDialogProps",
+    "function DesempenhoVagasDialog"
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA",
+     "value": "5"
+    },
+    {
+     "name": "CELULA_NUMERO",
+     "value": "'px-2 py-2.5 text-right align-middle text-[12px] tabular-nums'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "situacao",
+     "value": "aberta",
+     "kind": "compara"
+    }
+   ],
+   "percents": [
+    "do card) + percentual com a cor semântica. O piso de 6%"
+   ]
+  },
   "src/components/recrutamento/PipelineBoard.tsx": {
    "path": "src/components/recrutamento/PipelineBoard.tsx",
    "lines": 315,
@@ -297633,7 +297913,7 @@
   },
   "src/components/recrutamento/analyticsComum.ts": {
    "path": "src/components/recrutamento/analyticsComum.ts",
-   "lines": 713,
+   "lines": 875,
    "exports": [
     "const JANELA_COMPARACAO_DIAS",
     "type SeveridadeAtencao",
@@ -297645,6 +297925,8 @@
     "interface TempoEtapa",
     "interface PontoAtencao",
     "interface DesempenhoVaga",
+    "type SituacaoVaga",
+    "interface DetalheVaga",
     "interface IndicadorGeral",
     "interface TendenciaKpi",
     "interface KpiRecrutamento",
@@ -297660,6 +297942,11 @@
     "function construirOrigens",
     "function construirTempos",
     "function construirDesempenhoVagas",
+    "const ROTULO_SITUACAO",
+    "function situacaoDaVaga",
+    "function construirDetalheVagas",
+    "interface ResumoDesempenhoVagas",
+    "function resumirDesempenhoVagas",
     "function construirPontosDeAtencao",
     "function construirIndicadores",
     "function construirKpis",
@@ -297669,6 +297956,10 @@
     {
      "name": "SeveridadeAtencao",
      "values": "alta | media | baixa"
+    },
+    {
+     "name": "SituacaoVaga",
+     "values": "aberta | pausada | encerrada | indefinida"
     }
    ],
    "params": [
@@ -297768,6 +298059,157 @@
    ],
    "percents": [
     "// quando ALGUÉM chegou à etapa seguinte — 0% por amostra vazia não é alerta."
+   ]
+  },
+  "src/components/recrutamento/analyticsVagasFiltros.ts": {
+   "path": "src/components/recrutamento/analyticsVagasFiltros.ts",
+   "lines": 112,
+   "exports": [
+    "type FiltroSituacao",
+    "type OrdenacaoDesempenho",
+    "interface FiltrosDesempenho",
+    "const FILTROS_DESEMPENHO_PADRAO",
+    "const SITUACOES_DESEMPENHO",
+    "const ORDENACOES_DESEMPENHO",
+    "function rotuloOrdenacao",
+    "function rotuloSituacaoFiltro",
+    "function temFiltroDesempenho",
+    "function filtrarDetalheVagas"
+   ],
+   "enums": [
+    {
+     "name": "FiltroSituacao",
+     "values": "todas | aberta | pausada | encerrada"
+    },
+    {
+     "name": "OrdenacaoDesempenho",
+     "values": "candidatos | maior-conversao | menor-conversao | titulo"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "situacao",
+     "value": "todas",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "todas",
+     "kind": "compara"
+    }
+   ]
+  },
+  "src/components/recrutamento/analyticsVisual.ts": {
+   "path": "src/components/recrutamento/analyticsVisual.ts",
+   "lines": 294,
+   "exports": [
+    "const SUPERFICIE_INTERNA",
+    "const SUPERFICIE_SUAVE",
+    "const TRILHA_BARRA",
+    "const TRILHA_BARRA_VAGA",
+    "const TRILHA_BARRA_INLINE",
+    "const PREENCHIMENTO_BARRA",
+    "const GRADIENTES_ORIGEM",
+    "const GRADIENTE_VAGA",
+    "const BOTAO_ACAO",
+    "const FLOW_BOTAO_ACAO",
+    "const BOTAO_ACAO_SELECT",
+    "const SELECT_PAINEL",
+    "const BOTAO_VER_TODOS",
+    "const BOTAO_VER_TODOS_PRIMARIO",
+    "const ROTULO_MINI",
+    "function tokenDaConversao"
+   ],
+   "params": [
+    {
+     "name": "SUPERFICIE_INTERNA",
+     "value": "'border border-border/50 bg-[hsl(var(--foreground)/0.045)]'"
+    },
+    {
+     "name": "TRILHA_BARRA",
+     "value": "'block h-1.5 overflow-hidden rounded-full bg-border/40'"
+    },
+    {
+     "name": "TRILHA_BARRA_VAGA",
+     "value": "'block h-[8px] overflow-hidden rounded-full bg-border/40'"
+    }
+   ],
+   "rule_comments": [
+    "deve crescer com o conteúdo. Ver `AnalyticsBarraFiltros`.",
+    "* A regra nasceu no card \"Desempenho por vaga\" e passou a ser consumida também"
+   ],
+   "percents": [
+    "* `hover:bg-primary/5` ........... o véu de 5% que acompanha a onda;",
+    "* before:rounded-[100%]` com `before:transition-transform",
+    "* vaga (`TRILHA_BARRA_VAGA`). Com 6px de projeto a barra de 20% virava um traço",
+    "* • altura `h-[35px]` — 35px de projeto = 43,75px reais na base de 125%,"
+   ]
+  },
+  "src/components/recrutamento/animacaoDetalheVaga.ts": {
+   "path": "src/components/recrutamento/animacaoDetalheVaga.ts",
+   "lines": 178,
+   "exports": [
+    "const CURVA_DOBRA",
+    "const DOBRA_DURACAO_S",
+    "const DOBRA_CONTEUDO_ATRASO_S",
+    "const DOBRA_CONTEUDO_DURACAO_S",
+    "const DOBRA_SAIDA_DURACAO_S",
+    "const ETAPA_DESLOCAMENTO_PX",
+    "const ETAPA_ATRASO_S",
+    "const ETAPA_PASSO_S",
+    "const ETAPA_DURACAO_S",
+    "const DOBRA_DURACAO_REDUZIDA_S",
+    "interface VariantesDetalheVaga",
+    "function variantesDetalheVaga"
+   ],
+   "params": [
+    {
+     "name": "DOBRA_DURACAO_S",
+     "value": "0.3"
+    },
+    {
+     "name": "DOBRA_CONTEUDO_ATRASO_S",
+     "value": "0.06"
+    },
+    {
+     "name": "DOBRA_CONTEUDO_DURACAO_S",
+     "value": "0.2"
+    },
+    {
+     "name": "DOBRA_SAIDA_DURACAO_S",
+     "value": "0.18"
+    },
+    {
+     "name": "ETAPA_DESLOCAMENTO_PX",
+     "value": "6"
+    },
+    {
+     "name": "ETAPA_ATRASO_S",
+     "value": "0.06"
+    },
+    {
+     "name": "ETAPA_PASSO_S",
+     "value": "0.028"
+    },
+    {
+     "name": "ETAPA_DURACAO_S",
+     "value": "0.14"
+    },
+    {
+     "name": "DOBRA_DURACAO_REDUZIDA_S",
+     "value": "0.15"
+    }
+   ],
+   "rule_comments": [
+    "anima lê daqui (mesma regra de `analyticsFunilAnimacao.ts` para o funil e de",
+    "sistema (regra de `lib/motionMode.ts`)."
+   ]
+  },
+  "src/components/recrutamento/barraProgressoAnalytics.tsx": {
+   "path": "src/components/recrutamento/barraProgressoAnalytics.tsx",
+   "lines": 94,
+   "exports": [
+    "function PreenchimentoBarraAnalytics"
    ]
   },
   "src/components/recrutamento/candidatosComum.ts": {
@@ -298192,7 +298634,7 @@
   },
   "src/components/recrutamento/__tests__/analyticsComum.test.ts": {
    "path": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
-   "lines": 334,
+   "lines": 341,
    "is_test": true,
    "tests": [
     "analyticsComum",
@@ -298204,6 +298646,7 @@
     "mede a permanência média por etapa desde a última movimentação",
     "deriva pontos de atenção reais do funil",
     "calcula conversão e volume por vaga",
+    "expõe o detalhamento sobre a MESMA base do card (janela ",
     "entrega os quatro indicadores gerais com as réguas declaradas",
     "mede o tempo de contratação até a movimentação da contratação",
     "compara KPIs com a janela anterior usando os dados da base",
@@ -298263,6 +298706,34 @@
     "normaliza caixa, acentos e espaços extras",
     "é determinístico para competências fora da tabela (nunca por índice)",
     "nenhum tema carrega glow, sombra ou gradiente"
+   ]
+  },
+  "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx": {
+   "path": "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+   "lines": 381,
+   "is_test": true,
+   "tests": [
+    "filtros da tabela de desempenho",
+    "busca por vaga, departamento e situação, sem acento e sem caixa",
+    "recorta por situação e ordena pelas quatro opções",
+    "só considera filtro ativo o que sai do padrão",
+    "DesempenhoVagasDialog",
+    "abre com cabeçalho, quatro KPIs e a tabela completa do recorte",
+    "filtra pela busca e só então o ",
+    "detalha a vaga dentro da própria linha, sem abrir outra janela",
+    "mantém o detalhe aberto quando a tabela é filtrada de novo",
+    "anima a dobra num recorte com altura própria, sem tocar na tabela",
+    "mostra ",
+    "fecha pelo botão do rodapé, devolvendo o pedido ao card",
+    "não renderiza nada com a janela fechada",
+    "construirDetalheVagas",
+    "mantém os números do card e acrescenta o que a janela precisa",
+    "distribui as candidaturas nas etapas configuradas do pipeline",
+    "não inventa tempo médio para vaga sem candidatura",
+    "classifica o status real da vaga (aberta, pausada, encerrada)",
+    "resume os quatro KPIs sobre a base inteira do recorte",
+    "AnalyticsVagas — resumo do card",
+    "mantém quatro vagas no resumo e abre a janela completa pelo "
    ]
   },
   "src/components/recrutamento/__tests__/pipelineDragDrop.test.ts": {
@@ -301893,6 +302364,26 @@
      "value": "date",
      "kind": "compara"
     }
+   ]
+  },
+  "src/components/ui/interacao-cards.ts": {
+   "path": "src/components/ui/interacao-cards.ts",
+   "lines": 120,
+   "exports": [
+    "const CONFIG_INTERACAO_CARD",
+    "const CARD_INTERACAO",
+    "const CARD_INTERACAO_ICONE",
+    "const CARD_INTERACAO_ESTATICO",
+    "const CARD_INTERACAO_ICONE_ESTATICO"
+   ],
+   "params": [
+    {
+     "name": "CARD_INTERACAO",
+     "value": "'card-interacao hover:border-primary/40'"
+    }
+   ],
+   "rule_comments": [
+    "* O QUE NÃO EXISTE AQUI (e por isso não deve ser inventado em nenhum módulo):"
    ]
   },
   "src/components/ui/label.tsx": {
@@ -316771,7 +317262,7 @@
   },
   "src/pages/__tests__/RecrutamentoPage.vagaForm.test.tsx": {
    "path": "src/pages/__tests__/RecrutamentoPage.vagaForm.test.tsx",
-   "lines": 117,
+   "lines": 123,
    "is_test": true,
    "tests": [
     "RecrutamentoPage — formulário de vaga completo",
@@ -346134,10 +346625,32 @@
   }
  },
  "git": {
-  "sha": "08dd398c3f572899c4d76f53d19e23c09597dfae",
+  "sha": "ced6c84aa78d795fc580cdd12544f04e0aab3b7a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "ced6c84",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: resgata a janela Ver todas do desempenho de vagas (port do Muri) (#888)",
+    "files": [
+     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+     "scripts/.bundle-budget.json",
+     "src/components/recrutamento/AnalyticsRecrutamento.tsx",
+     "src/components/recrutamento/AnalyticsVagas.tsx",
+     "src/components/recrutamento/DesempenhoVagasDialog.tsx",
+     "src/components/recrutamento/__tests__/analyticsComum.test.ts",
+     "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+     "src/components/recrutamento/analyticsComum.ts",
+     "src/components/recrutamento/analyticsVagasFiltros.ts",
+     "src/components/recrutamento/analyticsVisual.ts",
+     "src/components/recrutamento/animacaoDetalheVaga.ts",
+     "src/components/recrutamento/barraProgressoAnalytics.tsx",
+     "src/components/ui/interacao-cards.ts",
+     "src/pages/__tests__/RecrutamentoPage.vagaForm.test.tsx"
+    ]
+   },
    {
     "sha": "08dd398",
     "date": "2026-11-25",
@@ -346877,32 +347390,12 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "2489b55",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "feat: entrega real de Web Push (VAPID) na fila de notificacoes (#853)",
-    "files": [
-     ".env.example",
-     "src/contexts/AuthContext.tsx",
-     "src/contexts/__tests__/AuthContext.test.tsx",
-     "src/pages/PerfilPage.tsx",
-     "src/services/__tests__/pushNotificationService.test.ts",
-     "src/services/pushNotificationService.ts",
-     "src/vite-env.d.ts",
-     "supabase/functions/_shared/circuitBreaker.test.ts",
-     "supabase/functions/_shared/circuitBreaker.ts",
-     "supabase/functions/_shared/webPush.test.ts",
-     "supabase/functions/_shared/webPush.ts",
-     "supabase/functions/processar-agendamentos/filaNotificacoes.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    6
+    7
    ],
    [
     "package-lock.json",
@@ -346913,12 +347406,16 @@
     5
    ],
    [
+    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    4
+   ],
+   [
     ".github/workflows/canonical-migrations.yml",
     4
    ],
    [
-    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-    3
+    "src/pages/__tests__/RecrutamentoPage.vagaForm.test.tsx",
+    2
    ],
    [
     "src/pages/PontoPage.tsx",
@@ -346941,43 +347438,39 @@
     2
    ],
    [
-    "src/components/recrutamento/VagaCard.tsx",
+    "src/components/recrutamento/AnalyticsRecrutamento.tsx",
     1
    ],
    [
-    "src/components/recrutamento/__tests__/VagaCard.test.tsx",
+    "src/components/recrutamento/AnalyticsVagas.tsx",
     1
    ],
    [
-    "src/components/recrutamento/__tests__/vagasComum.test.ts",
+    "src/components/recrutamento/DesempenhoVagasDialog.tsx",
     1
    ],
    [
-    "src/components/recrutamento/vagasComum.ts",
+    "src/components/recrutamento/__tests__/analyticsComum.test.ts",
     1
    ],
    [
-    "src/pages/RecrutamentoPage.tsx",
+    "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
     1
    ],
    [
-    "src/pages/__tests__/RecrutamentoPage.vagaForm.test.tsx",
+    "src/components/recrutamento/analyticsComum.ts",
     1
    ],
    [
-    "src/components/ponto/PontoBancoHorasCard.tsx",
+    "src/components/recrutamento/analyticsVagasFiltros.ts",
     1
    ],
    [
-    "src/components/ponto/PontoEquipeStatusCard.tsx",
+    "src/components/recrutamento/analyticsVisual.ts",
     1
    ],
    [
-    "src/components/ponto/PontoFechamentoCard.tsx",
-    1
-   ],
-   [
-    "src/components/ponto/PontoIndicadoresKpi.tsx",
+    "src/components/recrutamento/animacaoDetalheVaga.ts",
     1
    ]
   ]

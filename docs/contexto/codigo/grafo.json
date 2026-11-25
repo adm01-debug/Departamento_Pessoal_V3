@@ -1,16 +1,16 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1416,
- "arestas": 6962,
+ "nos": 1422,
+ "arestas": 6982,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 393
+   "importado_por": 394
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 327
+   "importado_por": 329
   },
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -26,7 +26,7 @@
   },
   {
    "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 184
+   "importado_por": 185
   },
   {
    "arquivo": "src/components/ui/dialog.tsx",
@@ -42,7 +42,7 @@
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 139
+   "importado_por": 140
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
@@ -122,7 +122,7 @@
   },
   {
    "arquivo": "src/components/ui/cascade-motion.ts",
-   "importado_por": 43
+   "importado_por": 44
   },
   {
    "arquivo": "src/components/ui/entrada-cards.tsx",
@@ -154,7 +154,7 @@
   },
   {
    "arquivo": "src/lib/motionMode.ts",
-   "importado_por": 32
+   "importado_por": 33
   },
   {
    "arquivo": "src/services/piiAccessLogService.ts",

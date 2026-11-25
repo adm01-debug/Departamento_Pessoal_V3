@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `08dd398c3f572899c4d76f53d19e23c09597dfae` (2026-11-25T13:58:28-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ced6c84aa78d795fc580cdd12544f04e0aab3b7a` (2026-11-25T14:36:43-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2123), SQL (1335), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2130), SQL (1335), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 4181 |
-| arquivos_codigo | 2266 |
-| linhas_codigo | 457271 |
+| arquivos_total | 4188 |
+| arquivos_codigo | 2273 |
+| linhas_codigo | 459419 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
 | itens_menu | 97 |
 | modulos | 86 |
-| componentes | 695 |
+| componentes | 697 |
 | hooks | 127 |
 | edge_functions | 68 |
 | tabelas | 438 |
 | migrations | 1261 |
 | cron_jobs | 43 |
-| testes | 852 |
+| testes | 853 |
 | workflows | 21 |
 | scripts | 138 |
 | docs_md | 347 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
-- componentes: src/components (577), src/pages (110), src/contexts (3)
+- componentes: src/components (579), src/pages (110), src/contexts (3)
 - hooks: src/hooks (105), src/components (12), src/contexts (4)
 - servicos_logica: src/services (100), src/utils (39), src/schemas (25)
-- testes: co-localizado (__tests__) (715), co-localizado (*.test) (78), e2e/ (33)
+- testes: co-localizado (__tests__) (716), co-localizado (*.test) (78), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -98,12 +98,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/ponto | 0 | 0 | 36 | 159 | 36 | 141 |
 | components/portal | 0 | 0 | 5 | 4 | 28 | 87 |
 | components/premiacoes | 0 | 0 | 23 | 148 | 33 | 138 |
-| components/recrutamento | 0 | 0 | 26 | 4 | 0 | 6 |
+| components/recrutamento | 0 | 0 | 31 | 4 | 0 | 6 |
 | components/settings | 0 | 0 | 11 | 150 | 33 | 174 |
 | components/sst | 0 | 0 | 11 | 6 | 2 | 9 |
 | components/treinamentos | 0 | 0 | 47 | 1 | 28 | 82 |
 | components/turnos | 0 | 0 | 22 | 153 | 33 | 134 |
-| components/ui | 0 | 0 | 78 | 19 | 2 | 6 |
+| components/ui | 0 | 0 | 79 | 19 | 2 | 6 |
 | hooks | 0 | 0 | 100 | 215 | 37 | 168 |
 | hooks/ferias | 0 | 0 | 6 | 11 | 0 | 8 |
 | integrations/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
@@ -404,8 +404,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 29510 nós · 66878 arestas · 2847 comunidades · grafo do commit `08dd398c`
-- comunidades maiores: cn (500), 20260831_corrected_public.sql (485), canonical_schema.sql (481), react (432), @tanstack/react-query (406), App.tsx (371), vitest (296), lucide-react (261), useEmpresas (238), validate.ts (230), validateTablePayload (203), contract.ts (196)
+- 29589 nós · 67079 arestas · 2836 comunidades · grafo do commit `ced6c84a`
+- comunidades maiores: lucide-react (548), 20260831_corrected_public.sql (493), canonical_schema.sql (481), useEmpresas (467), button.tsx (415), @tanstack/react-query (371), client.ts (362), ColaboradorDetalhesPage.tsx (294), vitest (264), react (196), rateLimit.ts (188), cn (172)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -663,6 +663,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-25 `ced6c84` feat: resgata a janela Ver todas do desempenho de vagas (port do Muri) (#888)
 - 2026-11-25 `08dd398` feat: formulario de vaga coleta cargo, contrato, faixa e beneficios (#887)
 - 2026-11-25 `58dd46c` feat: resgata os cards de resumo do ponto (indicadores, equipe, pendencias e fechamento) (#886)
 - 2026-11-25 `adc0f56` docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)
@@ -677,7 +678,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `014b447` fix: lote aditivo aplica no canônico, sem EXECUTE anon em refresh_dashboard_views e validate que reverte (#877)
 - 2026-11-25 `d30e8fb` infra: leva 7 migrations aditivas de observabilidade ao canônico + sidecars .verify (#869)
 - 2026-11-24 `ce83bb0` feat: banco de horas com extrato filtravel, KPIs e exportacao CSV (#873)
-- 2026-11-24 `2669333` feat(avaliacao): Ver todos dos Talentos em destaque abre a janela completa (resgate do trabalho do Muri) (#870)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
