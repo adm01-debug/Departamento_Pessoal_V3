@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 249,
+   "usado_por": 251,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -957,7 +957,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 329,
+   "usado_por": 336,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -1930,7 +1930,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 12,
+   "usado_por": 14,
    "usado_por_modulos": [
     "components/colaboradores",
     "components/dashboard",
@@ -3040,7 +3040,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 13,
+   "usado_por": 14,
    "usado_por_modulos": [
     "components/avaliacao",
     "components/banco-horas",
@@ -5323,7 +5323,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 64,
+   "usado_por": 66,
    "usado_por_modulos": [
     "components/admissoes",
     "components/banco-horas",
@@ -5346,7 +5346,7 @@
     "utils",
     "utils/importacao"
    ],
-   "coberto_por_testes": 7,
+   "coberto_por_testes": 9,
    "orfao": false
   },
   {
@@ -5968,7 +5968,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 6,
+   "usado_por": 9,
    "usado_por_modulos": [
     "components/ponto",
     "hooks",

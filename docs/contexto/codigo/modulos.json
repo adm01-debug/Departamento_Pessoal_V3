@@ -201,7 +201,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 330,
+   "testes": 337,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -1026,6 +1026,7 @@
    "importado_por_outros_modulos": [
     "components/banco-horas",
     "components/pesquisas",
+    "components/ponto",
     "components/premiacoes",
     "components/recrutamento",
     "hooks",
@@ -1849,7 +1850,7 @@
    "modulo": "components/dashboard",
    "arquivos": 23,
    "testes": 0,
-   "linhas": 4624,
+   "linhas": 4734,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4600,13 +4601,13 @@
   },
   {
    "modulo": "components/ponto",
-   "arquivos": 37,
+   "arquivos": 53,
    "testes": 1,
-   "linhas": 8725,
+   "linhas": 13277,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 33,
+   "componentes": 47,
    "hooks_locais": [
     "useASOs",
     "useAdmissaoWorkflow",
@@ -4934,7 +4935,6 @@
     "treinamento_feedback",
     "treinamento_instancias",
     "treinamento_participantes",
-    "trilha_auditoria_ponto",
     "trilhas_aprendizado",
     "trilhas_cursos",
     "turnos",
@@ -5004,7 +5004,9 @@
     "medidas-disciplinares",
     "ponto-biometria"
    ],
-   "canais_realtime": [],
+   "canais_realtime": [
+    "audit-changes"
+   ],
    "env": [
     "DEV",
     "MODE",
@@ -5024,6 +5026,7 @@
     "group",
     "progressbar",
     "rh",
+    "search",
     "status",
     "tooltip",
     "user"
@@ -5038,8 +5041,7 @@
      "batidas_ponto",
      "colaboradores",
      "registros_ponto",
-     "solicitacoes_ajuste_ponto",
-     "trilha_auditoria_ponto"
+     "solicitacoes_ajuste_ponto"
     ],
     "rpcs": [
      "admin_definir_pin_quiosque",
@@ -5052,9 +5054,11 @@
    },
    "importado_por_outros_modulos": [
     "components/colaborador-detalhes",
+    "mocks",
     "pages"
    ],
    "depende_de_modulos": [
+    "components/avaliacao",
     "components/dashboard",
     "components/ui",
     "contexts",
@@ -5069,6 +5073,7 @@
    ],
    "pacotes_externos": [
     "@tanstack/react-query",
+    "crypto-js",
     "date-fns",
     "framer-motion",
     "leaflet",
@@ -8972,9 +8977,9 @@
   },
   {
    "modulo": "mocks",
-   "arquivos": 5,
+   "arquivos": 6,
    "testes": 0,
-   "linhas": 3978,
+   "linhas": 4291,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -9014,10 +9019,12 @@
    ],
    "depende_de_modulos": [
     "components/avaliacao",
+    "components/ponto",
     "types",
     "utils"
    ],
    "pacotes_externos": [
+    "crypto-js",
     "sonner"
    ]
   },
@@ -9025,7 +9032,7 @@
    "modulo": "pages",
    "arquivos": 115,
    "testes": 0,
-   "linhas": 46978,
+   "linhas": 46985,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -9763,7 +9770,6 @@
     "treinamento_instancias",
     "treinamento_participantes",
     "treinamentos",
-    "trilha_auditoria_ponto",
     "trilhas_aprendizado",
     "trilhas_cursos",
     "turnos",
@@ -9927,6 +9933,7 @@
    ],
    "canais_realtime": [
     "afdt-div-${empresaId}",
+    "audit-changes",
     "comunicados-realtime",
     "notif-toast-${empresaId}-${Math.random().toString(36).slice(2)}",
     "notificacoes-realtime-page",
@@ -9974,6 +9981,7 @@
     "rh",
     "row",
     "rowgroup",
+    "search",
     "slider",
     "status",
     "supervisor",

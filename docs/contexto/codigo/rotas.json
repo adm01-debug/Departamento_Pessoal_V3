@@ -25357,7 +25357,6 @@
     "treinamento_feedback",
     "treinamento_instancias",
     "treinamento_participantes",
-    "trilha_auditoria_ponto",
     "trilhas_aprendizado",
     "trilhas_cursos",
     "turnos",
@@ -25456,6 +25455,7 @@
     "whatsapp-send"
    ],
    "canais_realtime": [
+    "audit-changes",
     "sidebar-security-alerts-${Math.random().toString(36).slice(2)}"
    ],
    "flags": [],
@@ -25470,13 +25470,14 @@
     "main",
     "progressbar",
     "rh",
+    "search",
     "status",
     "tab",
     "tablist",
     "tooltip",
     "user"
    ],
-   "arquivos_puxados": 282
+   "arquivos_puxados": 306
   },
   {
    "protegida": true,

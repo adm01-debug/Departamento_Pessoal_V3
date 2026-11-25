@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 861,
+ "total": 868,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 816
+  "unit": 823
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 724
+   "arquivos": 731
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -978,6 +978,17 @@
    "casos": 10
   },
   {
+   "arquivo": "src/components/__tests__/AuditoriaPonto.test.tsx",
+   "tipo": "unit",
+   "linhas": 408,
+   "testa": [
+    "src/components/ponto/AuditoriaPonto.tsx",
+    "src/components/ponto/centralAuditoria.ts",
+    "src/utils/dateLocal.ts"
+   ],
+   "casos": 17
+  },
+  {
    "arquivo": "src/components/__tests__/AuditoriaTab.test.tsx",
    "tipo": "unit",
    "linhas": 240,
@@ -1147,6 +1158,24 @@
     "src/components/ui/cascade-motion.ts"
    ],
    "casos": 1
+  },
+  {
+   "arquivo": "src/components/__tests__/centralAjustes.test.ts",
+   "tipo": "unit",
+   "linhas": 247,
+   "testa": [
+    "src/components/ponto/centralAjustes.ts"
+   ],
+   "casos": 23
+  },
+  {
+   "arquivo": "src/components/__tests__/centralAuditoria.test.ts",
+   "tipo": "unit",
+   "linhas": 309,
+   "testa": [
+    "src/components/ponto/centralAuditoria.ts"
+   ],
+   "casos": 26
   },
   {
    "arquivo": "src/components/__tests__/CNABDialog.test.tsx",
@@ -3197,11 +3226,22 @@
   {
    "arquivo": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
    "tipo": "unit",
-   "linhas": 96,
+   "linhas": 237,
    "testa": [
-    "src/components/ponto/PontoAdjustmentRequests.tsx"
+    "src/components/ponto/PontoAdjustmentRequests.tsx",
+    "src/utils/dateLocal.ts"
    ],
-   "casos": 8
+   "casos": 12
+  },
+  {
+   "arquivo": "src/components/__tests__/pontoAuditoriaMock.test.ts",
+   "tipo": "unit",
+   "linhas": 74,
+   "testa": [
+    "src/components/ponto/centralAuditoria.ts",
+    "src/mocks/pontoAuditoriaMock.ts"
+   ],
+   "casos": 4
   },
   {
    "arquivo": "src/components/__tests__/PontoAuditTimeline.test.tsx",
@@ -3209,6 +3249,38 @@
    "linhas": 138,
    "testa": [
     "src/components/ponto/PontoAuditTimeline.tsx"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+   "tipo": "unit",
+   "linhas": 181,
+   "testa": [
+    "src/components/avaliacao/ColoredFilterChip.tsx",
+    "src/components/avaliacao/chipFiltroComum.ts",
+    "src/components/ponto/CentralAjustesFiltros.tsx",
+    "src/components/ponto/centralAjustes.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoCentralAjustesPainel.test.tsx",
+   "tipo": "unit",
+   "linhas": 236,
+   "testa": [
+    "src/components/ponto/CentralAjustesPainel.tsx",
+    "src/components/ponto/centralAjustes.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
+   "tipo": "unit",
+   "linhas": 216,
+   "testa": [
+    "src/components/ponto/CentralAjustesTabela.tsx",
+    "src/components/ponto/centralAjustes.ts"
    ],
    "casos": 9
   },
@@ -8045,6 +8117,7 @@
   "src/components/avaliacao/AuditoriaChips.tsx": 1,
   "src/components/avaliacao/AuditoriaDetalheDialog.tsx": 1,
   "src/components/avaliacao/CicloAtivoPanel.tsx": 1,
+  "src/components/avaliacao/ColoredFilterChip.tsx": 1,
   "src/components/avaliacao/FeedbackAcoesRodape.tsx": 1,
   "src/components/avaliacao/FeedbackCard.tsx": 2,
   "src/components/avaliacao/FeedbackDetalheDialog.tsx": 2,
@@ -8076,7 +8149,7 @@
   "src/components/avaliacao/auditoriaFeedback.ts": 1,
   "src/components/avaliacao/barraProgresso.tsx": 1,
   "src/components/avaliacao/barraProgressoAnim.ts": 1,
-  "src/components/avaliacao/chipFiltroComum.ts": 1,
+  "src/components/avaliacao/chipFiltroComum.ts": 2,
   "src/components/avaliacao/criacaoFeedback.ts": 1,
   "src/components/avaliacao/desempenhoDemoStore.ts": 2,
   "src/components/avaliacao/edicaoFeedback.ts": 1,
@@ -8313,6 +8386,10 @@
   "src/components/pesquisas/barraAdesaoAnim.ts": 1,
   "src/components/pesquisas/pesquisasComum.ts": 2,
   "src/components/ponto/AssinarEspelhoDialog.tsx": 1,
+  "src/components/ponto/AuditoriaPonto.tsx": 1,
+  "src/components/ponto/CentralAjustesFiltros.tsx": 1,
+  "src/components/ponto/CentralAjustesPainel.tsx": 1,
+  "src/components/ponto/CentralAjustesTabela.tsx": 1,
   "src/components/ponto/EditarEscalaDialog.tsx": 1,
   "src/components/ponto/EspelhosPapelPanel.tsx": 1,
   "src/components/ponto/GerarAEJDialog.tsx": 1,
@@ -8332,6 +8409,8 @@
   "src/components/ponto/PontoStreakCard.tsx": 1,
   "src/components/ponto/PontoTodayCard.tsx": 1,
   "src/components/ponto/PontoWeekSummary.tsx": 1,
+  "src/components/ponto/centralAjustes.ts": 4,
+  "src/components/ponto/centralAuditoria.ts": 3,
   "src/components/ponto/relogio/JustificativasRelogioTab.tsx": 1,
   "src/components/ponto/relogio/RelogiosPanel.tsx": 1,
   "src/components/ponto/relogio/VinculosRelogioTab.tsx": 1,
@@ -8571,6 +8650,7 @@
   "src/lib/reciboAssinaturaPdf.ts": 1,
   "src/lib/retry.ts": 2,
   "src/lib/utils.ts": 1,
+  "src/mocks/pontoAuditoriaMock.ts": 1,
   "src/mocks/pontoGeoMock.ts": 2,
   "src/pages/AdminAgendamentoExamesPage.tsx": 1,
   "src/pages/AdminExtintoresPage.tsx": 1,
@@ -8710,7 +8790,7 @@
   "src/utils/calculoFerias.ts": 1,
   "src/utils/comunicadoFeriasColetivasPDF.ts": 1,
   "src/utils/cursorPagination.ts": 1,
-  "src/utils/dateLocal.ts": 7,
+  "src/utils/dateLocal.ts": 9,
   "src/utils/desligamentoExcel.ts": 1,
   "src/utils/esocialXmlGenerator.ts": 1,
   "src/utils/evaluationPDF.ts": 1,

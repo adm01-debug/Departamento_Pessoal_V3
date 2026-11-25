@@ -1803,7 +1803,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 130,
+   "usado_por": 131,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
@@ -2352,8 +2352,9 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_arquivos": [
+    "src/components/ponto/PontoAdjustmentRequests.tsx",
     "src/hooks/index.ts"
    ],
    "coberto_por_testes": 1

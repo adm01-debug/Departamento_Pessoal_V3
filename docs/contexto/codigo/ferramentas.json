@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2142)",
+   "TypeScript (2166)",
    "SQL (1339)",
    "Markdown (347)",
    "JavaScript (136)",
@@ -2152,6 +2152,7 @@
   ],
   "realtime": [
    "afdt-div-${empresaId}",
+   "audit-changes",
    "comunicados-realtime",
    "notif-toast-${empresaId}-${Math.random().toString(36).slice(2)}",
    "notificacoes-realtime-page",
@@ -2163,7 +2164,7 @@
   "papeis_no_codigo": [
    {
     "papel": "dialog",
-    "ocorrencias": 37
+    "ocorrencias": 36
    },
    {
     "papel": "rh",
@@ -2186,12 +2187,12 @@
     "ocorrencias": 13
    },
    {
-    "papel": "status",
+    "papel": "group",
     "ocorrencias": 12
    },
    {
-    "papel": "group",
-    "ocorrencias": 11
+    "papel": "status",
+    "ocorrencias": 12
    },
    {
     "papel": "tablist",
@@ -2315,6 +2316,10 @@
    },
    {
     "papel": "main",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "search",
     "ocorrencias": 1
    },
    {

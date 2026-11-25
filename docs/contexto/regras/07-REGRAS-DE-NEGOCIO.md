@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7a0aee8ae5` · branch `main` · 2026-11-25 19:30 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1d76c0224d` · branch `main` · 2026-11-25 20:56 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1582,7 +1582,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `email` | compara, escreve | `supabase/functions/enviar-email-admissao/index.ts`<br>`supabase/functions/notificacao/index.ts`<br>`supabase/functions/pix-lote/index.ts`<br>`supabase/functions/processar-agendamentos/filaNotificacoes.ts` |
 | `tipo` | `empresa` | escreve | `src/mocks/desempenhoMock.ts`<br>`src/services/rescisaoService.ts` |
 | `tipo` | `enps` | compara, escreve | `src/components/pesquisas/pesquisasComum.ts`<br>`src/mocks/pesquisasClimaMock.ts` |
-| `tipo` | `entrada` | compara, escreve | `src/components/ponto/PontoClockRegister.tsx`<br>`src/hooks/usePonto.ts`<br>`src/hooks/usePontoOffline.ts`<br>`src/mocks/pontoGeoMock.ts`<br>`src/pages/ControleAcessoPage.tsx`<br>… +7 |
+| `tipo` | `entrada` | compara, escreve | `src/components/ponto/PontoClockRegister.tsx`<br>`src/hooks/usePonto.ts`<br>`src/hooks/usePontoOffline.ts`<br>`src/mocks/pontoAuditoriaMock.ts`<br>`src/mocks/pontoGeoMock.ts`<br>… +8 |
 | `tipo` | `equipe` | escreve | `src/mocks/desempenhoMock.ts` |
 | `tipo` | `evp` | compara | `supabase/functions/pix-lote/index.ts` |
 | `tipo` | `exame` | escreve | `src/components/dashboard/useMorningBriefing.ts` |
@@ -1658,7 +1658,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `revogar` | compara, escreve | `src/components/ponto/relogio/RelogiosPanel.tsx` |
 | `tipo` | `risco` | escreve | `src/components/avaliacao/nineBoxComum.ts` |
 | `tipo` | `rotacionar` | compara, escreve | `src/components/ponto/relogio/RelogiosPanel.tsx` |
-| `tipo` | `saida` | compara, escreve | `src/components/ponto/PontoClockRegister.tsx`<br>`src/pages/ControleAcessoPage.tsx`<br>`src/utils/pontoEquipe.ts`<br>`supabase/functions/processar-ponto/index.ts`<br>`supabase/functions/processar-ponto/logica.ts` |
+| `tipo` | `saida` | compara, escreve | `src/components/ponto/PontoClockRegister.tsx`<br>`src/mocks/pontoAuditoriaMock.ts`<br>`src/pages/ControleAcessoPage.tsx`<br>`src/utils/pontoEquipe.ts`<br>`supabase/functions/processar-ponto/index.ts`<br>… +1 |
 | `tipo` | `saida_almoco` | compara, escreve | `src/components/ponto/PontoClockRegister.tsx`<br>`src/utils/pontoEquipe.ts` |
 | `tipo` | `satisfacao` | escreve | `src/mocks/pesquisasClimaMock.ts` |
 | `tipo` | `saude` | escreve | `src/mocks/colaboradoresMock.ts`<br>`src/pages/PlanosSaudePage.tsx` |
@@ -1712,7 +1712,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `aprovada` | compara, escreve, filtra | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/dashboard/useMorningBriefing.ts`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/components/ferias/FeriasDashboard.tsx`<br>`src/components/horas-extras/horasExtrasComum.ts`<br>… +8 |
 | `status` | `aprovada_gestor` | compara | `src/components/avaliacao/FeedbackAcoesRodape.tsx`<br>`src/components/avaliacao/FeedbacksTab.tsx`<br>`src/components/avaliacao/aprovacaoGestor.ts` |
 | `status` | `aprovadasRejeitadas` | escreve | `src/components/horas-extras/horasExtrasComum.ts` |
-| `status` | `aprovado` | compara, escreve, filtra | `src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/components/descontos/AdiantamentosTable.tsx`<br>`src/components/ferias/FeriasAuditTimeline.tsx`<br>`src/components/ferias/FeriasWorkflowStepper.tsx`<br>… +13 |
+| `status` | `aprovado` | compara, escreve, filtra | `src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/components/descontos/AdiantamentosTable.tsx`<br>`src/components/ferias/FeriasAuditTimeline.tsx`<br>`src/components/ferias/FeriasWorkflowStepper.tsx`<br>… +14 |
 | `status` | `aprovado_financeiro` | compara | `src/components/premiacoes/pagamentosComum.ts`<br>`src/services/premiacoesService.ts` |
 | `status` | `aprovado_gestor` | compara | `src/components/ferias/programacao/CardProgramacao.tsx`<br>`src/pages/FeriasProgramacaoPage.tsx` |
 | `status` | `aprovado_parcial` | compara | `supabase/functions/pix-lote/index.ts` |
@@ -1727,7 +1727,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `calculada` | compara, escreve | `src/services/folhaPagamentoService.ts`<br>`supabase/functions/calcular-folha/index.ts`<br>`supabase/functions/fechar-folha/index.ts` |
 | `status` | `calculado` | compara, escreve | `src/components/desligamentos/trilhaDerivacoes.ts`<br>`src/components/premiacoes/PagamentosTabela.tsx`<br>`src/components/premiacoes/pagamentosComum.ts`<br>`src/services/rescisaoService.ts` |
 | `status` | `cancelada` | compara, escreve | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/components/ferias/FeriasAuditTimeline.tsx`<br>`src/services/feriasService.ts`<br>`src/utils/regrasSolicitacaoFerias.ts` |
-| … +217 linhas — lista completa em `context.json` | | | |
+| … +223 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1857,6 +1857,13 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | PeriodoFiltro | qualquer \| 30d \| 90d \| ano | `src/components/pesquisas/pesquisasComum.ts` |
 | Ordenacao | recentes \| antigas \| adesao \| titulo | `src/components/pesquisas/pesquisasComum.ts` |
 | ModoVisualizacaoGeo | mapa \| satelite \| calor | `src/components/ponto/PontoGeoMapa.tsx` |
+| StatusAjusteResolvido | pendente \| aprovado \| rejeitado | `src/components/ponto/centralAjustes.ts` |
+| NivelRiscoAjuste | baixo \| medio \| alto | `src/components/ponto/centralAjustes.ts` |
+| FiltroStatusAjuste | todos \| pendente \| aprovado \| rejeitado | `src/components/ponto/centralAjustes.ts` |
+| PeriodoAjustes | hoje \| 7d \| 30d | `src/components/ponto/centralAjustes.ts` |
+| PeriodoAuditoria | 7d \| 30d \| 90d \| personalizado | `src/components/ponto/centralAuditoria.ts` |
+| OperacaoAuditoria | INSERT \| UPDATE \| DELETE \| OUTRA | `src/components/ponto/centralAuditoria.ts` |
+| EstadoEvidencia | verificada \| divergente \| revisao \| sem_comprovacao | `src/components/ponto/centralAuditoria.ts` |
 | StatusColetor | online \| atrasado \| nunca \| revogado | `src/components/ponto/relogio/statusColetor.ts` |
 | ScenarioParameterUnit | integer \| currency \| percentage | `src/components/premiacoes/ScenarioParameterCard.tsx` |
 | CategoriaAuditoriaId | todas \| campanhas \| pagamentos \| regras \| conciliacao \| integracoes \| aprovacoes | `src/components/premiacoes/auditoriaComum.ts` |
@@ -3286,6 +3293,22 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const { empresaAtual } = useEmpresas(); const [open, setOpen] = useState(false); const [loading, setLoading] = useState(false); const [inicio, setInicio] = useState(''); const [fim, setFim] = useState(''); const [resultado, setResultado] = useState<{ hash: string; bytes: number; marcacoes: number; colaboradores: number; sem_pis: number; } | null>(null); const handleGerar = async () => { if (!empresaAtual?.id) return toast.error('Selecione uma empresa'); if (!inicio || !fim) return toast.error('I …
   ```
+- **totalPaginasAjustes(total: number, tamanho: number)** — `src/components/ponto/centralAjustes.ts`
+  ```
+  return Math.max(1, Math.ceil(Math.max(0, total) / Math.max(1, tamanho)));
+  ```
+- **responsaveisDosEventos(eventos: readonly EventoAuditoria[])** — `src/components/ponto/centralAuditoria.ts`
+  ```
+  const nomes = new Set<string>(); eventos.forEach((evento) => nomes.add(responsavelDoEvento(evento))); return [...nomes].sort((a, b) => a.localeCompare(b));
+  ```
+- **iniciaisDoResponsavel(valor: string)** — `src/components/ponto/centralAuditoria.ts`
+  ```
+  const partes = valor .trim() .split(/[\s._@-]+/) .filter(Boolean); if (partes.length === 0) return '—'; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); return `${partes[0][0]}${partes[1][0]}`.toUpperCase();
+  ```
+- **totalPaginasAuditoria(total: number, tamanho: number = TAMANHO_PAGINA_AUDITORIA)** — `src/components/ponto/centralAuditoria.ts`
+  ```
+  return Math.max(1, Math.ceil(Math.max(0, total) / Math.max(1, tamanho)));
+  ```
 - **calcularIndicadoresPonto(registrosSemana: RegistroIndicador[] = [])** — `src/components/ponto/indicadoresPonto.ts`
   ```
   const comEntrada = registrosSemana.filter((registro) => !!registro?.entrada_1); const pontuais = comEntrada.filter((registro) => !Number(registro?.atraso_minutos)).length; const pontualidade = comEntrada.length > 0 ? Math.round((pontuais / comEntrada.length) * 100) : 0; const diasComRegistro = new Set(registrosSemana.map((registro) => registro?.data).filter(Boolean)).size; const totalTrabalhado = registrosSemana.reduce( (soma, registro) => soma + minutosDeDuracao(registro?.horas_trabalhadas ?? n …
@@ -4401,6 +4424,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ duration: 0.6, delay: i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}` | `src/components/dashboard/BarChartWidget.tsx` |
 | `const strokeOffset = -seg.offset + circumference * 0.25; // start from top` | `src/components/dashboard/DonutChart.tsx` |
 | `transition={{ delay: i * 0.08 }}` | `src/components/dashboard/EventTimeline.tsx` |
+| `* [ícone 36] Título [ +20% ]` | `src/components/dashboard/MetricCard.tsx` |
 | `// linha de apoio caber em UMA linha ("150% vs. período` | `src/components/dashboard/MetricCard.tsx` |
 | `transition: { delay: i * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },` | `src/components/dashboard/MetricCard.tsx` |
 | `transition={{ delay: 0.5 + i * 0.06 }}` | `src/components/dashboard/QuickActionsGrid.tsx` |
@@ -4475,7 +4499,17 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `lados) e ganhou `ml-3` = 0,75rem = 15px nesta base de 125%` | `src/components/pesquisas/CardPesquisa.tsx` |
 | `* barra de 48% terminaria no verde) e mudaria o degradê aprovado.` | `src/components/pesquisas/barraAdesaoAnim.ts` |
 | `* `chipFiltroComum`). Fundo em tint de 10%, borda em 35% e texto na cor cheia` | `src/components/pesquisas/pesquisasComum.ts` |
+| `* 2. grade de duas colunas (~69% / ~31% a partir de `xl`):` | `src/components/ponto/AuditoriaPonto.tsx` |
+| `{/* ── DUAS COLUNAS (~69% / ~31% a partir de `xl`) ───────────────────` | `src/components/ponto/AuditoriaPonto.tsx` |
+| `// QUATRO COLUNAS dentro da coluna esquerda (que é ~70% da tela): os KPIs` | `src/components/ponto/CentralAjustesKpis.tsx` |
+| `* PAINEL DE DETALHES DA CENTRAL DE AJUSTES — coluna direita (~30% no desktop).` | `src/components/ponto/CentralAjustesPainel.tsx` |
+| `* (142 76% 40% ≈ #18B361 e 0 63% 35% ≈ #912121) não são estes verdes/vermelhos` | `src/components/ponto/CentralAuditoriaDetalhes.tsx` |
+| `* A barra mora na coluna esquerda (~69% do grid da Central), não na largura da` | `src/components/ponto/CentralAuditoriaFiltros.tsx` |
+| `* Na Central de Auditoria estes quatro cards vivem na coluna de ~69% — cada um` | `src/components/ponto/CentralAuditoriaKpis.tsx` |
+| `{/* Título + selo numa linha que PODE quebrar: na coluna de ~69% o` | `src/components/ponto/CentralAuditoriaKpis.tsx` |
 | `podem gerar horas extras a 100%.` | `src/components/ponto/GestaoPontoAnalytics.tsx` |
+| `// 1860) — na prática entre 27% e 30% da largura útil, com piso de 320px. O` | `src/components/ponto/PontoAdjustmentRequests.tsx` |
+| `// com conteúdo real: a coluna acompanha os ~30% (414px de 1380 e 500px de` | `src/components/ponto/PontoAdjustmentRequests.tsx` |
 | `transition={{ delay: idx * 0.05 }}` | `src/components/ponto/PontoAuditTimeline.tsx` |
 | `é escuro, então 40% de alfa sumiria por completo na tela.` | `src/components/ponto/PontoBancoHorasCard.tsx` |
 | `// 100% independente do resultado (achado da auditoria — "teatro").` | `src/components/ponto/PontoClockRegister.tsx` |
@@ -4493,6 +4527,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `* `hover:text-primary-glow` = `--primary-glow` (68 100% 58% no claro, 60% no` | `src/components/ponto/acoesCardsPonto.ts` |
 | `* `text-primary` = `--primary` (68 100% 48% — o mesmo valor nos dois temas).` | `src/components/ponto/acoesCardsPonto.ts` |
 | `* escala de 125% do `<html>` só os converte em 30px / 15px / 10px / 12,5px na` | `src/components/ponto/acoesCardsPonto.ts` |
+| `* `tom` é o par fundo + tinta 10% (chip) — mantido para quem quiser o ícone` | `src/components/ponto/centralAjustes.ts` |
 | `transition={{ delay: i * 0.05 }}` | `src/components/portal/PortalFinanceiroTab.tsx` |
 | `transition={{ delay: 0.25 + i * 0.04 }}` | `src/components/portal/PortalOverviewTab.tsx` |
 | `* · Sem payout (0 colaboradores, 0% de bônus ou 0% de meta) não existe ROI:` | `src/components/premiacoes/RewardsSimulator.tsx` |
@@ -4587,19 +4622,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: index * 0.01 }}` | `src/pages/AuditoriaPage.tsx` |
 | `* Só um payload 100% UUID vai à RPC real — mesmo com mocks exibidos na tela.` | `src/pages/AvaliacaoPage.tsx` |
 | `transition={{ delay: i * 0.08 }}` | `src/pages/BackupPage.tsx` |
-| `transition={{ delay: i * 0.1 }}` | `src/pages/BackupPage.tsx` |
-| `* 2,6 / 3,6 ≈ 72% para o extrato — a tabela de 7 colunas precisa da largura, e a` | `src/pages/BancoHorasPage.tsx` |
-| `transition={{ delay: i * 0.03 }}` | `src/pages/ComunicacaoInternaPage.tsx` |
-| `transition={{ delay: i * 0.05 }}` | `src/pages/ComunicacaoInternaPage.tsx` |
-| `transition={{ delay: i * 0.05 }}` | `src/pages/DashboardExecutivoPage.tsx` |
-| `transition={{ delay: 0.5 + i * 0.15 }}` | `src/pages/DashboardPage.tsx` |
-| `transition={{ delay: 0.05 + i * 0.03 }}` | `src/pages/ESocialPage.tsx` |
-| `transition={{ delay: i * 0.06 }}` | `src/pages/ESocialPage.tsx` |
-| `transition={{ delay: i * 0.05 }}` | `src/pages/EmpresasPage.tsx` |
-| `transition={{ delay: i * 0.05 }}` | `src/pages/FolhaPage.tsx` |
-| `transition={{ delay: i * 0.05 }}` | `src/pages/GeradorDocumentosPage.tsx` |
-| `transition={{ delay: i * 0.03 }}` | `src/pages/HoleritesPage.tsx` |
-| … +108 linhas — lista completa em `context.json` | |
+| … +120 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -4800,6 +4823,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `REVEAL_MAX_STAGGERED_BLOCKS` | `8` | `src/components/organograma/organogramaReveal.ts` |
 | `REVEAL_CLOSE_WAVE_STEP` | `0.05` | `src/components/organograma/organogramaReveal.ts` |
 | `REVEAL_MAX_STAGGERED_CLOSE_BLOCKS` | `3` | `src/components/organograma/organogramaReveal.ts` |
+| `LIMITE_EVENTOS` | `500` | `src/components/ponto/AuditoriaPonto.tsx` |
+| `CARTAO` | `'rounded-[10px] border px-2.5 py-2.5'` | `src/components/ponto/CentralAjustesPainel.tsx` |
+| `VALOR` | `'text-[11px] leading-tight font-semibold'` | `src/components/ponto/CentralAjustesPainel.tsx` |
+| `CELULA` | `'px-2 py-[5px] align-middle'` | `src/components/ponto/CentralAjustesTabela.tsx` |
+| `LINHA_HOVER` | `'transition-colors duration-200 hover:bg-muted/70'` | `src/components/ponto/CentralAjustesTabela.tsx` |
 | `SLOT_ENTRADA_CARD` | `6` | `src/components/ponto/PontoEquipeStatusCard.tsx` |
 | `ENTRADA_INDICADOR_ESCALA` | `0.9` | `src/components/ponto/PontoEquipeStatusCard.tsx` |
 | `ENTRADA_INDICADOR_INTERVALO_S` | `0.1` | `src/components/ponto/PontoEquipeStatusCard.tsx` |
@@ -4807,6 +4835,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `TILE` | `256` | `src/components/ponto/PontoGeoAnalytics.tsx` |
 | `FOLGA` | `6` | `src/components/ponto/PontoGeoDistancia.tsx` |
 | `MINIMO_PONTOS_CALOR` | `5` | `src/components/ponto/PontoGeofencingPainel.tsx` |
+| `TAMANHO_PAGINA_AJUSTES` | `6` | `src/components/ponto/centralAjustes.ts` |
+| `DISPOSITIVO_WEB_DIGEST` | `'web'` | `src/components/ponto/centralAuditoria.ts` |
+| `DISPOSITIVO_WEB_COLUNA` | `'web-browser'` | `src/components/ponto/centralAuditoria.ts` |
+| `SISTEMA` | `'Sistema (automático)'` | `src/components/ponto/centralAuditoria.ts` |
+| `TAMANHO_PAGINA_AUDITORIA` | `5` | `src/components/ponto/centralAuditoria.ts` |
 | `DIAS_NA_SEMANA` | `7` | `src/components/ponto/indicadoresPonto.ts` |
 | `VERMELHO_TEXTO` | `'text-[#FF4545]'` | `src/components/ponto/vermelhoVibrante.ts` |
 | `VERMELHO_TRACO` | `'stroke-[#EF4444]'` | `src/components/ponto/vermelhoVibrante.ts` |
@@ -4897,17 +4930,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `BLOCOS_CASCATA` | `3` | `src/components/turnos/DialogoDiaEscalas.tsx` |
 | `BLOCOS_CASCATA` | `4` | `src/components/turnos/DialogoGerenciarTurnos.tsx` |
 | `BLOCOS_CASCATA` | `5` | `src/components/turnos/DialogoNovaEscala.tsx` |
-| `BLOCOS_CASCATA` | `3` | `src/components/turnos/DialogoProximasEscalas.tsx` |
-| `BLOCOS_CASCATA` | `4` | `src/components/turnos/DialogoTurno.tsx` |
-| `ROTULO` | `'text-[11px] leading-snug text-muted-foreground'` | `src/components/turnos/TurnosKpiCards.tsx` |
-| `MAX_OCORRENCIAS_ESCALA` | `30` | `src/components/turnos/turnosCalendario.ts` |
-| `COR_TURNO_PADRAO` | `'#64748b'` | `src/components/turnos/turnosCores.ts` |
-| `FUNDO_CARD` | `'bg-card/40'` | `src/components/turnos/turnosSuperficies.ts` |
-| `DIAS_PROXIMAS_ESCALAS` | `60` | `src/components/turnos/useTurnosEscalas.ts` |
-| `STALE_TIME` | `60` | `src/components/turnos/useTurnosEscalas.ts` |
-| `ROTULO_LINHAS_POR_PAGINA` | `'Linhas por página'` | `src/components/ui/app-pagination.tsx` |
-| `YEAR_WINDOW` | `12` | `src/components/ui/calendar.tsx` |
-| … +227 linhas — lista completa em `context.json` | | |
+| … +241 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -4949,6 +4972,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `setTimeout(() => { close(); }, 2000);` | `src/components/onboarding/GuidedTour.tsx` |
 | `if (periodo === '30d') return subDays(hoje, 30);` | `src/components/pesquisas/pesquisasComum.ts` |
 | `if (periodo === '90d') return subDays(hoje, 90);` | `src/components/pesquisas/pesquisasComum.ts` |
+| `const timer = window.setTimeout(() => setCopiado(false), 2000);` | `src/components/ponto/CentralAuditoriaDetalhes.tsx` |
 | `const diffHours = (inTime.getTime() - outTime.getTime()) / (1000 * 60 * 60);` | `src/components/ponto/GestaoPontoAnalytics.tsx` |
 | `setTimeout(() => setShowConfetti(false), 5000);` | `src/components/ponto/PontoClockRegister.tsx` |
 | `const diffHoras = (agora.getTime() - dataBatida.getTime()) / (1000 * 60 * 60);` | `src/components/ponto/PontoInconsistencyPanel.tsx` |
@@ -5478,6 +5502,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Nada a exportar — gere a matriz salarial primeiro. | `src/components/pcs/PcsEquidadeTab.tsx` |
 | ; import { Badge } from  | `src/components/ponto/AssinarEspelhoDialog.tsx` |
 | Divergência detectada: hash não bate | `src/components/ponto/AssinarEspelhoDialog.tsx` |
+| O navegador bloqueou a cópia. Selecione o texto manualmente. | `src/components/ponto/CentralAuditoriaDetalhes.tsx` |
 | PIN deve ter de 4 a 6 dígitos | `src/components/ponto/DefinirPinQuiosqueDialog.tsx` |
 | PINs não conferem | `src/components/ponto/DefinirPinQuiosqueDialog.tsx` |
 | >             {erro}             <Button size= | `src/components/ponto/EspelhosPapelPanel.tsx` |
@@ -5564,8 +5589,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Data/horário inválidos | `src/components/treinamentos/NovaTurmaDialog.tsx` |
 |        className= | `src/components/treinamentos/TreinamentosCatalogo.tsx` |
 |        className= | `src/components/treinamentos/TreinamentosTabela.tsx` |
-| Erro ao desvincular curso | `src/components/treinamentos/TrilhaCursosSection.tsx` |
-| … +721 linhas — lista completa em `context.json` | |
+| … +722 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5640,7 +5664,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (10342 testes em 816 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10464 testes em 823 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5695,9 +5719,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/importacao/__tests__/validators.test.ts` | 33 | validarCPF · returns true for valid CPF · returns false for CPFs with all same digits · returns false for CPF with wrong check digits … |
 | `src/components/__tests__/AcoesFeedback.test.ts` | 32 | perfilOperador (app_role real: admin\|gestor\|rh\|user) · mapeia os papéis administrativos e operacionais · papel ausente/desconhecido não vira permissão · podeValidarPotencial — exclusivo do RH … |
 | `src/components/__tests__/PagamentosComum.test.ts` | 32 | mapa status → etapa do fluxo · coloca cada status real em NO MÁXIMO uma das cinco etapas · mapeia a cadeia de aprovação como o quadro antigo (e deixa auditoria fora) · conta as etapas e fecha o total com o que está fora do fluxo … |
+| `src/components/__tests__/centralAuditoria.test.ts` | 32 | normalização · lê a linha legada (colunas no topo) · lê a linha nova (payload aninhado) · descarta linha sem id ou sem data … |
 | `src/pages/__tests__/OnboardingParidade.test.tsx` | 32 | PARIDADE — progresso, conclusão e contadores (mesma fixture) · percentual: a regra nova é idêntica à antiga em TODOS os registros · contadores do topo batem com o cálculo antigo da aba de Admissões · a divisão das abas (em andamento) bate com a régua antiga da Jornada … |
 | `src/components/__tests__/AuditoriaAdmissoesContent.test.tsx` | 31 | AuditoriaAdmissoesContent · renderiza os 4 KPI Cards no MESMO padrão do Dashboard de Admissões · coloca o tom semântico no ÍCONE e mantém o valor principal neutro · renderiza os 8 chips rápidos com a contagem real … |
 | `src/components/__tests__/FeedbacksDerivacoes.test.tsx` | 31 | feedbacksComum — tipo do feedback (texto livre) · normaliza os quatro tipos reais, aceitando caixa e rótulo por extenso · cai em gestor sem valor utilizável (nunca inventa categoria) · agrupa subordinado no chip de Gestor … |
+| `src/components/__tests__/centralAjustes.test.ts` | 31 | statusAjuste · traduz os nomes gravados no banco para os três estados da tela · trata valores sem decisão como pendente · riscoDoAjuste … |
 | `src/lib/cursor.test.ts` | 31 | encodeCursor · encode/decodes string values correctly · encode/decodes numeric values correctly · encode/decodes null values correctly … |
 | `src/services/__tests__/auditoriaService.test.ts` | 31 | auditoriaService.listarTrilha · usa a RPC unificada com tenant e filtros explícitos · aceita escopo global apenas como pedido explícito para a RPC autoritativa · rejeita limites fora do contrato antes de consultar o banco … |
 | `src/components/__tests__/forms.test.tsx` | 30 | FormField · renders label when provided · renders input · renders error message … |
@@ -5742,6 +5768,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/CardProgramacao.test.tsx` | 23 | CardProgramacao · renders colaborador name · renders dias previstos · renders status badge for rascunho … |
 | `src/components/__tests__/NineBoxElegibilidade.test.tsx` | 23 | etapa 1 · identificação de suspeita (isolada) · a PRIMEIRA ocorrência nunca é sinalizada; as repetições são · não muta a lista recebida (função pura) · avaliadores diferentes com as MESMAS notas não se sinalizam … |
 | `src/hooks/__tests__/useEmpresas.test.ts` | 23 | useEmpresas · returns expected shape · returns loadingEmpresas=true initially · loads todasEmpresas when isAdmin=true … |
+| `src/components/__tests__/AuditoriaPonto.test.tsx` | 22 | AuditoriaPonto — cabeçalho e KPIs · mostra o título, o subtítulo e as duas ações do cabeçalho · deriva os quatro KPIs das linhas do período · AuditoriaPonto — timeline e painel … |
 | `src/components/__tests__/CNABDialog.test.tsx` | 22 | CNABDialog · renders Exportar Bancário trigger button · renders Pagamento de Salários dialog title · renders Código do Banco label … |
 | `src/components/__tests__/CalculoFolhaWizard.test.tsx` | 22 | CalculoFolhaWizard · renders Assistente de Cálculo trigger button · renders Assistente de Folha dialog title · renders competencia in dialog header … |
 | `src/hooks/__tests__/useBruteForceProtection.test.ts` | 22 | useBruteForceProtection · estado inicial · começa destravado e sem tentativas · superfície de rede … |
@@ -5876,6 +5903,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/ESocialTSVComponents.test.tsx` | 13 | S2300TSVInicio · renders trabalhador name · renders CPF · renders data de início … |
 | `src/components/__tests__/EntityPageContainer.test.tsx` | 13 | EntityPageContainer · renders page title and description · shows TableSkeleton when isLoading=true · shows SyncErrorState when error is present … |
 | `src/components/__tests__/MetasEtiquetas.test.tsx` | 13 | metasComum — tom do TIPO da meta · mapeia cada tipo real para o tom da sua família de cor · trata o tipo como texto livre: caixa/espaços não mudam o tom · joga o composto  … |
+| `src/components/__tests__/PontoAdjustmentRequests.test.tsx` | 13 | Central de Ajustes (PontoAdjustmentRequests) · renderiza o cabeçalho, a busca e o seletor de período · mostra os quatro KPIs do período · lista as solicitações na tabela com as colunas da referência … |
 | `src/components/__tests__/TrabalhoHierarquiaTab.test.tsx` | 13 | TrabalhoHierarquiaTab · shows cargo from the cargos join when cargo_id is set · falls back to the plain text cargo column when cargo_id is not set · does not invent a gestor direto when supervisor_id is not set … |
 | `src/components/__tests__/desligamento-badges.test.tsx` | 13 | StatusBadge · renders  · renders  · renders  … |
 | `src/components/recrutamento/__tests__/PipelineBoard.test.tsx` | 13 | PipelineBoard — cinco etapas e cards ricos · renderiza as cinco colunas com a contagem e o card completo · abre o dossiê pelo card e pelo menu de ações · move a etapa pelo menu do card sem perder as opções … |
@@ -5931,6 +5959,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/MobileBottomNav.test.tsx` | 11 | MobileBottomNav · renders nav with aria-label · renders Home link · renders Equipe link … |
 | `src/components/__tests__/MorningBriefing.test.tsx` | 11 | MorningBriefing · separa o cache por empresa e não consulta sem tenant selecionado · shows skeleton when loading · renders error state when error occurs … |
 | `src/components/__tests__/NineBoxTalentosDialog.test.tsx` | 11 | NineBoxTalentosDialog — a MESMA janela de  · monta véu, casca e conteúdo com a receita do  · tem o título do card e o ícone de destaque · não renderiza nada com a janela fechada … |
+| `src/components/__tests__/PontoCentralAjustesFiltros.test.tsx` | 11 | CentralAjustesFiltros — chips de status · renderiza os quatro filtros como pílulas do Design System · não usa mais ícones — a leitura é a bolinha colorida · pinta cada filtro com a cor do seu status (indicador, borda, fundo e texto) … |
 | `src/components/__tests__/PontoInconsistencyPanel.test.tsx` | 11 | PontoInconsistencyPanel · renders without crash when registros is empty · shows Insights de Inteligência when inconsistency detected · shows Resolução Assistida Ativa badge when inconsistencies exist … |
 | `src/components/__tests__/PontoTodayCard.test.tsx` | 11 | PontoTodayCard · renders Hoje title · shows empty state when no registro · renders Progresso da Jornada when registro present … |
 | `src/components/__tests__/QuickActionsGrid.test.tsx` | 11 | QuickActionsGrid · renders Ações Rápidas heading · renders Novo Colaborador action · renders Lançar Ponto action … |
@@ -5939,12 +5968,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/recrutamento/__tests__/VagaCard.test.tsx` | 11 | VagaCard — identidade, funil e ações reais · mostra título, departamento, modalidade, competências e o funil completo · abre o Pipeline pelo botão Gerenciar Vaga · mantém apenas ações reais e não duplica Gerenciar no menu … |
 | `src/components/recrutamento/__tests__/pipelineEtapas.test.ts` | 11 | pipelineEtapas — configuração e leitura do board · define as cinco etapas na ordem do processo com tokens distintos · normaliza o vocabulário REAL do banco e isola o desconhecido em  · resolve a etapa visual pelos aliases do banco … |
 | `src/components/treinamentos/__tests__/CertificadoCard.test.tsx` | 11 | CertificadoCard — bloco Emissão / Validade / Código · usa três colunas proporcionais com labels, valores e complemento alinhados · exibe emissão e validade reais no formato dd/MM/yyyy · mostra o aviso âmbar de certificado a vencer … |
-| `src/components/treinamentos/__tests__/TurmaCard.test.tsx` | 11 | TurmaCard — composição compacta · coloca título e categoria DENTRO do cabeçalho da imagem · sem inscritos reais não inventa barra/percentual · com inscritos reais calcula e exibe ocupação + barra … |
-| `src/contexts/__tests__/NotificationContext.test.tsx` | 11 | useNotification · throws when used outside provider · provides notifications from useNotificacoes · provides unreadCount from naoLidas … |
-| `src/hooks/__tests__/useBackGesture.test.ts` | 11 | useBackGesture · navigates back on left-edge swipe right · does not navigate when swipe starts away from left edge · does not navigate when horizontal distance is too small … |
-| `src/hooks/__tests__/useHistoricoColaborador.test.ts` | 11 | useHistoricoColaborador · merges events from every source and sorts them from most to least recent · preserves rich fields instead of flattening them into a single description string · includes audit entries as a filterable  … |
-| `src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx` | 11 | CalculadoraRescisaoPage — importar colaborador · o seletor é um combobox com busca, não uma lista de rolagem · a busca filtra a lista pelo nome digitado · a busca aceita a matrícula e separa homônimos … |
-| … +516 linhas — lista completa em `context.json` | | |
+| … +523 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6312,4 +6336,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * HABILITAÇÃO (regra ÚNICA, a MESMA do servidor — `pode_aprovar_colaborador` | `src/components/avaliacao/feedbackCanonico.ts` |
 | ENCAMINHAMENTO (RH/admin) — visível apenas para quem pode encaminhar E na | `src/components/avaliacao/feedbackCanonico.ts` |
 | VALIDAÇÃO DO POTENCIAL (RH) — controle LEGADO. O fluxo atual termina na | `src/components/avaliacao/feedbackCanonico.ts` |
-| … +1073 linhas — lista completa em `context.json` | |
+| … +1091 linhas — lista completa em `context.json` | |

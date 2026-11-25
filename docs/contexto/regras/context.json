@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7a0aee8ae57dab602ac642ec028b42e54e820fd2",
+  "sha": "1d76c0224d1550c19f724ba5219e782a99110c0b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 19:30 UTC",
-  "files_total": 4218,
-  "code_files": 3622,
-  "code_lines": 535717
+  "generated_at": "2026-11-25 20:56 UTC",
+  "files_total": 4242,
+  "code_files": 3646,
+  "code_lines": 542511
  },
  "version": "1.3.2",
- "facts_hash": "7bb99589548d3dd0",
+ "facts_hash": "c1a9e74e9b4ef83b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,8 +388,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1339,
-   ".tsx": 1123,
-   ".ts": 1019,
+   ".tsx": 1141,
+   ".ts": 1025,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -97554,7 +97554,6 @@
      "treinamento_feedback",
      "treinamento_instancias",
      "treinamento_participantes",
-     "trilha_auditoria_ponto",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -97621,7 +97620,7 @@
      "validar_potencial_avaliacao",
      "verificar_espelho_ponto"
     ],
-    "deps_count": 269
+    "deps_count": 294
    },
    {
     "path": "",
@@ -103060,7 +103059,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1133,
+  "components_count": 1156,
   "hooks": [
    {
     "name": "useContacts",
@@ -104735,8 +104734,8 @@
   },
   {
    "module": "src/components",
-   "files": 1133,
-   "lines": 214772,
+   "files": 1156,
+   "lines": 221246,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -104786,7 +104785,6 @@
     "sst_regimento_documentos",
     "sst_riscos_ambientais",
     "tipos_beneficio",
-    "trilha_auditoria_ponto",
     "user_mfa",
     "webhooks_config",
     "webhooks_logs"
@@ -104838,8 +104836,8 @@
     "index.ts: V25: Components Export - active modules only",
     "AcoesFeedback.test.ts: Ações de feedback — camada de decisão dos controles (pura). Garante as regras pedidas: RH também gerencia (admin+rh), Validação de Potencial EXCLUSIVA do RH e situação da validação comparada com a versão canônica vinda do banco.",
     "AppPagination.test.tsx: AppPagination — padrão único de paginação do sistema. Cobre o contrato de APRESENTAÇÃO do componente: sequência dos controles, destaque da página ativa (verde-lima sólido), estado das setas nos extremos, seletor só quando há handler, recorte de página inexistente e as emissões de evento. A paginação …",
-    "BeneficiosSettingsTabCriar.test.tsx: Exercita a mutationFn de CRIACAO de plano de beneficio — o caminho que o teste existente (BeneficiosSettingsTab.test.tsx) nao executa, porque ali `useMutation` e mockado como `() => ({ mutate: vi.fn() })` e o `mutationFn` nunca roda. Apontado pela Devin Review em #696, com razao: os 8 testes de la p …",
-    "CriacaoFeedbackIntegracao.test.ts: Integração local da criação — a ponte entre o formulário existente e a RPC auditada. Cobre idempotência (mesma tentativa × operação nova), preservação de TODOS os campos, validações e payload da RPC. Sem rede, sem banco."
+    "AuditoriaPonto.test.tsx: Central de Auditoria (aba \"Auditoria\" de Controle de Ponto). O teste exercita a TELA, não o banco: a consulta é substituída por um cenário controlável (as linhas de `audit_log` que o componente receberia) e a exportação por um espião. O que se confere aqui é a fiação — KPIs derivados das linhas, tim …",
+    "BeneficiosSettingsTabCriar.test.tsx: Exercita a mutationFn de CRIACAO de plano de beneficio — o caminho que o teste existente (BeneficiosSettingsTab.test.tsx) nao executa, porque ali `useMutation` e mockado como `() => ({ mutate: vi.fn() })` e o `mutationFn` nunca roda. Apontado pela Devin Review em #696, com razao: os 8 testes de la p …"
    ],
    "deps": [
     "@\\/components\\",
@@ -104924,6 +104922,7 @@
     "src/components/__tests__/AuditoriaDetalheDialog.test.tsx",
     "src/components/__tests__/AuditoriaEventoDialog.test.tsx",
     "src/components/__tests__/AuditoriaFeedback.test.tsx",
+    "src/components/__tests__/AuditoriaPonto.test.tsx",
     "src/components/__tests__/AuditoriaTab.test.tsx",
     "src/components/__tests__/BancoHorasComum.test.ts",
     "src/components/__tests__/BarChartWidget.test.tsx",
@@ -104962,8 +104961,7 @@
     "src/components/__tests__/CriacaoFeedbackIntegracao.test.ts",
     "src/components/__tests__/CurrencyInput.test.tsx",
     "src/components/__tests__/DarfTab.test.tsx",
-    "src/components/__tests__/DashboardHeader.test.tsx",
-    "src/components/__tests__/DashboardWidgets.test.tsx"
+    "src/components/__tests__/DashboardHeader.test.tsx"
    ]
   },
   {
@@ -105410,18 +105408,20 @@
   },
   {
    "module": "src/mocks",
-   "files": 5,
-   "lines": 3978,
+   "files": 6,
+   "lines": 4291,
    "tables": [],
    "exports": [
     "colaboradoresMock.ts: isColaboradoresMockEnabled, MOCK_EMPRESA, getMockUserEmpresas, mockOr, isMockEmpresaId, MOCK_COLABORADORES",
     "desempenhoMock.ts: isDesempenhoMockEnabled, CicloMock, getMockCiclos, MetaMock, getMockMetas, FeedbackMock",
     "pesquisasClimaMock.ts: isPesquisasMockEnabled, PesquisaMock, getMockPesquisas, bloquearEscritaPesquisas",
+    "pontoAuditoriaMock.ts: isPontoAuditoriaMockEnabled, trilhaAuditoriaDemonstrativa",
     "pontoGeoMock.ts: RAIO_GEO_DEMO_METROS, UNIDADE_GEO_DEMO, isPontoGeoMockEnabled, batidasGeoDemonstrativas",
     "treinamentosMock.ts: isTreinamentosMockEnabled, TreinamentoMock, getMockTreinamentosLista, ParticipacaoTreinamentoMock, getMockParticipacaoTreinamentos, CursoMock"
    ],
    "docs": [],
    "deps": [
+    "crypto-js",
     "sonner"
    ],
    "imports_modules": [
@@ -105433,6 +105433,7 @@
     "src/mocks/colaboradoresMock.ts",
     "src/mocks/desempenhoMock.ts",
     "src/mocks/pesquisasClimaMock.ts",
+    "src/mocks/pontoAuditoriaMock.ts",
     "src/mocks/pontoGeoMock.ts",
     "src/mocks/treinamentosMock.ts"
    ]
@@ -105440,7 +105441,7 @@
   {
    "module": "src/pages",
    "files": 146,
-   "lines": 51971,
+   "lines": 51978,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -109555,6 +109556,7 @@
    "registros_ponto": {
     "select": [
      "src/components/folha/CalculoFolhaWizard.tsx",
+     "src/components/ponto/CentralAjustesPainel.tsx",
      "src/components/ponto/GestaoRegistrosPonto.tsx",
      "src/components/ponto/PontoCharts.tsx",
      "src/components/ponto/PontoStreakCard.tsx",
@@ -110001,11 +110003,6 @@
     ],
     "delete": [
      "src/pages/TreinamentosPage.tsx"
-    ]
-   },
-   "trilha_auditoria_ponto": {
-    "select": [
-     "src/components/ponto/PontoAdjustmentRequests.tsx"
     ]
    },
    "trilhas_aprendizado": {
@@ -111541,6 +111538,7 @@
     "entrada_1",
     "entrada_2",
     "entrada_3",
+    "entrada_4",
     "entrada_esperada",
     "he_banco_horas",
     "horas_extras",
@@ -111552,7 +111550,10 @@
     "id",
     "saida_1",
     "saida_2",
-    "saida_3"
+    "saida_3",
+    "saida_4",
+    "saida_5",
+    "saida_6"
    ],
    "relatorios_agendados": [
     "ativo",
@@ -111786,9 +111787,6 @@
    ],
    "treinamentos": [
     "id"
-   ],
-   "trilha_auditoria_ponto": [
-    "ponto_id"
    ],
    "trilhas_aprendizado": [
     "descricao",
@@ -112081,6 +112079,7 @@
     "src/mocks/colaboradoresMock.ts",
     "src/mocks/desempenhoMock.ts",
     "src/mocks/pesquisasClimaMock.ts",
+    "src/mocks/pontoAuditoriaMock.ts",
     "src/mocks/pontoGeoMock.ts",
     "src/mocks/treinamentosMock.ts",
     "src/pages/NineBoxPreviewPage.tsx",
@@ -112350,6 +112349,7 @@
     "src/mocks/colaboradoresMock.ts",
     "src/mocks/desempenhoMock.ts",
     "src/mocks/pesquisasClimaMock.ts",
+    "src/mocks/pontoAuditoriaMock.ts",
     "src/mocks/pontoGeoMock.ts",
     "src/mocks/treinamentosMock.ts"
    ],
@@ -112847,6 +112847,7 @@
     "src/mocks/pesquisasClimaMock.ts"
    ],
    "VITE_PONTO_MOCK": [
+    "src/mocks/pontoAuditoriaMock.ts",
     "src/mocks/pontoGeoMock.ts"
    ],
    "VITE_REACT_COMPILER": [
@@ -113604,6 +113605,9 @@
   "realtime": {
    "afdt-div-${empresaId}": [
     "src/pages/AdminPontoDivergenciasPage.tsx"
+   ],
+   "audit-changes": [
+    "src/components/ponto/AuditoriaPonto.tsx"
    ],
    "comunicados-realtime": [
     "src/pages/ComunicacaoInternaPage.tsx"
@@ -114477,6 +114481,7 @@
    "treinamentos_avaliacoes",
    "treinamentos_certificados",
    "triagem_notas",
+   "trilha_auditoria_ponto",
    "users",
    "vaga_entrevistas",
    "vaga_etapas",
@@ -116540,6 +116545,41 @@
     "values": "mapa | satelite | calor"
    },
    {
+    "file": "src/components/ponto/centralAjustes.ts",
+    "name": "StatusAjusteResolvido",
+    "values": "pendente | aprovado | rejeitado"
+   },
+   {
+    "file": "src/components/ponto/centralAjustes.ts",
+    "name": "NivelRiscoAjuste",
+    "values": "baixo | medio | alto"
+   },
+   {
+    "file": "src/components/ponto/centralAjustes.ts",
+    "name": "FiltroStatusAjuste",
+    "values": "todos | pendente | aprovado | rejeitado"
+   },
+   {
+    "file": "src/components/ponto/centralAjustes.ts",
+    "name": "PeriodoAjustes",
+    "values": "hoje | 7d | 30d"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "name": "PeriodoAuditoria",
+    "values": "7d | 30d | 90d | personalizado"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "name": "OperacaoAuditoria",
+    "values": "INSERT | UPDATE | DELETE | OUTRA"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "name": "EstadoEvidencia",
+    "values": "verificada | divergente | revisao | sem_comprovacao"
+   },
+   {
     "file": "src/components/ponto/relogio/statusColetor.ts",
     "name": "StatusColetor",
     "values": "online | atrasado | nunca | revogado"
@@ -118072,6 +118112,10 @@
    {
     "file": "src/components/ponto/AssinarEspelhoDialog.tsx",
     "msg": "Divergência detectada: hash não bate"
+   },
+   {
+    "file": "src/components/ponto/CentralAuditoriaDetalhes.tsx",
+    "msg": "O navegador bloqueou a cópia. Selecione o texto manualmente."
    },
    {
     "file": "src/components/ponto/DefinirPinQuiosqueDialog.tsx",
@@ -123366,6 +123410,10 @@
     "text": "do Dashboard Executivo) e apenas a LINHA DE APOIO fica um pouco menor (11px,"
    },
    {
+    "file": "src/components/dashboard/MetricCard.tsx",
+    "text": "propósito: o corpo do card padrão é validado por ~70 telas e não deve ser"
+   },
+   {
     "file": "src/components/dashboard/WorkforceHealthScore.tsx",
     "text": "o mínimo forçado pela antiga altura travada à viewport. `bare` usa um"
    },
@@ -123762,6 +123810,50 @@
     "text": "* Formato MÍNIMO que os cartões/indicadores consomem. As linhas de `pesquisas`"
    },
    {
+    "file": "src/components/ponto/AuditoriaPonto.tsx",
+    "text": "Este componente NÃO pode morar em `CentralAuditoria.tsx`: nesta mesma pasta"
+   },
+   {
+    "file": "src/components/ponto/AuditoriaPonto.tsx",
+    "text": "* Teto de linhas por consulta — o mesmo espírito do limite anterior (100). */"
+   },
+   {
+    "file": "src/components/ponto/CentralAjustesKpis.tsx",
+    "text": "Mesma regra do painel de Geofencing: com variação `null` (sem base de"
+   },
+   {
+    "file": "src/components/ponto/CentralAjustesPaginacao.tsx",
+    "text": "(`auto`, ver `PontoAdjustmentRequests`) — a paginação não pode estar dentro do"
+   },
+   {
+    "file": "src/components/ponto/CentralAjustesTabela.tsx",
+    "text": "zebra — as linhas não alternam faixa de fundo, alternam apenas o fio, então"
+   },
+   {
+    "file": "src/components/ponto/CentralAjustesTabela.tsx",
+    "text": "* Somente as linhas da PÁGINA atual, já filtradas e paginadas. */"
+   },
+   {
+    "file": "src/components/ponto/CentralAuditoriaCabecalho.tsx",
+    "text": "o painel apenas se ancora nele. A abertura é adiada em um tick porque o Radix"
+   },
+   {
+    "file": "src/components/ponto/CentralAuditoriaDetalhes.tsx",
+    "text": "escolhe o tom do cartão: verde apenas no veredito"
+   },
+   {
+    "file": "src/components/ponto/CentralAuditoriaTimeline.tsx",
+    "text": "* Somente os eventos da PÁGINA atual, já filtrados. */"
+   },
+   {
+    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
+    "text": "apenas abre os detalhes."
+   },
+   {
+    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
+    "text": "Validação de payload herdada do componente anterior: o mesmo"
+   },
+   {
     "file": "src/components/ponto/PontoBancoHorasCard.tsx",
     "text": "embaixo, separados apenas por fios discretos (`border-border`)."
    },
@@ -123836,6 +123928,22 @@
    {
     "file": "src/components/ponto/acoesCardsPonto.ts",
     "text": "* Cada utilitário aqui já existia nos três botões; foram apenas reunidos num"
+   },
+   {
+    "file": "src/components/ponto/centralAjustes.ts",
+    "text": "* Variação percentual dos quatro KPIs. A regra é a MESMA do painel de"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "text": "se as duas vierem invertidas elas são ordenadas (o usuário não deve ver uma"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "text": "id ou data — uma linha sem identidade não pode virar evento de trilha."
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "text": "* Botões de página do rodapé: no máximo CINCO números, com `null` marcando o"
    },
    {
     "file": "src/components/ponto/indicadoresPonto.ts",
@@ -124836,6 +124944,14 @@
    {
     "file": "src/mocks/pesquisasClimaMock.ts",
     "text": "ação deve ser ABORTADA, então o chamador só precisa de"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "text": "* Ativa o mock apenas em dev e apenas com o opt-in explícito da env var. */"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "text": "// A troca do primeiro caractere NÃO pode ser cega: o SHA-256 hex começa em"
    },
    {
     "file": "src/mocks/pontoGeoMock.ts",
@@ -152038,6 +152154,31 @@
     "value": "3"
    },
    {
+    "file": "src/components/ponto/AuditoriaPonto.tsx",
+    "name": "LIMITE_EVENTOS",
+    "value": "500"
+   },
+   {
+    "file": "src/components/ponto/CentralAjustesPainel.tsx",
+    "name": "CARTAO",
+    "value": "'rounded-[10px] border px-2.5 py-2.5'"
+   },
+   {
+    "file": "src/components/ponto/CentralAjustesPainel.tsx",
+    "name": "VALOR",
+    "value": "'text-[11px] leading-tight font-semibold'"
+   },
+   {
+    "file": "src/components/ponto/CentralAjustesTabela.tsx",
+    "name": "CELULA",
+    "value": "'px-2 py-[5px] align-middle'"
+   },
+   {
+    "file": "src/components/ponto/CentralAjustesTabela.tsx",
+    "name": "LINHA_HOVER",
+    "value": "'transition-colors duration-200 hover:bg-muted/70'"
+   },
+   {
     "file": "src/components/ponto/PontoEquipeStatusCard.tsx",
     "name": "SLOT_ENTRADA_CARD",
     "value": "6"
@@ -152070,6 +152211,31 @@
    {
     "file": "src/components/ponto/PontoGeofencingPainel.tsx",
     "name": "MINIMO_PONTOS_CALOR",
+    "value": "5"
+   },
+   {
+    "file": "src/components/ponto/centralAjustes.ts",
+    "name": "TAMANHO_PAGINA_AJUSTES",
+    "value": "6"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "name": "DISPOSITIVO_WEB_DIGEST",
+    "value": "'web'"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "name": "DISPOSITIVO_WEB_COLUNA",
+    "value": "'web-browser'"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "name": "SISTEMA",
+    "value": "'Sistema (automático)'"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "name": "TAMANHO_PAGINA_AUDITORIA",
     "value": "5"
    },
    {
@@ -152851,6 +153017,26 @@
     "file": "src/mocks/desempenhoMock.ts",
     "name": "EMAIL_GESTOR",
     "value": "'gestor.regional@empresa.com.br'"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "name": "GESTOR",
+    "value": "'william.cardoso@promobrindes.com.br'"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "name": "SISTEMA",
+    "value": "'carlos.lima@promobrindes.com.br'"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "name": "COLAB_A",
+    "value": "'a7f2e1c4-1111-4a2b-8c3d-9e0f1a2b3c4d'"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "name": "COLAB_B",
+    "value": "'f3b9d2e1-2222-4c3d-9e4f-0a1b2c3d4e5f'"
    },
    {
     "file": "src/mocks/pontoGeoMock.ts",
@@ -156973,6 +157159,24 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/ponto/CentralAjustesDetalhesDialog.tsx",
+    "field": "estado",
+    "value": "pendente",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/CentralAjustesPainel.tsx",
+    "field": "estado",
+    "value": "pendente",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/CentralAjustesPainel.tsx",
+    "field": "estado",
+    "value": "aprovado",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/ponto/EditarEscalaDialog.tsx",
     "field": "status",
     "value": "agendado",
@@ -156981,12 +157185,6 @@
    {
     "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
     "field": "status",
-    "value": "pendente",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
-    "field": "status",
     "value": "aprovado",
     "kind": "escreve"
    },
@@ -156999,49 +157197,7 @@
    {
     "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
     "field": "status",
-    "value": "recusado",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
-    "field": "status",
-    "value": "aprovado",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
-    "field": "status",
-    "value": "recusado",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
-    "field": "status",
-    "value": "aprovado",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
-    "field": "status",
-    "value": "recusado",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
-    "field": "status",
-    "value": "rejeitado",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
-    "field": "status",
-    "value": "pendente",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
-    "field": "status",
-    "value": "pendente",
+    "value": "todos",
     "kind": "compara"
    },
    {
@@ -157053,13 +157209,25 @@
    {
     "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
     "field": "status",
-    "value": "pendente",
+    "value": "aprovado",
     "kind": "compara"
    },
    {
     "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
     "field": "status",
-    "value": "pendente",
+    "value": "aprovado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
+    "field": "status",
+    "value": "aprovado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
+    "field": "status",
+    "value": "aprovado",
     "kind": "compara"
    },
    {
@@ -157198,6 +157366,60 @@
     "file": "src/components/ponto/PontoOcorrenciasCard.tsx",
     "field": "tipo",
     "value": "atraso",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/centralAjustes.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/centralAjustes.ts",
+    "field": "estado",
+    "value": "pendente",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/centralAjustes.ts",
+    "field": "estado",
+    "value": "aprovado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "field": "estado",
+    "value": "verificada",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "field": "estado",
+    "value": "divergente",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "field": "estado",
+    "value": "revisao",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "field": "estado",
+    "value": "sem_comprovacao",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "field": "estado",
+    "value": "divergente",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "field": "estado",
+    "value": "revisao",
     "kind": "compara"
    },
    {
@@ -160348,6 +160570,102 @@
     "file": "src/mocks/pesquisasClimaMock.ts",
     "field": "status",
     "value": "rascunho",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "tipo",
+    "value": "entrada",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "tipo",
+    "value": "entrada",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "status",
+    "value": "rejeitado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "status",
+    "value": "pendente",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "status",
+    "value": "aprovado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "status",
+    "value": "pendente",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "tipo",
+    "value": "entrada",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "tipo",
+    "value": "saida",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "status",
+    "value": "pendente",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "tipo",
+    "value": "saida",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "tipo",
+    "value": "entrada",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "status",
+    "value": "recusado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "status",
+    "value": "pendente",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "tipo",
+    "value": "entrada",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "tipo",
+    "value": "entrada",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pontoAuditoriaMock.ts",
+    "field": "status",
+    "value": "pendente",
     "kind": "escreve"
    },
    {
@@ -166977,6 +167295,30 @@
     "body": "const { empresaAtual } = useEmpresas(); const [open, setOpen] = useState(false); const [loading, setLoading] = useState(false); const [inicio, setInicio] = useState(''); const [fim, setFim] = useState(''); const [resultado, setResultado] = useState<{ hash: string; bytes: number; marcacoes: number; colaboradores: number; sem_pis: number; } | null>(null); const handleGerar = async () => { if (!empresaAtual?.id) return toast.error('Selecione uma empresa'); if (!inicio || !fim) return toast.error('I …"
    },
    {
+    "file": "src/components/ponto/centralAjustes.ts",
+    "name": "totalPaginasAjustes",
+    "params": "total: number, tamanho: number",
+    "body": "return Math.max(1, Math.ceil(Math.max(0, total) / Math.max(1, tamanho)));"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "name": "responsaveisDosEventos",
+    "params": "eventos: readonly EventoAuditoria[]",
+    "body": "const nomes = new Set<string>(); eventos.forEach((evento) => nomes.add(responsavelDoEvento(evento))); return [...nomes].sort((a, b) => a.localeCompare(b));"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "name": "iniciaisDoResponsavel",
+    "params": "valor: string",
+    "body": "const partes = valor .trim() .split(/[\\s._@-]+/) .filter(Boolean); if (partes.length === 0) return '—'; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); return `${partes[0][0]}${partes[1][0]}`.toUpperCase();"
+   },
+   {
+    "file": "src/components/ponto/centralAuditoria.ts",
+    "name": "totalPaginasAuditoria",
+    "params": "total: number, tamanho: number = TAMANHO_PAGINA_AUDITORIA",
+    "body": "return Math.max(1, Math.ceil(Math.max(0, total) / Math.max(1, tamanho)));"
+   },
+   {
     "file": "src/components/ponto/indicadoresPonto.ts",
     "name": "calcularIndicadoresPonto",
     "params": "registrosSemana: RegistroIndicador[] = []",
@@ -168635,6 +168977,10 @@
     "line": "if (periodo === '90d') return subDays(hoje, 90);"
    },
    {
+    "file": "src/components/ponto/CentralAuditoriaDetalhes.tsx",
+    "line": "const timer = window.setTimeout(() => setCopiado(false), 2000);"
+   },
+   {
     "file": "src/components/ponto/GestaoPontoAnalytics.tsx",
     "line": "const diffHours = (inTime.getTime() - outTime.getTime()) / (1000 * 60 * 60);"
    },
@@ -169826,6 +170172,10 @@
    },
    {
     "file": "src/components/dashboard/MetricCard.tsx",
+    "line": "* [ícone 36] Título [ +20% ]"
+   },
+   {
+    "file": "src/components/dashboard/MetricCard.tsx",
     "line": "// linha de apoio caber em UMA linha (\"150% vs. período"
    },
    {
@@ -170121,8 +170471,48 @@
     "line": "* `chipFiltroComum`). Fundo em tint de 10%, borda em 35% e texto na cor cheia"
    },
    {
+    "file": "src/components/ponto/AuditoriaPonto.tsx",
+    "line": "* 2. grade de duas colunas (~69% / ~31% a partir de `xl`):"
+   },
+   {
+    "file": "src/components/ponto/AuditoriaPonto.tsx",
+    "line": "{/* ── DUAS COLUNAS (~69% / ~31% a partir de `xl`) ───────────────────"
+   },
+   {
+    "file": "src/components/ponto/CentralAjustesKpis.tsx",
+    "line": "// QUATRO COLUNAS dentro da coluna esquerda (que é ~70% da tela): os KPIs"
+   },
+   {
+    "file": "src/components/ponto/CentralAjustesPainel.tsx",
+    "line": "* PAINEL DE DETALHES DA CENTRAL DE AJUSTES — coluna direita (~30% no desktop)."
+   },
+   {
+    "file": "src/components/ponto/CentralAuditoriaDetalhes.tsx",
+    "line": "* (142 76% 40% ≈ #18B361 e 0 63% 35% ≈ #912121) não são estes verdes/vermelhos"
+   },
+   {
+    "file": "src/components/ponto/CentralAuditoriaFiltros.tsx",
+    "line": "* A barra mora na coluna esquerda (~69% do grid da Central), não na largura da"
+   },
+   {
+    "file": "src/components/ponto/CentralAuditoriaKpis.tsx",
+    "line": "* Na Central de Auditoria estes quatro cards vivem na coluna de ~69% — cada um"
+   },
+   {
+    "file": "src/components/ponto/CentralAuditoriaKpis.tsx",
+    "line": "{/* Título + selo numa linha que PODE quebrar: na coluna de ~69% o"
+   },
+   {
     "file": "src/components/ponto/GestaoPontoAnalytics.tsx",
     "line": "podem gerar horas extras a 100%."
+   },
+   {
+    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
+    "line": "// 1860) — na prática entre 27% e 30% da largura útil, com piso de 320px. O"
+   },
+   {
+    "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
+    "line": "// com conteúdo real: a coluna acompanha os ~30% (414px de 1380 e 500px de"
    },
    {
     "file": "src/components/ponto/PontoAuditTimeline.tsx",
@@ -170191,6 +170581,10 @@
    {
     "file": "src/components/ponto/acoesCardsPonto.ts",
     "line": "* escala de 125% do `<html>` só os converte em 30px / 15px / 10px / 12,5px na"
+   },
+   {
+    "file": "src/components/ponto/centralAjustes.ts",
+    "line": "* `tom` é o par fundo + tinta 10% (chip) — mantido para quem quiser o ícone"
    },
    {
     "file": "src/components/portal/PortalFinanceiroTab.tsx",
@@ -174801,6 +175195,94 @@
    {
     "file": "src/components/__tests__/AuditoriaFeedback.test.tsx",
     "name": "campo declarado como alterado precisa existir em um dos lados"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "AuditoriaPonto — cabeçalho e KPIs"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "mostra o título, o subtítulo e as duas ações do cabeçalho"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "deriva os quatro KPIs das linhas do período"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "AuditoriaPonto — timeline e painel"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "lista a primeira página (5 de 7) com títulos legíveis"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "abre o primeiro evento no painel e troca ao clicar em outro registro"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "mostra os metadados do evento aberto"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "não afirma "
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "pagina a timeline e atualiza a faixa do rodapé"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "AuditoriaPonto — leitura visual da integridade"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "veste verde quando o digest foi recalculado e confere"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "veste vermelho quando não há evidência verificável"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "veste vermelho na exclusão sem digest (revisão recomendada)"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "AuditoriaPonto — filtros"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "a busca textual recorta a timeline"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "barra de filtros: busca elástica na linha 1 e os três recortes na linha 2"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "estado vazio sem eventos e com o recorte sem resultados"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "avisa quando a consulta falha"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "AuditoriaPonto — exportação"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "exporta a trilha FILTRADA em CSV"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "AuditoriaPonto — diagramação em duas colunas"
+   },
+   {
+    "file": "src/components/__tests__/AuditoriaPonto.test.tsx",
+    "name": "põe KPIs, filtros e timeline na coluna esquerda e o painel na direita"
    },
    {
     "file": "src/components/__tests__/AuditoriaTab.test.tsx",
@@ -185088,39 +185570,55 @@
    },
    {
     "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
-    "name": "PontoAdjustmentRequests"
+    "name": "Central de Ajustes (PontoAdjustmentRequests)"
    },
    {
     "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
-    "name": "renders search input"
+    "name": "renderiza o cabeçalho, a busca e o seletor de período"
    },
    {
     "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
-    "name": "renders Colaborador table header"
+    "name": "mostra os quatro KPIs do período"
    },
    {
     "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
-    "name": "renders Status table header"
+    "name": "lista as solicitações na tabela com as colunas da referência"
    },
    {
     "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
-    "name": "renders Data table header"
+    "name": "abre a primeira solicitação no painel de detalhes por padrão"
    },
    {
     "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
-    "name": "renders Motivo table header"
+    "name": "troca o painel ao clicar em outra linha"
    },
    {
     "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
-    "name": "renders empty state when no solicitacoes"
+    "name": "filtra pelo chip de status"
    },
    {
     "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
-    "name": "renders Solicitações de Ajuste title"
+    "name": "o rodapé traz a contagem de selecionadas e as ações em lote, sem perder o intervalo"
    },
    {
     "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
-    "name": "renders 0 Pendentes badge"
+    "name": "pede confirmação antes de aprovar e só então chama a mutation"
+   },
+   {
+    "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
+    "name": "não grava nada quando a confirmação é cancelada"
+   },
+   {
+    "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
+    "name": "rejeita pelo painel depois da confirmação, com o status recusado"
+   },
+   {
+    "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
+    "name": "em telas menores o painel abre como drawer ao clicar na linha"
+   },
+   {
+    "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
+    "name": "mostra o estado vazio quando não há solicitações no período"
    },
    {
     "file": "src/components/__tests__/PontoAuditTimeline.test.tsx",
@@ -185161,6 +185659,118 @@
    {
     "file": "src/components/__tests__/PontoAuditTimeline.test.tsx",
     "name": "renders without filterTabela prop"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+    "name": "CentralAjustesFiltros — chips de status"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+    "name": "renderiza os quatro filtros como pílulas do Design System"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+    "name": "não usa mais ícones — a leitura é a bolinha colorida"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+    "name": "pinta cada filtro com a cor do seu status (indicador, borda, fundo e texto)"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+    "name": "destaca o selecionado com a MESMA família + glow, sem alterar o tamanho"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+    "name": "clica no filtro e devolve o valor do status correspondente"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+    "name": "usa os contadores reais recebidos (nada fixo no componente)"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+    "name": "mantém os quatro numa linha, com rolagem horizontal em telas estreitas"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+    "name": "preserva o seletor de período ao lado dos chips"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+    "name": "ColoredFilterChip — o componente reusado"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+    "name": "é a pílula única do Design System (rótulo + contador + tema, sem ícone)"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesPainel.test.tsx",
+    "name": "CentralAjustesPainel — diagramação dos cartões internos"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesPainel.test.tsx",
+    "name": "empilha os quatro cartões com o mesmo raio, respiro e vão de 12 px"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesPainel.test.tsx",
+    "name": "veste os dados da solicitação de azul-aço, em três colunas iguais"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesPainel.test.tsx",
+    "name": "mostra a justificativa inteira num cartão roxo, sem fundo brilhante"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesPainel.test.tsx",
+    "name": "mantém o cartão de risco NEUTRO quando não há parecer (não inventa nível)"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesPainel.test.tsx",
+    "name": "lista último registro e próxima jornada em linhas separadas, valor acima do rótulo"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesPainel.test.tsx",
+    "name": "preserva as ações: Aprovar/Rejeitar na mesma linha e "
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesPainel.test.tsx",
+    "name": "não renderiza cartão nenhum no estado de espera"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
+    "name": "CentralAjustesTabela — aparência da linha"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
+    "name": "não pinta a linha ativa: sem fundo, sem barra lateral e sem contorno"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
+    "name": "dá à linha ativa, à marcada e à comum exatamente as mesmas classes"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
+    "name": "aplica o mesmo hover cinza-azulado em todas as linhas, em 200 ms"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
+    "name": "separa as linhas com um fio hairline, sem desenhar caixas"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
+    "name": "mantém densidade e colunas intactas (nada de altura ou espaçamento novo)"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
+    "name": "marca a seleção só no checkbox: lime preenchido com check escuro"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
+    "name": "na seleção múltipla todos os checkboxes ficam lime sem pintar as linhas"
+   },
+   {
+    "file": "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
+    "name": "preserva as cores semânticas dos badges, do selo Portaria 671 e do avatar"
    },
    {
     "file": "src/components/__tests__/PontoCharts.test.tsx",
@@ -187791,6 +188401,258 @@
     "name": "formata a data/hora com fallback para valor inválido"
    },
    {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "statusAjuste"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "traduz os nomes gravados no banco para os três estados da tela"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "trata valores sem decisão como pendente"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "riscoDoAjuste"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "devolve o parecer gravado em ia_risco"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "NÃO inventa nível quando o registro não tem análise"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "marca risco elevado apenas no nível alto"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "filtrarAjustes"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "sem filtro devolve a lista inteira, na mesma ordem"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "busca por nome ignorando acento e caixa"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "filtra pelo estado da tela (recusado conta como rejeitado)"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "recorta a janela de datas nas duas pontas"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "combina busca, status e intervalo"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "contarAjustes / resumoAjustes"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "conta por estado e soma risco elevado"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "lista vazia devolve zeros (sem NaN e sem percentual)"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "variacoesAjustes"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "calcula a variação contra o período anterior"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "sem base de comparação não existe percentual (null), nunca 0%"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "queda vira número negativo (a seta do card inverte)"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "paginação"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "nunca devolve página zero e limita a última"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "descreve a faixa exibida no rodapé"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "contextoDaJornada"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "pega o registro imediatamente anterior e a última batida do dia"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "sem registro anterior/posterior devolve null nos dois lados"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "registro anterior sem batida nenhuma mostra hora vazia"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "rótulos"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "formata data e hora sem depender de fuso"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "descreve o tipo de batida com o nome do módulo"
+   },
+   {
+    "file": "src/components/__tests__/centralAjustes.test.ts",
+    "name": "descreve a divergência em minutos/horas"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "normalização"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "lê a linha legada (colunas no topo)"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "lê a linha nova (payload aninhado)"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "descarta linha sem id ou sem data"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "traduz operações desconhecidas para OUTRA"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "títulos legíveis"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "%s + %s → %s"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "usa o nome técnico quando a tabela é desconhecida"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "integridade da evidência"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "verifica de verdade a batida cujo digest confere"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "aceita a batida em que o dispositivo gravado é o fallback "
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "acusa divergência quando o digest gravado não corresponde"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "NÃO marca como verificada só porque existe um hash de receita desconhecida"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "exclusão sem digest pede revisão"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "batida sem os campos da receita cai em sem comprovação"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "período"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "calcula a janela dos atalhos"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "ordena o recorte personalizado invertido"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "a janela anterior tem a mesma duração e termina no dia anterior"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "o rótulo sai do recorte, não de um estado paralelo"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "filtros, resumo e variação"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "recorta pelo intervalo (dia local)"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "combina operação, entidade, responsável e busca"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "conta os KPIs e os eventos de atenção"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "sem base de comparação a variação é nula"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "com base de comparação devolve o percentual arredondado"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "lista as opções dos três selects a partir dos eventos"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "formata a data sem passar por fuso"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "paginação"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "recorta a página e mantém a página dentro dos limites"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "descreve a faixa exibida"
+   },
+   {
+    "file": "src/components/__tests__/centralAuditoria.test.ts",
+    "name": "mostra no máximo cinco botões, com reticências nos vãos"
+   },
+   {
     "file": "src/components/__tests__/desligamento-badges.test.tsx",
     "name": "StatusBadge"
    },
@@ -188141,6 +189003,26 @@
    {
     "file": "src/components/__tests__/layout.test.tsx",
     "name": "navigates to fallback when history is short"
+   },
+   {
+    "file": "src/components/__tests__/pontoAuditoriaMock.test.ts",
+    "name": "trilha demonstrativa de auditoria"
+   },
+   {
+    "file": "src/components/__tests__/pontoAuditoriaMock.test.ts",
+    "name": "mantém exatamente uma linha divergente em qualquer dia do calendário"
+   },
+   {
+    "file": "src/components/__tests__/pontoAuditoriaMock.test.ts",
+    "name": "o digest corrompido difere do recalculado só no primeiro caractere"
+   },
+   {
+    "file": "src/components/__tests__/pontoAuditoriaMock.test.ts",
+    "name": "as batidas de ponto com receita continuam verificadas"
+   },
+   {
+    "file": "src/components/__tests__/pontoAuditoriaMock.test.ts",
+    "name": "a exclusão de batida sem digest pede revisão, nunca "
    },
    {
     "file": "src/components/__tests__/simulacaoResumo.test.ts",
@@ -241804,6 +242686,7 @@
       "escreve:src/components/ponto/PontoClockRegister.tsx",
       "escreve:src/hooks/usePonto.ts",
       "escreve:src/hooks/usePontoOffline.ts",
+      "escreve:src/mocks/pontoAuditoriaMock.ts",
       "escreve:src/mocks/pontoGeoMock.ts",
       "escreve:src/pages/ControleAcessoPage.tsx",
       "escreve:src/pages/PontoKioskPage.tsx",
@@ -241824,7 +242707,8 @@
       "compara:src/utils/pontoEquipe.ts",
       "compara:supabase/functions/processar-ponto/index.ts",
       "compara:supabase/functions/processar-ponto/logica.ts",
-      "escreve:src/components/ponto/PontoClockRegister.tsx"
+      "escreve:src/components/ponto/PontoClockRegister.tsx",
+      "escreve:src/mocks/pontoAuditoriaMock.ts"
      ],
      "forgotten_out": [
       "compara:src/components/ponto/PontoInconsistencyPanel.tsx",
@@ -242325,7 +243209,6 @@
       "compara:src/components/esocial/tabs.tsx",
       "compara:src/components/ferias/CalendarioFerias.tsx",
       "compara:src/components/ferias/FeriasRelatorioDialog.tsx",
-      "compara:src/components/ponto/PontoAdjustmentRequests.tsx",
       "compara:src/hooks/useAssinaturas.ts",
       "compara:src/hooks/usePontoDashboard.ts",
       "compara:src/pages/AdminEpisFichasPage.tsx",
@@ -242345,10 +243228,10 @@
       "escreve:src/components/desligamentos/NovoDesligamentoDialog.tsx",
       "escreve:src/components/esocial/ESocialTimeline.tsx",
       "escreve:src/components/horas-extras/horasExtrasComum.ts",
-      "escreve:src/components/ponto/PontoAdjustmentRequests.tsx",
       "escreve:src/hooks/useAssinaturas.ts",
       "escreve:src/hooks/usePendencias.ts",
       "escreve:src/mocks/desempenhoMock.ts",
+      "escreve:src/mocks/pontoAuditoriaMock.ts",
       "escreve:src/pages/AdminEpisFichasPage.tsx",
       "escreve:src/pages/AvaliacaoPage.tsx",
       "escreve:src/pages/CalculadoraRescisaoPage.tsx",
@@ -242387,11 +243270,11 @@
       "compara:src/components/admissao/AdmissaoChecklist.tsx",
       "compara:src/components/descontos/AdiantamentosTable.tsx",
       "compara:src/components/ferias/FeriasWorkflowStepper.tsx",
-      "compara:src/components/ponto/PontoAdjustmentRequests.tsx",
       "compara:src/components/premiacoes/PagamentosTabela.tsx",
       "compara:src/components/premiacoes/pagamentosComum.ts",
       "compara:src/services/premiacoesService.ts",
-      "escreve:src/components/descontos/AdiantamentosTable.tsx"
+      "escreve:src/components/descontos/AdiantamentosTable.tsx",
+      "escreve:src/mocks/pontoAuditoriaMock.ts"
      ],
      "enviado": [
       "compara:src/components/admissao/AdmissaoChecklist.tsx",
@@ -242424,6 +243307,8 @@
       "compara:src/components/avaliacao/PdiTab.tsx",
       "compara:src/components/desligamentos/GestaoDesligamentos.tsx",
       "compara:src/components/pesquisas/pesquisasComum.ts",
+      "compara:src/components/ponto/PontoAdjustmentRequests.tsx",
+      "compara:src/components/ponto/centralAjustes.ts",
       "compara:src/components/premiacoes/pagamentosComum.ts",
       "compara:src/components/premiacoes/premiacoesComum.ts",
       "compara:src/components/treinamentos/TurmasPainel.tsx",
@@ -242662,6 +243547,7 @@
       "escreve:src/components/descontos/AdiantamentosTable.tsx",
       "escreve:src/components/ponto/PontoAdjustmentRequests.tsx",
       "escreve:src/hooks/usePontoMelhorado.ts",
+      "escreve:src/mocks/pontoAuditoriaMock.ts",
       "escreve:src/services/notificacoesService.ts",
       "escreve:src/services/rescisaoService.ts",
       "escreve:src/services/tabelas/pontoService.ts",
@@ -242675,7 +243561,7 @@
       "compara:src/hooks/usePontoMelhorado.ts",
       "escreve:src/components/dashboard/AnalyticsSection.tsx",
       "escreve:src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
-      "escreve:src/components/ponto/PontoAdjustmentRequests.tsx"
+      "escreve:src/mocks/pontoAuditoriaMock.ts"
      ],
      "em_analise": [
       "compara:src/components/dashboard/AnalyticsSection.tsx",
@@ -243341,6 +244227,29 @@
      "nao_aplicavel": [
       "compara:src/components/avaliacao/feedbackCanonico.ts",
       "escreve:src/components/avaliacao/feedbackCanonico.ts"
+     ],
+     "pendente": [
+      "compara:src/components/ponto/CentralAjustesDetalhesDialog.tsx",
+      "compara:src/components/ponto/CentralAjustesPainel.tsx",
+      "compara:src/components/ponto/centralAjustes.ts"
+     ],
+     "aprovado": [
+      "compara:src/components/ponto/CentralAjustesPainel.tsx",
+      "compara:src/components/ponto/centralAjustes.ts"
+     ],
+     "verificada": [
+      "escreve:src/components/ponto/centralAuditoria.ts"
+     ],
+     "divergente": [
+      "compara:src/components/ponto/centralAuditoria.ts",
+      "escreve:src/components/ponto/centralAuditoria.ts"
+     ],
+     "revisao": [
+      "compara:src/components/ponto/centralAuditoria.ts",
+      "escreve:src/components/ponto/centralAuditoria.ts"
+     ],
+     "sem_comprovacao": [
+      "escreve:src/components/ponto/centralAuditoria.ts"
      ]
     },
     "etapa": {
@@ -278085,6 +278994,36 @@
     "campo declarado como alterado precisa existir em um dos lados"
    ]
   },
+  "src/components/__tests__/AuditoriaPonto.test.tsx": {
+   "path": "src/components/__tests__/AuditoriaPonto.test.tsx",
+   "lines": 408,
+   "is_test": true,
+   "doc": "Central de Auditoria (aba \"Auditoria\" de Controle de Ponto). O teste exercita a TELA, não o banco: a consulta é substituída por um cenário controlável (as linhas de `audit_log` que o componente receberia) e a exportação por um espião. O que se confere aqui é a fiação — KPIs derivados das linhas, tim …",
+   "tests": [
+    "AuditoriaPonto — cabeçalho e KPIs",
+    "mostra o título, o subtítulo e as duas ações do cabeçalho",
+    "deriva os quatro KPIs das linhas do período",
+    "AuditoriaPonto — timeline e painel",
+    "lista a primeira página (5 de 7) com títulos legíveis",
+    "abre o primeiro evento no painel e troca ao clicar em outro registro",
+    "mostra os metadados do evento aberto",
+    "não afirma ",
+    "pagina a timeline e atualiza a faixa do rodapé",
+    "AuditoriaPonto — leitura visual da integridade",
+    "veste verde quando o digest foi recalculado e confere",
+    "veste vermelho quando não há evidência verificável",
+    "veste vermelho na exclusão sem digest (revisão recomendada)",
+    "AuditoriaPonto — filtros",
+    "a busca textual recorta a timeline",
+    "barra de filtros: busca elástica na linha 1 e os três recortes na linha 2",
+    "estado vazio sem eventos e com o recorte sem resultados",
+    "avisa quando a consulta falha",
+    "AuditoriaPonto — exportação",
+    "exporta a trilha FILTRADA em CSV",
+    "AuditoriaPonto — diagramação em duas colunas",
+    "põe KPIs, filtros e timeline na coluna esquerda e o painel na direita"
+   ]
+  },
   "src/components/__tests__/AuditoriaTab.test.tsx": {
    "path": "src/components/__tests__/AuditoriaTab.test.tsx",
    "lines": 240,
@@ -282598,18 +283537,23 @@
   },
   "src/components/__tests__/PontoAdjustmentRequests.test.tsx": {
    "path": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
-   "lines": 96,
+   "lines": 237,
    "is_test": true,
+   "doc": "Central de Ajustes — conteúdo da aba Registros (Controle de Ponto). O teste exercita a TELA, não o banco: a query é substituída por um cenário controlável (as solicitações que o componente receberia) e a mutation por um espião, para conferir a fiação — filtro por status, painel de detalhes ao clicar …",
    "tests": [
-    "PontoAdjustmentRequests",
-    "renders search input",
-    "renders Colaborador table header",
-    "renders Status table header",
-    "renders Data table header",
-    "renders Motivo table header",
-    "renders empty state when no solicitacoes",
-    "renders Solicitações de Ajuste title",
-    "renders 0 Pendentes badge"
+    "Central de Ajustes (PontoAdjustmentRequests)",
+    "renderiza o cabeçalho, a busca e o seletor de período",
+    "mostra os quatro KPIs do período",
+    "lista as solicitações na tabela com as colunas da referência",
+    "abre a primeira solicitação no painel de detalhes por padrão",
+    "troca o painel ao clicar em outra linha",
+    "filtra pelo chip de status",
+    "o rodapé traz a contagem de selecionadas e as ações em lote, sem perder o intervalo",
+    "pede confirmação antes de aprovar e só então chama a mutation",
+    "não grava nada quando a confirmação é cancelada",
+    "rejeita pelo painel depois da confirmação, com o status recusado",
+    "em telas menores o painel abre como drawer ao clicar na linha",
+    "mostra o estado vazio quando não há solicitações no período"
    ]
   },
   "src/components/__tests__/PontoAuditTimeline.test.tsx": {
@@ -282627,6 +283571,58 @@
     "renders log tabela when logs provided",
     "renders user email in log",
     "renders without filterTabela prop"
+   ]
+  },
+  "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx": {
+   "path": "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+   "lines": 181,
+   "is_test": true,
+   "tests": [
+    "CentralAjustesFiltros — chips de status",
+    "renderiza os quatro filtros como pílulas do Design System",
+    "não usa mais ícones — a leitura é a bolinha colorida",
+    "pinta cada filtro com a cor do seu status (indicador, borda, fundo e texto)",
+    "destaca o selecionado com a MESMA família + glow, sem alterar o tamanho",
+    "clica no filtro e devolve o valor do status correspondente",
+    "usa os contadores reais recebidos (nada fixo no componente)",
+    "mantém os quatro numa linha, com rolagem horizontal em telas estreitas",
+    "preserva o seletor de período ao lado dos chips",
+    "ColoredFilterChip — o componente reusado",
+    "é a pílula única do Design System (rótulo + contador + tema, sem ícone)"
+   ]
+  },
+  "src/components/__tests__/PontoCentralAjustesPainel.test.tsx": {
+   "path": "src/components/__tests__/PontoCentralAjustesPainel.test.tsx",
+   "lines": 236,
+   "is_test": true,
+   "tests": [
+    "CentralAjustesPainel — diagramação dos cartões internos",
+    "empilha os quatro cartões com o mesmo raio, respiro e vão de 12 px",
+    "veste os dados da solicitação de azul-aço, em três colunas iguais",
+    "mostra a justificativa inteira num cartão roxo, sem fundo brilhante",
+    "mantém o cartão de risco NEUTRO quando não há parecer (não inventa nível)",
+    "lista último registro e próxima jornada em linhas separadas, valor acima do rótulo",
+    "preserva as ações: Aprovar/Rejeitar na mesma linha e ",
+    "não renderiza cartão nenhum no estado de espera"
+   ]
+  },
+  "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx": {
+   "path": "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
+   "lines": 216,
+   "is_test": true,
+   "errors": [
+    "Linha de ${nome} não encontrada"
+   ],
+   "tests": [
+    "CentralAjustesTabela — aparência da linha",
+    "não pinta a linha ativa: sem fundo, sem barra lateral e sem contorno",
+    "dá à linha ativa, à marcada e à comum exatamente as mesmas classes",
+    "aplica o mesmo hover cinza-azulado em todas as linhas, em 200 ms",
+    "separa as linhas com um fio hairline, sem desenhar caixas",
+    "mantém densidade e colunas intactas (nada de altura ou espaçamento novo)",
+    "marca a seleção só no checkbox: lime preenchido com check escuro",
+    "na seleção múltipla todos os checkboxes ficam lime sem pintar as linhas",
+    "preserva as cores semânticas dos badges, do selo Portaria 671 e do avatar"
    ]
   },
   "src/components/__tests__/PontoCharts.test.tsx": {
@@ -283808,6 +284804,93 @@
     "formata a data/hora com fallback para valor inválido"
    ]
   },
+  "src/components/__tests__/centralAjustes.test.ts": {
+   "path": "src/components/__tests__/centralAjustes.test.ts",
+   "lines": 247,
+   "is_test": true,
+   "tests": [
+    "statusAjuste",
+    "traduz os nomes gravados no banco para os três estados da tela",
+    "trata valores sem decisão como pendente",
+    "riscoDoAjuste",
+    "devolve o parecer gravado em ia_risco",
+    "NÃO inventa nível quando o registro não tem análise",
+    "marca risco elevado apenas no nível alto",
+    "filtrarAjustes",
+    "sem filtro devolve a lista inteira, na mesma ordem",
+    "busca por nome ignorando acento e caixa",
+    "filtra pelo estado da tela (recusado conta como rejeitado)",
+    "recorta a janela de datas nas duas pontas",
+    "combina busca, status e intervalo",
+    "contarAjustes / resumoAjustes",
+    "conta por estado e soma risco elevado",
+    "lista vazia devolve zeros (sem NaN e sem percentual)",
+    "variacoesAjustes",
+    "calcula a variação contra o período anterior",
+    "sem base de comparação não existe percentual (null), nunca 0%",
+    "queda vira número negativo (a seta do card inverte)",
+    "paginação",
+    "nunca devolve página zero e limita a última",
+    "descreve a faixa exibida no rodapé",
+    "contextoDaJornada",
+    "pega o registro imediatamente anterior e a última batida do dia",
+    "sem registro anterior/posterior devolve null nos dois lados",
+    "registro anterior sem batida nenhuma mostra hora vazia",
+    "rótulos",
+    "formata data e hora sem depender de fuso",
+    "descreve o tipo de batida com o nome do módulo",
+    "descreve a divergência em minutos/horas"
+   ]
+  },
+  "src/components/__tests__/centralAuditoria.test.ts": {
+   "path": "src/components/__tests__/centralAuditoria.test.ts",
+   "lines": 309,
+   "is_test": true,
+   "errors": [
+    "linha deveria normalizar"
+   ],
+   "params": [
+    {
+     "name": "HOJE",
+     "value": "'2026-11-05'"
+    }
+   ],
+   "doc": "Central de Auditoria — derivações puras. O teste cobre o que a TELA afirma: normalização das duas gerações de linha de `audit_log`, títulos legíveis, recortes combináveis, contagem dos KPIs, variação contra o período anterior, paginação e — principalmente — o parecer de integridade, que nunca pode d …",
+   "tests": [
+    "normalização",
+    "lê a linha legada (colunas no topo)",
+    "lê a linha nova (payload aninhado)",
+    "descarta linha sem id ou sem data",
+    "traduz operações desconhecidas para OUTRA",
+    "títulos legíveis",
+    "%s + %s → %s",
+    "usa o nome técnico quando a tabela é desconhecida",
+    "integridade da evidência",
+    "verifica de verdade a batida cujo digest confere",
+    "aceita a batida em que o dispositivo gravado é o fallback ",
+    "acusa divergência quando o digest gravado não corresponde",
+    "NÃO marca como verificada só porque existe um hash de receita desconhecida",
+    "exclusão sem digest pede revisão",
+    "batida sem os campos da receita cai em sem comprovação",
+    "período",
+    "calcula a janela dos atalhos",
+    "ordena o recorte personalizado invertido",
+    "a janela anterior tem a mesma duração e termina no dia anterior",
+    "o rótulo sai do recorte, não de um estado paralelo",
+    "filtros, resumo e variação",
+    "recorta pelo intervalo (dia local)",
+    "combina operação, entidade, responsável e busca",
+    "conta os KPIs e os eventos de atenção",
+    "sem base de comparação a variação é nula",
+    "com base de comparação devolve o percentual arredondado",
+    "lista as opções dos três selects a partir dos eventos",
+    "formata a data sem passar por fuso",
+    "paginação",
+    "recorta a página e mantém a página dentro dos limites",
+    "descreve a faixa exibida",
+    "mostra no máximo cinco botões, com reticências nos vãos"
+   ]
+  },
   "src/components/__tests__/desligamento-badges.test.tsx": {
    "path": "src/components/__tests__/desligamento-badges.test.tsx",
    "lines": 63,
@@ -283934,6 +285017,31 @@
     "renders on non-root paths",
     "navigates back when clicked",
     "navigates to fallback when history is short"
+   ]
+  },
+  "src/components/__tests__/pontoAuditoriaMock.test.ts": {
+   "path": "src/components/__tests__/pontoAuditoriaMock.test.ts",
+   "lines": 74,
+   "is_test": true,
+   "errors": [
+    "a trilha demonstrativa precisa manter uma exclusão de batida",
+    "nenhuma linha divergente na trilha demonstrativa",
+    "parecer divergente sem os dois hashes"
+   ],
+   "rule_comments": [
+    "* Base fixa: o teste não pode depender do dia em que roda. */",
+    "que por regra cai em \"Revisão recomendada\" — não em \"Não verificada\"."
+   ],
+   "doc": "Mock demonstrativo da Central de Auditoria — invariantes que a vitrine precisa manter para não mentir na tela. O mock não inventa selo: ele grava o `hash_integridade` com a receita REAL e deixa UMA linha com o digest trocado, para a tela exibir \"Divergente\". O teste garante que essa linha continua d …",
+   "temporal": [
+    "return Array.from({ length: quantidade }, (_, indice) => new Date(BASE.getTime() + indice * 24 * 60 * 60 * 1000));"
+   ],
+   "tests": [
+    "trilha demonstrativa de auditoria",
+    "mantém exatamente uma linha divergente em qualquer dia do calendário",
+    "o digest corrompido difere do recalculado só no primeiro caractere",
+    "as batidas de ponto com receita continuam verificadas",
+    "a exclusão de batida sem digest pede revisão, nunca "
    ]
   },
   "src/components/__tests__/simulacaoResumo.test.ts": {
@@ -290497,7 +291605,7 @@
   },
   "src/components/dashboard/MetricCard.tsx": {
    "path": "src/components/dashboard/MetricCard.tsx",
-   "lines": 264,
+   "lines": 374,
    "exports": [
     "const cardVariants",
     "type MetricTone",
@@ -290510,7 +291618,8 @@
     }
    ],
    "rule_comments": [
-    "do Dashboard Executivo) e apenas a LINHA DE APOIO fica um pouco menor (11px,"
+    "do Dashboard Executivo) e apenas a LINHA DE APOIO fica um pouco menor (11px,",
+    "propósito: o corpo do card padrão é validado por ~70 telas e não deve ser"
    ],
    "calc_fns": [
     {
@@ -290520,6 +291629,7 @@
     }
    ],
    "percents": [
+    "* [ícone 36] Título [ +20% ]",
     "// linha de apoio caber em UMA linha (\"150% vs. período",
     "transition: { delay: i * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },"
    ]
@@ -295564,6 +296674,224 @@
     "Divergência detectada: hash não bate"
    ]
   },
+  "src/components/ponto/AuditoriaPonto.tsx": {
+   "path": "src/components/ponto/AuditoriaPonto.tsx",
+   "lines": 374,
+   "exports": [
+    "function AuditoriaPonto"
+   ],
+   "channels": [
+    "audit-changes"
+   ],
+   "params": [
+    {
+     "name": "LIMITE_EVENTOS",
+     "value": "500"
+    }
+   ],
+   "rule_comments": [
+    "Este componente NÃO pode morar em `CentralAuditoria.tsx`: nesta mesma pasta",
+    "* Teto de linhas por consulta — o mesmo espírito do limite anterior (100). */"
+   ],
+   "percents": [
+    "* 2. grade de duas colunas (~69% / ~31% a partir de `xl`):",
+    "{/* ── DUAS COLUNAS (~69% / ~31% a partir de `xl`) ───────────────────"
+   ]
+  },
+  "src/components/ponto/CentralAjustesBuscaFiltros.tsx": {
+   "path": "src/components/ponto/CentralAjustesBuscaFiltros.tsx",
+   "lines": 186,
+   "exports": [
+    "function CentralAjustesBuscaFiltros"
+   ]
+  },
+  "src/components/ponto/CentralAjustesCabecalho.tsx": {
+   "path": "src/components/ponto/CentralAjustesCabecalho.tsx",
+   "lines": 60,
+   "exports": [
+    "function CentralAjustesCabecalho"
+   ]
+  },
+  "src/components/ponto/CentralAjustesDetalhesDialog.tsx": {
+   "path": "src/components/ponto/CentralAjustesDetalhesDialog.tsx",
+   "lines": 314,
+   "exports": [
+    "function CentralAjustesDetalhesDialog"
+   ],
+   "status_values": [
+    {
+     "field": "estado",
+     "value": "pendente",
+     "kind": "compara"
+    }
+   ]
+  },
+  "src/components/ponto/CentralAjustesFiltros.tsx": {
+   "path": "src/components/ponto/CentralAjustesFiltros.tsx",
+   "lines": 132,
+   "exports": [
+    "function CentralAjustesFiltros"
+   ]
+  },
+  "src/components/ponto/CentralAjustesKpis.tsx": {
+   "path": "src/components/ponto/CentralAjustesKpis.tsx",
+   "lines": 118,
+   "exports": [
+    "function CentralAjustesKpis"
+   ],
+   "rule_comments": [
+    "Mesma regra do painel de Geofencing: com variação `null` (sem base de"
+   ],
+   "percents": [
+    "// QUATRO COLUNAS dentro da coluna esquerda (que é ~70% da tela): os KPIs"
+   ]
+  },
+  "src/components/ponto/CentralAjustesPaginacao.tsx": {
+   "path": "src/components/ponto/CentralAjustesPaginacao.tsx",
+   "lines": 115,
+   "exports": [
+    "function CentralAjustesPaginacao"
+   ],
+   "rule_comments": [
+    "(`auto`, ver `PontoAdjustmentRequests`) — a paginação não pode estar dentro do"
+   ]
+  },
+  "src/components/ponto/CentralAjustesPainel.tsx": {
+   "path": "src/components/ponto/CentralAjustesPainel.tsx",
+   "lines": 493,
+   "exports": [
+    "function CentralAjustesPainel"
+   ],
+   "tables": [
+    {
+     "table": "registros_ponto",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "registros_ponto": [
+     "colaborador_id",
+     "data",
+     "empresa_id",
+     "entrada_1",
+     "entrada_2",
+     "entrada_3",
+     "entrada_4",
+     "saida_1",
+     "saida_2",
+     "saida_3",
+     "saida_4",
+     "saida_5",
+     "saida_6"
+    ]
+   },
+   "params": [
+    {
+     "name": "CARTAO",
+     "value": "'rounded-[10px] border px-2.5 py-2.5'"
+    },
+    {
+     "name": "VALOR",
+     "value": "'text-[11px] leading-tight font-semibold'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "estado",
+     "value": "pendente",
+     "kind": "compara"
+    },
+    {
+     "field": "estado",
+     "value": "aprovado",
+     "kind": "compara"
+    }
+   ],
+   "percents": [
+    "* PAINEL DE DETALHES DA CENTRAL DE AJUSTES — coluna direita (~30% no desktop)."
+   ]
+  },
+  "src/components/ponto/CentralAjustesTabela.tsx": {
+   "path": "src/components/ponto/CentralAjustesTabela.tsx",
+   "lines": 345,
+   "exports": [
+    "function CentralAjustesTabela"
+   ],
+   "params": [
+    {
+     "name": "CELULA",
+     "value": "'px-2 py-[5px] align-middle'"
+    },
+    {
+     "name": "LINHA_HOVER",
+     "value": "'transition-colors duration-200 hover:bg-muted/70'"
+    }
+   ],
+   "rule_comments": [
+    "zebra — as linhas não alternam faixa de fundo, alternam apenas o fio, então",
+    "* Somente as linhas da PÁGINA atual, já filtradas e paginadas. */"
+   ]
+  },
+  "src/components/ponto/CentralAuditoriaCabecalho.tsx": {
+   "path": "src/components/ponto/CentralAuditoriaCabecalho.tsx",
+   "lines": 207,
+   "exports": [
+    "function CentralAuditoriaCabecalho"
+   ],
+   "rule_comments": [
+    "o painel apenas se ancora nele. A abertura é adiada em um tick porque o Radix"
+   ]
+  },
+  "src/components/ponto/CentralAuditoriaDetalhes.tsx": {
+   "path": "src/components/ponto/CentralAuditoriaDetalhes.tsx",
+   "lines": 312,
+   "exports": [
+    "function CentralAuditoriaDetalhes"
+   ],
+   "errors": [
+    "O navegador bloqueou a cópia. Selecione o texto manualmente."
+   ],
+   "rule_comments": [
+    "escolhe o tom do cartão: verde apenas no veredito"
+   ],
+   "temporal": [
+    "const timer = window.setTimeout(() => setCopiado(false), 2000);"
+   ],
+   "percents": [
+    "* (142 76% 40% ≈ #18B361 e 0 63% 35% ≈ #912121) não são estes verdes/vermelhos"
+   ]
+  },
+  "src/components/ponto/CentralAuditoriaFiltros.tsx": {
+   "path": "src/components/ponto/CentralAuditoriaFiltros.tsx",
+   "lines": 201,
+   "exports": [
+    "function CentralAuditoriaFiltros"
+   ],
+   "percents": [
+    "* A barra mora na coluna esquerda (~69% do grid da Central), não na largura da"
+   ]
+  },
+  "src/components/ponto/CentralAuditoriaKpis.tsx": {
+   "path": "src/components/ponto/CentralAuditoriaKpis.tsx",
+   "lines": 144,
+   "exports": [
+    "function CentralAuditoriaKpis"
+   ],
+   "percents": [
+    "* Na Central de Auditoria estes quatro cards vivem na coluna de ~69% — cada um",
+    "{/* Título + selo numa linha que PODE quebrar: na coluna de ~69% o"
+   ]
+  },
+  "src/components/ponto/CentralAuditoriaTimeline.tsx": {
+   "path": "src/components/ponto/CentralAuditoriaTimeline.tsx",
+   "lines": 387,
+   "exports": [
+    "function CentralAuditoriaTimeline"
+   ],
+   "rule_comments": [
+    "* Somente os eventos da PÁGINA atual, já filtrados. */"
+   ]
+  },
   "src/components/ponto/DefinirPinQuiosqueDialog.tsx": {
    "path": "src/components/ponto/DefinirPinQuiosqueDialog.tsx",
    "lines": 100,
@@ -295760,17 +297088,13 @@
   },
   "src/components/ponto/PontoAdjustmentRequests.tsx": {
    "path": "src/components/ponto/PontoAdjustmentRequests.tsx",
-   "lines": 564,
+   "lines": 560,
    "exports": [
     "function PontoAdjustmentRequests"
    ],
    "tables": [
     {
      "table": "solicitacoes_ajuste_ponto",
-     "op": "select"
-    },
-    {
-     "table": "trilha_auditoria_ponto",
      "op": "select"
     },
     {
@@ -295781,9 +297105,6 @@
    "table_cols": {
     "solicitacoes_ajuste_ponto": [
      "empresa_id"
-    ],
-    "trilha_auditoria_ponto": [
-     "ponto_id"
     ]
    },
    "rpc": [
@@ -295792,11 +297113,6 @@
    "status_values": [
     {
      "field": "status",
-     "value": "pendente",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
      "value": "aprovado",
      "kind": "escreve"
     },
@@ -295807,42 +297123,7 @@
     },
     {
      "field": "status",
-     "value": "recusado",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "aprovado",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "recusado",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "aprovado",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "recusado",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "rejeitado",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "pendente",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "pendente",
+     "value": "todos",
      "kind": "compara"
     },
     {
@@ -295852,14 +297133,32 @@
     },
     {
      "field": "status",
-     "value": "pendente",
+     "value": "aprovado",
      "kind": "compara"
     },
     {
      "field": "status",
-     "value": "pendente",
+     "value": "aprovado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aprovado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "aprovado",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "apenas abre os detalhes.",
+    "Validação de payload herdada do componente anterior: o mesmo"
+   ],
+   "percents": [
+    "// 1860) — na prática entre 27% e 30% da largura útil, com piso de 320px. O",
+    "// com conteúdo real: a coluna acompanha os ~30% (414px de 1380 e 500px de"
    ]
   },
   "src/components/ponto/PontoAjustesCard.tsx": {
@@ -296368,6 +297667,238 @@
     "* `hover:text-primary-glow` = `--primary-glow` (68 100% 58% no claro, 60% no",
     "* `text-primary` = `--primary` (68 100% 48% — o mesmo valor nos dois temas).",
     "* escala de 125% do `<html>` só os converte em 30px / 15px / 10px / 12,5px na"
+   ]
+  },
+  "src/components/ponto/centralAjustes.ts": {
+   "path": "src/components/ponto/centralAjustes.ts",
+   "lines": 457,
+   "exports": [
+    "type StatusAjusteResolvido",
+    "type NivelRiscoAjuste",
+    "interface RiscoIaAjuste",
+    "interface RelatorioConformidadeAjuste",
+    "interface SolicitacaoAjustePonto",
+    "type FiltroStatusAjuste",
+    "type PeriodoAjustes",
+    "const PERIODOS_AJUSTES",
+    "type FiltroRiscoAjuste",
+    "const RISCOS_FILTRO",
+    "function statusAjuste",
+    "const STATUS_AJUSTE",
+    "const RISCOS_AJUSTE",
+    "function riscoDoAjuste",
+    "function riscoElevado",
+    "function metaTipoAjuste",
+    "function horaAjuste",
+    "function dataBR",
+    "function dataCurtaBR",
+    "function minutosAjuste",
+    "interface FiltrosAjuste",
+    "function filtrarAjustes",
+    "interface ContagemAjustes",
+    "function contarAjustes",
+    "interface IndicadoresAjustes",
+    "function resumoAjustes",
+    "interface VariacoesAjustes",
+    "function variacoesAjustes",
+    "const TAMANHO_PAGINA_AJUSTES",
+    "const OPCOES_TAMANHO_AJUSTES",
+    "function totalPaginasAjustes",
+    "function paginarAjustes",
+    "function faixaExibida",
+    "interface RegistroJornadaCru",
+    "interface ContextoJornadaAjuste",
+    "function contextoDaJornada"
+   ],
+   "enums": [
+    {
+     "name": "StatusAjusteResolvido",
+     "values": "pendente | aprovado | rejeitado"
+    },
+    {
+     "name": "NivelRiscoAjuste",
+     "values": "baixo | medio | alto"
+    },
+    {
+     "name": "FiltroStatusAjuste",
+     "values": "todos | pendente | aprovado | rejeitado"
+    },
+    {
+     "name": "PeriodoAjustes",
+     "values": "hoje | 7d | 30d"
+    }
+   ],
+   "params": [
+    {
+     "name": "TAMANHO_PAGINA_AJUSTES",
+     "value": "6"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "estado",
+     "value": "pendente",
+     "kind": "compara"
+    },
+    {
+     "field": "estado",
+     "value": "aprovado",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "* Variação percentual dos quatro KPIs. A regra é a MESMA do painel de"
+   ],
+   "calc_fns": [
+    {
+     "name": "totalPaginasAjustes",
+     "params": "total: number, tamanho: number",
+     "body": "return Math.max(1, Math.ceil(Math.max(0, total) / Math.max(1, tamanho)));"
+    }
+   ],
+   "percents": [
+    "* `tom` é o par fundo + tinta 10% (chip) — mantido para quem quiser o ícone"
+   ]
+  },
+  "src/components/ponto/centralAuditoria.ts": {
+   "path": "src/components/ponto/centralAuditoria.ts",
+   "lines": 711,
+   "exports": [
+    "type PeriodoAuditoria",
+    "interface RecortePersonalizado",
+    "const PERIODOS_AUDITORIA",
+    "function normalizarDataISO",
+    "function intervaloDoPeriodoAuditoria",
+    "function intervaloAnteriorAuditoria",
+    "function dataLocalDoEvento",
+    "function dentroDoIntervalo",
+    "function rotuloDoPeriodoAuditoria",
+    "type OperacaoAuditoria",
+    "interface LinhaAuditoriaCrua",
+    "interface EventoAuditoria",
+    "function operacaoDoEvento",
+    "function normalizarEvento",
+    "function normalizarEventos",
+    "function rotuloDoRecurso",
+    "function tituloDoEvento",
+    "function resumoDaOperacao",
+    "function textoDoEvento",
+    "type EstadoEvidencia",
+    "interface EvidenciaAuditoria",
+    "function digestDaBatida",
+    "function evidenciaDoEvento",
+    "type FiltroOperacao",
+    "interface FiltrosAuditoria",
+    "const SISTEMA",
+    "function responsavelDoEvento",
+    "function filtrarEventos",
+    "function entidadesDosEventos",
+    "function responsaveisDosEventos",
+    "function operacoesDosEventos",
+    "interface ResumoAuditoria",
+    "function resumoAuditoria",
+    "interface VariacoesAuditoria",
+    "function variacoesAuditoria",
+    "function jsonDoEvento",
+    "function dataBR",
+    "function dataHoraDoEvento",
+    "function iniciaisDoResponsavel",
+    "const TAMANHO_PAGINA_AUDITORIA",
+    "function totalPaginasAuditoria",
+    "function paginarAuditoria",
+    "function faixaExibidaAuditoria",
+    "function paginasVisiveisAuditoria"
+   ],
+   "enums": [
+    {
+     "name": "PeriodoAuditoria",
+     "values": "7d | 30d | 90d | personalizado"
+    },
+    {
+     "name": "OperacaoAuditoria",
+     "values": "INSERT | UPDATE | DELETE | OUTRA"
+    },
+    {
+     "name": "EstadoEvidencia",
+     "values": "verificada | divergente | revisao | sem_comprovacao"
+    }
+   ],
+   "params": [
+    {
+     "name": "DISPOSITIVO_WEB_DIGEST",
+     "value": "'web'"
+    },
+    {
+     "name": "DISPOSITIVO_WEB_COLUNA",
+     "value": "'web-browser'"
+    },
+    {
+     "name": "SISTEMA",
+     "value": "'Sistema (automático)'"
+    },
+    {
+     "name": "TAMANHO_PAGINA_AUDITORIA",
+     "value": "5"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "estado",
+     "value": "verificada",
+     "kind": "escreve"
+    },
+    {
+     "field": "estado",
+     "value": "divergente",
+     "kind": "escreve"
+    },
+    {
+     "field": "estado",
+     "value": "revisao",
+     "kind": "escreve"
+    },
+    {
+     "field": "estado",
+     "value": "sem_comprovacao",
+     "kind": "escreve"
+    },
+    {
+     "field": "estado",
+     "value": "divergente",
+     "kind": "compara"
+    },
+    {
+     "field": "estado",
+     "value": "revisao",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "se as duas vierem invertidas elas são ordenadas (o usuário não deve ver uma",
+    "id ou data — uma linha sem identidade não pode virar evento de trilha.",
+    "* Botões de página do rodapé: no máximo CINCO números, com `null` marcando o"
+   ],
+   "calc_fns": [
+    {
+     "name": "responsaveisDosEventos",
+     "params": "eventos: readonly EventoAuditoria[]",
+     "body": "const nomes = new Set<string>(); eventos.forEach((evento) => nomes.add(responsavelDoEvento(evento))); return [...nomes].sort((a, b) => a.localeCompare(b));"
+    },
+    {
+     "name": "iniciaisDoResponsavel",
+     "params": "valor: string",
+     "body": "const partes = valor .trim() .split(/[\\s._@-]+/) .filter(Boolean); if (partes.length === 0) return '—'; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); return `${partes[0][0]}${partes[1][0]}`.toUpperCase();"
+    },
+    {
+     "name": "totalPaginasAuditoria",
+     "params": "total: number, tamanho: number = TAMANHO_PAGINA_AUDITORIA",
+     "body": "return Math.max(1, Math.ceil(Math.max(0, total) / Math.max(1, tamanho)));"
+    }
    ]
   },
   "src/components/ponto/indicadoresPonto.ts": {
@@ -311286,6 +312817,123 @@
     "ação deve ser ABORTADA, então o chamador só precisa de"
    ]
   },
+  "src/mocks/pontoAuditoriaMock.ts": {
+   "path": "src/mocks/pontoAuditoriaMock.ts",
+   "lines": 313,
+   "exports": [
+    "function isPontoAuditoriaMockEnabled",
+    "function trilhaAuditoriaDemonstrativa"
+   ],
+   "env": [
+    "DEV",
+    "MODE",
+    "VITE_PONTO_MOCK"
+   ],
+   "params": [
+    {
+     "name": "GESTOR",
+     "value": "'william.cardoso@promobrindes.com.br'"
+    },
+    {
+     "name": "SISTEMA",
+     "value": "'carlos.lima@promobrindes.com.br'"
+    },
+    {
+     "name": "COLAB_A",
+     "value": "'a7f2e1c4-1111-4a2b-8c3d-9e0f1a2b3c4d'"
+    },
+    {
+     "name": "COLAB_B",
+     "value": "'f3b9d2e1-2222-4c3d-9e4f-0a1b2c3d4e5f'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "entrada",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "entrada",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "rejeitado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pendente",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "aprovado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pendente",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "entrada",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "saida",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pendente",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "saida",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "entrada",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "recusado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pendente",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "entrada",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "entrada",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "pendente",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "* Ativa o mock apenas em dev e apenas com o opt-in explícito da env var. */",
+    "// A troca do primeiro caractere NÃO pode ser cega: o SHA-256 hex começa em"
+   ]
+  },
   "src/mocks/pontoGeoMock.ts": {
    "path": "src/mocks/pontoGeoMock.ts",
    "lines": 229,
@@ -315960,7 +317608,7 @@
   },
   "src/pages/PontoPage.tsx": {
    "path": "src/pages/PontoPage.tsx",
-   "lines": 740,
+   "lines": 747,
    "exports": [
     "function PontoPage"
    ],
@@ -347115,10 +348763,49 @@
   }
  },
  "git": {
-  "sha": "7a0aee8ae57dab602ac642ec028b42e54e820fd2",
+  "sha": "1d76c0224d1550c19f724ba5219e782a99110c0b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "1d76c02",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: resgata Central de Ajustes e Auditoria do Ponto do port do Muri (#895)",
+    "files": [
+     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/AuditoriaPonto.test.tsx",
+     "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
+     "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
+     "src/components/__tests__/PontoCentralAjustesPainel.test.tsx",
+     "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
+     "src/components/__tests__/centralAjustes.test.ts",
+     "src/components/__tests__/centralAuditoria.test.ts",
+     "src/components/__tests__/pontoAuditoriaMock.test.ts",
+     "src/components/dashboard/MetricCard.tsx",
+     "src/components/ponto/AuditoriaPonto.tsx",
+     "src/components/ponto/CentralAjustesBuscaFiltros.tsx",
+     "src/components/ponto/CentralAjustesCabecalho.tsx",
+     "src/components/ponto/CentralAjustesDetalhesDialog.tsx",
+     "src/components/ponto/CentralAjustesFiltros.tsx",
+     "src/components/ponto/CentralAjustesKpis.tsx",
+     "src/components/ponto/CentralAjustesPaginacao.tsx",
+     "src/components/ponto/CentralAjustesPainel.tsx",
+     "src/components/ponto/CentralAjustesTabela.tsx",
+     "src/components/ponto/CentralAuditoriaCabecalho.tsx",
+     "src/components/ponto/CentralAuditoriaDetalhes.tsx",
+     "src/components/ponto/CentralAuditoriaFiltros.tsx",
+     "src/components/ponto/CentralAuditoriaKpis.tsx",
+     "src/components/ponto/CentralAuditoriaTimeline.tsx",
+     "src/components/ponto/PontoAdjustmentRequests.tsx",
+     "src/components/ponto/centralAjustes.ts",
+     "src/components/ponto/centralAuditoria.ts",
+     "src/mocks/pontoAuditoriaMock.ts",
+     "src/pages/PontoPage.tsx",
+     "src/services/exportService.ts"
+    ]
+   },
    {
     "sha": "7a0aee8",
     "date": "2026-11-25",
@@ -347891,36 +349578,27 @@
      "scripts/supabase_snapshot/requirements.txt",
      "scripts/uv-pin.txt"
     ]
-   },
-   {
-    "sha": "7245d10",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "infra: inclui a migration do cron do dreno no lote canonico (#860)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    9
+    10
    ],
    [
     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-    6
+    7
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    6
-   ],
-   [
-    "src/index.css",
-    3
+    5
    ],
    [
     "src/pages/PontoPage.tsx",
+    4
+   ],
+   [
+    "src/index.css",
     3
    ],
    [
@@ -347940,47 +349618,47 @@
     2
    ],
    [
-    "src/components/__tests__/CascadeDialogFrameAnimacao.test.tsx",
+    "src/components/__tests__/AuditoriaPonto.test.tsx",
     1
    ],
    [
-    "src/components/__tests__/FeedbacksResumoOrdem.test.tsx",
+    "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
     1
    ],
    [
-    "src/components/__tests__/LoginPageAjustesVisuais.test.ts",
+    "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
     1
    ],
    [
-    "src/components/avaliacao/FeedbacksResumo.tsx",
+    "src/components/__tests__/PontoCentralAjustesPainel.test.tsx",
     1
    ],
    [
-    "src/pages/LoginPage.tsx",
+    "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
     1
    ],
    [
-    "src/components/__tests__/PontoTodayCard.test.tsx",
+    "src/components/__tests__/centralAjustes.test.ts",
     1
    ],
    [
-    "src/components/ponto/EditarEscalaDialog.tsx",
+    "src/components/__tests__/centralAuditoria.test.ts",
     1
    ],
    [
-    "src/components/ponto/PontoTodayCard.tsx",
+    "src/components/__tests__/pontoAuditoriaMock.test.ts",
     1
    ],
    [
-    "src/components/ponto/__tests__/EditarEscalaDialog.test.tsx",
+    "src/components/dashboard/MetricCard.tsx",
     1
    ],
    [
-    "src/components/dashboard/DashboardHeader.tsx",
+    "src/components/ponto/AuditoriaPonto.tsx",
     1
    ],
    [
-    "src/components/recrutamento/AnalyticsBarraFiltros.tsx",
+    "src/components/ponto/CentralAjustesBuscaFiltros.tsx",
     1
    ]
   ]

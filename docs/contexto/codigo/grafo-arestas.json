@@ -3419,6 +3419,114 @@
    "src/integrations/supabase/client.ts",
    "src/utils/dateLocal.ts"
   ],
+  "src/components/ponto/AuditoriaPonto.tsx": [
+   "src/components/ponto/CentralAuditoriaCabecalho.tsx",
+   "src/components/ponto/CentralAuditoriaDetalhes.tsx",
+   "src/components/ponto/CentralAuditoriaFiltros.tsx",
+   "src/components/ponto/CentralAuditoriaKpis.tsx",
+   "src/components/ponto/CentralAuditoriaTimeline.tsx",
+   "src/components/ponto/centralAuditoria.ts",
+   "src/components/ui/entrada-cards.tsx",
+   "src/hooks/useEmpresas.ts",
+   "src/integrations/supabase/client.ts",
+   "src/mocks/pontoAuditoriaMock.ts",
+   "src/services/auditoriaService.ts",
+   "src/services/exportService.ts"
+  ],
+  "src/components/ponto/CentralAjustesBuscaFiltros.tsx": [
+   "src/components/ponto/centralAjustes.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ponto/CentralAjustesCabecalho.tsx": [
+   "src/components/ui/entrada-cards.tsx"
+  ],
+  "src/components/ponto/CentralAjustesDetalhesDialog.tsx": [
+   "src/components/ponto/centralAjustes.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/services/auditoriaService.ts",
+   "src/services/exportService.ts",
+   "src/services/piiAccessLogService.ts"
+  ],
+  "src/components/ponto/CentralAjustesFiltros.tsx": [
+   "src/components/avaliacao/ColoredFilterChip.tsx",
+   "src/components/avaliacao/chipFiltroComum.ts",
+   "src/components/ponto/centralAjustes.ts",
+   "src/components/ui/select.tsx"
+  ],
+  "src/components/ponto/CentralAjustesKpis.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ponto/centralAjustes.ts"
+  ],
+  "src/components/ponto/CentralAjustesPaginacao.tsx": [
+   "src/components/ponto/centralAjustes.ts",
+   "src/components/ui/app-pagination.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/ponto/CentralAjustesPainel.tsx": [
+   "src/components/ponto/centralAjustes.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/user-avatar.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ponto/CentralAjustesTabela.tsx": [
+   "src/components/ponto/centralAjustes.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/table.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/components/ui/user-avatar.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ponto/CentralAuditoriaCabecalho.tsx": [
+   "src/components/ponto/centralAuditoria.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/date-picker.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/select.tsx"
+  ],
+  "src/components/ponto/CentralAuditoriaDetalhes.tsx": [
+   "src/components/ponto/centralAuditoria.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ponto/CentralAuditoriaFiltros.tsx": [
+   "src/components/ponto/centralAuditoria.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ponto/CentralAuditoriaKpis.tsx": [
+   "src/components/ponto/centralAuditoria.ts",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/interacao-cards.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ponto/CentralAuditoriaTimeline.tsx": [
+   "src/components/ponto/centralAuditoria.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/lib/utils.ts"
+  ],
   "src/components/ponto/DefinirPinQuiosqueDialog.tsx": [
    "src/components/ui/button.tsx",
    "src/components/ui/dialog.tsx",
@@ -3500,21 +3608,22 @@
    "src/utils/safeError.ts"
   ],
   "src/components/ponto/PontoAdjustmentRequests.tsx": [
-   "src/components/ui/badge.tsx",
-   "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx",
-   "src/components/ui/checkbox.tsx",
-   "src/components/ui/dialog.tsx",
-   "src/components/ui/input.tsx",
-   "src/components/ui/scroll-area.tsx",
-   "src/components/ui/table.tsx",
-   "src/components/ui/tabs.tsx",
-   "src/components/ui/tooltip.tsx",
+   "src/components/ponto/CentralAjustesBuscaFiltros.tsx",
+   "src/components/ponto/CentralAjustesCabecalho.tsx",
+   "src/components/ponto/CentralAjustesDetalhesDialog.tsx",
+   "src/components/ponto/CentralAjustesFiltros.tsx",
+   "src/components/ponto/CentralAjustesKpis.tsx",
+   "src/components/ponto/CentralAjustesPaginacao.tsx",
+   "src/components/ponto/CentralAjustesPainel.tsx",
+   "src/components/ponto/CentralAjustesTabela.tsx",
+   "src/components/ponto/centralAjustes.ts",
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/sheet.tsx",
    "src/hooks/index.ts",
+   "src/hooks/useMediaQuery.ts",
    "src/integrations/supabase/client.ts",
    "src/schemas/validate.ts",
-   "src/services/exportService.ts",
-   "src/services/piiAccessLogService.ts",
+   "src/utils/pontoGeofencing.ts",
    "src/utils/safeError.ts"
   ],
   "src/components/ponto/PontoAjustesCard.tsx": [
@@ -3690,6 +3799,13 @@
   ],
   "src/components/ponto/acoesCardsPonto.ts": [
    "src/lib/utils.ts"
+  ],
+  "src/components/ponto/centralAjustes.ts": [
+   "src/utils/pontoGeofencing.ts"
+  ],
+  "src/components/ponto/centralAuditoria.ts": [
+   "src/utils/dateLocal.ts",
+   "src/utils/pontoGeofencing.ts"
   ],
   "src/components/ponto/indicadoresPonto.ts": [
    "src/components/dashboard/MetricCard.tsx",
@@ -5896,6 +6012,10 @@
   "src/mocks/pesquisasClimaMock.ts": [
    "src/mocks/colaboradoresMock.ts"
   ],
+  "src/mocks/pontoAuditoriaMock.ts": [
+   "src/components/ponto/centralAuditoria.ts",
+   "src/utils/dateLocal.ts"
+  ],
   "src/mocks/pontoGeoMock.ts": [
    "src/utils/dateLocal.ts",
    "src/utils/pontoGeofencing.ts"
@@ -7439,6 +7559,7 @@
    "src/components/PageTitle.tsx",
    "src/components/layout/index.ts",
    "src/components/ponto/AssinarEspelhoDialog.tsx",
+   "src/components/ponto/AuditoriaPonto.tsx",
    "src/components/ponto/EspelhosPapelPanel.tsx",
    "src/components/ponto/GerarAEJDialog.tsx",
    "src/components/ponto/GerarAFDDialog.tsx",
@@ -7446,7 +7567,6 @@
    "src/components/ponto/GestaoRegistrosPonto.tsx",
    "src/components/ponto/ImportarAFDTDialog.tsx",
    "src/components/ponto/PontoAdjustmentRequests.tsx",
-   "src/components/ponto/PontoAuditTimeline.tsx",
    "src/components/ponto/PontoBancoHorasCard.tsx",
    "src/components/ponto/PontoCharts.tsx",
    "src/components/ponto/PontoClockRegister.tsx",

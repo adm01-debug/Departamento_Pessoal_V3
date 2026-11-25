@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 699,
+ "total": 713,
  "orfaos": 24,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -831,7 +831,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 7,
+   "usado_por": 8,
    "orfao": false
   },
   {
@@ -2969,12 +2969,12 @@
     "MetricTone"
    ],
    "export_default": null,
-   "linhas": 264,
+   "linhas": 374,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 41,
+   "usado_por": 42,
    "orfao": false
   },
   {
@@ -5660,6 +5660,206 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/ponto/AuditoriaPonto.tsx",
+   "exports": [
+    "AuditoriaPonto"
+   ],
+   "export_default": null,
+   "linhas": 374,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAjustesBuscaFiltros.tsx",
+   "exports": [
+    "CentralAjustesBuscaFiltros"
+   ],
+   "export_default": null,
+   "linhas": 186,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAjustesCabecalho.tsx",
+   "exports": [
+    "CentralAjustesCabecalho"
+   ],
+   "export_default": null,
+   "linhas": 60,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAjustesDetalhesDialog.tsx",
+   "exports": [
+    "CentralAjustesDetalhesDialog"
+   ],
+   "export_default": null,
+   "linhas": 314,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAjustesFiltros.tsx",
+   "exports": [
+    "CentralAjustesFiltros"
+   ],
+   "export_default": null,
+   "linhas": 132,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAjustesKpis.tsx",
+   "exports": [
+    "CentralAjustesKpis"
+   ],
+   "export_default": null,
+   "linhas": 118,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAjustesPaginacao.tsx",
+   "exports": [
+    "CentralAjustesPaginacao"
+   ],
+   "export_default": null,
+   "linhas": 115,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAjustesPainel.tsx",
+   "exports": [
+    "CentralAjustesPainel"
+   ],
+   "export_default": null,
+   "linhas": 493,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [
+    "registros_ponto"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAjustesTabela.tsx",
+   "exports": [
+    "CentralAjustesTabela"
+   ],
+   "export_default": null,
+   "linhas": 345,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAuditoriaCabecalho.tsx",
+   "exports": [
+    "CentralAuditoriaCabecalho"
+   ],
+   "export_default": null,
+   "linhas": 207,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAuditoriaDetalhes.tsx",
+   "exports": [
+    "CentralAuditoriaDetalhes"
+   ],
+   "export_default": null,
+   "linhas": 312,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAuditoriaFiltros.tsx",
+   "exports": [
+    "CentralAuditoriaFiltros"
+   ],
+   "export_default": null,
+   "linhas": 201,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAuditoriaKpis.tsx",
+   "exports": [
+    "CentralAuditoriaKpis"
+   ],
+   "export_default": null,
+   "linhas": 144,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAuditoriaTimeline.tsx",
+   "exports": [
+    "CentralAuditoriaTimeline"
+   ],
+   "export_default": null,
+   "linhas": 387,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ponto/DefinirPinQuiosqueDialog.tsx",
    "exports": [
     "DefinirPinQuiosqueDialog"
@@ -5795,14 +5995,14 @@
     "PontoAdjustmentRequests"
    ],
    "export_default": null,
-   "linhas": 564,
+   "linhas": 560,
    "dominio": "components/ponto",
    "hooks_locais": [
-    "useEmpresas"
+    "useEmpresas",
+    "useMediaQuery"
    ],
    "tabelas": [
-    "solicitacoes_ajuste_ponto",
-    "trilha_auditoria_ponto"
+    "solicitacoes_ajuste_ponto"
    ],
    "edges": [],
    "usado_por": 1,
@@ -5835,7 +6035,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -8166,7 +8366,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 22,
+   "usado_por": 23,
    "orfao": false
   },
   {
@@ -8230,7 +8430,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 15,
+   "usado_por": 16,
    "orfao": false
   },
   {
@@ -8261,7 +8461,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 239,
+   "usado_por": 244,
    "orfao": false
   },
   {
@@ -8276,7 +8476,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 396,
+   "usado_por": 403,
    "orfao": false
   },
   {
@@ -8311,7 +8511,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 291,
+   "usado_por": 295,
    "orfao": false
   },
   {
@@ -8522,7 +8722,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 8,
+   "usado_por": 9,
    "orfao": false
   },
   {
@@ -8603,7 +8803,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 43,
+   "usado_por": 47,
    "orfao": false
   },
   {
@@ -8687,7 +8887,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 185,
+   "usado_por": 186,
    "orfao": false
   },
   {
@@ -8799,7 +8999,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 22,
+   "usado_por": 24,
    "orfao": false
   },
   {
@@ -8895,7 +9095,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 141,
+   "usado_por": 145,
    "orfao": false
   },
   {
@@ -8932,7 +9132,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "orfao": false
   },
   {
@@ -8999,7 +9199,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 31,
+   "usado_por": 32,
    "orfao": false
   },
   {
@@ -9271,7 +9471,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 15,
+   "usado_por": 17,
    "orfao": false
   },
   {
@@ -11017,7 +11217,7 @@
     "PontoPage"
    ],
    "export_default": "PontoPage",
-   "linhas": 740,
+   "linhas": 747,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

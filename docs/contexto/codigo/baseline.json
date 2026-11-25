@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7a0aee8ae57dab602ac642ec028b42e54e820fd2",
+  "commit": "1d76c0224d1550c19f724ba5219e782a99110c0b",
   "branch": "main",
-  "data_commit": "2026-11-25T16:29:26-03:00",
+  "data_commit": "2026-11-25T17:55:12-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1d76c02",
+    "data": "2026-11-25",
+    "assunto": "feat: resgata Central de Ajustes e Auditoria do Ponto do port do Muri (#895)"
+   },
    {
     "sha": "7a0aee8",
     "data": "2026-11-25",
@@ -126,18 +131,13 @@
     "sha": "252cc80",
     "data": "2026-11-24",
     "assunto": "chore: placeholders no-op para as 316 versoes do ledger sem fonte local (#865)"
-   },
-   {
-    "sha": "3ffaebd",
-    "data": "2026-11-24",
-    "assunto": "fix: guard to_regclass nas policies de backup_logs (apply abortava) (#867)"
    }
   ],
-  "arquivos_mudados_7d": 775,
+  "arquivos_mudados_7d": 793,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 385
+    "mudancas": 393
    },
    {
     "pasta": "src/components/ui",
@@ -168,12 +168,12 @@
     "mudancas": 66
    },
    {
-    "pasta": "supabase/functions/_shared",
-    "mudancas": 57
+    "pasta": "src/components/ponto",
+    "mudancas": 63
    },
    {
-    "pasta": "src/components/ponto",
-    "mudancas": 46
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 57
    },
    {
     "pasta": "src/components/layout",
@@ -181,7 +181,7 @@
    },
    {
     "pasta": "src/components/dashboard",
-    "mudancas": 38
+    "mudancas": 39
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -214,15 +214,11 @@
     "mudancas": 14
    },
    {
-    "arquivo": "package.json",
-    "mudancas": 12
-   },
-   {
     "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 12
    },
    {
-    "arquivo": "package-lock.json",
+    "arquivo": "package.json",
     "mudancas": 11
    },
    {
@@ -231,6 +227,10 @@
    },
    {
     "arquivo": "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
+    "mudancas": 10
+   },
+   {
+    "arquivo": "package-lock.json",
     "mudancas": 10
    },
    {
@@ -246,6 +246,10 @@
     "mudancas": 9
    },
    {
+    "arquivo": "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    "mudancas": 7
+   },
+   {
     "arquivo": "docs/auditoria/sql-preservado/README.md",
     "mudancas": 7
    },
@@ -258,11 +262,11 @@
     "mudancas": 7
    },
    {
-    "arquivo": "docs/agentes/banco.md",
-    "mudancas": 6
+    "arquivo": "src/pages/PontoPage.tsx",
+    "mudancas": 7
    },
    {
-    "arquivo": "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    "arquivo": "docs/agentes/banco.md",
     "mudancas": 6
    },
    {
@@ -275,10 +279,6 @@
    },
    {
     "arquivo": "src/components/colaborador-detalhes/index.ts",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "src/pages/PontoPage.tsx",
     "mudancas": 6
    },
    {
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4204,
-  "arquivos_codigo": 2285,
-  "linhas_codigo": 461179,
+  "arquivos_total": 4228,
+  "arquivos_codigo": 2309,
+  "linhas_codigo": 467973,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 86,
-  "componentes": 699,
+  "componentes": 713,
   "hooks": 127,
   "edge_functions": 68,
   "tabelas": 438,
   "migrations": 1265,
   "cron_jobs": 43,
-  "testes": 861,
+  "testes": 868,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 347
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1133,
-   "linhas": 214772
+   "arquivos": 1156,
+   "linhas": 221246
   },
   "src/constants": {
    "arquivos": 7,
@@ -679,12 +679,12 @@
    "linhas": 213
   },
   "src/mocks": {
-   "arquivos": 5,
-   "linhas": 3978
+   "arquivos": 6,
+   "linhas": 4291
   },
   "src/pages": {
    "arquivos": 146,
-   "linhas": 51971
+   "linhas": 51978
   },
   "src/providers": {
    "arquivos": 4,
@@ -862,8 +862,8 @@
   "console_log": 416,
   "ts_ignore": 1,
   "eslint_disable": 4,
-  "todos": 28,
-  "arquivos_acima_500_linhas": 127
+  "todos": 29,
+  "arquivos_acima_500_linhas": 128
  },
  "todos": [
   {
@@ -955,6 +955,12 @@
    "linha": 58,
    "tipo": "TODO",
    "texto": "nó interno da árvore (nível ≥ 1"
+  },
+  {
+   "arquivo": "src/components/ponto/CentralAuditoriaFiltros.tsx",
+   "linha": 95,
+   "tipo": "TODO",
+   "texto": "o vão até o botão"
   },
   {
    "arquivo": "src/components/treinamentos/trilhasDerivacoes.ts",

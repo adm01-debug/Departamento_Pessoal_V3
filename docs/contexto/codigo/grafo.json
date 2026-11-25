@@ -1,32 +1,32 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1426,
- "arestas": 7003,
+ "nos": 1443,
+ "arestas": 7089,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 396
+   "importado_por": 403
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 330
+   "importado_por": 337
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 291
+   "importado_por": 295
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 276
+   "importado_por": 278
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 239
+   "importado_por": 244
   },
   {
    "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 185
+   "importado_por": 186
   },
   {
    "arquivo": "src/components/ui/dialog.tsx",
@@ -38,7 +38,7 @@
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 142
+   "importado_por": 146
   },
   {
    "arquivo": "src/utils/safeError.ts",
@@ -46,7 +46,7 @@
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
-   "importado_por": 136
+   "importado_por": 137
   },
   {
    "arquivo": "src/components/ui/table.tsx",
@@ -82,7 +82,7 @@
   },
   {
    "arquivo": "src/utils/dateLocal.ts",
-   "importado_por": 71
+   "importado_por": 75
   },
   {
    "arquivo": "supabase/functions/_shared/rateLimit.ts",
@@ -114,7 +114,11 @@
   },
   {
    "arquivo": "src/components/dashboard/MetricCard.tsx",
-   "importado_por": 46
+   "importado_por": 47
+  },
+  {
+   "arquivo": "src/components/ui/entrada-cards.tsx",
+   "importado_por": 47
   },
   {
    "arquivo": "src/utils/format.ts",
@@ -123,10 +127,6 @@
   {
    "arquivo": "src/components/ui/cascade-motion.ts",
    "importado_por": 45
-  },
-  {
-   "arquivo": "src/components/ui/entrada-cards.tsx",
-   "importado_por": 43
   },
   {
    "arquivo": "src/components/ui/tooltip.tsx",
@@ -157,11 +157,11 @@
    "importado_por": 33
   },
   {
-   "arquivo": "src/services/piiAccessLogService.ts",
+   "arquivo": "src/components/ui/skeleton.tsx",
    "importado_por": 32
   },
   {
-   "arquivo": "supabase/functions/_shared/authz.ts",
+   "arquivo": "src/services/piiAccessLogService.ts",
    "importado_por": 32
   }
  ],
@@ -302,14 +302,19 @@
    "importado_por": 17
   },
   {
+   "modulo": "components/avaliacao",
+   "depende_de": 7,
+   "importado_por": 9
+  },
+  {
    "modulo": "contexts",
    "depende_de": 5,
    "importado_por": 11
   },
   {
-   "modulo": "components/avaliacao",
-   "depende_de": 7,
-   "importado_por": 8
+   "modulo": "components/ponto",
+   "depende_de": 12,
+   "importado_por": 3
   },
   {
    "modulo": "schemas",
@@ -337,11 +342,6 @@
    "importado_por": 3
   },
   {
-   "modulo": "components/ponto",
-   "depende_de": 11,
-   "importado_por": 2
-  },
-  {
    "modulo": "components/settings",
    "depende_de": 11,
    "importado_por": 1
@@ -352,9 +352,9 @@
    "importado_por": 1
   },
   {
-   "modulo": "components/colaboradores",
-   "depende_de": 8,
-   "importado_por": 2
+   "modulo": "mocks",
+   "depende_de": 4,
+   "importado_por": 7
   }
  ],
  "arestas_em": "docs/contexto/codigo/grafo-arestas.json"

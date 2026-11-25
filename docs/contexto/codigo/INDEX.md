@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7a0aee8ae57dab602ac642ec028b42e54e820fd2` (2026-11-25T16:29:26-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1d76c0224d1550c19f724ba5219e782a99110c0b` (2026-11-25T17:55:12-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2142), SQL (1339), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2166), SQL (1339), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 4204 |
-| arquivos_codigo | 2285 |
-| linhas_codigo | 461179 |
+| arquivos_total | 4228 |
+| arquivos_codigo | 2309 |
+| linhas_codigo | 467973 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
 | itens_menu | 97 |
 | modulos | 86 |
-| componentes | 699 |
+| componentes | 713 |
 | hooks | 127 |
 | edge_functions | 68 |
 | tabelas | 438 |
 | migrations | 1265 |
 | cron_jobs | 43 |
-| testes | 861 |
+| testes | 868 |
 | workflows | 21 |
 | scripts | 138 |
 | docs_md | 347 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
-- componentes: src/components (581), src/pages (110), src/contexts (3)
+- componentes: src/components (595), src/pages (110), src/contexts (3)
 - hooks: src/hooks (105), src/components (12), src/contexts (4)
 - servicos_logica: src/services (100), src/utils (39), src/schemas (25)
-- testes: co-localizado (__tests__) (724), co-localizado (*.test) (78), e2e/ (33)
+- testes: co-localizado (__tests__) (731), co-localizado (*.test) (78), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -95,7 +95,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/organograma | 0 | 0 | 10 | 2 | 0 | 3 |
 | components/pcs | 0 | 0 | 6 | 9 | 0 | 9 |
 | components/pesquisas | 0 | 0 | 6 | 1 | 0 | 0 |
-| components/ponto | 0 | 0 | 37 | 159 | 36 | 141 |
+| components/ponto | 0 | 0 | 53 | 159 | 36 | 140 |
 | components/portal | 0 | 0 | 5 | 4 | 28 | 87 |
 | components/premiacoes | 0 | 0 | 23 | 148 | 33 | 138 |
 | components/recrutamento | 0 | 0 | 34 | 4 | 0 | 6 |
@@ -108,8 +108,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks/ferias | 0 | 0 | 6 | 11 | 0 | 8 |
 | integrations/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib | 0 | 0 | 14 | 1 | 0 | 0 |
-| mocks | 0 | 0 | 5 | 0 | 0 | 0 |
-| pages | 96 | 114 | 115 | 231 | 51 | 278 |
+| mocks | 0 | 0 | 6 | 0 | 0 | 0 |
+| pages | 96 | 114 | 115 | 231 | 51 | 277 |
 | schemas | 0 | 0 | 19 | 0 | 0 | 0 |
 | schemas/esocial | 0 | 0 | 6 | 0 | 0 | 0 |
 | services | 0 | 0 | 78 | 0 | 37 | 196 |
@@ -381,7 +381,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - env de integração (só nomes): AI_GATEWAY_API_KEY, CRON_SECRET, DEEPSEEK_API_KEY, E2E_PONTO_HASH_SECRET, GOVBR_CLIENT_ID, GOVBR_CLIENT_SECRET, OPENAI_API_KEY, PONTO_HASH_SECRET, REPORT_SCHEDULER_SECRET, RESEND_API_KEY, SENTRY_DSN, SENTRY_ENVIRONMENT, SENTRY_RELEASE, SLACK_WEBHOOK_URL, TRAINING_IMAGE_DISPATCH_SECRET, TURNSTILE_SECRET_KEY, VITE_AUTH_GOOGLE_ENABLED, VITE_SENTRY_DSN, VITE_SENTRY_ORG, VITE_SENTRY_PROJECT, VITE_SENTRY_RELEASE, WEBHOOK_REQUIRE_TIMESTAMP, WEBHOOK_SECRET
 
 ## Permissões / papéis
-- papéis no código: dialog (37), rh (28), alert (27), admin (23), user (22), gestor (13), status (12), group (11), tablist (10), progressbar (9), tab (7), menuitem (5), row (5), combobox (4), service_role (4), switch (4), cell (3), columnheader (3), list (3), rowgroup (3), table (3), tooltip (3), grid (2), img (2), listitem (2), option (2), system (2), agent (1), alertdialog (1), anon (1), assistant (1), authenticated (1), banner (1), button (1), ci_auditor (1), colaborador (1), coordenador (1), heading (1), main (1), slider (1), sup (1), supabase_admin (1), super_admin (1), supervisor (1), tabpanel (1)
+- papéis no código: dialog (36), rh (28), alert (27), admin (23), user (22), gestor (13), group (12), status (12), tablist (10), progressbar (9), tab (7), menuitem (5), row (5), combobox (4), service_role (4), switch (4), cell (3), columnheader (3), list (3), rowgroup (3), table (3), tooltip (3), grid (2), img (2), listitem (2), option (2), system (2), agent (1), alertdialog (1), anon (1), assistant (1), authenticated (1), banner (1), button (1), ci_auditor (1), colaborador (1), coordenador (1), heading (1), main (1), search (1), slider (1), sup (1), supabase_admin (1), super_admin (1), supervisor (1), tabpanel (1)
 - enums de papel: app_role: admin|moderator|user|supervisor|coordenador; dp_user_role: colaborador|gestor|rh|auditoria|admin|dpo
 - guards: src/components/ProtectedRoute.tsx, src/components/RouteErrorBoundary.tsx · rotas protegidas: 110 · públicas: /assinar-contrato/:token, /ciencia-medida/:token, /contratacao, /login, /verificar-contrato, /verificar-contrato/:hash
 - feature flags: FEATURE_X, nova-tela, novo-inbox
@@ -404,9 +404,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 29665 nós · 67331 arestas · 2790 comunidades · grafo do commit `7a0aee8a`
-- comunidades maiores: cn (617), useEmpresas (590), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (438), sonner (385), vitest (261), PremiacoesPage.tsx (232), contract.ts (197), react (196), "public"."empresas" (164), "public"."empresas" (158)
-- símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
+- 29883 nós · 68135 arestas · 2839 comunidades · grafo do commit `1d76c022`
+- comunidades maiores: useEmpresas (608), lucide-react (532), button.tsx (497), 20260831_corrected_public.sql (493), canonical_schema.sql (481), cn (429), vitest (240), App.tsx (215), contract.ts (210), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
+- símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), formatDateLocalISO() (src/utils/dateLocal.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
@@ -414,17 +414,17 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - scripts/canonical-invariants.sql (21)
 - inventario/estado/rotas.json (19)
 - docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
-- package.json (12)
 - src/integrations/supabase/types.ts (12)
-- package-lock.json (11)
+- package.json (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
+- package-lock.json (10)
 - scripts/automation.config.json (10)
 - src/index.css (9)
 - src/schemas/tableColumns.ts (9)
+- docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md (7)
 - docs/auditoria/sql-preservado/README.md (7)
 - src/pages/CalculadoraRescisaoPage.tsx (7)
-- src/pages/ColaboradoresPage.tsx (7)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -663,6 +663,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-25 `1d76c02` feat: resgata Central de Ajustes e Auditoria do Ponto do port do Muri (#895)
 - 2026-11-25 `7a0aee8` feat: resgata a ordem aprovada da coluna de Feedbacks e os ajustes de login do port do Muri (#894)
 - 2026-11-25 `c87122f` docs(auditoria): fecha o mapa do port do Muri com a escala do dia (#892) e a fila ja resgatada (#893)
 - 2026-11-25 `58eab8d` feat: edita a escala do dia direto do card Hoje (port do Muri) (#892)
@@ -677,7 +678,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `05b201e` feat: resgata a tela de pesquisas de clima do port do Muri (#885)
 - 2026-11-25 `61145b4` feat: resgata a tela de solicitacoes de horas extras do port do Muri (#884)
 - 2026-11-25 `645def6` feat: resgata o painel de geofencing do ponto com mapa real (#883)
-- 2026-11-25 `5f2fa81` docs: registra o resgate da tela de Turnos e o lote canonico aplicado (#882)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

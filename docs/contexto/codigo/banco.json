@@ -52850,7 +52850,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 10,
+   "usada_no_front": 11,
    "usada_em_edges": [
     "alertas-preditivos",
     "calcular-ferias",
@@ -61203,11 +61203,11 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 1,
+   "usada_no_front": 0,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": false
+   "nao_usada": true
   },
   "trilhas_aprendizado": {
    "colunas": {
