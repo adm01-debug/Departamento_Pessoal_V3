@@ -1,60 +1,110 @@
+/**
+ * ============================================================================
+ * CENTRAL DE AJUSTES — conteúdo da aba **Registros** do Controle de Ponto
+ * (Gestão da Equipe → Registros).
+ *
+ * A tela NÃO tem rota própria e NÃO convive com seletor nenhum: ela é o corpo
+ * direto da aba Registros, que passou a ser uma área ÚNICA. Não existe mais
+ * sub-aba e não existe aba "Ajustes" na navegação principal (são quatro abas:
+ * Visão Geral, Geofencing, Registros e Auditoria). O painel de batidas
+ * (`GestaoRegistrosPonto`) não é montado aqui nem em outra aba.
+ *
+ * ── ESTRUTURA: UM GRID DE DUAS COLUNAS (~70/30) ────────────────────────────
+ * A composição é um único CSS Grid com cinco linhas explícitas; nada aqui usa
+ * `position: absolute`, altura fixa ou margem compensatória:
+ *
+ *   LINHA 1   cabeçalho ("Central de Ajustes")        busca + botão "Filtros"
+ *   LINHA 2   quatro KPIs compactos                  ┌──────────────────┐
+ *   LINHA 3   chips de status + período              │  Detalhes da     │
+ *   LINHA 4   tabela de solicitações (`1fr`)         │  Solicitação     │
+ *   LINHA 5   barra de paginação (card próprio)      └──────────────────┘
+ *
+ *  · COLUNA ESQUERDA (~70%): cabeçalho, KPIs, chips, tabela e paginação;
+ *  · COLUNA DIREITA (~30%): busca/"Filtros" na linha 1 e o painel de detalhes
+ *    ocupando as linhas 2–5 (`row-span-4`), de modo que o TOPO do painel fica
+ *    na altura do topo dos KPIs e a BASE dele fecha na base da paginação;
+ *  · abaixo de 1400px o grid vira uma coluna (ordem do DOM) e o painel passa a
+ *    ser DRAWER (`Sheet`), aberto pelo clique na linha.
+ *
+ * As duas colunas nascem na MESMA linha de base porque a faixa do título e a
+ * faixa da busca declaram a mesma altura mínima (36px) — é o grid alinhando,
+ * não um `mt-*` calculado à mão.
+ *
+ * ── UMA ÚNICA FONTE DE VERDADE ─────────────────────────────────────────────
+ * A query devolve `solicitacoes_ajuste_ponto` uma vez. Tudo o que a tela afirma
+ * sai dela, pelo módulo puro `centralAjustes`:
+ *
+ *     período  → `filtrarAjustes(intervalo)`  → base de KPIs e da tabela
+ *     busca    → `filtrarAjustes(busca)`      → tabela + contagem dos chips
+ *     risco    → `filtrarAjustes(risco)`      → tabela + contagem dos chips
+ *     status   → `filtrarAjustes(status)`     → tabela
+ *     períodos → `resumoAjustes` (atual e anterior) → KPIs + variação
+ *
+ * Não existe contador paralelo: aprovar uma solicitação invalida a query, a
+ * lista volta do banco e KPI, chip, tabela e painel acompanham juntos.
+ *
+ * ── DECISÕES PEDEM CONFIRMAÇÃO ─────────────────────────────────────────────
+ * Aprovar e rejeitar — no painel, no diálogo de detalhes completos e nas ações
+ * em lote — passam por um `AlertDialog` que diz QUEM (ou QUANTAS) será
+ * decidido. Nenhuma escrita acontece sem esse "confirmar": o clique na linha
+ * apenas abre os detalhes.
+ *
+ * ── O QUE FOI PRESERVADO DO COMPONENTE ANTERIOR ────────────────────────────
+ *  · consulta com join do colaborador e ordenação por `created_at` desc;
+ *  · aprovação com a RPC `processar_ajuste_aprovado` (e a tradução
+ *    `rejeitado → recusado` do ENUM) e as mensagens de erro seguras;
+ *  · aprovação/rejeição em LOTE, com resumo de sucesso/falha por item;
+ *  · seleção múltipla por checkbox (agora convivendo com a linha ativa);
+ *  · o diálogo com trilha de auditoria, conformidade 671 e exportação em PDF
+ *    (`CentralAjustesDetalhesDialog`), aberto pelo painel de detalhes;
+ *  · busca por nome e filtro de período (agora com contagem por status).
+ * ============================================================================
+ */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { CheckCircle2, XCircle, Clock, FileText, History, MapPin, Shield, Search, Download, Zap } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useMemo, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { Input } from '@/components/ui/input';
-import { useState, useMemo } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { exportPortaria671PDF } from '@/services/exportService';
-import { registrarAcessoPII } from '@/services/piiAccessLogService';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Checkbox } from '@/components/ui/checkbox';
-import { format, parseISO } from 'date-fns';
 import { validateTablePayload } from '@/schemas/validate';
+import { intervaloAnterior, intervaloDoPeriodo } from '@/utils/pontoGeofencing';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { CentralAjustesCabecalho } from './CentralAjustesCabecalho';
+import { CentralAjustesBuscaFiltros } from './CentralAjustesBuscaFiltros';
+import { CentralAjustesKpis } from './CentralAjustesKpis';
+import { CentralAjustesFiltros } from './CentralAjustesFiltros';
+import { CentralAjustesTabela } from './CentralAjustesTabela';
+import { CentralAjustesPaginacao } from './CentralAjustesPaginacao';
+import { CentralAjustesPainel } from './CentralAjustesPainel';
+import { CentralAjustesDetalhesDialog } from './CentralAjustesDetalhesDialog';
+import {
+  PERIODOS_AJUSTES,
+  TAMANHO_PAGINA_AJUSTES,
+  contarAjustes,
+  filtrarAjustes,
+  paginarAjustes,
+  resumoAjustes,
+  totalPaginasAjustes,
+  variacoesAjustes,
+  type FiltroRiscoAjuste,
+  type FiltroStatusAjuste,
+  type PeriodoAjustes,
+  type SolicitacaoAjustePonto,
+} from './centralAjustes';
 
-interface SolicitacaoAjustePonto {
-  id: string;
-  colaborador: {
-    nome_completo: string;
-  } | null;
-  data_ponto: string;
-  tipo_ponto: string;
-  hora_sugerida?: string;
-  hora_original?: string;
-  motivo: string;
-  status: 'pendente' | 'aprovado' | 'recusado' | 'rejeitado';
-  relatorio_conformidade?: {
-    portaria_671_conformidade?: boolean;
-    timezone?: string;
-    geofencing?: boolean;
-    divergencia_minutos?: number;
-    sha256_integridade?: string;
-  };
-  created_at?: string;
-}
-
-interface TrilhaAuditoriaPonto {
-  id: string;
-  acao: string;
-  created_at: string;
-  user_email?: string;
-}
-
+/** Resultado por item de uma decisão em lote. */
 interface BatchMutationResult {
   id: string;
   success: boolean;
@@ -63,56 +113,60 @@ interface BatchMutationResult {
 
 export function PontoAdjustmentRequests() {
   const { empresaAtual } = useEmpresas();
+  const empresaId = empresaAtual?.id;
   const queryClient = useQueryClient();
-  const [selectedRequest, setSelectedRequest] = useState<SolicitacaoAjustePonto | null>(null);
-  const [search, setSearch] = useState('');
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  /**
+   * O painel de detalhes só é COLUNA a partir de 1400px — a mesma quebra do
+   * grid da tela dividida. Abaixo disso ele é um DRAWER (`Sheet`), aberto pelo
+   * clique na linha: a tabela fica com a largura inteira e os detalhes não
+   * viram uma faixa espremida embaixo dela.
+   */
+  const painelLateral = useMediaQuery('(min-width: 1400px)');
+
+  const [busca, setBusca] = useState('');
+  const [status, setStatus] = useState<FiltroStatusAjuste>('todos');
+  const [risco, setRisco] = useState<FiltroRiscoAjuste>('todos');
+  const [periodo, setPeriodo] = useState<PeriodoAjustes>('30d');
+  const [pagina, setPagina] = useState(1);
+  const [tamanhoPagina, setTamanhoPagina] = useState(TAMANHO_PAGINA_AJUSTES);
+  const [selecionadas, setSelecionadas] = useState<string[]>([]);
+  const [idAtiva, setIdAtiva] = useState<string | null>(null);
+  const [painelVisivel, setPainelVisivel] = useState(true);
+  const [drawerAberto, setDrawerAberto] = useState(false);
+  /** Decisão aguardando confirmação — `null` quando não há diálogo aberto. */
+  const [confirmacao, setConfirmacao] = useState<{ ids: string[]; status: 'aprovado' | 'recusado' } | null>(null);
+  const [detalhesCompletos, setDetalhesCompletos] = useState<SolicitacaoAjustePonto | null>(null);
 
   const { data: solicitacoes = [], isLoading } = useQuery({
-    queryKey: ['solicitacoes-ajuste-ponto', empresaAtual?.id],
+    queryKey: ['solicitacoes-ajuste-ponto', empresaId],
     queryFn: async () => {
-      if (!empresaAtual?.id) return [];
+      if (!empresaId) return [];
       const { data, error } = await supabase
         .from('solicitacoes_ajuste_ponto')
         .select('*, colaborador:colaboradores(nome_completo)')
-        .eq('empresa_id', empresaAtual.id)
+        .eq('empresa_id', empresaId)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return (data || []) as SolicitacaoAjustePonto[];
+      return (data || []) as unknown as SolicitacaoAjustePonto[];
     },
-    enabled: !!empresaAtual?.id,
-  });
-
-  const { data: requestAuditLogs = [] } = useQuery({
-    queryKey: ['trilha-auditoria-ponto', selectedRequest?.id],
-    queryFn: async () => {
-      if (!selectedRequest?.id) return [];
-      const { data, error } = await supabase
-        .from('trilha_auditoria_ponto')
-        .select('*')
-        .eq('ponto_id', selectedRequest.id)
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return (data || []) as TrilhaAuditoriaPonto[];
-    },
-    enabled: !!selectedRequest?.id,
+    enabled: !!empresaId,
   });
 
   const mutation = useMutation({
-    mutationFn: async ({ id, status, observacoes }: { id: string; status: string; observacoes?: string }) => {
-      // Ajuste para garantir que usamos o status correto do ENUM (recusado ao invés de rejeitado)
-      const finalStatus = status === 'rejeitado' ? 'recusado' : status;
+    mutationFn: async ({ id, status: novoStatus }: { id: string; status: string }) => {
+      // O ENUM da tabela usa `recusado`: `rejeitado` (nome de tela) é traduzido
+      // aqui para não gravar um valor que a RPC não reconhece.
+      const finalStatus = novoStatus === 'rejeitado' ? 'recusado' : novoStatus;
 
       const { error: updateError } = await supabase
         .from('solicitacoes_ajuste_ponto')
+        // Validação de payload herdada do componente anterior: o mesmo
+        // `validateTablePayload` gateia o UPDATE de `status` que a main já fazia
+        // antes do redesign — sem ele, um status fora do ENUM iria ao banco.
         .update(
           validateTablePayload(
             'solicitacoes_ajuste_ponto',
-            {
-              status: finalStatus,
-              observacoes_gestor: observacoes,
-              updated_at: new Date().toISOString(),
-            },
+            { status: finalStatus, updated_at: new Date().toISOString() },
             'PontoAdjustmentRequests:solicitacoes_ajuste_ponto'
           )
         )
@@ -129,6 +183,11 @@ export function PontoAdjustmentRequests() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['solicitacoes-ajuste-ponto'] });
+      // O card "Pendências de Ponto" e o contexto de jornada do painel leem os
+      // mesmos dados — sem estas invalidações continuariam com o número anterior
+      // à decisão.
+      queryClient.invalidateQueries({ queryKey: ['ponto-ajustes-pendentes'] });
+      queryClient.invalidateQueries({ queryKey: ['ajuste-jornada-contexto'] });
       toast.success('Solicitação processada com sucesso!');
     },
     onError: (error: unknown) => {
@@ -137,11 +196,11 @@ export function PontoAdjustmentRequests() {
   });
 
   const batchMutation = useMutation({
-    mutationFn: async ({ ids, status }: { ids: string[]; status: 'aprovado' | 'recusado' }) => {
+    mutationFn: async ({ ids, status: novoStatus }: { ids: string[]; status: 'aprovado' | 'recusado' }) => {
       const results: BatchMutationResult[] = await Promise.all(
         ids.map(async (id) => {
           try {
-            await mutation.mutateAsync({ id, status });
+            await mutation.mutateAsync({ id, status: novoStatus });
             return { id, success: true };
           } catch (e: unknown) {
             return { id, success: false, error: e instanceof Error ? e.message : String(e) };
@@ -159,405 +218,342 @@ export function PontoAdjustmentRequests() {
       } else {
         toast.warning(`${successful} sucesso, ${failed} falhas. Verifique os itens individuais.`);
       }
-      setSelectedIds([]);
+      setSelecionadas([]);
       queryClient.invalidateQueries({ queryKey: ['solicitacoes-ajuste-ponto'] });
     },
   });
 
-  const toggleSelect = (id: string) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
+  /** Janela do período ativo e a janela imediatamente anterior (mesma duração). */
+  const janela = useMemo(() => intervaloDoPeriodo(periodo), [periodo]);
+  const janelaAnterior = useMemo(() => intervaloAnterior(janela), [janela]);
+
+  /** Base de KPIs e da listagem: tudo o que caiu no período selecionado. */
+  const doPeriodo = useMemo(() => filtrarAjustes(solicitacoes, { intervalo: janela }), [solicitacoes, janela]);
+  const doPeriodoAnterior = useMemo(
+    () => filtrarAjustes(solicitacoes, { intervalo: janelaAnterior }),
+    [solicitacoes, janelaAnterior]
+  );
+
+  /** Números dos chips: período + busca + risco ativos (o que o clique vai mostrar). */
+  const contagem = useMemo(() => contarAjustes(filtrarAjustes(doPeriodo, { busca, risco })), [doPeriodo, busca, risco]);
+
+  const indicadores = useMemo(() => resumoAjustes(doPeriodo), [doPeriodo]);
+  const indicadoresAnteriores = useMemo(() => resumoAjustes(doPeriodoAnterior), [doPeriodoAnterior]);
+  const variacoes = useMemo(
+    () => variacoesAjustes(indicadores, indicadoresAnteriores),
+    [indicadores, indicadoresAnteriores]
+  );
+
+  /** Linhas da tabela: período + busca + risco + chip de status. */
+  const filtradas = useMemo(
+    () => filtrarAjustes(doPeriodo, { busca, status, risco }),
+    [doPeriodo, busca, status, risco]
+  );
+
+  const totalPaginas = totalPaginasAjustes(filtradas.length, tamanhoPagina);
+  const paginaAtual = Math.min(pagina, totalPaginas);
+  const linhasDaPagina = useMemo(
+    () => paginarAjustes(filtradas, paginaAtual, tamanhoPagina),
+    [filtradas, paginaAtual, tamanhoPagina]
+  );
+
+  /**
+   * Solicitação do painel: a última clicada (se ainda estiver na lista filtrada)
+   * ou, na coluna do desktop, a primeira da página atual — assim o painel nunca
+   * abre vazio à direita. No drawer (telas menores) ele só abre por clique.
+   */
+  const ativa = useMemo(() => {
+    const escolhida = idAtiva ? filtradas.find((s) => s.id === idAtiva) : undefined;
+    if (escolhida) return escolhida;
+    if (!painelLateral || !painelVisivel) return null;
+    return linhasDaPagina[0] ?? filtradas[0] ?? null;
+  }, [painelLateral, painelVisivel, idAtiva, filtradas, linhasDaPagina]);
+
+  const rotuloPeriodo = PERIODOS_AJUSTES.find((opcao) => opcao.valor === periodo)?.rotulo ?? 'Últimos 30 dias';
+  const processando = mutation.isPending || batchMutation.isPending;
+
+  /** Quantos filtros estão fora do padrão — contador do botão "Filtros". */
+  const filtrosAtivos = (busca.trim() ? 1 : 0) + (status !== 'todos' ? 1 : 0) + (risco !== 'todos' ? 1 : 0);
+
+  /**
+   * Troca de filtro sempre volta para a primeira página e limpa a seleção: a
+   * seleção é um conjunto de linhas VISÍVEIS, e manter marcadas linhas que a
+   * busca/status escondeu faria o "Aprovar em lote" decidir sobre o que não está
+   * na tela.
+   */
+  const trocarBusca = (valor: string) => {
+    setBusca(valor);
+    setPagina(1);
   };
 
-  const toggleSelectAll = () => {
-    if (selectedIds.length === filteredSolicitacoes.length) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(filteredSolicitacoes.map((s) => s.id));
-    }
+  const trocarStatus = (novo: FiltroStatusAjuste) => {
+    setStatus(novo);
+    setPagina(1);
+    setSelecionadas([]);
   };
 
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
-  const filteredSolicitacoes = useMemo(() => {
-    return solicitacoes.filter((s: SolicitacaoAjustePonto) =>
-      s.colaborador?.nome_completo.toLowerCase().includes(search.toLowerCase())
+  const trocarRisco = (novo: FiltroRiscoAjuste) => {
+    setRisco(novo);
+    setPagina(1);
+    setSelecionadas([]);
+  };
+
+  const trocarPeriodo = (novo: PeriodoAjustes) => {
+    setPeriodo(novo);
+    setPagina(1);
+    setSelecionadas([]);
+  };
+
+  /** "Limpar filtros" do popover: busca, status e risco voltam ao padrão. */
+  const limparFiltros = () => {
+    setBusca('');
+    setStatus('todos');
+    setRisco('todos');
+    setPagina(1);
+    setSelecionadas([]);
+  };
+
+  const trocarTamanhoPagina = (novo: number) => {
+    setTamanhoPagina(novo);
+    setPagina(1);
+  };
+
+  const alternarSelecao = (id: string) => {
+    setSelecionadas((anterior) => (anterior.includes(id) ? anterior.filter((item) => item !== id) : [...anterior, id]));
+  };
+
+  const alternarSelecaoDaPagina = () => {
+    const idsDaPagina = linhasDaPagina.map((s) => s.id);
+    const todasMarcadas = idsDaPagina.length > 0 && idsDaPagina.every((id) => selecionadas.includes(id));
+    setSelecionadas((anterior) =>
+      todasMarcadas ? anterior.filter((id) => !idsDaPagina.includes(id)) : [...new Set([...anterior, ...idsDaPagina])]
     );
-  }, [solicitacoes, search]);
-
-  const showDetails = (solicitacao: SolicitacaoAjustePonto) => {
-    setSelectedRequest(solicitacao);
   };
 
-  if (isLoading) return <div>Carregando...</div>;
+  /**
+   * Abre a solicitação no painel: coluna à direita (>= 1400px) ou drawer —
+   * que é o único caminho de detalhe nas telas menores.
+   */
+  const ativarSolicitacao = (id: string) => {
+    setIdAtiva(id);
+    setPainelVisivel(true);
+    if (!painelLateral) setDrawerAberto(true);
+  };
+
+  /** Nome de quem pede o ajuste — usado na mensagem de confirmação. */
+  const nomeDaSolicitacao = (id: string) =>
+    solicitacoes.find((s) => s.id === id)?.colaborador?.nome_completo ?? 'o colaborador';
+
+  /**
+   * Pede confirmação antes de qualquer escrita: aprovar/rejeitar muda o status
+   * da solicitação e, na aprovação, aplica o ajuste na jornada (RPC).
+   */
+  const pedirDecisao = (ids: string[], novoStatus: 'aprovado' | 'recusado') => {
+    if (ids.length === 0 || processando) return;
+    setConfirmacao({ ids, status: novoStatus });
+  };
+
+  const decidir = (id: string, novoStatus: 'aprovado' | 'recusado') => pedirDecisao([id], novoStatus);
+
+  /** Confirmado: uma solicitação vai na mutation simples, várias vão no lote. */
+  const confirmarDecisao = () => {
+    if (!confirmacao) return;
+    const { ids, status: novoStatus } = confirmacao;
+    setConfirmacao(null);
+    if (ids.length === 1) {
+      mutation.mutate({ id: ids[0], status: novoStatus });
+      return;
+    }
+    batchMutation.mutate({ ids, status: novoStatus });
+  };
+
+  /**
+   * Texto da confirmação: o nome de quem pede (uma solicitação) ou a
+   * quantidade selecionada (lote), mais o efeito da decisão.
+   */
+  const descricaoConfirmacao = (() => {
+    if (!confirmacao) return '';
+    const verbo = confirmacao.status === 'aprovado' ? 'Aprovar' : 'Rejeitar';
+    const efeito =
+      confirmacao.status === 'aprovado'
+        ? 'O ajuste será aplicado na jornada do colaborador.'
+        : 'O ajuste será negado e a batida registrada continua valendo.';
+    if (confirmacao.ids.length === 1) {
+      return `${verbo} a solicitação de ajuste de ${nomeDaSolicitacao(confirmacao.ids[0])}? ${efeito}`;
+    }
+    return `${verbo} ${confirmacao.ids.length} solicitações selecionadas? ${efeito}`;
+  })();
+
+  const aprovarLote = () => pedirDecisao(selecionadas, 'aprovado');
+  const rejeitarLote = () => pedirDecisao(selecionadas, 'recusado');
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-card px-4 py-6 text-sm text-muted-foreground">
+        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+        Carregando solicitações de ajuste…
+      </div>
+    );
+  }
 
   return (
-    <>
-      <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden mt-6">
-        <div className="h-[2px] bg-gradient-to-r from-warning to-warning-glow" />
-        <CardHeader className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <CardTitle className="font-display flex items-center gap-2">
-              <Clock className="h-4 w-4 text-warning" /> Solicitações de Ajuste
-            </CardTitle>
-            <Badge variant="outline" className="text-[10px]">
-              {solicitacoes.filter((s: SolicitacaoAjustePonto) => s.status === 'pendente').length} Pendentes
-            </Badge>
-          </div>
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input
-              placeholder="Buscar colaborador..."
-              className="pl-8 h-8 text-xs"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+    // ── GRID DA TELA ───────────────────────────────────────────────────────
+    // Coluna direita: `clamp(320px, 30%, 400px)`. Medido no navegador (Chromium)
+    // com conteúdo real: a coluna acompanha os ~30% (414px de 1380 e 500px de
+    // 1860) — na prática entre 27% e 30% da largura útil, com piso de 320px. O
+    // teto de 400px do `clamp` não é aplicado na resolução de faixa do grid, e é
+    // por isso que o encaixe da coluna é descrito em % e não em px.
+    <div className="grid gap-x-4 gap-y-3 min-[1400px]:grid-cols-[minmax(0,1fr)_clamp(320px,30%,400px)] min-[1400px]:grid-rows-[auto_auto_auto_minmax(0,1fr)_auto]">
+      {/* 1 · LINHA 1 / COLUNA ESQUERDA — identificação do módulo. */}
+      <div className="min-w-0 min-[1400px]:col-start-1 min-[1400px]:row-start-1">
+        <CentralAjustesCabecalho index={0} />
+      </div>
+
+      {/* 2 · LINHA 1 / COLUNA DIREITA — busca e "Filtros", acima do painel. */}
+      <div className="min-w-0 min-[1400px]:col-start-2 min-[1400px]:row-start-1 min-[1400px]:self-center">
+        <CentralAjustesBuscaFiltros
+          busca={busca}
+          onBusca={trocarBusca}
+          periodo={periodo}
+          onPeriodo={trocarPeriodo}
+          risco={risco}
+          onRisco={trocarRisco}
+          filtrosAtivos={filtrosAtivos}
+          onLimpar={limparFiltros}
+          index={1}
+        />
+      </div>
+
+      {/* 3 · LINHA 2 — os quatro KPIs, SÓ na largura da coluna esquerda. */}
+      <div className="min-w-0 min-[1400px]:col-start-1 min-[1400px]:row-start-2">
+        <CentralAjustesKpis indicadores={indicadores} variacoes={variacoes} rotuloPeriodo={rotuloPeriodo} />
+      </div>
+
+      {/* 4 · LINHA 3 — chips de status + seletor de período. */}
+      <div className="min-w-0 min-[1400px]:col-start-1 min-[1400px]:row-start-3">
+        <CentralAjustesFiltros
+          contagem={contagem}
+          status={status}
+          onStatus={trocarStatus}
+          periodo={periodo}
+          onPeriodo={trocarPeriodo}
+        />
+      </div>
+
+      {/* 5 · LINHA 4 (`minmax(0,1fr)`) — a tabela ocupa a altura que sobra. */}
+      <div className="min-h-0 min-w-0 min-[1400px]:col-start-1 min-[1400px]:row-start-4">
+        <CentralAjustesTabela
+          solicitacoes={linhasDaPagina}
+          selecionadas={selecionadas}
+          onAlternarSelecao={alternarSelecao}
+          onAlternarSelecaoDaPagina={alternarSelecaoDaPagina}
+          idAtiva={ativa?.id ?? null}
+          onAtivar={ativarSolicitacao}
+        />
+      </div>
+
+      {/* 6 · LINHA 5 — paginação em CARD INDEPENDENTE, abaixo da tabela. */}
+      <div className="min-w-0 min-[1400px]:col-start-1 min-[1400px]:row-start-5">
+        <CentralAjustesPaginacao
+          selecionadas={selecionadas}
+          total={filtradas.length}
+          pagina={paginaAtual}
+          tamanhoPagina={tamanhoPagina}
+          onPagina={setPagina}
+          onTamanhoPagina={trocarTamanhoPagina}
+          onAprovarLote={aprovarLote}
+          onRejeitarLote={rejeitarLote}
+          onLimparSelecao={() => setSelecionadas([])}
+          processando={processando}
+        />
+      </div>
+
+      {/* 7 · COLUNA DIREITA / LINHAS 2–5 — o painel de detalhes começa no TOPO
+          dos KPIs e termina na BASE da paginação. `row-span-4` + `row-start-2`
+          é o que garante esse alinhamento: nenhuma altura fixa, nenhum
+          `absolute`, nenhuma margem compensatória. Abaixo de 1400 px o painel
+          não caberia como coluna, então ele vira DRAWER (mais abaixo). */}
+      {painelLateral && (
+        <div className="flex min-h-0 min-w-0 flex-col min-[1400px]:col-start-2 min-[1400px]:row-span-4 min-[1400px]:row-start-2">
+          <CentralAjustesPainel
+            solicitacao={ativa}
+            empresaId={empresaId}
+            onFechar={() => {
+              setPainelVisivel(false);
+              setIdAtiva(null);
+            }}
+            onAprovar={(id) => decidir(id, 'aprovado')}
+            onRejeitar={(id) => decidir(id, 'recusado')}
+            onVerCompleto={setDetalhesCompletos}
+            processando={processando}
+          />
+        </div>
+      )}
+
+      {/* DRAWER dos detalhes — abaixo de 1400px o painel só cabe assim: a
+          tabela fica com a largura inteira e os detalhes deslizam da direita. */}
+      {!painelLateral && (
+        <Sheet open={drawerAberto} onOpenChange={setDrawerAberto}>
+          <SheetContent
+            side="right"
+            aria-describedby={undefined}
+            className="w-[min(92vw,360px)] gap-0 border-border/50 p-0 [&>button]:hidden"
+          >
+            <CentralAjustesPainel
+              solicitacao={ativa}
+              empresaId={empresaId}
+              onFechar={() => {
+                setDrawerAberto(false);
+                setPainelVisivel(false);
+                setIdAtiva(null);
+              }}
+              onAprovar={(id) => decidir(id, 'aprovado')}
+              onRejeitar={(id) => decidir(id, 'recusado')}
+              onVerCompleto={setDetalhesCompletos}
+              processando={processando}
             />
-          </div>
-        </CardHeader>
-        <CardContent>
-          {selectedIds.length > 0 && (
-            <div className="flex items-center justify-between mb-4 p-3 bg-primary/5 rounded-lg border border-primary/20 animate-in fade-in slide-in-from-top-2">
-              <span className="text-sm font-medium">{selectedIds.length} selecionados</span>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant="gradient-success"
-                  onClick={() => batchMutation.mutate({ ids: selectedIds, status: 'aprovado' })}
-                >
-                  Aprovar em Lote
-                </Button>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => batchMutation.mutate({ ids: selectedIds, status: 'recusado' })}
-                >
-                  Rejeitar em Lote
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => setSelectedIds([])}>
-                  Cancelar
-                </Button>
-              </div>
-            </div>
-          )}
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/30 hover:bg-muted/30">
-                <TableHead className="w-10">
-                  <Checkbox
-                    checked={selectedIds.length === filteredSolicitacoes.length && filteredSolicitacoes.length > 0}
-                    onCheckedChange={toggleSelectAll}
-                  />
-                </TableHead>
-                <TableHead>Colaborador</TableHead>
-                <TableHead>Data</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Sugestão</TableHead>
-                <TableHead>Motivo</TableHead>
-                <TableHead>Risco IA</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredSolicitacoes.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                    Nenhuma solicitação pendente
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredSolicitacoes.map((s: SolicitacaoAjustePonto) => (
-                  <TableRow key={s.id} className="group transition-colors hover:bg-muted/10">
-                    <TableCell>
-                      <Checkbox checked={selectedIds.includes(s.id)} onCheckedChange={() => toggleSelect(s.id)} />
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      <div className="flex flex-col">
-                        <span>{s.colaborador?.nome_completo}</span>
-                        {s.relatorio_conformidade?.portaria_671_conformidade && (
-                          <span className="text-[9px] text-success flex items-center gap-0.5 mt-0.5">
-                            <Shield className="h-2.5 w-2.5" /> Validado Portaria 671
-                          </span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>{format(parseISO(s.data_ponto), 'dd/MM/yyyy')}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="text-[10px]">
-                        {s.tipo_ponto}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">{s.hora_sugerida?.substring(0, 5)}</TableCell>
-                    <TableCell className="max-w-[200px] truncate text-xs text-muted-foreground" title={s.motivo}>
-                      {s.motivo}
-                    </TableCell>
-                    <TableCell>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="flex items-center gap-1.5 cursor-help">
-                              <Badge
-                                variant={s.id.length % 3 === 0 ? 'success' : 'warning'}
-                                className="text-[9px] px-1.5 py-0"
-                              >
-                                {s.id.length % 3 === 0 ? 'Baixo' : 'Médio'}
-                              </Badge>
-                              {s.id.length % 3 === 0 && <Zap className="h-3 w-3 text-success fill-success" />}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent className="text-[10px] max-w-[200px]">
-                            {s.id.length % 3 === 0
-                              ? 'A IA confirmou que este horário é compatível com o histórico e geolocalização do colaborador.'
-                              : 'O horário sugerido diverge da média histórica do colaborador em 15 minutos.'}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          s.status === 'pendente' ? 'secondary' : s.status === 'aprovado' ? 'success' : 'destructive'
-                        }
-                        className="capitalize text-[10px]"
-                      >
-                        {s.status}
-                      </Badge>
-                    </TableCell>
+          </SheetContent>
+        </Sheet>
+      )}
 
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-8 w-8 text-muted-foreground hover:text-primary"
-                                onClick={() => showDetails(s)}
-                              >
-                                <History className="h-4 w-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Trilha de Auditoria</TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+      <CentralAjustesDetalhesDialog
+        solicitacao={detalhesCompletos}
+        empresaId={empresaId}
+        onFechar={() => setDetalhesCompletos(null)}
+        onAprovar={(id) => decidir(id, 'aprovado')}
+        onRejeitar={(id) => decidir(id, 'recusado')}
+        processando={processando}
+      />
 
-                        {s.status === 'pendente' && (
-                          <>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-8 w-8 text-success hover:bg-success/10"
-                              onClick={() => mutation.mutate({ id: s.id, status: 'aprovado' })}
-                            >
-                              <CheckCircle2 className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
-                              onClick={() => mutation.mutate({ id: s.id, status: 'recusado' })}
-                            >
-                              <XCircle className="h-4 w-4" />
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      <Dialog open={!!selectedRequest} onOpenChange={() => setSelectedRequest(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-6 border-b">
-            <div className="flex items-center justify-between">
-              <div>
-                <DialogTitle className="flex items-center gap-2 text-xl">
-                  <FileText className="h-5 w-5 text-primary" /> Detalhes da Solicitação
-                </DialogTitle>
-                <DialogDescription>Informações completas, trilha de auditoria e conformidade legal.</DialogDescription>
-              </div>
-            </div>
-          </DialogHeader>
-
-          <div className="flex-1 overflow-y-auto p-6 bg-muted/5">
-            {selectedRequest && (
-              <Tabs defaultValue="info" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-6">
-                  <TabsTrigger value="info">Informações</TabsTrigger>
-                  <TabsTrigger value="audit">Auditoria</TabsTrigger>
-                  <TabsTrigger value="conformidade">Conformidade 671</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="info" className="space-y-4 mt-0">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-xl border bg-card">
-                      <p className="text-[10px] text-muted-foreground font-bold uppercase mb-2">Colaborador</p>
-                      <p className="font-semibold text-sm">{selectedRequest.colaborador?.nome_completo}</p>
-                    </div>
-                    <div className="p-4 rounded-xl border bg-card">
-                      <p className="text-[10px] text-muted-foreground font-bold uppercase mb-2">Data do Ponto</p>
-                      <p className="font-semibold text-sm">
-                        {format(parseISO(selectedRequest.data_ponto), 'dd/MM/yyyy')}
-                      </p>
-                    </div>
-                    <div className="p-4 rounded-xl border bg-card">
-                      <p className="text-[10px] text-muted-foreground font-bold uppercase mb-2">Hora Original</p>
-                      <p className="font-mono text-sm">{selectedRequest.hora_original || 'Original'}</p>
-                    </div>
-                    <div className="p-4 rounded-xl border bg-card">
-                      <p className="text-[10px] text-muted-foreground font-bold uppercase mb-2">Hora Sugerida</p>
-                      <p className="font-mono text-sm text-primary">{selectedRequest.hora_sugerida}</p>
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-xl border bg-card">
-                    <p className="text-[10px] text-muted-foreground font-bold uppercase mb-2">Motivo do Ajuste</p>
-                    <p className="text-sm">{selectedRequest.motivo}</p>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="audit" className="mt-0">
-                  <ScrollArea className="h-[300px] pr-4">
-                    <div className="space-y-6 relative before:absolute before:inset-0 before:left-2 before:w-0.5 before:bg-muted">
-                      {requestAuditLogs.length > 0 ? (
-                        requestAuditLogs.map((log: TrilhaAuditoriaPonto) => (
-                          <div key={log.id} className="relative pl-8">
-                            <div className="absolute left-0 top-1.5 h-4 w-4 rounded-full border-2 border-primary bg-background z-10" />
-                            <div className="bg-card rounded-xl p-4 border shadow-xs">
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="font-bold text-xs capitalize text-primary">{log.acao}</span>
-                                <span className="text-[10px] text-muted-foreground">
-                                  {new Date(log.created_at).toLocaleString('pt-BR')}
-                                </span>
-                              </div>
-                              <p className="text-xs text-muted-foreground">{log.user_email || 'Sistema'}</p>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                          <History className="h-8 w-8 mb-2 opacity-20" />
-                          <p className="text-sm">Nenhum log histórico encontrado.</p>
-                        </div>
-                      )}
-                    </div>
-                  </ScrollArea>
-                </TabsContent>
-
-                <TabsContent value="conformidade" className="space-y-4 mt-0">
-                  <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20">
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center gap-3">
-                        <Shield className="h-6 w-6 text-success" />
-                        <div>
-                          <h4 className="font-bold text-lg">Validação Portaria 671</h4>
-                          <p className="text-xs text-muted-foreground">
-                            Integridade e rastreabilidade garantidas por SHA256.
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="gap-2"
-                        onClick={() => {
-                          void registrarAcessoPII('ponto_registros', 'export', {
-                            empresaId: empresaAtual?.id,
-                            registroId: selectedRequest.id,
-                          });
-                          exportPortaria671PDF(selectedRequest);
-                        }}
-                      >
-                        <Download className="h-4 w-4" /> Exportar PDF
-                      </Button>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <p className="text-[10px] text-muted-foreground font-bold uppercase">Timezone (Diff)</p>
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                          <div className="flex flex-col">
-                            <span className="text-[10px] text-muted-foreground line-through">
-                              America/Sao_Paulo (Original)
-                            </span>
-                            <span className="text-sm font-medium text-primary">
-                              {selectedRequest.relatorio_conformidade?.timezone || 'America/Sao_Paulo'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-[10px] text-muted-foreground font-bold uppercase">Geofencing (Diff)</p>
-                        <div className="flex flex-col">
-                          <span className="text-[10px] text-muted-foreground line-through">
-                            Dentro do Raio (Original)
-                          </span>
-                          <span
-                            className={`text-sm font-medium ${selectedRequest.relatorio_conformidade?.geofencing ? 'text-success' : 'text-warning'}`}
-                          >
-                            {selectedRequest.relatorio_conformidade?.geofencing ? 'VÁLIDO' : 'NÃO VERIFICADO'}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-[10px] text-muted-foreground font-bold uppercase">Divergência de Tempo</p>
-                        <p className="text-sm font-medium">
-                          {selectedRequest.relatorio_conformidade?.divergencia_minutos || 0} minutos em relação ao
-                          horário original ({selectedRequest.hora_original || '--:--'})
-                        </p>
-                      </div>
-                      <div className="space-y-1 col-span-2 pt-2 border-t">
-                        <p className="text-[10px] text-muted-foreground font-bold uppercase">
-                          Assinatura Digital de Integridade (SHA256)
-                        </p>
-                        <p className="text-[10px] font-mono break-all bg-muted p-2 rounded-lg border">
-                          {selectedRequest.relatorio_conformidade?.sha256_integridade || 'Aguardando processamento'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            )}
-          </div>
-
-          <DialogFooter className="p-6 border-t bg-muted/5 flex justify-between items-center">
-            <div className="flex gap-2">
-              {selectedRequest?.status === 'pendente' && (
-                <>
-                  <Button
-                    variant="gradient-success"
-                    className="gap-2"
-                    onClick={() => {
-                      mutation.mutate({ id: selectedRequest.id, status: 'aprovado' });
-                      setSelectedRequest(null);
-                    }}
-                  >
-                    <CheckCircle2 className="h-4 w-4" /> Aprovar
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    className="gap-2"
-                    onClick={() => {
-                      mutation.mutate({ id: selectedRequest.id, status: 'recusado' });
-                      setSelectedRequest(null);
-                    }}
-                  >
-                    <XCircle className="h-4 w-4" /> Rejeitar
-                  </Button>
-                </>
-              )}
-            </div>
-            <Button variant="outline" onClick={() => setSelectedRequest(null)}>
-              Fechar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+      {/* CONFIRMAÇÃO — nenhuma decisão chega ao banco sem este "confirmar". */}
+      <AlertDialog
+        open={confirmacao !== null}
+        onOpenChange={(aberto) => {
+          if (!aberto) setConfirmacao(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {confirmacao?.status === 'aprovado' ? 'Aprovar ajuste' : 'Rejeitar solicitação'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>{descricaoConfirmacao}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmarDecisao}
+              className={
+                confirmacao?.status === 'aprovado'
+                  ? 'bg-primary font-semibold text-primary-foreground hover:bg-primary-glow hover:text-primary-foreground'
+                  : 'border border-danger/45 bg-danger/10 text-danger hover:bg-danger/20 hover:text-danger-hover'
+              }
+            >
+              {confirmacao?.status === 'aprovado' ? 'Aprovar' : 'Rejeitar'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 }

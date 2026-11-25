@@ -84,6 +84,41 @@ export function normalizarVaga(valor: string | null | undefined): string {
     .trim();
 }
 
+const MOEDA_BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+
+/** “R$ 4.500 – R$ 6.000” / “A partir de R$ 4.500” / “Até R$ 6.000”; null sem faixa. */
+export function formatarFaixaSalarial(minimo: number | null, maximo: number | null): string | null {
+  const min = typeof minimo === 'number' && minimo > 0 ? minimo : 0;
+  const max = typeof maximo === 'number' && maximo > 0 ? maximo : 0;
+  if (min > 0 && max > 0) return `${MOEDA_BRL.format(min)} – ${MOEDA_BRL.format(max)}`;
+  if (min > 0) return `A partir de ${MOEDA_BRL.format(min)}`;
+  if (max > 0) return `Até ${MOEDA_BRL.format(max)}`;
+  return null;
+}
+
+/** Valores de `vagas.tipo_contrato`: exatamente os ids aceitos por `vagaSchema`. */
+export const OPCOES_TIPO_CONTRATO = [
+  { valor: 'clt', rotulo: 'CLT' },
+  { valor: 'pj', rotulo: 'PJ' },
+  { valor: 'estagiario', rotulo: 'Estágio' },
+  { valor: 'temporario', rotulo: 'Temporário' },
+  { valor: 'intermitente', rotulo: 'Intermitente' },
+  { valor: 'aprendiz', rotulo: 'Aprendiz' },
+] as const;
+
+export type TipoContratoVaga = (typeof OPCOES_TIPO_CONTRATO)[number]['valor'];
+
+const ROTULO_CONTRATO: Record<string, string> = Object.fromEntries(
+  OPCOES_TIPO_CONTRATO.map((opcao) => [opcao.valor, opcao.rotulo])
+);
+
+/** Rótulo legível do tipo de contrato; o texto cru quando fora da lista conhecida. */
+export function rotuloTipoContrato(valor: string | null | undefined): string | null {
+  const texto = (valor ?? '').trim();
+  if (!texto) return null;
+  return ROTULO_CONTRATO[texto.toLowerCase()] ?? texto;
+}
+
 function identidadeDe(vaga: VagaRow): IdentidadeVaga {
   const departamento = normalizarVaga(vaga.departamento);
   const cargo = normalizarVaga(`${vaga.cargo ?? ''} ${vaga.titulo ?? ''}`);

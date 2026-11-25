@@ -170,8 +170,8 @@ export interface Portaria671Solicitacao {
   id: string;
   data_ponto: string;
   tipo_ponto?: string;
-  hora_original?: string;
-  hora_sugerida?: string;
+  hora_original?: string | null;
+  hora_sugerida?: string | null;
   motivo?: string;
   colaborador?: { nome_completo?: string } | null;
   relatorio_conformidade?: {

@@ -3,6 +3,20 @@
 @import 'tailwindcss';
 @config "../tailwind.config.js";
 
+/* ============================================================================
+   MOTION — RÉGUA GLOBAL DE DURAÇÃO.
+
+   O sistema nomeia os passos de duração (`duration-fast`, `duration-slow`,
+   `duration-slower`) em vez de repetir milissegundos soltos, e a onda do
+   `ui/flow-hover-button` (botão "Sincronizar"/"Exportar") lê `duration-slower`
+   — 500ms é o tempo em que o preenchimento é percebido, não um "piscar".
+   Aqui mora o passo usado hoje; os demais passos entram conforme forem
+   consumidos por componente, para não mudar o ritmo do que já está em produção.
+   ========================================================================== */
+@theme {
+  --transition-duration-slower: 500ms;
+}
+
 @layer base {
   :root {
     /* ─── LIGHT MODE (Bombon Lime — Clean & Modern) ─── */
@@ -971,3 +985,190 @@
    preferência que fazia a entrada automática saltar direto para a altura
    final e parecer que a animação não existia. Não há override de `transform`
    aqui para não anular a reprodução manual. */
+/* ============================================================================
+   MAPA GEOGRÁFICO DO CONTROLE DE PONTO (aba Geofencing)
+   ----------------------------------------------------------------------------
+   Pele do Leaflet dentro do card escuro do sistema. O componente
+   (`components/ponto/PontoGeoMapa.tsx`) monta mapa, perímetro (círculo
+   tracejado) e marcadores; aqui ficam só as cores/tokens que o Leaflet não
+   consegue ler de classe Tailwind (as camadas de tile e os ícones de marcador
+   são criados fora do JSX).
+
+   TINTING DOS TILES: o CARTO "dark" é cinza-azulado neutro e destoava do navy
+   do card. O filtro abaixo puxa o matiz para o azul do `--background`/`--card`
+   sem inventar cor: matiz girado para ~200°, saturação contida e brilho
+   rebaixado — o mesmo tom das grades e bordas do painel. O modo Satélite
+   desliga o filtro (imagem de satélite tem de parecer satélite).
+
+   MOVIMENTO: entrada do marcador é uma animação de 260 ms (escala + fade) e
+   respeita `prefers-reduced-motion` pela guarda global do projeto
+   (`html:not(.dp-force-motion)`), a MESMA dos outros blocos deste arquivo.
+   ========================================================================== */
+.geo-mapa .leaflet-container {
+  background: hsl(var(--background));
+  font-family: inherit;
+  outline: none;
+}
+
+/* Tiles CLAROS (OpenStreetMap) escurecidos para o navy do tema: inverter +
+   girar o matiz devolve ruas claras sobre fundo escuro mantendo a legibilidade
+   dos rótulos — o mesmo resultado visual do basemap escuro pago, sem chave de
+   API e com dados até o zoom 19 (necessário para um perímetro de 100 m).
+   O filtro vive no `leaflet-tile-pane` e é desligado no modo Satélite
+   (`.geo-mapa--satelite`), onde a imagem tem de continuar sendo satélite. */
+.geo-mapa:not(.geo-mapa--satelite) .leaflet-tile-pane {
+  filter: invert(1) grayscale(0.85) brightness(0.95) contrast(1.05);
+}
+
+/* PREFLIGHT x LEAFLET: o `img { max-width: 100% }` do Tailwind zera a largura
+   dos tiles (o pane é um `div` posicionado de 0px), e o mapa fica sem base
+   cartográfica. O Leaflet já define `width/height` inline por tile — aqui só
+   devolvemos a esses `img` o direito de crescer. */
+.geo-mapa .leaflet-tile {
+  max-width: none;
+  max-height: none;
+}
+
+/* Satélite: imagem real, sem tinting. */
+.geo-mapa--satelite .leaflet-tile-pane {
+  filter: none;
+}
+
+/* Créditos e escala: legíveis sobre o mapa. Mesmo tratamento dos controles
+   flutuantes do componente (`PELE_SOBRE_MAPA`): superfície quase sólida, borda
+   de contraste e sombra curta — antes eram `0.72` de opacidade e as ruas do
+   tile atravessavam o texto.
+
+   ATENÇÃO ao seletor dos créditos: o `leaflet.css` (importado pelo componente)
+   declara `.leaflet-container .leaflet-control-attribution { background: #fff;
+   background: rgba(255,255,255,0.8) }` e, como entra DEPOIS deste arquivo no
+   bundle, vencia uma regra de mesma especificidade — a barra ficava branca em
+   cima do mapa escuro. `.geo-mapa .leaflet-container …` tem especificidade
+   maior e resolve sem `!important`. */
+.geo-mapa .leaflet-container .leaflet-control-attribution {
+  background: hsl(var(--background) / 0.95);
+  color: hsl(var(--muted-foreground));
+  border: 1px solid hsl(var(--muted-foreground) / 0.25);
+  border-right: none;
+  border-bottom: none;
+  border-top-left-radius: 6px;
+  padding: 1px 6px;
+  font-size: 9px;
+  line-height: 1.4;
+  box-shadow: 0 10px 24px -16px hsl(0 0% 0% / 0.95);
+  backdrop-filter: blur(8px);
+}
+
+.geo-mapa .leaflet-control-attribution a {
+  color: hsl(var(--muted-foreground));
+  text-decoration: none;
+}
+
+.geo-mapa .leaflet-control-scale-line {
+  background: hsl(var(--background) / 0.95);
+  border-color: hsl(var(--muted-foreground) / 0.4);
+  border-top: none;
+  color: hsl(var(--foreground) / 0.85);
+  font-size: 9px;
+  line-height: 1.4;
+  padding: 1px 6px;
+  box-shadow: 0 10px 24px -16px hsl(0 0% 0% / 0.95);
+  backdrop-filter: blur(8px);
+}
+
+/* O perímetro tracejado é desenhado pelo Leaflet em SVG: a cor vem dos tokens
+   via `hsl(...)` no próprio componente (não dá para usar classe aqui porque o
+   Leaflet reescreve os atributos `stroke`/`fill` a cada zoom). */
+
+/* ─── MARCADORES DE BATIDA ─────────────────────────────────────────────── */
+.geo-marcador {
+  background: transparent;
+  border: 0;
+}
+
+.geo-marcador__ponto {
+  display: block;
+  height: 12px;
+  width: 12px;
+  border-radius: 9999px;
+  background: hsl(var(--success));
+  box-shadow:
+    0 0 0 3px hsl(var(--success) / 0.22),
+    0 0 12px hsl(var(--success) / 0.55);
+  transition:
+    transform var(--transition-duration-base, 220ms) ease-out,
+    box-shadow var(--transition-duration-base, 220ms) ease-out;
+  animation: geoMarcadorEntrada 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--geo-atraso, 0ms);
+}
+
+/* Fora do perímetro: vermelho vivo do sistema (o `--destructive` do tema
+   escuro é escuro demais sobre o mapa e sumiria no fundo). */
+.geo-marcador--fora .geo-marcador__ponto {
+  background: hsl(var(--destructive-vivid));
+  box-shadow:
+    0 0 0 3px hsl(var(--destructive-vivid) / 0.25),
+    0 0 12px hsl(var(--destructive-vivid) / 0.6);
+}
+
+.geo-marcador:hover .geo-marcador__ponto,
+.geo-marcador:focus-visible .geo-marcador__ponto {
+  transform: scale(1.35);
+}
+
+@keyframes geoMarcadorEntrada {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ─── MARCADOR DA UNIDADE (pino lime com o prédio) ─────────────────────── */
+.geo-unidade {
+  background: transparent;
+  border: 0;
+}
+
+.geo-unidade__pinho {
+  display: grid;
+  height: 34px;
+  width: 34px;
+  place-items: center;
+  border-radius: 50% 50% 50% 4px;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  transform: rotate(-45deg);
+  box-shadow: 0 8px 20px hsl(var(--primary) / 0.35);
+}
+
+.geo-unidade__pinho svg {
+  transform: rotate(45deg);
+}
+
+/* Unidade secundária (empresa com mais de um local): só o contorno, sem
+   competir com o marcador da unidade de referência. */
+.geo-unidade--secundaria .geo-unidade__pinho {
+  height: 26px;
+  width: 26px;
+  background: hsl(var(--background) / 0.9);
+  color: hsl(var(--primary));
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(.dp-force-motion) .geo-marcador__ponto {
+    animation: none;
+  }
+}
+
+/* Autofill do navegador nos campos do login: sem o par abaixo o Chrome pinta o
+   campo de branco e o texto digitado some no tema escuro. */
+.campo-login:-webkit-autofill {
+  -webkit-text-fill-color: hsl(var(--foreground));
+  box-shadow: 0 0 0 1000px hsl(var(--background)) inset;
+}

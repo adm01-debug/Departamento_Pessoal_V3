@@ -192,6 +192,13 @@ describe('analyticsComum', () => {
     expect(desempenho.reduce((soma, vaga) => soma + vaga.candidatos, 0)).toBe(12);
   });
 
+  it('expõe o detalhamento sobre a MESMA base do card (janela "Ver todas")', () => {
+    const analytics = construirAnalytics(entrada());
+    expect(analytics.detalhes.map((vaga) => vaga.id)).toEqual(analytics.vagas.map((vaga) => vaga.id));
+    expect(analytics.detalhes[0]).toMatchObject({ situacao: 'aberta', statusRotulo: 'Aberta' });
+    expect(analytics.detalhes.every((vaga) => vaga.porEtapa.length === 5)).toBe(true);
+  });
+
   it('entrega os quatro indicadores gerais com as réguas declaradas', () => {
     const indicadores = construirAnalytics(entrada()).indicadores;
     expect(indicadores.map((indicador) => indicador.label)).toEqual([

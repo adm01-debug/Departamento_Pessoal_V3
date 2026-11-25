@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { EntradaPresenca } from '@/components/ui/entrada-cards';
 import { AnalyticsRecrutamento } from '@/components/recrutamento/AnalyticsRecrutamento';
@@ -36,9 +37,43 @@ import { CandidatosPainel } from '@/components/recrutamento/CandidatosPainel';
 import { PipelineBoard } from '@/components/recrutamento/PipelineBoard';
 import { VagasPainel } from '@/components/recrutamento/VagasPainel';
 import { ETAPAS, filtrarCandidaturas, normalizarEtapa } from '@/components/recrutamento/pipelineEtapas';
+import { OPCOES_TIPO_CONTRATO, type TipoContratoVaga } from '@/components/recrutamento/vagasComum';
 import type { CandidaturaComRelacoes, VagaRow, CandidatoRow } from '@/types/recrutamento';
 
-const VAGA_FORM_VAZIO = { titulo: '', departamento: '', modalidade: '', quantidade: '1', requisitos: '' };
+const VAGA_FORM_VAZIO = {
+  titulo: '',
+  cargo: '',
+  departamento: '',
+  modalidade: '',
+  tipoContrato: '',
+  quantidade: '1',
+  faixaMin: '',
+  faixaMax: '',
+  descricao: '',
+  beneficios: '',
+  requisitos: '',
+};
+
+const TIPO_CONTRATO_NAO_INFORMADO = 'nao-informado';
+
+/** Campo numérico opcional: texto vazio vira `null`; inválido ou negativo também. */
+function numeroOpcional(valor: string): number | null {
+  const texto = valor.trim();
+  if (!texto) return null;
+  const numero = Number(texto);
+  return Number.isFinite(numero) && numero >= 0 ? numero : null;
+}
+
+function textoOpcional(valor: string): string | null {
+  return valor.trim() || null;
+}
+
+/** Prefill do formulário: aceita ids válidos e normaliza variações como “CLT”. */
+function tipoContratoSalvo(valor: string | null | undefined): string {
+  const texto = (valor ?? '').trim();
+  if (!texto) return '';
+  return OPCOES_TIPO_CONTRATO.find((opcao) => opcao.valor === texto.toLowerCase())?.valor ?? texto;
+}
 
 export default function RecrutamentoPage() {
   const { empresaAtual } = useEmpresas();
@@ -138,7 +173,29 @@ export default function RecrutamentoPage() {
   });
 
   const quantidadeVaga = Number.parseInt(vagaForm.quantidade, 10);
-  const vagaFormValido = !!vagaForm.titulo.trim() && Number.isInteger(quantidadeVaga) && quantidadeVaga >= 1;
+  /**
+   * `vagas.tipo_contrato` é texto livre no banco: um valor fora do enum entra
+   * como opção extra, para editar uma vaga antiga nunca esconder o que está
+   * gravado nem apagá-lo em silêncio.
+   */
+  const opcoesTipoContrato = useMemo(() => {
+    const texto = vagaForm.tipoContrato.trim();
+    const conhecido = OPCOES_TIPO_CONTRATO.some((opcao) => opcao.valor === texto);
+    return texto && !conhecido
+      ? [{ valor: texto, rotulo: `${texto} (valor atual)` }, ...OPCOES_TIPO_CONTRATO]
+      : OPCOES_TIPO_CONTRATO;
+  }, [vagaForm.tipoContrato]);
+  const faixaMin = numeroOpcional(vagaForm.faixaMin);
+  const faixaMax = numeroOpcional(vagaForm.faixaMax);
+  const faixaInvalida = faixaMin !== null && faixaMax !== null && faixaMin > faixaMax;
+  const numerosValidos =
+    (vagaForm.faixaMin.trim() === '' || faixaMin !== null) && (vagaForm.faixaMax.trim() === '' || faixaMax !== null);
+  const vagaFormValido =
+    !!vagaForm.titulo.trim() &&
+    Number.isInteger(quantidadeVaga) &&
+    quantidadeVaga >= 1 &&
+    numerosValidos &&
+    !faixaInvalida;
 
   const abrirNovaVaga = () => {
     setVagaEditandoId(null);
@@ -150,9 +207,15 @@ export default function RecrutamentoPage() {
     setVagaEditandoId(vaga.id);
     setVagaForm({
       titulo: vaga.titulo ?? '',
+      cargo: vaga.cargo ?? '',
       departamento: vaga.departamento ?? '',
       modalidade: vaga.modalidade ?? '',
+      tipoContrato: tipoContratoSalvo(vaga.tipo_contrato),
       quantidade: String(vaga.quantidade ?? 1),
+      faixaMin: vaga.faixa_salarial_min != null ? String(vaga.faixa_salarial_min) : '',
+      faixaMax: vaga.faixa_salarial_max != null ? String(vaga.faixa_salarial_max) : '',
+      descricao: vaga.descricao ?? '',
+      beneficios: vaga.beneficios_oferecidos ?? '',
       requisitos: vaga.requisitos ?? '',
     });
     setVagaDialogOpen(true);
@@ -162,10 +225,16 @@ export default function RecrutamentoPage() {
     mutationFn: () => {
       const dados = {
         titulo: vagaForm.titulo.trim(),
-        departamento: vagaForm.departamento.trim() || null,
-        modalidade: vagaForm.modalidade.trim() || null,
+        cargo: textoOpcional(vagaForm.cargo),
+        departamento: textoOpcional(vagaForm.departamento),
+        modalidade: textoOpcional(vagaForm.modalidade),
+        tipo_contrato: (vagaForm.tipoContrato || null) as TipoContratoVaga | null,
         quantidade: quantidadeVaga,
-        requisitos: vagaForm.requisitos.trim() || null,
+        faixa_salarial_min: faixaMin,
+        faixa_salarial_max: faixaMax,
+        descricao: textoOpcional(vagaForm.descricao),
+        beneficios_oferecidos: textoOpcional(vagaForm.beneficios),
+        requisitos: textoOpcional(vagaForm.requisitos),
       };
       return vagaEditandoId
         ? recrutamentoService.atualizarVaga(vagaEditandoId, dados, empresaAtual!.id)
@@ -299,7 +368,7 @@ export default function RecrutamentoPage() {
                   Nova Vaga
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-xl">
+              <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>{vagaEditandoId ? 'Editar Vaga' : 'Anunciar Nova Vaga'}</DialogTitle>
                 </DialogHeader>
@@ -310,6 +379,14 @@ export default function RecrutamentoPage() {
                       placeholder="Ex: Desenvolvedor Senior"
                       value={vagaForm.titulo}
                       onChange={(e) => setVagaForm((f) => ({ ...f, titulo: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid gap-1">
+                    <Label>Cargo</Label>
+                    <Input
+                      placeholder="Ex: Desenvolvedor Full Stack"
+                      value={vagaForm.cargo}
+                      onChange={(e) => setVagaForm((f) => ({ ...f, cargo: e.target.value }))}
                     />
                   </div>
                   <div className="grid gap-1">
@@ -329,12 +406,81 @@ export default function RecrutamentoPage() {
                     />
                   </div>
                   <div className="grid gap-1">
+                    <Label>Tipo de contrato</Label>
+                    <Select
+                      value={vagaForm.tipoContrato || TIPO_CONTRATO_NAO_INFORMADO}
+                      onValueChange={(valor) =>
+                        setVagaForm((f) => ({
+                          ...f,
+                          tipoContrato: valor === TIPO_CONTRATO_NAO_INFORMADO ? '' : valor,
+                        }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Não informado" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value={TIPO_CONTRATO_NAO_INFORMADO}>Não informado</SelectItem>
+                        {opcoesTipoContrato.map((opcao) => (
+                          <SelectItem key={opcao.valor} value={opcao.valor}>
+                            {opcao.rotulo}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-1">
                     <Label>Quantidade</Label>
                     <Input
                       type="number"
                       min={1}
                       value={vagaForm.quantidade}
                       onChange={(e) => setVagaForm((f) => ({ ...f, quantidade: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid gap-1">
+                    <Label>Faixa salarial — mínima (R$)</Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      step={100}
+                      placeholder="4500"
+                      value={vagaForm.faixaMin}
+                      onChange={(e) => setVagaForm((f) => ({ ...f, faixaMin: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid gap-1">
+                    <Label>Faixa salarial — máxima (R$)</Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      step={100}
+                      placeholder="6000"
+                      value={vagaForm.faixaMax}
+                      onChange={(e) => setVagaForm((f) => ({ ...f, faixaMax: e.target.value }))}
+                    />
+                  </div>
+                  {faixaInvalida ? (
+                    <p className="col-span-2 text-xs text-destructive">
+                      A faixa máxima deve ser maior ou igual à mínima.
+                    </p>
+                  ) : null}
+                  <div className="grid gap-1 col-span-2">
+                    <Label>Descrição da vaga</Label>
+                    <Textarea
+                      rows={3}
+                      placeholder="Contexto da área, escopo da posição e o dia a dia de quem ocupar a vaga."
+                      value={vagaForm.descricao}
+                      onChange={(e) => setVagaForm((f) => ({ ...f, descricao: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid gap-1 col-span-2">
+                    <Label>Benefícios oferecidos</Label>
+                    <Textarea
+                      rows={2}
+                      placeholder="Plano de saúde, vale-refeição, home office..."
+                      value={vagaForm.beneficios}
+                      onChange={(e) => setVagaForm((f) => ({ ...f, beneficios: e.target.value }))}
                     />
                   </div>
                   <div className="grid gap-1 col-span-2">
