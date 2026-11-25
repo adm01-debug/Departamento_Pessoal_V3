@@ -3455,6 +3455,50 @@
    "src/integrations/supabase/types.ts",
    "src/lib/utils.ts"
   ],
+  "src/components/ponto/PontoGeoDistancia.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/crescimentoBarras.ts",
+   "src/lib/utils.ts",
+   "src/utils/pontoGeofencing.ts"
+  ],
+  "src/components/ponto/PontoGeoMapa.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/lib/utils.ts",
+   "src/utils/pontoGeofencing.ts"
+  ],
+  "src/components/ponto/PontoGeoRegistros.tsx": [
+   "src/components/ponto/acoesCardsPonto.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/filter-chip.tsx",
+   "src/components/ui/table-row-reveal.ts",
+   "src/components/ui/table.tsx",
+   "src/lib/utils.ts",
+   "src/utils/pontoGeofencing.ts"
+  ],
+  "src/components/ponto/PontoGeofencingPainel.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ponto/PontoGeoDistancia.tsx",
+   "src/components/ponto/PontoGeoMapa.tsx",
+   "src/components/ponto/PontoGeoRegistros.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/date-picker.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/progressMotion.ts",
+   "src/components/ui/select.tsx",
+   "src/hooks/usePontoGeofencing.ts",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts",
+   "src/mocks/pontoGeoMock.ts",
+   "src/utils/pontoGeofencing.ts"
+  ],
   "src/components/ponto/PontoInconsistencyPanel.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -3494,6 +3538,9 @@
    "src/components/ui/badge.tsx",
    "src/components/ui/card.tsx",
    "src/integrations/supabase/types.ts"
+  ],
+  "src/components/ponto/acoesCardsPonto.ts": [
+   "src/lib/utils.ts"
   ],
   "src/components/ponto/relogio/JustificativasRelogioTab.tsx": [
    "src/components/ui/button.tsx",
@@ -5513,6 +5560,11 @@
    "src/services/pontosService.ts",
    "src/utils/safeError.ts"
   ],
+  "src/hooks/usePontoGeofencing.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/services/index.ts",
+   "src/utils/pontoGeofencing.ts"
+  ],
   "src/hooks/usePontoMelhorado.ts": [
    "src/integrations/supabase/client.ts",
    "src/schemas/validate.ts",
@@ -5640,6 +5692,10 @@
    "src/components/avaliacao/nineBoxModo.ts",
    "src/mocks/colaboradoresMock.ts",
    "src/utils/dateLocal.ts"
+  ],
+  "src/mocks/pontoGeoMock.ts": [
+   "src/utils/dateLocal.ts",
+   "src/utils/pontoGeofencing.ts"
   ],
   "src/mocks/treinamentosMock.ts": [
    "src/mocks/colaboradoresMock.ts"
@@ -7180,7 +7236,7 @@
    "src/components/ponto/PontoAuditTimeline.tsx",
    "src/components/ponto/PontoCharts.tsx",
    "src/components/ponto/PontoClockRegister.tsx",
-   "src/components/ponto/PontoGeoAnalytics.tsx",
+   "src/components/ponto/PontoGeofencingPainel.tsx",
    "src/components/ponto/PontoStreakCard.tsx",
    "src/components/ponto/PontoTodayCard.tsx",
    "src/components/ponto/PontoWeekSummary.tsx",
@@ -8347,6 +8403,9 @@
    "src/utils/importacao/excelDownload.ts"
   ],
   "src/utils/importacao/validators.ts": [
+   "src/utils/dateLocal.ts"
+  ],
+  "src/utils/pontoGeofencing.ts": [
    "src/utils/dateLocal.ts"
   ],
   "src/utils/rescisaoCalc.ts": [

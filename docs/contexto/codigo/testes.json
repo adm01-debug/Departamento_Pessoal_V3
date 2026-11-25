@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 826,
+ "total": 831,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 781
+  "unit": 786
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 689
+   "arquivos": 694
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -3192,6 +3192,34 @@
    "casos": 8
   },
   {
+   "arquivo": "src/components/__tests__/PontoGeoDistancia.test.tsx",
+   "tipo": "unit",
+   "linhas": 121,
+   "testa": [
+    "src/components/ponto/PontoGeoDistancia.tsx",
+    "src/utils/pontoGeofencing.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+   "tipo": "unit",
+   "linhas": 214,
+   "testa": [],
+   "casos": 22
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoGeofencingPainel.test.tsx",
+   "tipo": "unit",
+   "linhas": 193,
+   "testa": [
+    "src/components/ponto/PontoGeoMapa.tsx",
+    "src/components/ponto/PontoGeofencingPainel.tsx",
+    "src/mocks/pontoGeoMock.ts"
+   ],
+   "casos": 6
+  },
+  {
    "arquivo": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
    "tipo": "unit",
    "linhas": 239,
@@ -4341,6 +4369,15 @@
     "src/components/ui/dropdown-menu.tsx"
    ],
    "casos": 3
+  },
+  {
+   "arquivo": "src/components/ui/__tests__/filter-chip-brilho.test.tsx",
+   "tipo": "unit",
+   "linhas": 178,
+   "testa": [
+    "src/components/ui/filter-chip.tsx"
+   ],
+   "casos": 6
   },
   {
    "arquivo": "src/components/ui/__tests__/popover-combobox.test.tsx",
@@ -7042,6 +7079,16 @@
    "casos": 15
   },
   {
+   "arquivo": "src/utils/__tests__/pontoGeofencing.test.ts",
+   "tipo": "unit",
+   "linhas": 238,
+   "testa": [
+    "src/mocks/pontoGeoMock.ts",
+    "src/utils/pontoGeofencing.ts"
+   ],
+   "casos": 15
+  },
+  {
    "arquivo": "src/utils/__tests__/regrasSolicitacaoFerias.test.ts",
    "tipo": "unit",
    "linhas": 87,
@@ -7965,6 +8012,9 @@
   "src/components/ponto/PontoCharts.tsx": 1,
   "src/components/ponto/PontoClockRegister.tsx": 1,
   "src/components/ponto/PontoGeoAnalytics.tsx": 1,
+  "src/components/ponto/PontoGeoDistancia.tsx": 1,
+  "src/components/ponto/PontoGeoMapa.tsx": 1,
+  "src/components/ponto/PontoGeofencingPainel.tsx": 1,
   "src/components/ponto/PontoInconsistencyPanel.tsx": 1,
   "src/components/ponto/PontoLeaderboard.tsx": 1,
   "src/components/ponto/PontoStreakCard.tsx": 1,
@@ -8066,6 +8116,7 @@
   "src/components/ui/currency-input.tsx": 1,
   "src/components/ui/data-table-toolbar.tsx": 1,
   "src/components/ui/dropdown-menu.tsx": 1,
+  "src/components/ui/filter-chip.tsx": 1,
   "src/components/ui/index.ts": 1,
   "src/components/ui/popover.tsx": 1,
   "src/components/ui/select.tsx": 1,
@@ -8198,6 +8249,7 @@
   "src/lib/reciboAssinaturaPdf.ts": 1,
   "src/lib/retry.ts": 2,
   "src/lib/utils.ts": 1,
+  "src/mocks/pontoGeoMock.ts": 2,
   "src/pages/AdminAgendamentoExamesPage.tsx": 1,
   "src/pages/AdminExtintoresPage.tsx": 1,
   "src/pages/AdminRegimentoInternoPage.tsx": 1,
@@ -8353,6 +8405,7 @@
   "src/utils/passwordPolicy.ts": 1,
   "src/utils/pgInterval.ts": 1,
   "src/utils/piiMask.ts": 5,
+  "src/utils/pontoGeofencing.ts": 2,
   "src/utils/regrasSolicitacaoFerias.ts": 1,
   "src/utils/rescisaoCalc.ts": 2,
   "src/utils/rescisaoPDF.ts": 1,
@@ -8508,12 +8561,14 @@
    "src/components/dashboard/useMorningBriefing.ts",
    "src/components/layout/Breadcrumb.tsx",
    "src/components/turnos/useTurnosEscalas.ts",
+   "src/components/ui/crescimentoBarras.ts",
    "src/components/ui/form.tsx",
    "src/components/ui/sidebar.tsx",
    "src/components/ui/use-toast.ts",
    "src/hooks/useColetoresPonto.ts",
    "src/hooks/useEntradaCardConcluida.ts",
    "src/hooks/useJornadaOnboarding.ts",
+   "src/hooks/usePontoGeofencing.ts",
    "src/hooks/useVinculos.ts",
    "src/i18n/useTranslation.ts",
    "src/lib/motionMode.ts",

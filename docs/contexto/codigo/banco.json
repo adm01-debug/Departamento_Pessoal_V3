@@ -17419,7 +17419,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 3,
+   "usada_no_front": 4,
    "usada_em_edges": [],
    "triggers": [
     "tr_updated_at_config_ponto"
@@ -38211,7 +38211,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 1,
+   "usada_no_front": 2,
    "usada_em_edges": [],
    "triggers": [
     "update_locais_trabalho_updated_at"

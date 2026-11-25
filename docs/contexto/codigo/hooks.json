@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 124,
+ "total": 126,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -221,6 +221,29 @@
    "usado_por": 1,
    "usado_por_arquivos": [
     "src/components/turnos/TurnosConteudo.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/ui/crescimentoBarras.ts",
+   "hooks_exportados": [
+    "useCrescimentoBarras"
+   ],
+   "linhas": 202,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useLayoutEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/ponto/PontoGeoDistancia.tsx"
    ],
    "coberto_por_testes": 0
   },
@@ -2745,6 +2768,29 @@
    "coberto_por_testes": 1
   },
   {
+   "arquivo": "src/hooks/usePontoGeofencing.ts",
+   "hooks_exportados": [
+    "usePontoGeofencing"
+   ],
+   "linhas": 160,
+   "dominio": "hooks",
+   "tabelas": [
+    "configuracoes_ponto",
+    "locais_trabalho"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/ponto/PontoGeofencingPainel.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
    "arquivo": "src/hooks/usePontoMelhorado.ts",
    "hooks_exportados": [
     "usePontoMelhorado"
@@ -3369,7 +3415,7 @@
     "useReducedMotion"
    ],
    "canais_realtime": [],
-   "usado_por": 25,
+   "usado_por": 26,
    "usado_por_arquivos": [
     "src/components/avaliacao/AnaliticosDesempenho.tsx",
     "src/components/avaliacao/CicloAtivoPanel.tsx",
@@ -3386,6 +3432,7 @@
     "src/components/banco-horas/TotaisHorasCard.tsx",
     "src/components/dashboard/DonutChart.tsx",
     "src/components/desligamentos/TurnoverChart.tsx",
+    "src/components/ponto/PontoGeofencingPainel.tsx",
     "src/components/premiacoes/AuditoriaTab.tsx",
     "src/components/recrutamento/TabelaCandidatos.tsx",
     "src/components/treinamentos/InscricoesPainel.tsx",

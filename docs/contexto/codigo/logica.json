@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 189,
+ "total": 190,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
@@ -10,7 +10,7 @@
   "python": 5,
   "schemas": 25,
   "services": 100,
-  "utils": 36
+  "utils": 37
  },
  "arquivos": [
   {
@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 247,
+   "usado_por": 248,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -743,12 +743,13 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 25,
+   "usado_por": 26,
    "usado_por_modulos": [
     "components/avaliacao",
     "components/banco-horas",
     "components/dashboard",
     "components/desligamentos",
+    "components/ponto",
     "components/premiacoes",
     "components/recrutamento",
     "components/treinamentos",
@@ -954,7 +955,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 309,
+   "usado_por": 314,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -2129,7 +2130,7 @@
     "batidasPontoService"
    ],
    "export_default": null,
-   "linhas": 133,
+   "linhas": 154,
    "tabelas": [
     "batidas_ponto",
     "periodos_ponto"
@@ -3323,7 +3324,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 36,
+   "usado_por": 37,
    "usado_por_modulos": [
     "components/colaborador-detalhes",
     "components/ferias",
@@ -5317,7 +5318,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 61,
+   "usado_por": 63,
    "usado_por_modulos": [
     "components/admissoes",
     "components/banco-horas",
@@ -5869,6 +5870,53 @@
     "hooks"
    ],
    "coberto_por_testes": 5,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/pontoGeofencing.ts",
+   "camada": "utils",
+   "exports": [
+    "BatidaGeograficaCrua",
+    "FaixaDistancia",
+    "IntervaloGeo",
+    "PERIODOS_GEO",
+    "PeriodoGeo",
+    "PontoGeografico",
+    "ResumoGeo",
+    "UnidadeGeografica",
+    "distanciaEmMetros",
+    "faixasDeDistancia",
+    "formatarDistancia",
+    "horaCurta",
+    "iniciaisDoNome",
+    "intervaloAnterior",
+    "intervaloDoPeriodo",
+    "montarPontos",
+    "passoDaFaixa",
+    "registrosRecentes",
+    "resumoGeo",
+    "rotuloDataCurta",
+    "rotuloOrigemGeo",
+    "serieDiaria",
+    "variacaoPercentual"
+   ],
+   "export_default": null,
+   "linhas": 408,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 6,
+   "usado_por_modulos": [
+    "components/ponto",
+    "hooks",
+    "mocks"
+   ],
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {

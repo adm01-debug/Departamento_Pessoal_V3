@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5f2fa81a90ced4f5c2e763bb929755504d7f7651",
+  "commit": "645def6f9d4f06b5caf806ed69cd09f8fdb0319c",
   "branch": "main",
-  "data_commit": "2026-11-25T09:39:43-03:00",
+  "data_commit": "2026-11-25T10:36:15-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "645def6",
+    "data": "2026-11-25",
+    "assunto": "feat: resgata o painel de geofencing do ponto com mapa real (#883)"
+   },
    {
     "sha": "5f2fa81",
     "data": "2026-11-25",
@@ -126,22 +131,17 @@
     "sha": "132ece1",
     "data": "2026-11-23",
     "assunto": "chore: resgata autofix de eslint (type-imports e inferrable-types) de agente interrompido (#854)"
-   },
-   {
-    "sha": "066f553",
-    "data": "2026-11-23",
-    "assunto": "fix: impede que destinatario nao-roteavel derrube o lote de alertas por e-mail (#852)"
    }
   ],
-  "arquivos_mudados_7d": 701,
+  "arquivos_mudados_7d": 720,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 375
+    "mudancas": 378
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 114
+    "mudancas": 117
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -180,6 +180,10 @@
     "mudancas": 37
    },
    {
+    "pasta": "src/components/ponto",
+    "mudancas": 37
+   },
+   {
     "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 35
    },
@@ -188,12 +192,8 @@
     "mudancas": 34
    },
    {
-    "pasta": "src/components/desligamentos",
-    "mudancas": 31
-   },
-   {
-    "pasta": "src/components/ponto",
-    "mudancas": 31
+    "pasta": "src/utils/__tests__",
+    "mudancas": 32
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -214,11 +214,15 @@
     "mudancas": 14
    },
    {
+    "arquivo": "package.json",
+    "mudancas": 12
+   },
+   {
     "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 12
    },
    {
-    "arquivo": "package.json",
+    "arquivo": "package-lock.json",
     "mudancas": 11
    },
    {
@@ -227,10 +231,6 @@
    },
    {
     "arquivo": "docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "package-lock.json",
     "mudancas": 10
    },
    {
@@ -243,6 +243,10 @@
    },
    {
     "arquivo": "docs/auditoria/sql-preservado/README.md",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "src/index.css",
     "mudancas": 7
    },
    {
@@ -267,10 +271,6 @@
    },
    {
     "arquivo": "src/components/colaborador-detalhes/index.ts",
-    "mudancas": 6
-   },
-   {
-    "arquivo": "src/index.css",
     "mudancas": 6
    },
    {
@@ -314,24 +314,24 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4121,
-  "arquivos_codigo": 2207,
-  "linhas_codigo": 444004,
+  "arquivos_total": 4137,
+  "arquivos_codigo": 2222,
+  "linhas_codigo": 448199,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 85,
-  "componentes": 675,
-  "hooks": 124,
+  "componentes": 679,
+  "hooks": 126,
   "edge_functions": 68,
   "tabelas": 438,
   "migrations": 1261,
   "cron_jobs": 43,
-  "testes": 826,
+  "testes": 831,
   "workflows": 21,
   "scripts": 138,
-  "docs_md": 346
+  "docs_md": 347
  },
  "por_pasta": {
   "capacitor.config.ts": {
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1066,
-   "linhas": 200221
+   "arquivos": 1077,
+   "linhas": 203360
   },
   "src/constants": {
    "arquivos": 7,
@@ -659,8 +659,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 208,
-   "linhas": 24288
+   "arquivos": 209,
+   "linhas": 24448
   },
   "src/i18n": {
    "arquivos": 2,
@@ -679,8 +679,8 @@
    "linhas": 213
   },
   "src/mocks": {
-   "arquivos": 3,
-   "linhas": 3564
+   "arquivos": 4,
+   "linhas": 3793
   },
   "src/pages": {
    "arquivos": 145,
@@ -696,7 +696,7 @@
   },
   "src/services": {
    "arquivos": 198,
-   "linhas": 42481
+   "linhas": 42502
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -715,8 +715,8 @@
    "linhas": 891
   },
   "src/utils": {
-   "arquivos": 71,
-   "linhas": 9132
+   "arquivos": 73,
+   "linhas": 9778
   },
   "stylelint.config.js": {
    "arquivos": 1,
@@ -863,7 +863,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 27,
-  "arquivos_acima_500_linhas": 122
+  "arquivos_acima_500_linhas": 124
  },
  "todos": [
   {
@@ -1231,6 +1231,7 @@
    "VITE_HOMOLOG_ORIGEM",
    "VITE_NINEBOX_MODO_REAL",
    "VITE_PDI_MOCK",
+   "VITE_PONTO_MOCK",
    "VITE_TREINAMENTOS_MOCK",
    "VITE_TREINAMENTOS_PREVIEW_PROGRESSO"
   ],

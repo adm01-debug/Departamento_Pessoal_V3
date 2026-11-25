@@ -7,22 +7,22 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (557)",
+   "src/components (561)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
   "hooks": [
-   "src/hooks (103)",
-   "src/components (11)",
+   "src/hooks (104)",
+   "src/components (12)",
    "src/contexts (4)"
   ],
   "servicos_logica": [
    "src/services (100)",
-   "src/utils (36)",
+   "src/utils (37)",
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (689)",
+   "co-localizado (__tests__) (694)",
    "co-localizado (*.test) (78)",
    "e2e/ (33)"
   ],
@@ -34,7 +34,7 @@
    "scripts/autofix (10)"
   ],
   "docs": [
-   "docs (96)",
+   "docs (97)",
    "(raiz) (32)",
    ".github (1)"
   ]
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (675)"
+  ".tsx (679)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: resgata o painel de geofencing do ponto com mapa real (#883)",
    "docs: registra o resgate da tela de Turnos e o lote canonico aplicado (#882)",
    "feat: resgata a tela de Turnos do agente Muri (calendario, escalas e dialogos) (#875)",
    "fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)",
-   "fix: p4_071 nao aborta mais o lote aditivo no canônico (#879)",
-   "fix: lote aditivo aplica no canônico, sem EXECUTE anon em refresh_dashboard_views e validate que reverte (#877)"
+   "fix: p4_071 nao aborta mais o lote aditivo no canônico (#879)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

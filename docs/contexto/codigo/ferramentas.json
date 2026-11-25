@@ -3,9 +3,9 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2064)",
+   "TypeScript (2079)",
    "SQL (1335)",
-   "Markdown (346)",
+   "Markdown (347)",
    "JavaScript (136)",
    "JSON (64)",
    "Shell (60)",
@@ -126,8 +126,8 @@
    "verificar:layout": "node scripts/verificar-layout-protegido.mjs --sem-diff",
    "verificar:tipografia": "node scripts/verificar-tipografia.mjs"
   },
-  "dependencias": 61,
-  "dev_dependencias": 35,
+  "dependencias": 62,
+  "dev_dependencias": 36,
   "principais": {
    "@supabase/supabase-js": "^2.119.0",
    "@tanstack/react-query": "^5.105.3",
@@ -1526,6 +1526,11 @@
    "linhas": 176
   },
   {
+   "arquivo": "docs/ponto-geofencing.md",
+   "titulo": "Painel de Geofencing (Controle de Ponto → Gestão da Equipe → Geofencing)",
+   "linhas": 180
+  },
+  {
    "arquivo": "docs/prod-readiness.md",
    "titulo": "Prontidão para produção — Departamento Pessoal V3",
    "linhas": 853
@@ -1632,6 +1637,7 @@
    "VITE_HOMOLOG_ORIGEM",
    "VITE_NINEBOX_MODO_REAL",
    "VITE_PDI_MOCK",
+   "VITE_PONTO_MOCK",
    "VITE_SENTRY_DSN",
    "VITE_SENTRY_RELEASE",
    "VITE_SUPABASE_FUNCTIONS_BASE",
@@ -1745,6 +1751,7 @@
    "VITE_HOMOLOG_ORIGEM",
    "VITE_NINEBOX_MODO_REAL",
    "VITE_PDI_MOCK",
+   "VITE_PONTO_MOCK",
    "VITE_TREINAMENTOS_MOCK",
    "VITE_TREINAMENTOS_PREVIEW_PROGRESSO"
   ],
@@ -1884,6 +1891,10 @@
    },
    {
     "host": "api.openai.com",
+    "arquivos": 3
+   },
+   {
+    "host": "tile.openstreetmap.org",
     "arquivos": 3
    },
    {
@@ -2063,6 +2074,10 @@
     "arquivos": 1
    },
    {
+    "host": "server.arcgisonline.com",
+    "arquivos": 1
+   },
+   {
     "host": "seu-bitrix.bitrix24.com.br",
     "arquivos": 1
    },
@@ -2080,10 +2095,6 @@
    },
    {
     "host": "sua-api.com",
-    "arquivos": 1
-   },
-   {
-    "host": "tile.openstreetmap.org",
     "arquivos": 1
    },
    {
@@ -2178,7 +2189,7 @@
    },
    {
     "papel": "group",
-    "ocorrencias": 10
+    "ocorrencias": 11
    },
    {
     "papel": "tablist",
@@ -2230,6 +2241,10 @@
    },
    {
     "papel": "table",
+    "ocorrencias": 3
+   },
+   {
+    "papel": "tooltip",
     "ocorrencias": 3
    },
    {
@@ -2322,10 +2337,6 @@
    },
    {
     "papel": "tabpanel",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "tooltip",
     "ocorrencias": 1
    }
   ],

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "5f2fa81a90ced4f5c2e763bb929755504d7f7651",
+  "sha": "645def6f9d4f06b5caf806ed69cd09f8fdb0319c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 13:15 UTC",
-  "files_total": 4135,
-  "code_files": 3540,
-  "code_lines": 518322
+  "generated_at": "2026-11-25 13:38 UTC",
+  "files_total": 4151,
+  "code_files": 3555,
+  "code_lines": 522517
  },
  "version": "1.3.2",
- "facts_hash": "5e78323ef0b5ce8a",
+ "facts_hash": "f0920a06495192f5",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,8 +388,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1335,
-   ".tsx": 1075,
-   ".ts": 989,
+   ".tsx": 1082,
+   ".ts": 997,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -97617,7 +97617,7 @@
      "validar_potencial_avaliacao",
      "verificar_espelho_ponto"
     ],
-    "deps_count": 236
+    "deps_count": 255
    },
    {
     "path": "",
@@ -103056,7 +103056,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1066,
+  "components_count": 1077,
   "hooks": [
    {
     "name": "useContacts",
@@ -103085,6 +103085,10 @@
    {
     "name": "useTurnosEscalas",
     "file": "src/components/turnos/useTurnosEscalas.ts"
+   },
+   {
+    "name": "useCrescimentoBarras",
+    "file": "src/components/ui/crescimentoBarras.ts"
    },
    {
     "name": "useAuth",
@@ -103805,6 +103809,10 @@
    {
     "name": "usePonto",
     "file": "src/hooks/usePonto.ts"
+   },
+   {
+    "name": "usePontoGeofencing",
+    "file": "src/hooks/usePontoGeofencing.ts"
    },
    {
     "name": "usePontoMelhorado",
@@ -104711,8 +104719,8 @@
   },
   {
    "module": "src/components",
-   "files": 1066,
-   "lines": 200221,
+   "files": 1077,
+   "lines": 203360,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105046,14 +105054,15 @@
   },
   {
    "module": "src/hooks",
-   "files": 208,
-   "lines": 24288,
+   "files": 209,
+   "lines": 24448,
    "tables": [
     "admissao_tokens",
     "admissoes",
     "afastamentos",
     "beneficios_colaborador",
     "colaboradores",
+    "configuracoes_ponto",
     "departamentos",
     "desligamentos",
     "documentos",
@@ -105066,6 +105075,7 @@
     "folha_auditoria",
     "folha_itens",
     "folhas_pagamento",
+    "locais_trabalho",
     "notificacoes",
     "pendencias",
     "periodos_aquisitivos",
@@ -105239,11 +105249,11 @@
     "src/hooks/usePermissions.ts",
     "src/hooks/usePiiMask.ts",
     "src/hooks/usePonto.ts",
+    "src/hooks/usePontoGeofencing.ts",
     "src/hooks/usePontoMelhorado.ts",
     "src/hooks/usePontoOffline.ts",
     "src/hooks/usePontosAbertos.ts",
-    "src/hooks/useProximosEventos.ts",
-    "src/hooks/useRealTimeSubscription.ts"
+    "src/hooks/useProximosEventos.ts"
    ]
   },
   {
@@ -105383,12 +105393,13 @@
   },
   {
    "module": "src/mocks",
-   "files": 3,
-   "lines": 3564,
+   "files": 4,
+   "lines": 3793,
    "tables": [],
    "exports": [
     "colaboradoresMock.ts: isColaboradoresMockEnabled, MOCK_EMPRESA, getMockUserEmpresas, mockOr, isMockEmpresaId, MOCK_COLABORADORES",
     "desempenhoMock.ts: isDesempenhoMockEnabled, CicloMock, getMockCiclos, MetaMock, getMockMetas, FeedbackMock",
+    "pontoGeoMock.ts: RAIO_GEO_DEMO_METROS, UNIDADE_GEO_DEMO, isPontoGeoMockEnabled, batidasGeoDemonstrativas",
     "treinamentosMock.ts: isTreinamentosMockEnabled, TreinamentoMock, getMockTreinamentosLista, ParticipacaoTreinamentoMock, getMockParticipacaoTreinamentos, CursoMock"
    ],
    "docs": [],
@@ -105403,6 +105414,7 @@
    "file_list": [
     "src/mocks/colaboradoresMock.ts",
     "src/mocks/desempenhoMock.ts",
+    "src/mocks/pontoGeoMock.ts",
     "src/mocks/treinamentosMock.ts"
    ]
   },
@@ -105777,7 +105789,7 @@
   {
    "module": "src/services",
    "files": 198,
-   "lines": 42481,
+   "lines": 42502,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -106259,8 +106271,8 @@
   },
   {
    "module": "src/utils",
-   "files": 71,
-   "lines": 9132,
+   "files": 73,
+   "lines": 9778,
    "tables": [
     "folha_itens",
     "rubricas_folha"
@@ -106285,6 +106297,7 @@
     "passwordPolicy.ts: PasswordValidation, validatePassword, checkPasswordBreach, validatePasswordFull",
     "pgInterval.ts: parsePgIntervalToHours",
     "piiMask.ts: maskCpfDisplay, maskBankAccount, maskPisDisplay, maskEmail, maskGeneric, maskPiiDeep",
+    "pontoGeofencing.ts: PeriodoGeo, IntervaloGeo, PERIODOS_GEO, UnidadeGeografica, PontoGeografico, FaixaDistancia",
     "regrasSolicitacaoFerias.ts: DIAS_AVISO_FERIAS, FeriasLancada, UsoPeriodo, USO_VAZIO, resumirUsoPorPeriodo, validarSaldoFerias",
     "rescisaoCalc.ts: normalizarTipoRescisao, SeguroDesempregoInfo, RescisaoResult, LinhaBaseCalculo, aliquotaEfetiva, RescisaoParams",
     "rescisaoPDF.ts: AuditoriaPdf, OrigemCalculoRescisao, LABEL_ORIGEM_CALCULO, formatarMomentoCalculo, mapearResultadoDeDesligamento, gerarPDFRescisao",
@@ -106325,6 +106338,7 @@
    "imports_modules": [
     "src/calculators",
     "src/integrations",
+    "src/mocks",
     "src/services",
     "src/types"
    ],
@@ -106348,6 +106362,7 @@
     "src/utils/passwordPolicy.ts",
     "src/utils/pgInterval.ts",
     "src/utils/piiMask.ts",
+    "src/utils/pontoGeofencing.ts",
     "src/utils/regrasSolicitacaoFerias.ts",
     "src/utils/rescisaoCalc.ts",
     "src/utils/rescisaoPDF.ts",
@@ -106376,6 +106391,7 @@
     "src/utils/__tests__/passwordPolicy.test.ts",
     "src/utils/__tests__/pgInterval.test.ts",
     "src/utils/__tests__/piiMask.test.ts",
+    "src/utils/__tests__/pontoGeofencing.test.ts",
     "src/utils/__tests__/regrasSolicitacaoFerias.test.ts",
     "src/utils/__tests__/rescisaoCalc.test.ts",
     "src/utils/__tests__/rescisaoPDF.test.ts",
@@ -107677,6 +107693,7 @@
      "scripts/e2e/ensure-fixtures.mjs",
      "scripts/e2e/seed.mjs",
      "src/components/settings/InlineTabs.tsx",
+     "src/hooks/usePontoGeofencing.ts",
      "src/pages/PontoPage.tsx",
      "src/services/pontoService.ts"
     ],
@@ -108768,6 +108785,7 @@
    },
    "locais_trabalho": {
     "select": [
+     "src/hooks/usePontoGeofencing.ts",
      "src/pages/PontoPage.tsx"
     ]
    },
@@ -110694,6 +110712,7 @@
     "exige_reconhecimento_facial",
     "id",
     "permite_ponto_offline",
+    "raio_maximo_metros",
     "tolerancia_minutos"
    ],
    "conformidade_ponto_logs": [
@@ -111157,7 +111176,11 @@
    ],
    "locais_trabalho": [
     "ativo",
-    "empresa_id"
+    "empresa_id",
+    "id",
+    "latitude",
+    "longitude",
+    "nome"
    ],
    "log_envio_relatorios": [
     "agendamento_id"
@@ -112028,6 +112051,7 @@
     "src/main.tsx",
     "src/mocks/colaboradoresMock.ts",
     "src/mocks/desempenhoMock.ts",
+    "src/mocks/pontoGeoMock.ts",
     "src/mocks/treinamentosMock.ts",
     "src/pages/NineBoxPreviewPage.tsx",
     "src/services/loggerService.ts",
@@ -112295,6 +112319,7 @@
     "src/main.tsx",
     "src/mocks/colaboradoresMock.ts",
     "src/mocks/desempenhoMock.ts",
+    "src/mocks/pontoGeoMock.ts",
     "src/mocks/treinamentosMock.ts"
    ],
    "NODE_ENV": [
@@ -112786,6 +112811,9 @@
    ],
    "VITE_PDI_MOCK": [
     "src/components/avaliacao/pdiProgressoMock.ts"
+   ],
+   "VITE_PONTO_MOCK": [
+    "src/mocks/pontoGeoMock.ts"
    ],
    "VITE_REACT_COMPILER": [
     "vite.config.ts"
@@ -116433,6 +116461,11 @@
     "values": "guias_fgts | guias_inss"
    },
    {
+    "file": "src/components/ponto/PontoGeoMapa.tsx",
+    "name": "ModoVisualizacaoGeo",
+    "values": "mapa | satelite | calor"
+   },
+   {
     "file": "src/components/ponto/relogio/statusColetor.ts",
     "name": "StatusColetor",
     "values": "online | atrasado | nunca | revogado"
@@ -116680,7 +116713,12 @@
    {
     "file": "src/components/ui/filter-chip.tsx",
     "name": "VarianteFilterChip",
-    "values": "padrao | compacto"
+    "values": "padrao | compacto | brilho"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "name": "TomChipBrilho",
+    "values": "primary | success | warning | destructive | neutro"
    },
    {
     "file": "src/components/workflows/WorkflowDesigner.tsx",
@@ -116991,6 +117029,11 @@
     "file": "src/utils/fileSignature.ts",
     "name": "SignedFileType",
     "values": "application/pdf | image/jpeg | image/png | application/x-pkcs12"
+   },
+   {
+    "file": "src/utils/pontoGeofencing.ts",
+    "name": "PeriodoGeo",
+    "values": "hoje | 7d | 30d | personalizado"
    },
    {
     "file": "src/utils/rescisaoPDF.ts",
@@ -119470,6 +119513,10 @@
    {
     "file": "src/services/batidasPontoService.ts",
     "msg": "empresa_id obrigatório para isolamento de tenant"
+   },
+   {
+    "file": "src/services/batidasPontoService.ts",
+    "msg": "intervalo de datas obrigatório para listar batidas"
    },
    {
     "file": "src/services/beneficioService.ts",
@@ -123548,12 +123595,40 @@
     "text": "biometria — risco trabalhista), mas o resultado real da validação"
    },
    {
+    "file": "src/components/ponto/PontoGeoMapa.tsx",
+    "text": "`html:not(.dp-force-motion)`), a mesma regra dos outros blocos do projeto."
+   },
+   {
+    "file": "src/components/ponto/PontoGeoMapa.tsx",
+    "text": "responder 403 (\"API key required\") a partir do navegador, o que enchia o mapa"
+   },
+   {
+    "file": "src/components/ponto/PontoGeoMapa.tsx",
+    "text": "(MapTiler, Stadia, Thunderforest) e trocar apenas a URL abaixo."
+   },
+   {
+    "file": "src/components/ponto/PontoGeoMapa.tsx",
+    "text": "* Dica \"presa\" por clique: `mouseout` não pode fechá-la. */"
+   },
+   {
+    "file": "src/components/ponto/PontoGeoMapa.tsx",
+    "text": "Um único ponto gera um bounds degenerado (zoom máximo): centraliza nele."
+   },
+   {
+    "file": "src/components/ponto/PontoGeofencingPainel.tsx",
+    "text": "* Mínimo de coordenadas para o modo Calor fazer sentido. */"
+   },
+   {
     "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
     "text": "Mesma regra da aprovação em GestaoRegistrosPonto (pode_gerir_pessoas: admin/RH/gestor)."
    },
    {
     "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
     "text": "Já gravados (aprovados/cobrados): \"Mostrar ocultas\" não pode trazê-los de"
+   },
+   {
+    "file": "src/components/ponto/acoesCardsPonto.ts",
+    "text": "* Cada utilitário aqui já existia nos três botões; foram apenas reunidos num"
    },
    {
     "file": "src/components/portal/PortalDocumentosTab.tsx",
@@ -124105,7 +124180,31 @@
    },
    {
     "file": "src/components/ui/filter-chip.tsx",
+    "text": "* `primary`     verde/lima    → tudo em ordem (Todos, Em dia, No prazo)"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "text": "`destructive` vermelho      → prazo estourado (Atrasados, Fora do prazo)"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "text": "Verde/lima da marca — \"Todos\", \"Em dia\", \"No prazo\"."
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "text": "Vermelho — \"Atrasados\", \"Fora do prazo\". Usa `destructive-vivid`, o vermelho"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
     "text": "igual (a barra não pode ter faixa vazia à direita), mas nunca"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "text": "tinta 10%, texto 90%): o repouso não pode virar cinza, senão a"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "text": "Ajustes não pode gastar 14 px por glifo."
    },
    {
     "file": "src/components/ui/filter-chip.tsx",
@@ -124474,6 +124573,14 @@
    {
     "file": "src/mocks/desempenhoMock.ts",
     "text": "Devolve `true` quando a ação deve ser ABORTADA, então o chamador só precisa de"
+   },
+   {
+    "file": "src/mocks/pontoGeoMock.ts",
+    "text": "SOMENTE quando o modo real não tem o que mostrar (nenhuma batida no período"
+   },
+   {
+    "file": "src/mocks/pontoGeoMock.ts",
+    "text": "liga somente com as DUAS condições abaixo — logo, nunca em produção:"
    },
    {
     "file": "src/mocks/treinamentosMock.ts",
@@ -125350,6 +125457,18 @@
    {
     "file": "src/utils/piiMask.ts",
     "text": "estruturas cíclicas usa WeakSet — não há limite de profundidade, então"
+   },
+   {
+    "file": "src/utils/pontoGeofencing.ts",
+    "text": "`registrar_batida_ponto` NUNCA a preenche (ele grava apenas `dentro_raio`)."
+   },
+   {
+    "file": "src/utils/pontoGeofencing.ts",
+    "text": "* Limite superior INCLUSIVO; `null` na última faixa (acima do raio). */"
+   },
+   {
+    "file": "src/utils/pontoGeofencing.ts",
+    "text": "só o que passa do limite cai na faixa \"acima do raio\"."
    },
    {
     "file": "src/utils/rescisaoCalc.ts",
@@ -151612,6 +151731,46 @@
     "value": "256"
    },
    {
+    "file": "src/components/ponto/PontoGeoDistancia.tsx",
+    "name": "FOLGA",
+    "value": "6"
+   },
+   {
+    "file": "src/components/ponto/PontoGeofencingPainel.tsx",
+    "name": "MINIMO_PONTOS_CALOR",
+    "value": "5"
+   },
+   {
+    "file": "src/components/ponto/vermelhoVibrante.ts",
+    "name": "VERMELHO_TEXTO",
+    "value": "'text-[#FF4545]'"
+   },
+   {
+    "file": "src/components/ponto/vermelhoVibrante.ts",
+    "name": "VERMELHO_TRACO",
+    "value": "'stroke-[#EF4444]'"
+   },
+   {
+    "file": "src/components/ponto/vermelhoVibrante.ts",
+    "name": "VERMELHO_SOLIDO",
+    "value": "'bg-[#EF4444]'"
+   },
+   {
+    "file": "src/components/ponto/vermelhoVibrante.ts",
+    "name": "VERMELHO_FUNDO",
+    "value": "'bg-[rgba(239,68,68,0.14)]'"
+   },
+   {
+    "file": "src/components/ponto/vermelhoVibrante.ts",
+    "name": "VERMELHO_BORDA",
+    "value": "'border-[rgba(239,68,68,0.55)]'"
+   },
+   {
+    "file": "src/components/ponto/vermelhoVibrante.ts",
+    "name": "VERMELHO_BORDA_SUAVE",
+    "value": "'border-[rgba(239,68,68,0.32)]'"
+   },
+   {
     "file": "src/components/ponto/relogio/JustificativasRelogioTab.tsx",
     "name": "SEM_EFEITO",
     "value": "'sem_efeito'"
@@ -152017,6 +152176,16 @@
     "value": "0.3"
    },
    {
+    "file": "src/components/ui/crescimentoBarras.ts",
+    "name": "CRESCIMENTO_BARRA_DURACAO_MS",
+    "value": "900"
+   },
+   {
+    "file": "src/components/ui/crescimentoBarras.ts",
+    "name": "CRESCIMENTO_BARRA_INTERVALO_MS",
+    "value": "100"
+   },
+   {
     "file": "src/components/ui/entrada-cards.tsx",
     "name": "MAX_ENTRADA_INDEX",
     "value": "8"
@@ -152177,6 +152346,11 @@
     "value": "5"
    },
    {
+    "file": "src/hooks/usePontoGeofencing.ts",
+    "name": "RAIO_PADRAO_METROS",
+    "value": "200"
+   },
+   {
     "file": "src/hooks/useSessionTimeout.ts",
     "name": "INACTIVITY_LIMIT_MS",
     "value": "30"
@@ -152240,6 +152414,11 @@
     "file": "src/mocks/desempenhoMock.ts",
     "name": "EMAIL_GESTOR",
     "value": "'gestor.regional@empresa.com.br'"
+   },
+   {
+    "file": "src/mocks/pontoGeoMock.ts",
+    "name": "RAIO_GEO_DEMO_METROS",
+    "value": "100"
    },
    {
     "file": "src/pages/BancoHorasPage.tsx",
@@ -152485,6 +152664,11 @@
     "file": "src/utils/piiMask.ts",
     "name": "MASK_CHAR",
     "value": "'•'"
+   },
+   {
+    "file": "src/utils/pontoGeofencing.ts",
+    "name": "RAIO_TERRA_METROS",
+    "value": "6371"
    },
    {
     "file": "src/utils/regrasSolicitacaoFerias.ts",
@@ -159541,6 +159725,12 @@
     "kind": "escreve"
    },
    {
+    "file": "src/mocks/pontoGeoMock.ts",
+    "field": "tipo",
+    "value": "entrada",
+    "kind": "escreve"
+   },
+   {
     "file": "src/mocks/treinamentosMock.ts",
     "field": "status",
     "value": "em_andamento",
@@ -166419,6 +166609,12 @@
     "body": "const cleaned = cpf.replace(/\\D/g, ''); // Rejeita tamanho inválido ou todos os dígitos iguais (ex.: 111.111.111-11). if (cleaned.length !== 11 || /^(\\d)\\1{10}$/.test(cleaned)) return false; let sum = 0; for (let i = 0; i < 9; i++) sum += parseInt(cleaned[i]) * (10 - i); let d1 = (sum * 10) % 11; if (d1 === 10) d1 = 0; if (d1 !== parseInt(cleaned[9])) return false; sum = 0; for (let i = 0; i < 10; i++) sum += parseInt(cleaned[i]) * (11 - i); let d2 = (sum * 10) % 11; if (d2 === 10) d2 = 0; retur …"
    },
    {
+    "file": "src/components/ui/crescimentoBarras.ts",
+    "name": "duracaoTotalCrescimento",
+    "params": "total: number",
+    "body": "const barras = Math.max(0, Math.floor(total)); if (barras === 0) return 0; return CRESCIMENTO_BARRA_DURACAO_MS + (barras - 1) * CRESCIMENTO_BARRA_INTERVALO_MS;"
+   },
+   {
     "file": "src/components/ui/currency-input.tsx",
     "name": "formatCurrency",
     "params": "value: number",
@@ -167317,6 +167513,12 @@
     "name": "validatePasswordFull",
     "params": "password: string",
     "body": "const base = validatePassword(password); if (!base.valid) return base; const { breached, count } = await checkPasswordBreach(password); const warnings: string[] = []; if (breached) { warnings.push( `Esta senha apareceu em ${count.toLocaleString('pt-BR')} vazamentos de dados. Considere usar outra.` ); } return { ...base, warnings };"
+   },
+   {
+    "file": "src/utils/pontoGeofencing.ts",
+    "name": "iniciaisDoNome",
+    "params": "nome: string | null | undefined, alternativa = '—'",
+    "body": "const partes = String(nome ?? '') .trim() .split(/\\s+/) .filter(Boolean); if (partes.length === 0) return alternativa; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();"
    },
    {
     "file": "src/utils/regrasSolicitacaoFerias.ts",
@@ -169289,6 +169491,46 @@
     "line": "if (dx <= w * 0.7 && dy <= h * 0.7) return z;"
    },
    {
+    "file": "src/components/ponto/PontoGeoDistancia.tsx",
+    "line": "() => [topo, Math.round(topo * 0.75), Math.round(topo * 0.5), Math.round(topo * 0.25), 0],"
+   },
+   {
+    "file": "src/components/ponto/PontoGeoDistancia.tsx",
+    "line": "* borda de 1,5 px na cor cheia e fundo da mesma cor a 20%. A última posição é a"
+   },
+   {
+    "file": "src/components/ponto/PontoGeoDistancia.tsx",
+    "line": "* cheia do token + preenchimento da MESMA cor a 20% — o par `stroke`/"
+   },
+   {
+    "file": "src/components/ponto/PontoGeoDistancia.tsx",
+    "line": "* saltar aos olhos. No hover o preenchimento sobe para 30% — sem sombra, sem"
+   },
+   {
+    "file": "src/components/ponto/PontoGeoMapa.tsx",
+    "line": "* Zoom que faz o diâmetro do perímetro caber em ~62% da altura do mapa — assim"
+   },
+   {
+    "file": "src/components/ponto/PontoGeoMapa.tsx",
+    "line": "const metrosPorPixel = (2 * raio) / (altura * 0.62);"
+   },
+   {
+    "file": "src/components/ponto/PontoGeofencingPainel.tsx",
+    "line": "125% rende ~45px) e com o mesmo respiro horizontal (`px-3.5`)."
+   },
+   {
+    "file": "src/components/ponto/acoesCardsPonto.ts",
+    "line": "* `hover:text-primary-glow` = `--primary-glow` (68 100% 58% no claro, 60% no"
+   },
+   {
+    "file": "src/components/ponto/acoesCardsPonto.ts",
+    "line": "* `text-primary` = `--primary` (68 100% 48% — o mesmo valor nos dois temas)."
+   },
+   {
+    "file": "src/components/ponto/acoesCardsPonto.ts",
+    "line": "* escala de 125% do `<html>` só os converte em 30px / 15px / 10px / 12,5px na"
+   },
+   {
     "file": "src/components/portal/PortalFinanceiroTab.tsx",
     "line": "transition={{ delay: i * 0.05 }}"
    },
@@ -169449,6 +169691,62 @@
     "line": "* ~23% do percurso: sobreposição clara, cascata percebida card a card, e uma"
    },
    {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": "* + pílula do contador a 15%; selecionado = a MESMA família um"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": "* A variante `brilho` acende em VIDRO (tinta de 20% + halo) porque nas telas"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": "* degrau acima (borda 55–60%, tinta 20%, texto cheio) + o HALO"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": "* nos DOIS estados — repouso = borda 25% + tinta 10% + texto 90%"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": "* repouso borda 25% + tinta 10% + texto 90% + pílula do contador a 15%"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": "* selecionado borda 55–60% + tinta 20% + texto cheio + halo `shadow-glow*`"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": "/** Fundo no repouso: tinta de 10% da família. */"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": "/** Fundo no selecionado: tinta de 20% (vidro, nunca preenchimento opaco). */"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": "/** Pílula do contador no repouso (tinta 15% + número na cor da família). */"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": "/** Pílula do contador no selecionado (tinta 25% + número na cor cheia). */"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": "// 20%, borda 55–60%, texto cheio) + o HALO do tema. Quem destaca é"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": "// botão. O número mora na pílula translúcida da família (tinta 15% no"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": "// repouso, 25% no aceso) na cor do status — a MESMA leitura dos chips"
+   },
+   {
+    "file": "src/components/ui/filter-chip.tsx",
+    "line": ": // INATIVO BRILHO = casulo COLORIDO da mesma família (borda 25%,"
+   },
+   {
     "file": "src/components/ui/flow-hover-button.tsx",
     "line": "* deslocado 150% + escalado 2.5x) e desliza para o centro no hover,"
    },
@@ -169567,6 +169865,10 @@
    {
     "file": "src/mocks/colaboradoresMock.ts",
     "line": "valor_irrf: Math.round(salario * 0.05),"
+   },
+   {
+    "file": "src/mocks/pontoGeoMock.ts",
+    "line": "* → variações reais do mock: total +8%, dentro +8%, fora 0%, distância -12%"
    },
    {
     "file": "src/pages/AssistenteIAPage.tsx",
@@ -184163,6 +184465,166 @@
     "name": "renders card with rounded-2xl when data provided"
    },
    {
+    "file": "src/components/__tests__/PontoGeoDistancia.test.tsx",
+    "name": "PontoGeoDistancia · colunas vazadas"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoDistancia.test.tsx",
+    "name": "usa contorno e preenchimento do MESMO token em cada faixa"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoDistancia.test.tsx",
+    "name": "escreve a quantidade acima da coluna correspondente"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoDistancia.test.tsx",
+    "name": "não desenha barra (nem contorno) na faixa sem registro"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "Geofencing · mapa"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "desenha o perímetro com o raio REAL da unidade e borda tracejada"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "mantém as três visualizações reais (mapa, satélite e calor)"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "não usa o renderer de canvas do Leaflet (intercepta o ponteiro)"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "expõe zoom, centralizar e ajustar aos registros"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "mostra a dica do marcador com os campos pedidos"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "Geofencing · CSS do mapa"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "neutraliza o preflight do Tailwind nos tiles"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "respeita movimento reduzido na entrada dos marcadores"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "Geofencing · cards"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "usa a peça oficial de KPI e a régua de preenchimento do sistema"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "mantém o cabeçalho e as ferramentas do card principal"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "reaproveita o crescimento das barras do "
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "desenha colunas VAZADAS, como o "
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "mostra o valor de cada faixa acima da coluna, dentro do plot"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "ancora a dica na coluna ativa (medida no DOM), sem coordenada fixa"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "entra e sai com fade + 4 px de subida (mesma régua dos tooltips)"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "preenche a conformidade com gradiente success → lime na régua global"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "mantém todos os filtros do mapa na mesma altura e o período em linha única"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "usa a cascata de linhas de Candidatos e a moldura de modal de Pendências"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "Geofencing · contraste sobre o mapa"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "dá superfície sólida, borda e sombra aos controles e às legendas"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "mantém créditos e escala legíveis no CSS"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "Geofencing · dados"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "deriva distância e situação das coordenadas reais"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "mantém o fallback de raio do registro de ponto"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+    "name": "a aba Geofencing renderiza o painel novo (e não o componente antigo)"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeofencingPainel.test.tsx",
+    "name": "PontoGeofencingPainel · KPIs e conformidade"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeofencingPainel.test.tsx",
+    "name": "mostra os quatro indicadores do período demonstrativo"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeofencingPainel.test.tsx",
+    "name": "resume a conformidade com selo, percentual e contagens"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeofencingPainel.test.tsx",
+    "name": "sinaliza que a série é demonstrativa e entrega o raio real ao mapa"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeofencingPainel.test.tsx",
+    "name": "PontoGeofencingPainel · gráficos e tabela"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeofencingPainel.test.tsx",
+    "name": "desenha as faixas de distância do raio configurado"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeofencingPainel.test.tsx",
+    "name": "lista os registros mais recentes primeiro"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeofencingPainel.test.tsx",
+    "name": "PontoGeofencingPainel · dica do gráfico de distância"
+   },
+   {
+    "file": "src/components/__tests__/PontoGeofencingPainel.test.tsx",
+    "name": "mostra a dica da coluna sob o ponteiro e troca o conteúdo ao mudar de coluna"
+   },
+   {
     "file": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
     "name": "PontoInconsistencyPanel"
    },
@@ -189689,6 +190151,34 @@
    {
     "file": "src/components/ui/__tests__/dropdown-menu.test.tsx",
     "name": "preserva o gap-3 do consumidor (ícone + texto) via [gap:inherit] no wrapper"
+   },
+   {
+    "file": "src/components/ui/__tests__/filter-chip-brilho.test.tsx",
+    "name": "FilterChip variante="
+   },
+   {
+    "file": "src/components/ui/__tests__/filter-chip-brilho.test.tsx",
+    "name": "$tom: o repouso é COLORIDO (borda 25-30%, tinta 10%, texto 90%)"
+   },
+   {
+    "file": "src/components/ui/__tests__/filter-chip-brilho.test.tsx",
+    "name": "$tom: o aceso sobe um degrau na mesma família (tinta 20%) e acende o halo"
+   },
+   {
+    "file": "src/components/ui/__tests__/filter-chip-brilho.test.tsx",
+    "name": "só o repouso carrega hover: no aceso o hover não pode apagar a cor acesa"
+   },
+   {
+    "file": "src/components/ui/__tests__/filter-chip-brilho.test.tsx",
+    "name": "sem "
+   },
+   {
+    "file": "src/components/ui/__tests__/filter-chip-brilho.test.tsx",
+    "name": "mostra só o número, sem parênteses — o nome acessível lê "
+   },
+   {
+    "file": "src/components/ui/__tests__/filter-chip-brilho.test.tsx",
+    "name": "a bolinha é sólida nos dois estados (nunca em 50% de opacidade)"
    },
    {
     "file": "src/components/ui/__tests__/popover-combobox.test.tsx",
@@ -207693,6 +208183,86 @@
    {
     "file": "src/utils/__tests__/piiMask.test.ts",
     "name": "masks without domain entirely for invalid email"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "pontoGeofencing · distância e situação"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "mede a distância com a mesma fórmula do registro de ponto"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "descarta registros sem coordenada válida e recalcula a situação pelo raio atual"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "normaliza hora, iniciais e origem para os rótulos da tela"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "pontoGeofencing · períodos"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "fecha a janela do período no dia de hoje"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "devolve o intervalo anterior com a mesma duração"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "só calcula variação com base comparativa"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "pontoGeofencing · conformidade e faixas"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "resume totais, conformidade e distância média"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "adapta o passo das faixas ao raio configurado, sem assumir 100 m"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "classifica cada registro na faixa certa e soma o total"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "pontoGeofencing · séries e ordenação"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "conta um valor por dia do intervalo, inclusive os dias vazios"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "ordena os mais recentes primeiro e respeita o limite"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "formata data curta e distância"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "pontoGeofencing · vitrine demonstrativa"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "reproduz os números da referência no período de 7 dias"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "deriva as variações do período anterior (nada digitado no painel)"
+   },
+   {
+    "file": "src/utils/__tests__/pontoGeofencing.test.ts",
+    "name": "exercita o estado de alerta em 30 dias (registros fora do raio)"
    },
    {
     "file": "src/utils/__tests__/regrasSolicitacaoFerias.test.ts",
@@ -239245,6 +239815,7 @@
       "escreve:src/components/ponto/PontoClockRegister.tsx",
       "escreve:src/hooks/usePonto.ts",
       "escreve:src/hooks/usePontoOffline.ts",
+      "escreve:src/mocks/pontoGeoMock.ts",
       "escreve:src/pages/ControleAcessoPage.tsx",
       "escreve:src/pages/PontoKioskPage.tsx",
       "escreve:src/pages/PontoPage.tsx",
@@ -280023,6 +280594,77 @@
     "renders card with rounded-2xl when data provided"
    ]
   },
+  "src/components/__tests__/PontoGeoDistancia.test.tsx": {
+   "path": "src/components/__tests__/PontoGeoDistancia.test.tsx",
+   "lines": 121,
+   "is_test": true,
+   "rule_comments": [
+    "a faixa sem registro (que não pode virar uma linha falsa no eixo)."
+   ],
+   "tests": [
+    "PontoGeoDistancia · colunas vazadas",
+    "usa contorno e preenchimento do MESMO token em cada faixa",
+    "escreve a quantidade acima da coluna correspondente",
+    "não desenha barra (nem contorno) na faixa sem registro"
+   ]
+  },
+  "src/components/__tests__/PontoGeoEstrutura.test.ts": {
+   "path": "src/components/__tests__/PontoGeoEstrutura.test.ts",
+   "lines": 214,
+   "is_test": true,
+   "rule_comments": [
+    "qual regra de animação foi reaproveitada e quais armadilhas já resolvidas não",
+    "O preenchimento sólido antigo não pode voltar."
+   ],
+   "tests": [
+    "Geofencing · mapa",
+    "desenha o perímetro com o raio REAL da unidade e borda tracejada",
+    "mantém as três visualizações reais (mapa, satélite e calor)",
+    "não usa o renderer de canvas do Leaflet (intercepta o ponteiro)",
+    "expõe zoom, centralizar e ajustar aos registros",
+    "mostra a dica do marcador com os campos pedidos",
+    "Geofencing · CSS do mapa",
+    "neutraliza o preflight do Tailwind nos tiles",
+    "respeita movimento reduzido na entrada dos marcadores",
+    "Geofencing · cards",
+    "usa a peça oficial de KPI e a régua de preenchimento do sistema",
+    "mantém o cabeçalho e as ferramentas do card principal",
+    "reaproveita o crescimento das barras do ",
+    "desenha colunas VAZADAS, como o ",
+    "mostra o valor de cada faixa acima da coluna, dentro do plot",
+    "ancora a dica na coluna ativa (medida no DOM), sem coordenada fixa",
+    "entra e sai com fade + 4 px de subida (mesma régua dos tooltips)",
+    "preenche a conformidade com gradiente success → lime na régua global",
+    "mantém todos os filtros do mapa na mesma altura e o período em linha única",
+    "usa a cascata de linhas de Candidatos e a moldura de modal de Pendências",
+    "Geofencing · contraste sobre o mapa",
+    "dá superfície sólida, borda e sombra aos controles e às legendas",
+    "mantém créditos e escala legíveis no CSS",
+    "Geofencing · dados",
+    "deriva distância e situação das coordenadas reais",
+    "mantém o fallback de raio do registro de ponto",
+    "a aba Geofencing renderiza o painel novo (e não o componente antigo)"
+   ]
+  },
+  "src/components/__tests__/PontoGeofencingPainel.test.tsx": {
+   "path": "src/components/__tests__/PontoGeofencingPainel.test.tsx",
+   "lines": 193,
+   "is_test": true,
+   "rule_comments": [
+    "um stub que apenas registra o que recebeu — o objetivo aqui é provar que os"
+   ],
+   "tests": [
+    "PontoGeofencingPainel · KPIs e conformidade",
+    "mostra os quatro indicadores do período demonstrativo",
+    "resume a conformidade com selo, percentual e contagens",
+    "sinaliza que a série é demonstrativa e entrega o raio real ao mapa",
+    "PontoGeofencingPainel · gráficos e tabela",
+    "desenha as faixas de distância do raio configurado",
+    "lista os registros mais recentes primeiro",
+    "PontoGeofencingPainel · dica do gráfico de distância",
+    "mostra a dica da coluna sob o ponteiro e troca o conteúdo ao mudar de coluna"
+   ]
+  },
   "src/components/__tests__/PontoInconsistencyPanel.test.tsx": {
    "path": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
    "lines": 239,
@@ -292633,6 +293275,81 @@
     "if (dx <= w * 0.7 && dy <= h * 0.7) return z;"
    ]
   },
+  "src/components/ponto/PontoGeoDistancia.tsx": {
+   "path": "src/components/ponto/PontoGeoDistancia.tsx",
+   "lines": 339,
+   "exports": [
+    "interface PontoGeoDistanciaProps",
+    "function PontoGeoDistancia"
+   ],
+   "params": [
+    {
+     "name": "FOLGA",
+     "value": "6"
+    }
+   ],
+   "percents": [
+    "() => [topo, Math.round(topo * 0.75), Math.round(topo * 0.5), Math.round(topo * 0.25), 0],",
+    "* borda de 1,5 px na cor cheia e fundo da mesma cor a 20%. A última posição é a",
+    "* cheia do token + preenchimento da MESMA cor a 20% — o par `stroke`/",
+    "* saltar aos olhos. No hover o preenchimento sobe para 30% — sem sombra, sem"
+   ]
+  },
+  "src/components/ponto/PontoGeoMapa.tsx": {
+   "path": "src/components/ponto/PontoGeoMapa.tsx",
+   "lines": 624,
+   "exports": [
+    "type ModoVisualizacaoGeo",
+    "interface CamadasGeo",
+    "interface PontoGeoMapaProps",
+    "function PontoGeoMapa"
+   ],
+   "enums": [
+    {
+     "name": "ModoVisualizacaoGeo",
+     "values": "mapa | satelite | calor"
+    }
+   ],
+   "rule_comments": [
+    "`html:not(.dp-force-motion)`), a mesma regra dos outros blocos do projeto.",
+    "responder 403 (\"API key required\") a partir do navegador, o que enchia o mapa",
+    "(MapTiler, Stadia, Thunderforest) e trocar apenas a URL abaixo.",
+    "* Dica \"presa\" por clique: `mouseout` não pode fechá-la. */",
+    "Um único ponto gera um bounds degenerado (zoom máximo): centraliza nele."
+   ],
+   "percents": [
+    "* Zoom que faz o diâmetro do perímetro caber em ~62% da altura do mapa — assim",
+    "const metrosPorPixel = (2 * raio) / (altura * 0.62);"
+   ]
+  },
+  "src/components/ponto/PontoGeoRegistros.tsx": {
+   "path": "src/components/ponto/PontoGeoRegistros.tsx",
+   "lines": 311,
+   "exports": [
+    "interface PontoGeoRegistrosProps",
+    "function PontoGeoRegistros"
+   ]
+  },
+  "src/components/ponto/PontoGeofencingPainel.tsx": {
+   "path": "src/components/ponto/PontoGeofencingPainel.tsx",
+   "lines": 529,
+   "exports": [
+    "interface PontoGeofencingPainelProps",
+    "function PontoGeofencingPainel"
+   ],
+   "params": [
+    {
+     "name": "MINIMO_PONTOS_CALOR",
+     "value": "5"
+    }
+   ],
+   "rule_comments": [
+    "* Mínimo de coordenadas para o modo Calor fazer sentido. */"
+   ],
+   "percents": [
+    "125% rende ~45px) e com o mesmo respiro horizontal (`px-3.5`)."
+   ]
+  },
   "src/components/ponto/PontoInconsistencyPanel.tsx": {
    "path": "src/components/ponto/PontoInconsistencyPanel.tsx",
    "lines": 378,
@@ -292805,6 +293522,61 @@
    "lines": 87,
    "exports": [
     "function PontoWeekSummary"
+   ]
+  },
+  "src/components/ponto/acoesCardsPonto.ts": {
+   "path": "src/components/ponto/acoesCardsPonto.ts",
+   "lines": 98,
+   "exports": [
+    "const ACAO_CARD_LIME",
+    "const ACOES_CARDS_PONTO"
+   ],
+   "rule_comments": [
+    "* Cada utilitário aqui já existia nos três botões; foram apenas reunidos num"
+   ],
+   "percents": [
+    "* `hover:text-primary-glow` = `--primary-glow` (68 100% 58% no claro, 60% no",
+    "* `text-primary` = `--primary` (68 100% 48% — o mesmo valor nos dois temas).",
+    "* escala de 125% do `<html>` só os converte em 30px / 15px / 10px / 12,5px na"
+   ]
+  },
+  "src/components/ponto/vermelhoVibrante.ts": {
+   "path": "src/components/ponto/vermelhoVibrante.ts",
+   "lines": 52,
+   "exports": [
+    "const VERMELHO_TEXTO",
+    "const VERMELHO_TRACO",
+    "const VERMELHO_SOLIDO",
+    "const VERMELHO_FUNDO",
+    "const VERMELHO_BORDA",
+    "const VERMELHO_BORDA_SUAVE",
+    "const VERMELHO_HOVER"
+   ],
+   "params": [
+    {
+     "name": "VERMELHO_TEXTO",
+     "value": "'text-[#FF4545]'"
+    },
+    {
+     "name": "VERMELHO_TRACO",
+     "value": "'stroke-[#EF4444]'"
+    },
+    {
+     "name": "VERMELHO_SOLIDO",
+     "value": "'bg-[#EF4444]'"
+    },
+    {
+     "name": "VERMELHO_FUNDO",
+     "value": "'bg-[rgba(239,68,68,0.14)]'"
+    },
+    {
+     "name": "VERMELHO_BORDA",
+     "value": "'border-[rgba(239,68,68,0.55)]'"
+    },
+    {
+     "name": "VERMELHO_BORDA_SUAVE",
+     "value": "'border-[rgba(239,68,68,0.32)]'"
+    }
    ]
   },
   "src/components/ponto/relogio/JustificativasRelogioTab.tsx": {
@@ -298550,6 +299322,40 @@
     }
    ]
   },
+  "src/components/ui/crescimentoBarras.ts": {
+   "path": "src/components/ui/crescimentoBarras.ts",
+   "lines": 202,
+   "exports": [
+    "const CRESCIMENTO_BARRA_DURACAO_MS",
+    "const CRESCIMENTO_BARRA_INTERVALO_MS",
+    "function easeInOutSine",
+    "function duracaoTotalCrescimento",
+    "function variavelCrescimentoBarra",
+    "function estiloCrescimentoBarra",
+    "interface OpcoesCrescimentoBarras",
+    "function useCrescimentoBarras"
+   ],
+   "params": [
+    {
+     "name": "CRESCIMENTO_BARRA_DURACAO_MS",
+     "value": "900"
+    },
+    {
+     "name": "CRESCIMENTO_BARRA_INTERVALO_MS",
+     "value": "100"
+    }
+   ],
+   "hooks": [
+    "useCrescimentoBarras"
+   ],
+   "calc_fns": [
+    {
+     "name": "duracaoTotalCrescimento",
+     "params": "total: number",
+     "body": "const barras = Math.max(0, Math.floor(total)); if (barras === 0) return 0; return CRESCIMENTO_BARRA_DURACAO_MS + (barras - 1) * CRESCIMENTO_BARRA_INTERVALO_MS;"
+    }
+   ]
+  },
   "src/components/ui/currency-input.tsx": {
    "path": "src/components/ui/currency-input.tsx",
    "lines": 59,
@@ -298691,23 +299497,50 @@
   },
   "src/components/ui/filter-chip.tsx": {
    "path": "src/components/ui/filter-chip.tsx",
-   "lines": 136,
+   "lines": 414,
    "exports": [
     "type VarianteFilterChip",
+    "type TomChipBrilho",
     "interface FilterChipProps",
     "function FilterChip"
    ],
    "enums": [
     {
      "name": "VarianteFilterChip",
-     "values": "padrao | compacto"
+     "values": "padrao | compacto | brilho"
+    },
+    {
+     "name": "TomChipBrilho",
+     "values": "primary | success | warning | destructive | neutro"
     }
    ],
    "rule_comments": [
     "telas não mantenham duas cópias que possam divergir (a regra de ouro da",
+    "* `primary`     verde/lima    → tudo em ordem (Todos, Em dia, No prazo)",
+    "`destructive` vermelho      → prazo estourado (Atrasados, Fora do prazo)",
+    "Verde/lima da marca — \"Todos\", \"Em dia\", \"No prazo\".",
+    "Vermelho — \"Atrasados\", \"Fora do prazo\". Usa `destructive-vivid`, o vermelho",
     "igual (a barra não pode ter faixa vazia à direita), mas nunca",
+    "tinta 10%, texto 90%): o repouso não pode virar cinza, senão a",
+    "Ajustes não pode gastar 14 px por glifo.",
     "Contador com padding mínimo: a caixa do contador ativo fica justa",
     "estados (a barra de filtros nunca quebra, então não pode haver"
+   ],
+   "percents": [
+    "* + pílula do contador a 15%; selecionado = a MESMA família um",
+    "* A variante `brilho` acende em VIDRO (tinta de 20% + halo) porque nas telas",
+    "* degrau acima (borda 55–60%, tinta 20%, texto cheio) + o HALO",
+    "* nos DOIS estados — repouso = borda 25% + tinta 10% + texto 90%",
+    "* repouso borda 25% + tinta 10% + texto 90% + pílula do contador a 15%",
+    "* selecionado borda 55–60% + tinta 20% + texto cheio + halo `shadow-glow*`",
+    "/** Fundo no repouso: tinta de 10% da família. */",
+    "/** Fundo no selecionado: tinta de 20% (vidro, nunca preenchimento opaco). */",
+    "/** Pílula do contador no repouso (tinta 15% + número na cor da família). */",
+    "/** Pílula do contador no selecionado (tinta 25% + número na cor cheia). */",
+    "// 20%, borda 55–60%, texto cheio) + o HALO do tema. Quem destaca é",
+    "// botão. O número mora na pílula translúcida da família (tinta 15% no",
+    "// repouso, 25% no aceso) na cor do status — a MESMA leitura dos chips",
+    ": // INATIVO BRILHO = casulo COLORIDO da mesma família (borda 25%,"
    ]
   },
   "src/components/ui/flow-hover-button.tsx": {
@@ -299197,6 +300030,20 @@
     "renderiza os itens dentro do wrapper motion.div (DropdownMenuContent)",
     "cada DropdownMenuItem envolve {children} num motion.span com style próprio",
     "preserva o gap-3 do consumidor (ícone + texto) via [gap:inherit] no wrapper"
+   ]
+  },
+  "src/components/ui/__tests__/filter-chip-brilho.test.tsx": {
+   "path": "src/components/ui/__tests__/filter-chip-brilho.test.tsx",
+   "lines": 178,
+   "is_test": true,
+   "tests": [
+    "FilterChip variante=",
+    "$tom: o repouso é COLORIDO (borda 25-30%, tinta 10%, texto 90%)",
+    "$tom: o aceso sobe um degrau na mesma família (tinta 20%) e acende o halo",
+    "só o repouso carrega hover: no aceso o hover não pode apagar a cor acesa",
+    "sem ",
+    "mostra só o número, sem parênteses — o nome acessível lê ",
+    "a bolinha é sólida nos dois estados (nunca em 50% de opacidade)"
    ]
   },
   "src/components/ui/__tests__/popover-combobox.test.tsx": {
@@ -302333,6 +303180,48 @@
    ],
    "hooks": [
     "usePonto"
+   ]
+  },
+  "src/hooks/usePontoGeofencing.ts": {
+   "path": "src/hooks/usePontoGeofencing.ts",
+   "lines": 160,
+   "exports": [
+    "const RAIO_PADRAO_METROS",
+    "interface ResultadoPontoGeofencing",
+    "function usePontoGeofencing"
+   ],
+   "tables": [
+    {
+     "table": "locais_trabalho",
+     "op": "select"
+    },
+    {
+     "table": "configuracoes_ponto",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "locais_trabalho": [
+     "ativo",
+     "empresa_id",
+     "id",
+     "latitude",
+     "longitude",
+     "nome"
+    ],
+    "configuracoes_ponto": [
+     "empresa_id",
+     "raio_maximo_metros"
+    ]
+   },
+   "params": [
+    {
+     "name": "RAIO_PADRAO_METROS",
+     "value": "200"
+    }
+   ],
+   "hooks": [
+    "usePontoGeofencing"
    ]
   },
   "src/hooks/usePontoMelhorado.ts": {
@@ -306963,6 +307852,41 @@
     "auditoriaMock.ts, colaboradoresMock.ts e dashboardMockData.ts): liga somente",
     "* Ativa o mock do módulo apenas em dev, com o opt-in explícito da env var E com o",
     "Devolve `true` quando a ação deve ser ABORTADA, então o chamador só precisa de"
+   ]
+  },
+  "src/mocks/pontoGeoMock.ts": {
+   "path": "src/mocks/pontoGeoMock.ts",
+   "lines": 229,
+   "exports": [
+    "const RAIO_GEO_DEMO_METROS",
+    "const UNIDADE_GEO_DEMO",
+    "function isPontoGeoMockEnabled",
+    "function batidasGeoDemonstrativas"
+   ],
+   "env": [
+    "DEV",
+    "MODE",
+    "VITE_PONTO_MOCK"
+   ],
+   "params": [
+    {
+     "name": "RAIO_GEO_DEMO_METROS",
+     "value": "100"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "entrada",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "SOMENTE quando o modo real não tem o que mostrar (nenhuma batida no período",
+    "liga somente com as DUAS condições abaixo — logo, nunca em produção:"
+   ],
+   "percents": [
+    "* → variações reais do mock: total +8%, dentro +8%, fora 0%, distância -12%"
    ]
   },
   "src/mocks/treinamentosMock.ts": {
@@ -315532,11 +316456,15 @@
   },
   "src/services/batidasPontoService.ts": {
    "path": "src/services/batidasPontoService.ts",
-   "lines": 133,
+   "lines": 154,
    "exports": [
     "const batidasPontoService"
    ],
    "tables": [
+    {
+     "table": "batidas_ponto",
+     "op": "select"
+    },
     {
      "table": "batidas_ponto",
      "op": "select"
@@ -315581,7 +316509,8 @@
    "errors": [
     "Falha ao ajustar batida de ponto",
     "Nenhum registro de batida de ponto foi retornado.",
-    "empresa_id obrigatório para isolamento de tenant"
+    "empresa_id obrigatório para isolamento de tenant",
+    "intervalo de datas obrigatório para listar batidas"
    ],
    "status_values": [
     {
@@ -325718,6 +326647,59 @@
     "estruturas cíclicas usa WeakSet — não há limite de profundidade, então"
    ]
   },
+  "src/utils/pontoGeofencing.ts": {
+   "path": "src/utils/pontoGeofencing.ts",
+   "lines": 408,
+   "exports": [
+    "type PeriodoGeo",
+    "interface IntervaloGeo",
+    "const PERIODOS_GEO",
+    "interface UnidadeGeografica",
+    "interface PontoGeografico",
+    "interface FaixaDistancia",
+    "interface ResumoGeo",
+    "interface BatidaGeograficaCrua",
+    "function distanciaEmMetros",
+    "function intervaloDoPeriodo",
+    "function intervaloAnterior",
+    "function horaCurta",
+    "function iniciaisDoNome",
+    "function formatarDistancia",
+    "function montarPontos",
+    "function resumoGeo",
+    "function passoDaFaixa",
+    "function faixasDeDistancia",
+    "function variacaoPercentual",
+    "function serieDiaria",
+    "function registrosRecentes",
+    "function rotuloDataCurta",
+    "function rotuloOrigemGeo"
+   ],
+   "enums": [
+    {
+     "name": "PeriodoGeo",
+     "values": "hoje | 7d | 30d | personalizado"
+    }
+   ],
+   "params": [
+    {
+     "name": "RAIO_TERRA_METROS",
+     "value": "6371"
+    }
+   ],
+   "rule_comments": [
+    "`registrar_batida_ponto` NUNCA a preenche (ele grava apenas `dentro_raio`).",
+    "* Limite superior INCLUSIVO; `null` na última faixa (acima do raio). */",
+    "só o que passa do limite cai na faixa \"acima do raio\"."
+   ],
+   "calc_fns": [
+    {
+     "name": "iniciaisDoNome",
+     "params": "nome: string | null | undefined, alternativa = '—'",
+     "body": "const partes = String(nome ?? '') .trim() .split(/\\s+/) .filter(Boolean); if (partes.length === 0) return alternativa; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();"
+    }
+   ]
+  },
   "src/utils/regrasSolicitacaoFerias.ts": {
    "path": "src/utils/regrasSolicitacaoFerias.ts",
    "lines": 84,
@@ -326524,6 +327506,33 @@
     "masks local part keeping first and last char",
     "masks entire local part when very short",
     "masks without domain entirely for invalid email"
+   ]
+  },
+  "src/utils/__tests__/pontoGeofencing.test.ts": {
+   "path": "src/utils/__tests__/pontoGeofencing.test.ts",
+   "lines": 238,
+   "is_test": true,
+   "tests": [
+    "pontoGeofencing · distância e situação",
+    "mede a distância com a mesma fórmula do registro de ponto",
+    "descarta registros sem coordenada válida e recalcula a situação pelo raio atual",
+    "normaliza hora, iniciais e origem para os rótulos da tela",
+    "pontoGeofencing · períodos",
+    "fecha a janela do período no dia de hoje",
+    "devolve o intervalo anterior com a mesma duração",
+    "só calcula variação com base comparativa",
+    "pontoGeofencing · conformidade e faixas",
+    "resume totais, conformidade e distância média",
+    "adapta o passo das faixas ao raio configurado, sem assumir 100 m",
+    "classifica cada registro na faixa certa e soma o total",
+    "pontoGeofencing · séries e ordenação",
+    "conta um valor por dia do intervalo, inclusive os dias vazios",
+    "ordena os mais recentes primeiro e respeita o limite",
+    "formata data curta e distância",
+    "pontoGeofencing · vitrine demonstrativa",
+    "reproduz os números da referência no período de 7 dias",
+    "deriva as variações do período anterior (nada digitado no painel)",
+    "exercita o estado de alerta em 30 dias (registros fora do raio)"
    ]
   },
   "src/utils/__tests__/regrasSolicitacaoFerias.test.ts": {
@@ -342553,10 +343562,41 @@
   }
  },
  "git": {
-  "sha": "5f2fa81a90ced4f5c2e763bb929755504d7f7651",
+  "sha": "645def6f9d4f06b5caf806ed69cd09f8fdb0319c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "645def6",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: resgata o painel de geofencing do ponto com mapa real (#883)",
+    "files": [
+     "docs/ponto-geofencing.md",
+     "package-lock.json",
+     "package.json",
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/PontoGeoDistancia.test.tsx",
+     "src/components/__tests__/PontoGeoEstrutura.test.ts",
+     "src/components/__tests__/PontoGeofencingPainel.test.tsx",
+     "src/components/ponto/PontoGeoDistancia.tsx",
+     "src/components/ponto/PontoGeoMapa.tsx",
+     "src/components/ponto/PontoGeoRegistros.tsx",
+     "src/components/ponto/PontoGeofencingPainel.tsx",
+     "src/components/ponto/acoesCardsPonto.ts",
+     "src/components/ponto/vermelhoVibrante.ts",
+     "src/components/ui/__tests__/filter-chip-brilho.test.tsx",
+     "src/components/ui/crescimentoBarras.ts",
+     "src/components/ui/filter-chip.tsx",
+     "src/hooks/usePontoGeofencing.ts",
+     "src/index.css",
+     "src/mocks/pontoGeoMock.ts",
+     "src/pages/PontoPage.tsx",
+     "src/services/batidasPontoService.ts",
+     "src/utils/__tests__/pontoGeofencing.test.ts",
+     "src/utils/pontoGeofencing.ts"
+    ]
+   },
    {
     "sha": "5f2fa81",
     "date": "2026-11-25",
@@ -343244,29 +344284,24 @@
     "files": [
      "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md"
     ]
-   },
-   {
-    "sha": "9924630",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: usa enum valido no tipo de notificacao de workflow (#847)",
-    "files": [
-     "src/services/workflowService.ts"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "package-lock.json",
+    5
+   ],
+   [
+    "package.json",
+    5
+   ],
    [
     ".github/workflows/canonical-migrations.yml",
     4
    ],
    [
-    "package-lock.json",
-    4
-   ],
-   [
-    "package.json",
-    4
+    "scripts/.bundle-budget.json",
+    3
    ],
    [
     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
@@ -343275,10 +344310,6 @@
    [
     "supabase/functions/alertas-dp/index.ts",
     3
-   ],
-   [
-    "scripts/.bundle-budget.json",
-    2
    ],
    [
     "supabase/migrations/20260719170000_security_indexes_constraints.verify.sql",
@@ -343301,39 +344332,39 @@
     2
    ],
    [
-    "src/components/turnos/BarraFiltrosEscalas.tsx",
+    "docs/ponto-geofencing.md",
     1
    ],
    [
-    "src/components/turnos/CabecalhoTurnos.tsx",
+    "src/components/__tests__/PontoGeoDistancia.test.tsx",
     1
    ],
    [
-    "src/components/turnos/CalendarioMensal.tsx",
+    "src/components/__tests__/PontoGeoEstrutura.test.ts",
     1
    ],
    [
-    "src/components/turnos/CalendarioSemanal.tsx",
+    "src/components/__tests__/PontoGeofencingPainel.test.tsx",
     1
    ],
    [
-    "src/components/turnos/ColunaLateralTurnos.tsx",
+    "src/components/ponto/PontoGeoDistancia.tsx",
     1
    ],
    [
-    "src/components/turnos/DialogoConflitos.tsx",
+    "src/components/ponto/PontoGeoMapa.tsx",
     1
    ],
    [
-    "src/components/turnos/DialogoDetalhesEscala.tsx",
+    "src/components/ponto/PontoGeoRegistros.tsx",
     1
    ],
    [
-    "src/components/turnos/DialogoDiaEscalas.tsx",
+    "src/components/ponto/PontoGeofencingPainel.tsx",
     1
    ],
    [
-    "src/components/turnos/DialogoGerenciarTurnos.tsx",
+    "src/components/ponto/acoesCardsPonto.ts",
     1
    ]
   ]

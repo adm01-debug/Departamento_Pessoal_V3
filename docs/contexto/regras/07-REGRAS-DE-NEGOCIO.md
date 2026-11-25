@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5f2fa81a90` · branch `main` · 2026-11-25 13:15 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `645def6f9d` · branch `main` · 2026-11-25 13:38 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1580,7 +1580,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `elogio` | escreve | `src/mocks/colaboradoresMock.ts` |
 | `tipo` | `email` | compara, escreve | `supabase/functions/enviar-email-admissao/index.ts`<br>`supabase/functions/notificacao/index.ts`<br>`supabase/functions/pix-lote/index.ts`<br>`supabase/functions/processar-agendamentos/filaNotificacoes.ts` |
 | `tipo` | `empresa` | escreve | `src/mocks/desempenhoMock.ts`<br>`src/services/rescisaoService.ts` |
-| `tipo` | `entrada` | compara, escreve | `src/components/ponto/PontoClockRegister.tsx`<br>`src/hooks/usePonto.ts`<br>`src/hooks/usePontoOffline.ts`<br>`src/pages/ControleAcessoPage.tsx`<br>`src/pages/PontoKioskPage.tsx`<br>… +6 |
+| `tipo` | `entrada` | compara, escreve | `src/components/ponto/PontoClockRegister.tsx`<br>`src/hooks/usePonto.ts`<br>`src/hooks/usePontoOffline.ts`<br>`src/mocks/pontoGeoMock.ts`<br>`src/pages/ControleAcessoPage.tsx`<br>… +7 |
 | `tipo` | `equipe` | escreve | `src/mocks/desempenhoMock.ts` |
 | `tipo` | `evp` | compara | `supabase/functions/pix-lote/index.ts` |
 | `tipo` | `exame` | escreve | `src/components/dashboard/useMorningBriefing.ts` |
@@ -1852,6 +1852,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | TransitionDirection | left \| right \| up \| down | `src/components/layout/PageTransition.tsx` |
 | DarfIrrfSituacao | sem_folha \| nao_calculada \| sem_itens | `src/components/obrigacoes/DarfTab.tsx` |
 | GuiaTabela | guias_fgts \| guias_inss | `src/components/obrigacoes/GuiasTable.tsx` |
+| ModoVisualizacaoGeo | mapa \| satelite \| calor | `src/components/ponto/PontoGeoMapa.tsx` |
 | StatusColetor | online \| atrasado \| nunca \| revogado | `src/components/ponto/relogio/statusColetor.ts` |
 | ScenarioParameterUnit | integer \| currency \| percentage | `src/components/premiacoes/ScenarioParameterCard.tsx` |
 | CategoriaAuditoriaId | todas \| campanhas \| pagamentos \| regras \| conciliacao \| integracoes \| aprovacoes | `src/components/premiacoes/auditoriaComum.ts` |
@@ -1901,7 +1902,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | ModoPeriodo | semana \| mes | `src/components/turnos/turnosCalendario.ts` |
 | VisualizacaoTurnos | semana \| mes \| lista | `src/components/turnos/turnosCalendario.ts` |
 | RecorrenciaEscala | unica \| diaria \| semanal | `src/components/turnos/turnosCalendario.ts` |
-| VarianteFilterChip | padrao \| compacto | `src/components/ui/filter-chip.tsx` |
+| VarianteFilterChip | padrao \| compacto \| brilho | `src/components/ui/filter-chip.tsx` |
+| TomChipBrilho | primary \| success \| warning \| destructive \| neutro | `src/components/ui/filter-chip.tsx` |
 | WfNodeType | start \| end \| aprovador \| gateway_xor \| gateway_and \| email \| delay \| webhook | `src/components/workflows/WorkflowDesigner.tsx` |
 | RegimeTributario | simples_nacional \| lucro_presumido \| lucro_real \| mei | `src/constants/regimes.ts` |
 | TipoRubrica | provento \| desconto \| informativa | `src/constants/rubricas.ts` |
@@ -1964,6 +1966,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | TimelineEventType | vinculo \| salario \| contrato \| cargo \| promocao \| transferencia \| ferias \| afastamento \| treinamento \| avaliacao \| onboarding \| medida_disciplinar \| desligamento \| auditoria | `src/types/timelineEvent.ts` |
 | DocFileKind | pdf \| image \| word \| excel \| archive \| unknown | `src/utils/documentFileType.ts` |
 | SignedFileType | application/pdf \| image/jpeg \| image/png \| application/x-pkcs12 | `src/utils/fileSignature.ts` |
+| PeriodoGeo | hoje \| 7d \| 30d \| personalizado | `src/utils/pontoGeofencing.ts` |
 | OrigemCalculoRescisao | local \| servidor | `src/utils/rescisaoPDF.ts` |
 | TipoVerbaRescisoria | provento \| desconto | `src/utils/rescisaoVerbas.ts` |
 | TEMPLATE_HEADERS | 'Nome Completo', 'CPF', 'Email', 'Telefone', 'Cargo', 'Departamento', 'Salário', 'Data Admissão', 'Data Nascimento', 'PIS', 'RG', | `src/utils/importacao/columnMap.ts` |
@@ -3418,6 +3421,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const cleaned = cpf.replace(/\D/g, ''); // Rejeita tamanho inválido ou todos os dígitos iguais (ex.: 111.111.111-11). if (cleaned.length !== 11 || /^(\d)\1{10}$/.test(cleaned)) return false; let sum = 0; for (let i = 0; i < 9; i++) sum += parseInt(cleaned[i]) * (10 - i); let d1 = (sum * 10) % 11; if (d1 === 10) d1 = 0; if (d1 !== parseInt(cleaned[9])) return false; sum = 0; for (let i = 0; i < 10; i++) sum += parseInt(cleaned[i]) * (11 - i); let d2 = (sum * 10) % 11; if (d2 === 10) d2 = 0; retur …
   ```
+- **duracaoTotalCrescimento(total: number)** — `src/components/ui/crescimentoBarras.ts`
+  ```
+  const barras = Math.max(0, Math.floor(total)); if (barras === 0) return 0; return CRESCIMENTO_BARRA_DURACAO_MS + (barras - 1) * CRESCIMENTO_BARRA_INTERVALO_MS;
+  ```
 - **formatCurrency(value: number)** — `src/components/ui/currency-input.tsx`
   ```
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -4018,6 +4025,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const base = validatePassword(password); if (!base.valid) return base; const { breached, count } = await checkPasswordBreach(password); const warnings: string[] = []; if (breached) { warnings.push( `Esta senha apareceu em ${count.toLocaleString('pt-BR')} vazamentos de dados. Considere usar outra.` ); } return { ...base, warnings };
   ```
+- **iniciaisDoNome(nome: string | null | undefined, alternativa = '—')** — `src/utils/pontoGeofencing.ts`
+  ```
+  const partes = String(nome ?? '') .trim() .split(/\s+/) .filter(Boolean); if (partes.length === 0) return alternativa; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();
+  ```
 - **validarSaldoFerias(params: { diasDireito: number; uso: UsoPeriodo; diasGozo: number; diasAbono: number; })** — `src/utils/regrasSolicitacaoFerias.ts`
   ```
   const { diasDireito, uso, diasGozo, diasAbono } = params; const saldo = diasDireito - uso.usado; if (diasGozo + diasAbono > saldo) { return `Dias de gozo + abono excedem o direito disponível no período (saldo ${Math.max(saldo, 0)} de ${diasDireito} dias).`; } const limiteAbono = Math.floor(diasDireito / 3); if (uso.abonoUsado + diasAbono > limiteAbono) { return `Abono pecuniário limitado a 1/3 do direito do período: ${limiteAbono} dias (já convertidos ${uso.abonoUsado}) — Art. 143 CLT.`; } if (u …
@@ -4434,6 +4445,16 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `// até 60% — os 40% restantes refletem trabalho assíncrono REAL` | `src/components/ponto/PontoClockRegister.tsx` |
 | `transition={{ duration: 1, delay: i * 0.05 }}` | `src/components/ponto/PontoClockRegister.tsx` |
 | `if (dx <= w * 0.7 && dy <= h * 0.7) return z;` | `src/components/ponto/PontoGeoAnalytics.tsx` |
+| `() => [topo, Math.round(topo * 0.75), Math.round(topo * 0.5), Math.round(topo * 0.25), 0],` | `src/components/ponto/PontoGeoDistancia.tsx` |
+| `* borda de 1,5 px na cor cheia e fundo da mesma cor a 20%. A última posição é a` | `src/components/ponto/PontoGeoDistancia.tsx` |
+| `* cheia do token + preenchimento da MESMA cor a 20% — o par `stroke`/` | `src/components/ponto/PontoGeoDistancia.tsx` |
+| `* saltar aos olhos. No hover o preenchimento sobe para 30% — sem sombra, sem` | `src/components/ponto/PontoGeoDistancia.tsx` |
+| `* Zoom que faz o diâmetro do perímetro caber em ~62% da altura do mapa — assim` | `src/components/ponto/PontoGeoMapa.tsx` |
+| `const metrosPorPixel = (2 * raio) / (altura * 0.62);` | `src/components/ponto/PontoGeoMapa.tsx` |
+| `125% rende ~45px) e com o mesmo respiro horizontal (`px-3.5`).` | `src/components/ponto/PontoGeofencingPainel.tsx` |
+| `* `hover:text-primary-glow` = `--primary-glow` (68 100% 58% no claro, 60% no` | `src/components/ponto/acoesCardsPonto.ts` |
+| `* `text-primary` = `--primary` (68 100% 48% — o mesmo valor nos dois temas).` | `src/components/ponto/acoesCardsPonto.ts` |
+| `* escala de 125% do `<html>` só os converte em 30px / 15px / 10px / 12,5px na` | `src/components/ponto/acoesCardsPonto.ts` |
 | `transition={{ delay: i * 0.05 }}` | `src/components/portal/PortalFinanceiroTab.tsx` |
 | `transition={{ delay: 0.25 + i * 0.04 }}` | `src/components/portal/PortalOverviewTab.tsx` |
 | `* · Sem payout (0 colaboradores, 0% de bônus ou 0% de meta) não existe ROI:` | `src/components/premiacoes/RewardsSimulator.tsx` |
@@ -4474,6 +4495,20 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `// saída ele só cai depois da 1ª fase — quando a caixa já está com 16% da` | `src/components/ui/cascade-motion.ts` |
 | ``select.tsx`, não uma cópia. Content acima continua 100% Radix` | `src/components/ui/dropdown-menu.tsx` |
 | `* ~23% do percurso: sobreposição clara, cascata percebida card a card, e uma` | `src/components/ui/entradaGlobal.ts` |
+| `* + pílula do contador a 15%; selecionado = a MESMA família um` | `src/components/ui/filter-chip.tsx` |
+| `* A variante `brilho` acende em VIDRO (tinta de 20% + halo) porque nas telas` | `src/components/ui/filter-chip.tsx` |
+| `* degrau acima (borda 55–60%, tinta 20%, texto cheio) + o HALO` | `src/components/ui/filter-chip.tsx` |
+| `* nos DOIS estados — repouso = borda 25% + tinta 10% + texto 90%` | `src/components/ui/filter-chip.tsx` |
+| `* repouso borda 25% + tinta 10% + texto 90% + pílula do contador a 15%` | `src/components/ui/filter-chip.tsx` |
+| `* selecionado borda 55–60% + tinta 20% + texto cheio + halo `shadow-glow*`` | `src/components/ui/filter-chip.tsx` |
+| `/** Fundo no repouso: tinta de 10% da família. */` | `src/components/ui/filter-chip.tsx` |
+| `/** Fundo no selecionado: tinta de 20% (vidro, nunca preenchimento opaco). */` | `src/components/ui/filter-chip.tsx` |
+| `/** Pílula do contador no repouso (tinta 15% + número na cor da família). */` | `src/components/ui/filter-chip.tsx` |
+| `/** Pílula do contador no selecionado (tinta 25% + número na cor cheia). */` | `src/components/ui/filter-chip.tsx` |
+| `// 20%, borda 55–60%, texto cheio) + o HALO do tema. Quem destaca é` | `src/components/ui/filter-chip.tsx` |
+| `// botão. O número mora na pílula translúcida da família (tinta 15% no` | `src/components/ui/filter-chip.tsx` |
+| `// repouso, 25% no aceso) na cor do status — a MESMA leitura dos chips` | `src/components/ui/filter-chip.tsx` |
+| `: // INATIVO BRILHO = casulo COLORIDO da mesma família (borda 25%,` | `src/components/ui/filter-chip.tsx` |
 | `* deslocado 150% + escalado 2.5x) e desliza para o centro no hover,` | `src/components/ui/flow-hover-button.tsx` |
 | `before:rounded-[100%] before:transition-transform before:duration-700 before:content-['']` | `src/components/ui/flow-hover-button.tsx` |
 | `* A COR: `--background` (216 48% 8% no tema escuro) é o token mais ESCURO do` | `src/components/ui/linha-tabela-hover.ts` |
@@ -4504,6 +4539,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `valor_fgts: Math.round(salario * 0.08),` | `src/mocks/colaboradoresMock.ts` |
 | `valor_inss: Math.round(salario * 0.09),` | `src/mocks/colaboradoresMock.ts` |
 | `valor_irrf: Math.round(salario * 0.05),` | `src/mocks/colaboradoresMock.ts` |
+| `* → variações reais do mock: total +8%, dentro +8%, fora 0%, distância -12%` | `src/mocks/pontoGeoMock.ts` |
 | `transition={{ delay: 0.2 + i * 0.08 }}` | `src/pages/AssistenteIAPage.tsx` |
 | `transition={{ delay: index * 0.01 }}` | `src/pages/AuditoriaPage.tsx` |
 | `* Só um payload 100% UUID vai à RPC real — mesmo com mocks exibidos na tela.` | `src/pages/AvaliacaoPage.tsx` |
@@ -4534,32 +4570,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `diff: Math.abs(vf + tc - provF) > sal * 0.05 ? Math.abs(vf + tc - provF) : Math.abs(v13 - prov13),` | `src/pages/PassivoTrabalhistaPage.tsx` |
 | `return { mes: format(d, 'MMM/yy', { locale: ptBR }), valor: tTotal * (1 + i * 0.015) };` | `src/pages/PassivoTrabalhistaPage.tsx` |
 | `tipo: Math.abs(vf + tc - provF) > sal * 0.05 ? 'Férias' : '13º',` | `src/pages/PassivoTrabalhistaPage.tsx` |
-| `transition={{ delay: i * 0.1 }}` | `src/pages/PassivoTrabalhistaPage.tsx` |
-| `transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}` | `src/pages/PontoKioskPage.tsx` |
-| `// 100% e o ponto era registrado independente de qualquer checagem).` | `src/pages/PontoPage.tsx` |
-| `// desliga o deslocamento — conteúdo 100% visível.` | `src/pages/PremiacoesPage.tsx` |
-| `<Cell key={`cell-${index}`} fillOpacity={0.8 + (index / trendData.length) * 0.2} />` | `src/pages/ProvisoesPage.tsx` |
-| `transition={{ delay: i * 0.05 }}` | `src/pages/ProvisoesPage.tsx` |
-| `placeholder="salario_base * 0.08"` | `src/pages/RubricasPage.tsx` |
-| `transition={{ delay: i * 0.02 }}` | `src/pages/RubricasPage.tsx` |
-| `transition={{ delay: i * 0.05 }}` | `src/pages/RubricasPage.tsx` |
-| `transition={{ delay: i * 0.1 }}` | `src/pages/SegurancaPage.tsx` |
-| `transition={{ delay: i * 0.05 }}` | `src/pages/WorkflowsPage.tsx` |
-| `custoTotalEmpresa: totalProventos + totalProventos * 0.278 + fgts,` | `src/pages/folhaResumo.ts` |
-| `* Calcula o custo de VT considerando o limite de 6% do salário base (Lei 7.418/85)` | `src/services/calculoBeneficiosService.ts` |
-| `const descontoMaximo = salario * 0.06;` | `src/services/calculoBeneficiosService.ts` |
-| `// QA-r4: Math.trunc(9.95*100) perdia 1 centavo (~5,9% dos valores) —` | `src/services/cnabService.ts` |
-| `export const fgtsService = { calcular: (salario: number) => salario * 0.08 };` | `src/services/index.ts` |
-| `// query inteira em runtime, quebrando 100% das tentativas de calcular` | `src/services/rescisaoService.ts` |
-| `// vira HE 50% como antes. Registro novo sempre grava '00:00' nas` | `src/services/folha/calculoLoteService.ts` |
-| `const desc = v.valor_mensal ? v.valor_mensal * 0.2 : 0;` | `src/services/folha/calculoLoteService.ts` |
-| `const descontoMaximoVT = Number(colab.salario_base \|\| 0) * 0.06;` | `src/services/folha/calculoLoteService.ts` |
-| `// 2b. Adicional noturno 20% (CLT art. 73) — horas trabalhadas 22h–05h.` | `src/utils/folhaCalc.ts` |
-| `* (somente o período efetivamente indenizado: 100% sem justa causa,` | `src/utils/rescisaoCalc.ts` |
-| `* - Art. 484-A: aviso 50%, multa FGTS 20%, saque FGTS limitado a 80% e` | `src/utils/rescisaoCalc.ts` |
-| `* - Súmula 14 TST (culpa recíproca): aviso, férias proporcionais e 13º a 50%,` | `src/utils/rescisaoCalc.ts` |
-| `* 50% dos dias restantes — provento para o empregado ou desconto a favor` | `src/utils/rescisaoCalc.ts` |
-| … +66 linhas — lista completa em `context.json` | |
+| … +91 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -4756,6 +4767,14 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `REVEAL_CLOSE_WAVE_STEP` | `0.05` | `src/components/organograma/organogramaReveal.ts` |
 | `REVEAL_MAX_STAGGERED_CLOSE_BLOCKS` | `3` | `src/components/organograma/organogramaReveal.ts` |
 | `TILE` | `256` | `src/components/ponto/PontoGeoAnalytics.tsx` |
+| `FOLGA` | `6` | `src/components/ponto/PontoGeoDistancia.tsx` |
+| `MINIMO_PONTOS_CALOR` | `5` | `src/components/ponto/PontoGeofencingPainel.tsx` |
+| `VERMELHO_TEXTO` | `'text-[#FF4545]'` | `src/components/ponto/vermelhoVibrante.ts` |
+| `VERMELHO_TRACO` | `'stroke-[#EF4444]'` | `src/components/ponto/vermelhoVibrante.ts` |
+| `VERMELHO_SOLIDO` | `'bg-[#EF4444]'` | `src/components/ponto/vermelhoVibrante.ts` |
+| `VERMELHO_FUNDO` | `'bg-[rgba(239,68,68,0.14)]'` | `src/components/ponto/vermelhoVibrante.ts` |
+| `VERMELHO_BORDA` | `'border-[rgba(239,68,68,0.55)]'` | `src/components/ponto/vermelhoVibrante.ts` |
+| `VERMELHO_BORDA_SUAVE` | `'border-[rgba(239,68,68,0.32)]'` | `src/components/ponto/vermelhoVibrante.ts` |
 | `SEM_EFEITO` | `'sem_efeito'` | `src/components/ponto/relogio/JustificativasRelogioTab.tsx` |
 | `MAX_CAMPO` | `60` | `src/components/ponto/relogio/RelogiosPanel.tsx` |
 | `ONLINE_MS` | `30` | `src/components/ponto/relogio/statusColetor.ts` |
@@ -4837,6 +4856,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `CASCADE_ITEM_DURATION_OUT` | `0.28` | `src/components/ui/cascade-motion.ts` |
 | `CASCADE_ITEM_DURATION_IN` | `0.4` | `src/components/ui/cascade-motion.ts` |
 | `CASCADE_OVERLAY_OPEN_DURATION` | `0.3` | `src/components/ui/cascade-motion.ts` |
+| `CRESCIMENTO_BARRA_DURACAO_MS` | `900` | `src/components/ui/crescimentoBarras.ts` |
+| `CRESCIMENTO_BARRA_INTERVALO_MS` | `100` | `src/components/ui/crescimentoBarras.ts` |
 | `MAX_ENTRADA_INDEX` | `8` | `src/components/ui/entrada-cards.tsx` |
 | `MAX_SLOT_ENTRADA_CARD_GLOBAL` | `11` | `src/components/ui/entradaGlobal.ts` |
 | `ATTR_ESCOPO_ENTRADA` | `'data-entrada-escopo'` | `src/components/ui/entradaGlobal.ts` |
@@ -4857,17 +4878,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `GW_H` | `56` | `src/components/workflows/WorkflowDesigner.tsx` |
 | `PORT_R` | `7` | `src/components/workflows/WorkflowDesigner.tsx` |
 | `MIN_ZOOM` | `0.25` | `src/components/workflows/WorkflowDesigner.tsx` |
-| `MAX_ZOOM` | `2` | `src/components/workflows/WorkflowDesigner.tsx` |
-| `AUTH_INIT_TIMEOUT_MS` | `10000` | `src/contexts/AuthContext.tsx` |
-| `USER_ROLES_TIMEOUT_MS` | `5000` | `src/contexts/AuthContext.tsx` |
-| `MOBILE_BREAKPOINT` | `768` | `src/hooks/use-mobile.tsx` |
-| `PROCESSED_ATTR` | `'data-stagger-applied'` | `src/hooks/use-stagger-cards.ts` |
-| `MAX_STAGGER_INDEX` | `8` | `src/hooks/use-stagger-cards.ts` |
-| `ALPHABET` | `'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'` | `src/hooks/useAdmissaoWorkflow.ts` |
-| `LOCAL_MAX_ATTEMPTS` | `5` | `src/hooks/useBruteForceProtection.ts` |
-| `LOCAL_LOCKOUT_MS` | `5` | `src/hooks/useBruteForceProtection.ts` |
-| `MARGEM_REDE_SEGURANCA_MS` | `250` | `src/hooks/useEntradaCardConcluida.ts` |
-| … +181 linhas — lista completa em `context.json` | | |
+| … +194 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5520,7 +5531,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 |        className= | `src/components/treinamentos/TreinamentosTabela.tsx` |
 | Erro ao desvincular curso | `src/components/treinamentos/TrilhaCursosSection.tsx` |
 | Erro ao vincular | `src/components/treinamentos/TrilhaCursosSection.tsx` |
-| … +718 linhas — lista completa em `context.json` | |
+| … +719 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5595,7 +5606,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (9957 testes em 781 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10024 testes em 786 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5666,6 +5677,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/pushNotificationService.test.ts` | 28 | pushNotificationService.isSupported · returns false when serviceWorker is absent · returns false when PushManager is absent · pushNotificationService.getSubscription … |
 | `src/utils/__tests__/format.test.ts` | 28 | format — resiliência a entradas inválidas · formatDate(%p) → fallback · formatCurrency(%p) → fallback · respeita fallback customizado … |
 | `supabase/functions/external-db-bridge/validation.test.ts` | 28 | tabela: injeção rejeitada · tabela: nomes legítimos aceitos · denylist: tabelas sensíveis presentes · colunas: injeção/subquery rejeitada … |
+| `src/components/__tests__/PontoGeoEstrutura.test.ts` | 27 | Geofencing · mapa · desenha o perímetro com o raio REAL da unidade e borda tracejada · mantém as três visualizações reais (mapa, satélite e calor) · não usa o renderer de canvas do Leaflet (intercepta o ponteiro) … |
 | `src/pages/__tests__/OnboardingJornada.test.tsx` | 27 | Jornada de Onboarding — card e estado (cobertura herdada) · shows loading spinner while fetching · shows empty state when no onboarding data · renders the collaborator header (name + cargo • departamento + % progress) … |
 | `src/schemas/esocial/__tests__/sstValidators.test.ts` | 27 | validarS2210 · returns valid for complete data · errors when cpfTrab is missing · errors for invalid CPF … |
 | `src/services/__tests__/admissaoService.test.ts` | 27 | admissaoService.listarAdmissoes · always scopes query by empresa_id (multi-tenant) · returns empty array when supabase returns null · filters by empresa_id when provided … |
@@ -5724,6 +5736,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/pontoOfflineService.test.ts` | 20 | pontoOfflineService.generateIntegrityHash · returns a non-empty string · is deterministic for the same input · differs for different inputs … |
 | `src/services/trainingImages/__tests__/guardrails.test.ts` | 20 | nenhuma conexão com a OpenAI nesta fase · não há endpoint, SDK ou chave da OpenAI no código do frontend · não há chamada de rede no módulo de provedor nem no serviço de solicitação · .env.example expõe apenas a flag de LEITURA, nunca uma chave de cliente … |
 | `src/services/trainingImages/__tests__/openaiProvider.test.ts` | 20 | configuração e chave · sem chave não se declara configurado e não chama fetch · recusa parâmetros fora do contrato antes de qualquer chamada · requisição e resposta … |
+| `src/utils/__tests__/pontoGeofencing.test.ts` | 20 | pontoGeofencing · distância e situação · mede a distância com a mesma fórmula do registro de ponto · descarta registros sem coordenada válida e recalcula a situação pelo raio atual · normaliza hora, iniciais e origem para os rótulos da tela … |
 | `src/components/__tests__/FeriasForm.test.tsx` | 19 | FeriasForm · não renderiza quando fechado · lista só colaboradores não desligados · envia a solicitação com datas e valores calculados e fecha o diálogo … |
 | `src/components/__tests__/LayoutPrimitives.test.tsx` | 19 | PageContainer · renders children · renders title when provided · renders description when provided … |
 | `src/components/__tests__/PendenciasAprovacao.test.tsx` | 19 | fila de aprovação — controles padronizados por vínculo · registro REAL com vínculo provado: Ver, Devolver e Aprovar habilitados (nesta ordem) · registro REAL SEM o vínculo: os controles continuam VISÍVEIS, porém desabilitados · registro REAL com vínculo não avaliável ( … |
@@ -5897,9 +5910,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/CascadeSaidaPerfis.test.ts` | 10 | cascade-motion — perfil PADRÃO (comportamento histórico intacto) · mantém 0,12 s por bloco, sem teto, e 0,55 s de caixa · é o mesmo  · a caixa só encolhe depois da cascata (delay) e em 0,55 s … |
 | `src/components/__tests__/DarfTab.test.tsx` | 10 | DarfTab · renders DARF title · renders IRRF label · does not render non-payroll taxes (PIS/COFINS, CSLL) … |
 | `src/components/__tests__/DesempenhoBarrasProgresso.test.tsx` | 10 | barra de progresso — paridade com  · a régua do módulo é, número por número, a do card de referência · props da barra: 0 → pct%, com o stagger por índice · normaliza o percentual (limites 0–100 e valor inválido) … |
-| `src/components/__tests__/ESocialAuditDialog.test.tsx` | 10 | ESocialAuditDialog · renders honest dialog title when open (sem alegar IA) · renders description with the number of eventos checked · shows results immediately, without fake progress bar … |
-| `src/components/__tests__/EdicaoFeedbackDemo.test.ts` | 10 | edição de feedback cancelado na demonstração · reconhece todas as grafias de cancelamento · cancelado permanece cancelado após reler o armazenamento (F5/novo login) · cancelamento demonstrativo grava status + motivo e confirma a releitura local … |
-| … +481 linhas — lista completa em `context.json` | | |
+| … +486 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6267,4 +6278,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * HABILITAÇÃO (regra ÚNICA, a MESMA do servidor — `pode_aprovar_colaborador` | `src/components/avaliacao/feedbackCanonico.ts` |
 | ENCAMINHAMENTO (RH/admin) — visível apenas para quem pode encaminhar E na | `src/components/avaliacao/feedbackCanonico.ts` |
 | VALIDAÇÃO DO POTENCIAL (RH) — controle LEGADO. O fluxo atual termina na | `src/components/avaliacao/feedbackCanonico.ts` |
-| … +1010 linhas — lista completa em `context.json` | |
+| … +1028 linhas — lista completa em `context.json` | |

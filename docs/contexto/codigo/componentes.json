@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 675,
+ "total": 679,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -2974,7 +2974,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 34,
+   "usado_por": 35,
    "orfao": false
   },
   {
@@ -5703,7 +5703,74 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoGeoDistancia.tsx",
+   "exports": [
+    "PontoGeoDistancia",
+    "PontoGeoDistanciaProps"
+   ],
+   "export_default": null,
+   "linhas": 339,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useCrescimentoBarras"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoGeofencingPainel.tsx",
+   "exports": [
+    "PontoGeofencingPainel",
+    "PontoGeofencingPainelProps"
+   ],
+   "export_default": null,
+   "linhas": 529,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useMovimentoReduzido",
+    "usePontoGeofencing"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoGeoMapa.tsx",
+   "exports": [
+    "CamadasGeo",
+    "ModoVisualizacaoGeo",
+    "PontoGeoMapa",
+    "PontoGeoMapaProps"
+   ],
+   "export_default": null,
+   "linhas": 624,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoGeoRegistros.tsx",
+   "exports": [
+    "PontoGeoRegistros",
+    "PontoGeoRegistrosProps"
+   ],
+   "export_default": null,
+   "linhas": 311,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -7887,7 +7954,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 232,
+   "usado_por": 235,
    "orfao": false
   },
   {
@@ -7902,7 +7969,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 381,
+   "usado_por": 383,
    "orfao": false
   },
   {
@@ -7937,7 +8004,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 286,
+   "usado_por": 289,
    "orfao": false
   },
   {
@@ -7952,7 +8019,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 18,
+   "usado_por": 19,
    "orfao": false
   },
   {
@@ -8148,7 +8215,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 7,
+   "usado_por": 8,
    "orfao": false
   },
   {
@@ -8171,7 +8238,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 162,
+   "usado_por": 163,
    "orfao": false
   },
   {
@@ -8197,7 +8264,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 37,
+   "usado_por": 38,
    "orfao": false
   },
   {
@@ -8237,15 +8304,16 @@
    "exports": [
     "FilterChip",
     "FilterChipProps",
+    "TomChipBrilho",
     "VarianteFilterChip"
    ],
    "export_default": null,
-   "linhas": 136,
+   "linhas": 414,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "orfao": false
   },
   {
@@ -8438,7 +8506,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 17,
+   "usado_por": 18,
    "orfao": false
   },
   {
@@ -8520,7 +8588,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 135,
+   "usado_por": 136,
    "orfao": false
   },
   {
@@ -8762,7 +8830,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 120,
+   "usado_por": 121,
    "orfao": false
   },
   {
