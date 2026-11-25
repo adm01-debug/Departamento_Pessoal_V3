@@ -23,6 +23,7 @@ import {
   BrainCircuit,
   BarChart3,
   Map as MapIcon,
+  ClipboardList,
   FileSignature,
 } from 'lucide-react';
 import { pontoService, batidasPontoService } from '@/services';
@@ -48,7 +49,7 @@ import { PontoWeekSummary } from '@/components/ponto/PontoWeekSummary';
 import { PontoAdjustmentRequests } from '@/components/ponto/PontoAdjustmentRequests';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PontoAuditTimeline } from '@/components/ponto/PontoAuditTimeline';
+import { AuditoriaPonto } from '@/components/ponto/AuditoriaPonto';
 import { GestaoPontoAnalytics } from '@/components/ponto/GestaoPontoAnalytics';
 import { PontoGeofencingPainel } from '@/components/ponto/PontoGeofencingPainel';
 import { PontoIndicadoresKpi } from '@/components/ponto/PontoIndicadoresKpi';
@@ -649,6 +650,9 @@ export default function PontoPage() {
                 <TabsTrigger value="geofencing" className="gap-2">
                   <MapIcon className="h-4 w-4" /> Geofencing
                 </TabsTrigger>
+                <TabsTrigger value="registros" className="gap-2">
+                  <ClipboardList className="h-4 w-4" /> Registros
+                </TabsTrigger>
                 <TabsTrigger value="ajustes" className="gap-2">
                   <Settings className="h-4 w-4" /> Ajustes
                 </TabsTrigger>
@@ -668,13 +672,16 @@ export default function PontoPage() {
                 <PontoGeofencingPainel empresaId={empresaAtual?.id} />
               </TabsContent>
 
-              <TabsContent value="ajustes" className="space-y-6">
+              <TabsContent value="registros" className="space-y-4">
                 <PontoAdjustmentRequests />
+              </TabsContent>
+
+              <TabsContent value="ajustes" className="space-y-6">
                 <GestaoRegistrosPonto />
               </TabsContent>
 
               <TabsContent value="auditoria">
-                <PontoAuditTimeline />
+                <AuditoriaPonto />
               </TabsContent>
 
               <TabsContent value="espelhos-papel">
