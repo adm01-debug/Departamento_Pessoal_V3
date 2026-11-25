@@ -93,11 +93,11 @@ objetos que o banco real não tem (#880) e com 4 defeitos de SQL da `p4_071` (#8
 
 Lote de 17 migrations aplicado no projeto `frjbfeamybqsejlvmqbl`:
 
-| passo | run | resultado |
-| --- | --- | --- |
+| passo      | run         | resultado                                       |
+| ---------- | ----------- | ----------------------------------------------- |
 | `validate` | 45609683492 | SUCCESS (primeiro verde de todos os três modos) |
-| `apply` | 45610349420 | SUCCESS |
-| `verify` | 45610901215 | SUCCESS |
+| `apply`    | 45610349420 | SUCCESS                                         |
+| `verify`   | 45610901215 | SUCCESS                                         |
 
 Confirmado por consulta read-only no canônico (run 45611331779): `backup_logs` existe com RLS e 1 policy,
 6 materialized views presentes, `refresh_dashboard_views` **sem** EXECUTE para `anon`, 27 índices do top-20
@@ -126,3 +126,16 @@ mergear e aplicar.
 2. **Horas extras** — `horas-extras/*` (19 arquivos, 14 testes); a página foi modificada, não substituída.
 3. **Demais páginas do port** — cada uma exige comparação funcional (todas têm deleções, nenhuma é
    superconjunto puro da main).
+
+### Entregas do resgate (25/11, todas em `main` ou em PR)
+
+| fatia                                     | PR                       | o que saiu do port e entrou na main                                                                                                                                                                                                                                                       | prova                                                                                                                                           |
+| ----------------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ponto / dashboard                         | #886 (merge `58dd46c64`) | 5 cards de resumo (`PontoIndicadoresKpi`, `PontoEquipeStatusCard`, `PontoBancoHorasCard`, `PontoPendenciasCard`, `PontoFechamentoCard`), `indicadoresPonto`, `usePontoDashboard`, `pontoDuracao`, `pontoEquipe` + abas controladas na `PontoPage`                                         | 50 testes de `src/components/ponto`; suíte completa 8350; deploy Production `8063649559` success                                                |
+| Formulário de vaga                        | #887 (merge `08dd398c3`) | a vaga criada pela UI passou a gravar cargo, tipo de contrato, faixa mín/máx, descrição e benefícios (antes só título/departamento/modalidade/quantidade/requisitos)                                                                                                                      | `RecrutamentoPage.vagaForm.test.tsx` (payload real completo + bloqueio de faixa invertida); deploy Production `8063907122` success              |
+| Janela "Ver todas" do desempenho por vaga | #888 (aberta)            | `DesempenhoVagasDialog` (36 KB, estava sem consumidor), `analyticsVisual`, `analyticsVagasFiltros`, `barraProgressoAnalytics`, `animacaoDetalheVaga`, `ui/interacao-cards` e `detalhes`/`SituacaoVaga`/`DetalheVaga`/`construirDetalheVagas`/`resumirDesempenhoVagas` em `analyticsComum` | `desempenhoVagasModal.test.tsx` (do port: KPIs, filtros, ordem, teclado, foco) + 1 caso em `analyticsComum.test.ts`; suíte completa 8373 passed |
+
+Descartes conferidos nesta rodada (trabalho parcial que **não** foi resgatado, por falta de consumidor real ou
+por duplicar regra já existente): `NovaVagaDialog` (wizard de 1324 linhas + `novaVagaRascunho`) — o formulário
+existente foi completado em vez de trocar o fluxo; `PROXIMOS_PASSOS_UI_RECRUTAMENTO`, `roadmap` de analytics e
+os mocks `pontoFluxoMock`/`auditoriaMock`/`dashboardMockData`/`admissoesMock`/`desligamentosMock`.
