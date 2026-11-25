@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3c8c48466af1b36cb76dcdea1ae6acb1432c1b56",
+  "sha": "8697240d1ae3b546910c6f01f4216f03bb3d1751",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 21:28 UTC",
-  "files_total": 4244,
-  "code_files": 3648,
-  "code_lines": 542927
+  "generated_at": "2026-11-25 22:20 UTC",
+  "files_total": 4246,
+  "code_files": 3650,
+  "code_lines": 542982
  },
  "version": "1.3.2",
- "facts_hash": "7dc233a583ecef88",
+ "facts_hash": "42fcc5901afa51e9",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 1339,
+   ".sql": 1341,
    ".tsx": 1143,
    ".ts": 1025,
    ".mjs": 110,
@@ -63813,12 +63813,12 @@
    },
    "prevent_empty_empresa_id": {
     "args": "",
-    "returns": "TRIGGER",
+    "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260719170000_security_indexes_constraints.sql",
+    "src": "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql",
     "security_definer": false,
     "search_path": false,
-    "body": "BEGIN IF NEW.empresa_id IS NOT NULL AND NEW.empresa_id = '' THEN RAISE EXCEPTION 'empresa_id cannot be an empty string'; END IF; RETURN NEW; END;",
+    "body": "BEGIN IF NEW.empresa_id IS NOT NULL AND NEW.empresa_id::text = '' THEN RAISE EXCEPTION 'empresa_id cannot be an empty string'; END IF; RETURN NEW; END;",
     "raises": [
      "empresa_id cannot be an empty string"
     ],
@@ -74052,6 +74052,8 @@
    "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.verify.sql",
    "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql",
    "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.verify.sql",
+   "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql",
+   "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -87238,11 +87240,6 @@
     "src": "supabase/baseline/20260831_canonical/canonical_storage_schema.sql"
    },
    {
-    "function": "prevent_empty_empresa_id",
-    "msg": "empresa_id cannot be an empty string",
-    "src": "supabase/migrations/20260719170000_security_indexes_constraints.sql"
-   },
-   {
     "function": "decrypt_pii",
     "msg": "Este campo foi armazenado como hash irreversível",
     "src": "supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql"
@@ -88091,6 +88088,11 @@
     "function": "agendar_dreno_fila_notificacoes",
     "msg": "pg_net sem http_post(text,jsonb,jsonb,jsonb,integer): sem pg_net nao ha como o cron chamar a funcao.",
     "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
+   },
+   {
+    "function": "prevent_empty_empresa_id",
+    "msg": "empresa_id cannot be an empty string",
+    "src": "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -106724,8 +106726,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 1265,
-   "lines": 87663,
+   "files": 1267,
+   "lines": 87718,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -234738,12 +234740,12 @@
    },
    "prevent_empty_empresa_id": {
     "args": "",
-    "returns": "TRIGGER",
+    "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260719170000_security_indexes_constraints.sql",
+    "src": "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql",
     "security_definer": false,
     "search_path": false,
-    "body": "BEGIN IF NEW.empresa_id IS NOT NULL AND NEW.empresa_id = '' THEN RAISE EXCEPTION 'empresa_id cannot be an empty string'; END IF; RETURN NEW; END;",
+    "body": "BEGIN IF NEW.empresa_id IS NOT NULL AND NEW.empresa_id::text = '' THEN RAISE EXCEPTION 'empresa_id cannot be an empty string'; END IF; RETURN NEW; END;",
     "raises": [
      "empresa_id cannot be an empty string"
     ],
@@ -237316,11 +237318,6 @@
     "src": "supabase/baseline/20260831_canonical/canonical_storage_schema.sql"
    },
    {
-    "function": "prevent_empty_empresa_id",
-    "msg": "empresa_id cannot be an empty string",
-    "src": "supabase/migrations/20260719170000_security_indexes_constraints.sql"
-   },
-   {
     "function": "decrypt_pii",
     "msg": "Este campo foi armazenado como hash irreversível",
     "src": "supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql"
@@ -238169,6 +238166,11 @@
     "function": "agendar_dreno_fila_notificacoes",
     "msg": "pg_net sem http_post(text,jsonb,jsonb,jsonb,integer): sem pg_net nao ha como o cron chamar a funcao.",
     "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
+   },
+   {
+    "function": "prevent_empty_empresa_id",
+    "msg": "empresa_id cannot be an empty string",
+    "src": "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -348485,6 +348487,14 @@
    "path": "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.verify.sql",
    "lines": 26
   },
+  "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql": {
+   "path": "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql",
+   "lines": 31
+  },
+  "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.verify.sql": {
+   "path": "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.verify.sql",
+   "lines": 24
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -348880,10 +348890,21 @@
   }
  },
  "git": {
-  "sha": "3c8c48466af1b36cb76dcdea1ae6acb1432c1b56",
+  "sha": "8697240d1ae3b546910c6f01f4216f03bb3d1751",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "8697240",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix: prevent_empty_empresa_id compara uuid com text e para de derrubar toda escrita (#897)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql",
+     "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.verify.sql"
+    ]
+   },
    {
     "sha": "3c8c484",
     "date": "2026-11-25",
@@ -349685,15 +349706,6 @@
     "files": [
      "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql"
     ]
-   },
-   {
-    "sha": "bb8ebe2",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: nao reexecuta o script da extensao pg_cron/pg_net no canonico (#862)",
-    "files": [
-     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -349707,7 +349719,7 @@
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    5
+    6
    ],
    [
     "src/pages/PontoPage.tsx",
@@ -349732,6 +349744,14 @@
    [
     "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.verify.sql",
     2
+   ],
+   [
+    "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.verify.sql",
+    1
    ],
    [
     "src/components/__tests__/BancoHorasCabecalho.test.tsx",
@@ -349767,14 +349787,6 @@
    ],
    [
     "src/components/__tests__/centralAuditoria.test.ts",
-    1
-   ],
-   [
-    "src/components/__tests__/pontoAuditoriaMock.test.ts",
-    1
-   ],
-   [
-    "src/components/dashboard/MetricCard.tsx",
     1
    ]
   ]

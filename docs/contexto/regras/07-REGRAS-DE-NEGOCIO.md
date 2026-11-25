@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3c8c48466a` · branch `main` · 2026-11-25 21:28 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8697240d1a` · branch `main` · 2026-11-25 22:20 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -931,7 +931,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 |---|---|---|
 | `enforce_bucket_name_length` | bucket name "%" is too long (% characters). Max is 100. | `supabase/baseline/20260831_canonical/canonical_storage_schema.sql` |
 | `protect_delete` | Direct deletion from storage tables is not allowed. Use the Storage API instead. | `supabase/baseline/20260831_canonical/canonical_storage_schema.sql` |
-| `prevent_empty_empresa_id` | empresa_id cannot be an empty string | `supabase/migrations/20260719170000_security_indexes_constraints.sql` |
 | `decrypt_pii` | Este campo foi armazenado como hash irreversível | `supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql` |
 | `decrypt_pii` | Chave de descriptografia não configurada | `supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql` |
 | `documento_registrar` | empresa_id não identificado para o contexto informado | `supabase/migrations/20260726110000_p2_037_consolidate_duplicates.sql` |
@@ -1102,6 +1101,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `reprocessar_ponto_relogio` | Sessao obrigatoria | `supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql` |
 | `reprocessar_ponto_relogio` | Sem permissao para reprocessar o ponto desta empresa | `supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql` |
 | `agendar_dreno_fila_notificacoes` | pg_net sem http_post(text,jsonb,jsonb,jsonb,integer): sem pg_net nao ha como o cron chamar a funcao. | `supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql` |
+| `prevent_empty_empresa_id` | empresa_id cannot be an empty string | `supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql` |
 | `_purge_audit_log_internal` | Retenção mínima de 30 dias | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_security_definer_rpcs` | access denied | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_user_roles` | Apenas administradores podem listar papéis de usuário | `supabase/rebaseline/20260831_corrected_public.sql` |

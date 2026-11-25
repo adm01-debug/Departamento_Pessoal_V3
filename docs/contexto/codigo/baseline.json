@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3c8c48466af1b36cb76dcdea1ae6acb1432c1b56",
+  "commit": "8697240d1ae3b546910c6f01f4216f03bb3d1751",
   "branch": "main",
-  "data_commit": "2026-11-25T18:26:47-03:00",
+  "data_commit": "2026-11-25T19:16:45-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "8697240",
+    "data": "2026-11-25",
+    "assunto": "fix: prevent_empty_empresa_id compara uuid com text e para de derrubar toda escrita (#897)"
+   },
    {
     "sha": "3c8c484",
     "data": "2026-11-25",
@@ -126,14 +131,9 @@
     "sha": "2669333",
     "data": "2026-11-24",
     "assunto": "feat(avaliacao): Ver todos dos Talentos em destaque abre a janela completa (resgate do trabalho do Muri) (#870)"
-   },
-   {
-    "sha": "a19e496",
-    "data": "2026-11-24",
-    "assunto": "docs(auditoria): registra o resgate do trabalho do agente Muri e a regra que evita regressao (#871)"
    }
   ],
-  "arquivos_mudados_7d": 795,
+  "arquivos_mudados_7d": 792,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -185,7 +185,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 37
+    "mudancas": 38
    },
    {
     "pasta": "src/pages/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 37
+    "mudancas": 38
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -234,10 +234,6 @@
     "mudancas": 10
    },
    {
-    "arquivo": "scripts/automation.config.json",
-    "mudancas": 9
-   },
-   {
     "arquivo": "src/index.css",
     "mudancas": 9
    },
@@ -247,6 +243,10 @@
    },
    {
     "arquivo": "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "scripts/automation.config.json",
     "mudancas": 8
    },
    {
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4230,
+  "arquivos_total": 4232,
   "arquivos_codigo": 2311,
   "linhas_codigo": 468389,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 127,
   "edge_functions": 68,
   "tabelas": 438,
-  "migrations": 1265,
+  "migrations": 1267,
   "cron_jobs": 43,
   "testes": 870,
   "workflows": 21,
