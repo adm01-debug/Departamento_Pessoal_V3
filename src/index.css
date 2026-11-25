@@ -1165,3 +1165,10 @@
     animation: none;
   }
 }
+
+/* Autofill do navegador nos campos do login: sem o par abaixo o Chrome pinta o
+   campo de branco e o texto digitado some no tema escuro. */
+.campo-login:-webkit-autofill {
+  -webkit-text-fill-color: hsl(var(--foreground));
+  box-shadow: 0 0 0 1000px hsl(var(--background)) inset;
+}
