@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "61145b4f55d138b19f5d49e20124d58503e5c42c",
+  "commit": "3cb33da5c8f164c7dd52ae8c6ccd691dbf6d36a5",
   "branch": "main",
-  "data_commit": "2026-11-25T12:25:12-03:00",
+  "data_commit": "2026-11-25T13:04:21-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3cb33da",
+    "data": "2026-11-25",
+    "assunto": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)"
+   },
+   {
+    "sha": "05b201e",
+    "data": "2026-11-25",
+    "assunto": "feat: resgata a tela de pesquisas de clima do port do Muri (#885)"
+   },
    {
     "sha": "61145b4",
     "data": "2026-11-25",
@@ -121,23 +131,13 @@
     "sha": "c058153",
     "data": "2026-11-23",
     "assunto": "chore(deps-dev): bump the testing group with 2 updates (#845)"
-   },
-   {
-    "sha": "a036a95",
-    "data": "2026-11-23",
-    "assunto": "chore(deps): bump the react-ecosystem group with 2 updates (#844)"
-   },
-   {
-    "sha": "2489b55",
-    "data": "2026-11-23",
-    "assunto": "feat: entrega real de Web Push (VAPID) na fila de notificacoes (#853)"
    }
   ],
-  "arquivos_mudados_7d": 734,
+  "arquivos_mudados_7d": 750,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 378
+    "mudancas": 381
    },
    {
     "pasta": "src/components/ui",
@@ -290,18 +290,18 @@
     "mudancas": 5
    },
    {
-    "arquivo": "docs/prod-readiness.md",
+    "arquivo": "src/App.tsx",
     "mudancas": 5
    },
    {
-    "arquivo": "src/App.tsx",
+    "arquivo": "src/components/desligamentos/index.ts",
     "mudancas": 5
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 290
+    "commits": 289
    },
    {
     "autor": "dependabot[bot]",
@@ -309,26 +309,26 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 4
+    "commits": 5
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 4154,
-  "arquivos_codigo": 2239,
-  "linhas_codigo": 452386,
+  "arquivos_total": 4169,
+  "arquivos_codigo": 2254,
+  "linhas_codigo": 455347,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
-  "modulos": 85,
-  "componentes": 686,
+  "modulos": 86,
+  "componentes": 690,
   "hooks": 126,
   "edge_functions": 68,
   "tabelas": 438,
   "migrations": 1261,
   "cron_jobs": 43,
-  "testes": 841,
+  "testes": 849,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 347
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1094,
-   "linhas": 207505
+   "arquivos": 1108,
+   "linhas": 209757
   },
   "src/constants": {
    "arquivos": 7,
@@ -679,12 +679,12 @@
    "linhas": 213
   },
   "src/mocks": {
-   "arquivos": 4,
-   "linhas": 3793
+   "arquivos": 5,
+   "linhas": 3978
   },
   "src/pages": {
    "arquivos": 145,
-   "linhas": 51160
+   "linhas": 51684
   },
   "src/providers": {
    "arquivos": 4,
@@ -863,7 +863,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 28,
-  "arquivos_acima_500_linhas": 125
+  "arquivos_acima_500_linhas": 126
  },
  "todos": [
   {
@@ -1237,6 +1237,7 @@
    "VITE_HOMOLOG_ORIGEM",
    "VITE_NINEBOX_MODO_REAL",
    "VITE_PDI_MOCK",
+   "VITE_PESQUISAS_MOCK",
    "VITE_PONTO_MOCK",
    "VITE_TREINAMENTOS_MOCK",
    "VITE_TREINAMENTOS_PREVIEW_PROGRESSO"

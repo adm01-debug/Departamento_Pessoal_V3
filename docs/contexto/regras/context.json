@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "61145b4f55d138b19f5d49e20124d58503e5c42c",
+  "sha": "3cb33da5c8f164c7dd52ae8c6ccd691dbf6d36a5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 15:26 UTC",
-  "files_total": 4168,
-  "code_files": 3572,
-  "code_lines": 526704
+  "generated_at": "2026-11-25 16:18 UTC",
+  "files_total": 4183,
+  "code_files": 3587,
+  "code_lines": 529665
  },
  "version": "1.3.2",
- "facts_hash": "b268eeccf55c55d8",
+ "facts_hash": "40637ae201b36bd3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,8 +388,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1335,
-   ".tsx": 1098,
-   ".ts": 998,
+   ".tsx": 1107,
+   ".ts": 1004,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -97147,7 +97147,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 201
+    "deps_count": 218
    },
    {
     "path": "",
@@ -103056,7 +103056,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1094,
+  "components_count": 1108,
   "hooks": [
    {
     "name": "useContacts",
@@ -104719,8 +104719,8 @@
   },
   {
    "module": "src/components",
-   "files": 1094,
-   "lines": 207505,
+   "files": 1108,
+   "lines": 209757,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105393,12 +105393,13 @@
   },
   {
    "module": "src/mocks",
-   "files": 4,
-   "lines": 3793,
+   "files": 5,
+   "lines": 3978,
    "tables": [],
    "exports": [
     "colaboradoresMock.ts: isColaboradoresMockEnabled, MOCK_EMPRESA, getMockUserEmpresas, mockOr, isMockEmpresaId, MOCK_COLABORADORES",
     "desempenhoMock.ts: isDesempenhoMockEnabled, CicloMock, getMockCiclos, MetaMock, getMockMetas, FeedbackMock",
+    "pesquisasClimaMock.ts: isPesquisasMockEnabled, PesquisaMock, getMockPesquisas, bloquearEscritaPesquisas",
     "pontoGeoMock.ts: RAIO_GEO_DEMO_METROS, UNIDADE_GEO_DEMO, isPontoGeoMockEnabled, batidasGeoDemonstrativas",
     "treinamentosMock.ts: isTreinamentosMockEnabled, TreinamentoMock, getMockTreinamentosLista, ParticipacaoTreinamentoMock, getMockParticipacaoTreinamentos, CursoMock"
    ],
@@ -105414,6 +105415,7 @@
    "file_list": [
     "src/mocks/colaboradoresMock.ts",
     "src/mocks/desempenhoMock.ts",
+    "src/mocks/pesquisasClimaMock.ts",
     "src/mocks/pontoGeoMock.ts",
     "src/mocks/treinamentosMock.ts"
    ]
@@ -105421,7 +105423,7 @@
   {
    "module": "src/pages",
    "files": 145,
-   "lines": 51160,
+   "lines": 51684,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -112051,6 +112053,7 @@
     "src/main.tsx",
     "src/mocks/colaboradoresMock.ts",
     "src/mocks/desempenhoMock.ts",
+    "src/mocks/pesquisasClimaMock.ts",
     "src/mocks/pontoGeoMock.ts",
     "src/mocks/treinamentosMock.ts",
     "src/pages/NineBoxPreviewPage.tsx",
@@ -112319,6 +112322,7 @@
     "src/main.tsx",
     "src/mocks/colaboradoresMock.ts",
     "src/mocks/desempenhoMock.ts",
+    "src/mocks/pesquisasClimaMock.ts",
     "src/mocks/pontoGeoMock.ts",
     "src/mocks/treinamentosMock.ts"
    ],
@@ -112811,6 +112815,9 @@
    ],
    "VITE_PDI_MOCK": [
     "src/components/avaliacao/pdiProgressoMock.ts"
+   ],
+   "VITE_PESQUISAS_MOCK": [
+    "src/mocks/pesquisasClimaMock.ts"
    ],
    "VITE_PONTO_MOCK": [
     "src/mocks/pontoGeoMock.ts"
@@ -115999,6 +116006,16 @@
     "rules": "type=password"
    },
    {
+    "file": "src/pages/PesquisasClimaPage.tsx",
+    "field": "pesquisa-inicio",
+    "rules": "type=date"
+   },
+   {
+    "file": "src/pages/PesquisasClimaPage.tsx",
+    "field": "pesquisa-fim",
+    "rules": "type=date"
+   },
+   {
     "file": "src/pages/PromoBrindesPage.tsx",
     "field": "estoque",
     "rules": "type=number"
@@ -116469,6 +116486,26 @@
     "file": "src/components/obrigacoes/GuiasTable.tsx",
     "name": "GuiaTabela",
     "values": "guias_fgts | guias_inss"
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "name": "TipoPesquisa",
+    "values": "clima | enps | satisfacao | custom"
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "name": "StatusPesquisa",
+    "values": "ativa | encerrada | rascunho"
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "name": "PeriodoFiltro",
+    "values": "qualquer | 30d | 90d | ano"
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "name": "Ordenacao",
+    "values": "recentes | antigas | adesao | titulo"
    },
    {
     "file": "src/components/ponto/PontoGeoMapa.tsx",
@@ -119154,7 +119191,11 @@
    },
    {
     "file": "src/pages/PesquisasClimaPage.tsx",
-    "msg": "Erro ao criar pesquisa"
+    "msg": "Não foi possível alterar o status da pesquisa"
+   },
+   {
+    "file": "src/pages/PesquisasClimaPage.tsx",
+    "msg": "Não foi possível excluir a pesquisa"
    },
    {
     "file": "src/pages/PlanosSaudePage.tsx",
@@ -123653,6 +123694,18 @@
     "text": "sem cortar nada que o olho ainda esteja lendo: o que não pode ser atropelado é"
    },
    {
+    "file": "src/components/pesquisas/CardPesquisa.tsx",
+    "text": "a mesma moldura e mudam apenas o miolo:"
+   },
+   {
+    "file": "src/components/pesquisas/PilulaFiltroPesquisa.tsx",
+    "text": "a única fonte de verdade das cores) e redesenha apenas a estrutura, sem a"
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "text": "* Formato MÍNIMO que os cartões/indicadores consomem. As linhas de `pesquisas`"
+   },
+   {
     "file": "src/components/ponto/PontoClockRegister.tsx",
     "text": "(upload + validação biométrica), não mais um timer decorativo até"
    },
@@ -124641,6 +124694,26 @@
     "text": "Devolve `true` quando a ação deve ser ABORTADA, então o chamador só precisa de"
    },
    {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "text": "* ESCOPO: somente apresentação/validação de LAYOUT — os 4 KPIs (Total de"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "text": "* ⚠️ SOMENTE LEITURA. Toda ESCRITA (criar, excluir, ativar pesquisa) é"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "text": "e colaboradoresMock.ts): liga somente com as DUAS condições abaixo — logo,"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "text": "* Ativa o mock apenas em dev e apenas com o opt-in explícito da env var. */"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "text": "ação deve ser ABORTADA, então o chamador só precisa de"
+   },
+   {
     "file": "src/mocks/pontoGeoMock.ts",
     "text": "SOMENTE quando o modo real não tem o que mostrar (nenhuma batida no período"
    },
@@ -124839,6 +124912,10 @@
    {
     "file": "src/pages/OrganogramaPage.tsx",
     "text": "filtro não pode ficar \"esquecido\" aberto pra reaparecer expandido quando a"
+   },
+   {
+    "file": "src/pages/PesquisasClimaPage.tsx",
+    "text": "Estado vazio: a criação agora mora apenas no \"+ Nova Pesquisa\" do"
    },
    {
     "file": "src/pages/PontoKioskPage.tsx",
@@ -152581,6 +152658,11 @@
     "value": "0.2"
    },
    {
+    "file": "src/pages/PesquisasClimaPage.tsx",
+    "name": "BLOCOS_CASCATA_JANELA",
+    "value": "3"
+   },
+   {
     "file": "src/pages/PremiacoesPage.tsx",
     "name": "POR_PAGINA",
     "value": "8"
@@ -156556,6 +156638,66 @@
     "kind": "escreve"
    },
    {
+    "file": "src/components/pesquisas/CardPesquisa.tsx",
+    "field": "status",
+    "value": "rascunho",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/pesquisas/CardPesquisa.tsx",
+    "field": "status",
+    "value": "encerrada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/pesquisas/CardPesquisa.tsx",
+    "field": "status",
+    "value": "rascunho",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/pesquisas/CardPesquisa.tsx",
+    "field": "status",
+    "value": "encerrada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "field": "tipo",
+    "value": "enps",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "field": "status",
+    "value": "ativa",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "field": "status",
+    "value": "encerrada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "field": "status",
+    "value": "rascunho",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "field": "tipo",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/ponto/PontoAdjustmentRequests.tsx",
     "field": "status",
     "value": "pendente",
@@ -159820,6 +159962,72 @@
     "kind": "escreve"
    },
    {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "field": "tipo",
+    "value": "enps",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "field": "tipo",
+    "value": "clima",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "field": "status",
+    "value": "ativa",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "field": "tipo",
+    "value": "enps",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "field": "status",
+    "value": "ativa",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "field": "tipo",
+    "value": "satisfacao",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "field": "status",
+    "value": "encerrada",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "field": "tipo",
+    "value": "custom",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "field": "status",
+    "value": "rascunho",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "field": "tipo",
+    "value": "clima",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/pesquisasClimaMock.ts",
+    "field": "status",
+    "value": "rascunho",
+    "kind": "escreve"
+   },
+   {
     "file": "src/mocks/pontoGeoMock.ts",
     "field": "tipo",
     "value": "entrada",
@@ -161759,32 +161967,32 @@
    },
    {
     "file": "src/pages/PesquisasClimaPage.tsx",
-    "field": "tipo",
-    "value": "clima",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/pages/PesquisasClimaPage.tsx",
     "field": "status",
     "value": "ativa",
     "kind": "escreve"
-   },
-   {
-    "file": "src/pages/PesquisasClimaPage.tsx",
-    "field": "status",
-    "value": "ativa",
-    "kind": "compara"
    },
    {
     "file": "src/pages/PesquisasClimaPage.tsx",
     "field": "status",
     "value": "encerrada",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/PesquisasClimaPage.tsx",
+    "field": "status",
+    "value": "ativa",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/PesquisasClimaPage.tsx",
+    "field": "tipo",
+    "value": "todos",
     "kind": "compara"
    },
    {
     "file": "src/pages/PesquisasClimaPage.tsx",
     "field": "status",
-    "value": "rascunho",
+    "value": "ativa",
     "kind": "compara"
    },
    {
@@ -166452,6 +166660,12 @@
     "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);"
    },
    {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "name": "calcularMetricas",
+    "params": "pesquisas: PesquisaListada[]",
+    "body": "let respostas = 0; let convidados = 0; for (const pesquisa of pesquisas) { const adesao = adesaoDe(pesquisa); if (!adesao.disponivel) continue; respostas += adesao.respostas; convidados += adesao.convidados; } const comEnps = pesquisas .filter((p) => p.tipo === 'enps' && p.enps !== null && p.enps !== undefined) .sort((a, b) => dataDeReferencia(b) - dataDeReferencia(a)); return { total: pesquisas.length, ativas: pesquisas.filter((p) => p.status === 'ativa').length, encerradas: pesquisas.filter((p …"
+   },
+   {
     "file": "src/components/ponto/EspelhosPapelPanel.tsx",
     "name": "aplicar",
     "params": "r: EspelhoPapel",
@@ -167014,6 +167228,12 @@
     "name": "formatCurrency",
     "params": "v: number",
     "body": ""
+   },
+   {
+    "file": "src/pages/PesquisasClimaPage.tsx",
+    "name": "invalidar",
+    "params": "",
+    "body": "qc.invalidateQueries({ queryKey: ['pesquisas'] });"
    },
    {
     "file": "src/pages/PontoPage.tsx",
@@ -168106,6 +168326,14 @@
    {
     "file": "src/components/onboarding/GuidedTour.tsx",
     "line": "setTimeout(() => { close(); }, 2000);"
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "line": "if (periodo === '30d') return subDays(hoje, 30);"
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "line": "if (periodo === '90d') return subDays(hoje, 90);"
    },
    {
     "file": "src/components/ponto/GestaoPontoAnalytics.tsx",
@@ -169574,6 +169802,22 @@
     "line": "O P50 vem da pesquisa salarial mais recente de cada cargo da grade (aba Mercado). Tolerância de ±5%."
    },
    {
+    "file": "src/components/pesquisas/CardPesquisa.tsx",
+    "line": "ele fica inteiro fora da área visível (trilha vazia), em 100%"
+   },
+   {
+    "file": "src/components/pesquisas/CardPesquisa.tsx",
+    "line": "lados) e ganhou `ml-3` = 0,75rem = 15px nesta base de 125%"
+   },
+   {
+    "file": "src/components/pesquisas/barraAdesaoAnim.ts",
+    "line": "* barra de 48% terminaria no verde) e mudaria o degradê aprovado."
+   },
+   {
+    "file": "src/components/pesquisas/pesquisasComum.ts",
+    "line": "* `chipFiltroComum`). Fundo em tint de 10%, borda em 35% e texto na cor cheia"
+   },
+   {
     "file": "src/components/ponto/GestaoPontoAnalytics.tsx",
     "line": "podem gerar horas extras a 100%."
    },
@@ -170100,6 +170344,18 @@
    {
     "file": "src/pages/PassivoTrabalhistaPage.tsx",
     "line": "transition={{ delay: i * 0.1 }}"
+   },
+   {
+    "file": "src/pages/PesquisasClimaPage.tsx",
+    "line": "* 2. faixa horizontal e densa de MÉTRICAS: os 4 indicadores ocupando 100% da"
+   },
+   {
+    "file": "src/pages/PesquisasClimaPage.tsx",
+    "line": "Fechamento (X, rodapé, Esc, clique fora) continua 100% do Radix. */}"
+   },
+   {
+    "file": "src/pages/PesquisasClimaPage.tsx",
+    "line": "{/* 1 · FAIXA DE MÉTRICAS — os quatro indicadores ocupam 100% da largura"
    },
    {
     "file": "src/pages/PontoKioskPage.tsx",
@@ -180448,6 +180704,42 @@
     "name": "renders file input for upload"
    },
    {
+    "file": "src/components/__tests__/IndicadorPesquisa.test.tsx",
+    "name": "IndicadorPesquisa — variação à direita, centralizada no número"
+   },
+   {
+    "file": "src/components/__tests__/IndicadorPesquisa.test.tsx",
+    "name": "mostra título, valor e variação"
+   },
+   {
+    "file": "src/components/__tests__/IndicadorPesquisa.test.tsx",
+    "name": "transforma o card em grid de 2 linhas × 3 colunas (ícone · texto · pílula)"
+   },
+   {
+    "file": "src/components/__tests__/IndicadorPesquisa.test.tsx",
+    "name": "mantém o ícone atravessando as duas linhas (centro do card)"
+   },
+   {
+    "file": "src/components/__tests__/IndicadorPesquisa.test.tsx",
+    "name": "coloca o título na linha 1 e o valor na linha 2 da coluna de texto"
+   },
+   {
+    "file": "src/components/__tests__/IndicadorPesquisa.test.tsx",
+    "name": "envia a pílula para a coluna 3 / linha 2, encostada à direita"
+   },
+   {
+    "file": "src/components/__tests__/IndicadorPesquisa.test.tsx",
+    "name": "aumenta a escala da pílula sem mexer nas cores"
+   },
+   {
+    "file": "src/components/__tests__/IndicadorPesquisa.test.tsx",
+    "name": "sem variação a coluna 3 não existe e o card não muda de grade"
+   },
+   {
+    "file": "src/components/__tests__/IndicadorPesquisa.test.tsx",
+    "name": "não voltou a usar a linha de apoio antiga (9px sob o número)"
+   },
+   {
     "file": "src/components/__tests__/InlineTabs.test.tsx",
     "name": "PreferenciasTab"
    },
@@ -184338,6 +184630,46 @@
    {
     "file": "src/components/__tests__/PermissionRoute.test.tsx",
     "name": "a negativa nao imprime id nem e-mail do usuario"
+   },
+   {
+    "file": "src/components/__tests__/PesquisasClimaGrade.test.ts",
+    "name": "PesquisasClimaPage — grade de cartões sem o slot vazio de criação"
+   },
+   {
+    "file": "src/components/__tests__/PesquisasClimaGrade.test.ts",
+    "name": "não renderiza mais o card "
+   },
+   {
+    "file": "src/components/__tests__/PesquisasClimaGrade.test.ts",
+    "name": "a grade é só o mapa das pesquisas filtradas (termina no último card real)"
+   },
+   {
+    "file": "src/components/__tests__/PesquisasClimaGrade.test.ts",
+    "name": "o estado vazio aponta para o botão do topo, não para o card removido"
+   },
+   {
+    "file": "src/components/__tests__/PesquisasClimaJanelasCascata.test.tsx",
+    "name": "PesquisasClimaPage — mesmas janelas animadas do popup "
+   },
+   {
+    "file": "src/components/__tests__/PesquisasClimaJanelasCascata.test.tsx",
+    "name": "usa a moldura compartilhada e a coreografia única do sistema"
+   },
+   {
+    "file": "src/components/__tests__/PesquisasClimaJanelasCascata.test.tsx",
+    "name": "não sobrou nenhuma janela estática (Dialog/DialogContent) nem coreografia paralela"
+   },
+   {
+    "file": "src/components/__tests__/PesquisasClimaJanelasCascata.test.tsx",
+    "name": "monta as DUAS janelas na moldura clonada, com cabeçalho, corpo e rodapé cascateando"
+   },
+   {
+    "file": "src/components/__tests__/PesquisasClimaJanelasCascata.test.tsx",
+    "name": "preserva as larguras, os textos e as ações de cada janela"
+   },
+   {
+    "file": "src/components/__tests__/PesquisasClimaJanelasCascata.test.tsx",
+    "name": "mantém as regras de fechamento de cada janela (Radix + estado do módulo)"
    },
    {
     "file": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
@@ -188778,6 +189110,238 @@
    {
     "file": "src/components/layout/__tests__/AppSidebar.menu.test.ts",
     "name": "todo item tem label e rota absoluta não vazias"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/BarraAdesao.test.tsx",
+    "name": "BarraAdesao — preenchimento sai do zero"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/BarraAdesao.test.tsx",
+    "name": "monta com o degradê inteiro fora da área visível (0%)"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/BarraAdesao.test.tsx",
+    "name": "mantém trilho, degradê e rótulo acessível do Progress do sistema"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts",
+    "name": "barra de adesão das pesquisas — paridade com a régua do preenchimento"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts",
+    "name": "a régua é, número por número, a global do sistema"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts",
+    "name": "entrega a MESMA transição do helper global, índice a índice"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts",
+    "name": "não recria a régua: consome as constantes de "
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts",
+    "name": "cresce da esquerda para a direita até o percentual final"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts",
+    "name": "normaliza o percentual (limites 0–100 e valor inválido)"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts",
+    "name": "com movimento reduzido nasce cheia, sem transição"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "CardPesquisa — barra de adesão em degradê lime → verde"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "pinta o preenchimento com "
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "não voltou ao degradê chapado lime → lime ("
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "fecha o degradê no próprio raio da pílula ("
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "mantém o trilho recortando o degradê: "
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "preserva o valor real e o rótulo acessível da adesão"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "aplica o mesmo degradê na pesquisa ENCERRADA"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "não mexe no cartão em RASCUNHO: sem barra, aviso intacto"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "CardPesquisa — preenchimento animado (régua de "
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "parte do zero e anima até a adesão real (154/215 = 72%)"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "usa a duração, a curva e o atraso da referência"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "entra em cascata pelo índice do cartão na grade"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "não mantém a transição CSS que deixava a barra no valor final de imediato"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "CardPesquisa — topo: tipo · status lado a lado"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "encosta o status na tag de tipo com o respiro de "
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "não centra mais a pílula ("
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "mantém o menu "
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "a pesquisa ENCERRADA segue o mesmo topo (status ao lado do tipo)"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "o RASCUNHO segue o mesmo topo (sem barra de adesão no miolo)"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "CardPesquisa — cor da pílula de status"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+    "name": "a bolinha do "
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/PilulaFiltroPesquisa.test.tsx",
+    "name": "PilulaFiltroPesquisa"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/PilulaFiltroPesquisa.test.tsx",
+    "name": "não renderiza nenhum elemento decorativo (bolinha) — só rótulo e badge"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/PilulaFiltroPesquisa.test.tsx",
+    "name": "centraliza o rótulo e ancora o badge na direita"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/PilulaFiltroPesquisa.test.tsx",
+    "name": "mantém o texto do rótulo e a contagem recebida"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/PilulaFiltroPesquisa.test.tsx",
+    "name": "aplica o tema no repouso e troca para o tom ativo quando selecionada"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/PilulaFiltroPesquisa.test.tsx",
+    "name": "expõe o estado por aria-pressed e dispara o clique"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/PilulaFiltroPesquisa.test.tsx",
+    "name": "usa o aria-label descritivo quando informado"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "pesquisasComum · período e atualização em pt-BR"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "formata o período no padrão da referência"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "usa "
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "formata updated_at (timestamptz) sem recuar um dia"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "pesquisasComum · adesão"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "calcula o percentual arredondado de respostas sobre convidados"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "não inventa percentual quando o registro não tem agregados"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "pesquisasComum · indicadores"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "conta por status e calcula a participação média PONDERADA"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "usa o eNPS da pesquisa de eNPS mais recente"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "devolve null (indicador "
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "pesquisasComum · filtros"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "a aba recorta por status"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "o dropdown de tipo combina com a aba"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "a busca ignora acento e caixa"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "o período usa a data de referência e descarta rascunho sem data"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "pesquisasComum · ordenação"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "pesquisasComum · cores da tag de status do cartão"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "pílula e bolinha ficam sempre na MESMA família de cor"
+   },
+   {
+    "file": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+    "name": "status desconhecido continua caindo em "
    },
    {
     "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
@@ -240205,7 +240769,9 @@
      "todos": [
       "compara:src/components/banco-horas/bancoHorasComum.ts",
       "compara:src/components/desligamentos/GestaoDesligamentos.tsx",
+      "compara:src/components/pesquisas/pesquisasComum.ts",
       "compara:src/components/premiacoes/auditoriaComum.ts",
+      "compara:src/pages/PesquisasClimaPage.tsx",
       "escreve:src/components/banco-horas/ExtratoBancoHoras.tsx",
       "escreve:src/components/banco-horas/bancoHorasComum.ts",
       "escreve:src/components/premiacoes/auditoriaComum.ts",
@@ -240409,6 +240975,10 @@
       "compara:src/pages/MedidasDisciplinaresPage.tsx",
       "compara:supabase/functions/gerar-medida-disciplinar-pdf/index.ts",
       "escreve:src/components/medidas-disciplinares/MedidasGravityScale.tsx"
+     ],
+     "enps": [
+      "compara:src/components/pesquisas/pesquisasComum.ts",
+      "escreve:src/mocks/pesquisasClimaMock.ts"
      ],
      "entrada": [
       "compara:src/pages/ControleAcessoPage.tsx",
@@ -240684,6 +241254,16 @@
      "subordinado": [
       "escreve:src/mocks/desempenhoMock.ts"
      ],
+     "clima": [
+      "escreve:src/mocks/pesquisasClimaMock.ts",
+      "escreve:src/pages/PesquisasClimaPage.tsx"
+     ],
+     "satisfacao": [
+      "escreve:src/mocks/pesquisasClimaMock.ts"
+     ],
+     "custom": [
+      "escreve:src/mocks/pesquisasClimaMock.ts"
+     ],
      "remarcar": [
       "compara:src/pages/AdminAgendamentoExamesPage.tsx",
       "escreve:src/pages/AdminAgendamentoExamesPage.tsx"
@@ -240760,9 +241340,6 @@
      ],
      "alimenticia": [
       "escreve:src/pages/PensoesPage.tsx"
-     ],
-     "clima": [
-      "escreve:src/pages/PesquisasClimaPage.tsx"
      ],
      "dependente": [
       "escreve:src/pages/PlanosSaudePage.tsx"
@@ -241034,6 +241611,7 @@
       "compara:src/components/avaliacao/PdiFiltros.tsx",
       "compara:src/components/avaliacao/PdiTab.tsx",
       "compara:src/components/desligamentos/GestaoDesligamentos.tsx",
+      "compara:src/components/pesquisas/pesquisasComum.ts",
       "compara:src/components/premiacoes/pagamentosComum.ts",
       "compara:src/components/premiacoes/premiacoesComum.ts",
       "compara:src/components/treinamentos/TurmasPainel.tsx",
@@ -241497,23 +242075,39 @@
       "escreve:src/pages/ObrigacoesFiscaisPage.tsx",
       "escreve:supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql"
      ],
-     "PUBLICADO": [
-      "compara:src/pages/AdminRegimentoInternoPage.tsx",
-      "filtra:src/components/portal/PortalRegimentoCard.tsx",
-      "filtra:src/pages/AdminRegimentoInternoPage.tsx"
-     ],
      "rascunho": [
+      "compara:src/components/pesquisas/CardPesquisa.tsx",
+      "compara:src/components/pesquisas/pesquisasComum.ts",
       "compara:src/components/premiacoes/CampaignWizard.tsx",
       "compara:src/components/premiacoes/CampanhaTabela.tsx",
       "compara:src/components/premiacoes/premiacoesComum.ts",
       "compara:src/hooks/usePontoMelhorado.ts",
-      "compara:src/pages/PesquisasClimaPage.tsx",
       "escreve:src/components/premiacoes/CampaignWizard.tsx",
       "escreve:src/hooks/usePontoMelhorado.ts",
       "escreve:src/mocks/desempenhoMock.ts",
+      "escreve:src/mocks/pesquisasClimaMock.ts",
       "escreve:src/pages/PesquisasClimaPage.tsx",
       "escreve:src/services/contratoTemplateService.ts",
       "filtra:src/services/premiacoesService.ts"
+     ],
+     "encerrada": [
+      "compara:src/components/pesquisas/CardPesquisa.tsx",
+      "compara:src/components/pesquisas/pesquisasComum.ts",
+      "escreve:src/mocks/pesquisasClimaMock.ts",
+      "escreve:src/pages/PesquisasClimaPage.tsx"
+     ],
+     "ativa": [
+      "compara:src/components/pesquisas/pesquisasComum.ts",
+      "compara:src/pages/PesquisasClimaPage.tsx",
+      "escreve:src/mocks/pesquisasClimaMock.ts",
+      "escreve:src/pages/PesquisasClimaPage.tsx",
+      "escreve:supabase/functions/gerar-ltcat-os/index.ts",
+      "filtra:supabase/functions/gerar-ltcat-os/index.ts"
+     ],
+     "PUBLICADO": [
+      "compara:src/pages/AdminRegimentoInternoPage.tsx",
+      "filtra:src/components/portal/PortalRegimentoCard.tsx",
+      "filtra:src/pages/AdminRegimentoInternoPage.tsx"
      ],
      "suspenso": [
       "compara:src/components/premiacoes/CampanhaTabela.tsx"
@@ -241760,15 +242354,6 @@
       "escreve:supabase/functions/dctfweb/index.ts",
       "escreve:supabase/functions/fgts-digital/index.ts",
       "filtra:supabase/functions/gerar-guias/index.ts"
-     ],
-     "ativa": [
-      "compara:src/pages/PesquisasClimaPage.tsx",
-      "escreve:src/pages/PesquisasClimaPage.tsx",
-      "escreve:supabase/functions/gerar-ltcat-os/index.ts",
-      "filtra:supabase/functions/gerar-ltcat-os/index.ts"
-     ],
-     "encerrada": [
-      "compara:src/pages/PesquisasClimaPage.tsx"
      ],
      "excluido": [
       "compara:src/pages/PlanosSaudePage.tsx",
@@ -279438,6 +280023,25 @@
     "renders file input for upload"
    ]
   },
+  "src/components/__tests__/IndicadorPesquisa.test.tsx": {
+   "path": "src/components/__tests__/IndicadorPesquisa.test.tsx",
+   "lines": 164,
+   "is_test": true,
+   "rule_comments": [
+    "Regra do ajuste: NENHUMA cor de fundo foi acrescentada à pílula."
+   ],
+   "tests": [
+    "IndicadorPesquisa — variação à direita, centralizada no número",
+    "mostra título, valor e variação",
+    "transforma o card em grid de 2 linhas × 3 colunas (ícone · texto · pílula)",
+    "mantém o ícone atravessando as duas linhas (centro do card)",
+    "coloca o título na linha 1 e o valor na linha 2 da coluna de texto",
+    "envia a pílula para a coluna 3 / linha 2, encostada à direita",
+    "aumenta a escala da pílula sem mexer nas cores",
+    "sem variação a coluna 3 não existe e o card não muda de grade",
+    "não voltou a usar a linha de apoio antiga (9px sob o número)"
+   ]
+  },
   "src/components/__tests__/InlineTabs.test.tsx": {
    "path": "src/components/__tests__/InlineTabs.test.tsx",
    "lines": 571,
@@ -281092,6 +281696,39 @@
     "enquanto a matriz carrega, nem libera nem nega",
     "sem usuario, redireciona para o login",
     "a negativa nao imprime id nem e-mail do usuario"
+   ]
+  },
+  "src/components/__tests__/PesquisasClimaGrade.test.ts": {
+   "path": "src/components/__tests__/PesquisasClimaGrade.test.ts",
+   "lines": 69,
+   "is_test": true,
+   "rule_comments": [
+    "A chamada do card vazio (título + descrição) não pode sobrar na página."
+   ],
+   "tests": [
+    "PesquisasClimaPage — grade de cartões sem o slot vazio de criação",
+    "não renderiza mais o card ",
+    "a grade é só o mapa das pesquisas filtradas (termina no último card real)",
+    "o estado vazio aponta para o botão do topo, não para o card removido"
+   ]
+  },
+  "src/components/__tests__/PesquisasClimaJanelasCascata.test.tsx": {
+   "path": "src/components/__tests__/PesquisasClimaJanelasCascata.test.tsx",
+   "lines": 92,
+   "is_test": true,
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA_JANELA",
+     "value": "3"
+    }
+   ],
+   "tests": [
+    "PesquisasClimaPage — mesmas janelas animadas do popup ",
+    "usa a moldura compartilhada e a coreografia única do sistema",
+    "não sobrou nenhuma janela estática (Dialog/DialogContent) nem coreografia paralela",
+    "monta as DUAS janelas na moldura clonada, com cabeçalho, corpo e rodapé cascateando",
+    "preserva as larguras, os textos e as ações de cada janela",
+    "mantém as regras de fechamento de cada janela (Radix + estado do módulo)"
    ]
   },
   "src/components/__tests__/PontoAdjustmentRequests.test.tsx": {
@@ -293759,6 +294396,291 @@
      "field": "pcs-stp",
      "rules": "type=number, min=1, step"
     }
+   ]
+  },
+  "src/components/pesquisas/BarraAdesao.tsx": {
+   "path": "src/components/pesquisas/BarraAdesao.tsx",
+   "lines": 57,
+   "exports": [
+    "type BarraAdesaoProps",
+    "function BarraAdesao"
+   ]
+  },
+  "src/components/pesquisas/CardPesquisa.tsx": {
+   "path": "src/components/pesquisas/CardPesquisa.tsx",
+   "lines": 347,
+   "exports": [
+    "interface CardPesquisaProps",
+    "function CardPesquisa"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "rascunho",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "encerrada",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "rascunho",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "encerrada",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "a mesma moldura e mudam apenas o miolo:"
+   ],
+   "percents": [
+    "ele fica inteiro fora da área visível (trilha vazia), em 100%",
+    "lados) e ganhou `ml-3` = 0,75rem = 15px nesta base de 125%"
+   ]
+  },
+  "src/components/pesquisas/IndicadorPesquisa.tsx": {
+   "path": "src/components/pesquisas/IndicadorPesquisa.tsx",
+   "lines": 113,
+   "exports": [
+    "interface IndicadorPesquisaProps",
+    "function IndicadorPesquisa"
+   ]
+  },
+  "src/components/pesquisas/PilulaFiltroPesquisa.tsx": {
+   "path": "src/components/pesquisas/PilulaFiltroPesquisa.tsx",
+   "lines": 76,
+   "exports": [
+    "interface PilulaFiltroPesquisaProps",
+    "function PilulaFiltroPesquisa"
+   ],
+   "rule_comments": [
+    "a única fonte de verdade das cores) e redesenha apenas a estrutura, sem a"
+   ]
+  },
+  "src/components/pesquisas/barraAdesaoAnim.ts": {
+   "path": "src/components/pesquisas/barraAdesaoAnim.ts",
+   "lines": 76,
+   "exports": [
+    "function percentualAdesao",
+    "function atrasoPreenchimento",
+    "function deslocamentoPreenchimento",
+    "function propsPreenchimentoAdesao"
+   ],
+   "percents": [
+    "* barra de 48% terminaria no verde) e mudaria o degradê aprovado."
+   ]
+  },
+  "src/components/pesquisas/pesquisasComum.ts": {
+   "path": "src/components/pesquisas/pesquisasComum.ts",
+   "lines": 391,
+   "exports": [
+    "interface PesquisaListada",
+    "type TipoPesquisa",
+    "type StatusPesquisa",
+    "interface TemaTipoPesquisa",
+    "const TEMAS_TIPO",
+    "function temaTipo",
+    "const OPCOES_TIPO",
+    "interface TemaStatusPesquisa",
+    "const TEMAS_STATUS",
+    "function temaStatus",
+    "const OPCOES_STATUS",
+    "function formatarPeriodo",
+    "function formatarAtualizacao",
+    "interface Adesao",
+    "function adesaoDe",
+    "interface MetricasPesquisas",
+    "function calcularMetricas",
+    "const VARIACAO_INDICADORES",
+    "type AbaFiltro",
+    "type PeriodoFiltro",
+    "type Ordenacao",
+    "const OPCOES_PERIODO",
+    "const OPCOES_ORDENACAO",
+    "interface FiltrosPesquisas",
+    "function filtrarPesquisas",
+    "function ordenarPesquisas"
+   ],
+   "enums": [
+    {
+     "name": "TipoPesquisa",
+     "values": "clima | enps | satisfacao | custom"
+    },
+    {
+     "name": "StatusPesquisa",
+     "values": "ativa | encerrada | rascunho"
+    },
+    {
+     "name": "PeriodoFiltro",
+     "values": "qualquer | 30d | 90d | ano"
+    },
+    {
+     "name": "Ordenacao",
+     "values": "recentes | antigas | adesao | titulo"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "enps",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "ativa",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "encerrada",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "rascunho",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "* Formato MÍNIMO que os cartões/indicadores consomem. As linhas de `pesquisas`"
+   ],
+   "calc_fns": [
+    {
+     "name": "calcularMetricas",
+     "params": "pesquisas: PesquisaListada[]",
+     "body": "let respostas = 0; let convidados = 0; for (const pesquisa of pesquisas) { const adesao = adesaoDe(pesquisa); if (!adesao.disponivel) continue; respostas += adesao.respostas; convidados += adesao.convidados; } const comEnps = pesquisas .filter((p) => p.tipo === 'enps' && p.enps !== null && p.enps !== undefined) .sort((a, b) => dataDeReferencia(b) - dataDeReferencia(a)); return { total: pesquisas.length, ativas: pesquisas.filter((p) => p.status === 'ativa').length, encerradas: pesquisas.filter((p …"
+    }
+   ],
+   "temporal": [
+    "if (periodo === '30d') return subDays(hoje, 30);",
+    "if (periodo === '90d') return subDays(hoje, 90);"
+   ],
+   "percents": [
+    "* `chipFiltroComum`). Fundo em tint de 10%, borda em 35% e texto na cor cheia"
+   ]
+  },
+  "src/components/pesquisas/__tests__/BarraAdesao.test.tsx": {
+   "path": "src/components/pesquisas/__tests__/BarraAdesao.test.tsx",
+   "lines": 46,
+   "is_test": true,
+   "params": [
+    {
+     "name": "TRILHO",
+     "value": "'h-1.5 bg-muted/50'"
+    },
+    {
+     "name": "PREENCHIMENTO",
+     "value": "'rounded-full bg-gradient-to-r from-primary to-success'"
+    }
+   ],
+   "tests": [
+    "BarraAdesao — preenchimento sai do zero",
+    "monta com o degradê inteiro fora da área visível (0%)",
+    "mantém trilho, degradê e rótulo acessível do Progress do sistema"
+   ]
+  },
+  "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts": {
+   "path": "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts",
+   "lines": 110,
+   "is_test": true,
+   "rule_comments": [
+    "Também o par \"zero → valor\": a barra não pode nascer cheia."
+   ],
+   "tests": [
+    "barra de adesão das pesquisas — paridade com a régua do preenchimento",
+    "a régua é, número por número, a global do sistema",
+    "entrega a MESMA transição do helper global, índice a índice",
+    "não recria a régua: consome as constantes de ",
+    "cresce da esquerda para a direita até o percentual final",
+    "normaliza o percentual (limites 0–100 e valor inválido)",
+    "com movimento reduzido nasce cheia, sem transição"
+   ]
+  },
+  "src/components/pesquisas/__tests__/CardPesquisa.test.tsx": {
+   "path": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+   "lines": 358,
+   "is_test": true,
+   "tests": [
+    "CardPesquisa — barra de adesão em degradê lime → verde",
+    "pinta o preenchimento com ",
+    "não voltou ao degradê chapado lime → lime (",
+    "fecha o degradê no próprio raio da pílula (",
+    "mantém o trilho recortando o degradê: ",
+    "preserva o valor real e o rótulo acessível da adesão",
+    "aplica o mesmo degradê na pesquisa ENCERRADA",
+    "não mexe no cartão em RASCUNHO: sem barra, aviso intacto",
+    "CardPesquisa — preenchimento animado (régua de ",
+    "parte do zero e anima até a adesão real (154/215 = 72%)",
+    "usa a duração, a curva e o atraso da referência",
+    "entra em cascata pelo índice do cartão na grade",
+    "não mantém a transição CSS que deixava a barra no valor final de imediato",
+    "CardPesquisa — topo: tipo · status lado a lado",
+    "encosta o status na tag de tipo com o respiro de ",
+    "não centra mais a pílula (",
+    "mantém o menu ",
+    "a pesquisa ENCERRADA segue o mesmo topo (status ao lado do tipo)",
+    "o RASCUNHO segue o mesmo topo (sem barra de adesão no miolo)",
+    "CardPesquisa — cor da pílula de status",
+    "a bolinha do "
+   ]
+  },
+  "src/components/pesquisas/__tests__/PilulaFiltroPesquisa.test.tsx": {
+   "path": "src/components/pesquisas/__tests__/PilulaFiltroPesquisa.test.tsx",
+   "lines": 109,
+   "is_test": true,
+   "tests": [
+    "PilulaFiltroPesquisa",
+    "não renderiza nenhum elemento decorativo (bolinha) — só rótulo e badge",
+    "centraliza o rótulo e ancora o badge na direita",
+    "mantém o texto do rótulo e a contagem recebida",
+    "aplica o tema no repouso e troca para o tom ativo quando selecionada",
+    "expõe o estado por aria-pressed e dispara o clique",
+    "usa o aria-label descritivo quando informado"
+   ]
+  },
+  "src/components/pesquisas/__tests__/pesquisasComum.test.ts": {
+   "path": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+   "lines": 244,
+   "is_test": true,
+   "rule_comments": [
+    "no formato mínimo lido pela tela. Se o mock mudar, este arquivo acompanha —"
+   ],
+   "tests": [
+    "pesquisasComum · período e atualização em pt-BR",
+    "formata o período no padrão da referência",
+    "usa ",
+    "formata updated_at (timestamptz) sem recuar um dia",
+    "pesquisasComum · adesão",
+    "calcula o percentual arredondado de respostas sobre convidados",
+    "não inventa percentual quando o registro não tem agregados",
+    "pesquisasComum · indicadores",
+    "conta por status e calcula a participação média PONDERADA",
+    "usa o eNPS da pesquisa de eNPS mais recente",
+    "devolve null (indicador ",
+    "pesquisasComum · filtros",
+    "a aba recorta por status",
+    "o dropdown de tipo combina com a aba",
+    "a busca ignora acento e caixa",
+    "o período usa a data de referência e descarta rascunho sem data",
+    "pesquisasComum · ordenação",
+    "pesquisasComum · cores da tag de status do cartão",
+    "pílula e bolinha ficam sempre na MESMA família de cor",
+    "status desconhecido continua caindo em "
    ]
   },
   "src/components/ponto/AssinarEspelhoDialog.tsx": {
@@ -308799,6 +309721,85 @@
     "Devolve `true` quando a ação deve ser ABORTADA, então o chamador só precisa de"
    ]
   },
+  "src/mocks/pesquisasClimaMock.ts": {
+   "path": "src/mocks/pesquisasClimaMock.ts",
+   "lines": 185,
+   "exports": [
+    "function isPesquisasMockEnabled",
+    "interface PesquisaMock",
+    "function getMockPesquisas",
+    "function bloquearEscritaPesquisas"
+   ],
+   "env": [
+    "DEV",
+    "MODE",
+    "VITE_PESQUISAS_MOCK"
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "enps",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "clima",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "ativa",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "enps",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "ativa",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "satisfacao",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "encerrada",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "custom",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "rascunho",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "clima",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "rascunho",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "* ESCOPO: somente apresentação/validação de LAYOUT — os 4 KPIs (Total de",
+    "* ⚠️ SOMENTE LEITURA. Toda ESCRITA (criar, excluir, ativar pesquisa) é",
+    "e colaboradoresMock.ts): liga somente com as DUAS condições abaixo — logo,",
+    "* Ativa o mock apenas em dev e apenas com o opt-in explícito da env var. */",
+    "ação deve ser ABORTADA, então o chamador só precisa de"
+   ]
+  },
   "src/mocks/pontoGeoMock.ts": {
    "path": "src/mocks/pontoGeoMock.ts",
    "lines": 229,
@@ -313238,12 +314239,29 @@
   },
   "src/pages/PesquisasClimaPage.tsx": {
    "path": "src/pages/PesquisasClimaPage.tsx",
-   "lines": 252,
+   "lines": 776,
    "exports": [
     "function PesquisasClimaPage"
    ],
    "errors": [
-    "Erro ao criar pesquisa"
+    "Não foi possível alterar o status da pesquisa",
+    "Não foi possível excluir a pesquisa"
+   ],
+   "html_constraints": [
+    {
+     "field": "pesquisa-inicio",
+     "rules": "type=date"
+    },
+    {
+     "field": "pesquisa-fim",
+     "rules": "type=date"
+    }
+   ],
+   "params": [
+    {
+     "name": "BLOCOS_CASCATA_JANELA",
+     "value": "3"
+    }
    ],
    "status_values": [
     {
@@ -313257,30 +314275,45 @@
      "kind": "escreve"
     },
     {
-     "field": "tipo",
-     "value": "clima",
-     "kind": "escreve"
-    },
-    {
      "field": "status",
      "value": "ativa",
      "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "ativa",
-     "kind": "compara"
     },
     {
      "field": "status",
      "value": "encerrada",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "ativa",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "todos",
      "kind": "compara"
     },
     {
      "field": "status",
-     "value": "rascunho",
+     "value": "ativa",
      "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "Estado vazio: a criação agora mora apenas no \"+ Nova Pesquisa\" do"
+   ],
+   "calc_fns": [
+    {
+     "name": "invalidar",
+     "params": "",
+     "body": "qc.invalidateQueries({ queryKey: ['pesquisas'] });"
+    }
+   ],
+   "percents": [
+    "* 2. faixa horizontal e densa de MÉTRICAS: os 4 indicadores ocupando 100% da",
+    "Fechamento (X, rodapé, Esc, clique fora) continua 100% do Radix. */}",
+    "{/* 1 · FAIXA DE MÉTRICAS — os quatro indicadores ocupam 100% da largura"
    ]
   },
   "src/pages/PlanoCargosSalariosPage.tsx": {
@@ -344503,10 +345536,44 @@
   }
  },
  "git": {
-  "sha": "61145b4f55d138b19f5d49e20124d58503e5c42c",
+  "sha": "3cb33da5c8f164c7dd52ae8c6ccd691dbf6d36a5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "3cb33da",
+    "date": "2026-11-25",
+    "author": "github-actions[bot]",
+    "subject": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)",
+    "files": [
+     "docs/auditoria/estado/WORKFLOWS_STATUS.md"
+    ]
+   },
+   {
+    "sha": "05b201e",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: resgata a tela de pesquisas de clima do port do Muri (#885)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/components/__tests__/IndicadorPesquisa.test.tsx",
+     "src/components/__tests__/PesquisasClimaGrade.test.ts",
+     "src/components/__tests__/PesquisasClimaJanelasCascata.test.tsx",
+     "src/components/pesquisas/BarraAdesao.tsx",
+     "src/components/pesquisas/CardPesquisa.tsx",
+     "src/components/pesquisas/IndicadorPesquisa.tsx",
+     "src/components/pesquisas/PilulaFiltroPesquisa.tsx",
+     "src/components/pesquisas/__tests__/BarraAdesao.test.tsx",
+     "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts",
+     "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+     "src/components/pesquisas/__tests__/PilulaFiltroPesquisa.test.tsx",
+     "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+     "src/components/pesquisas/barraAdesaoAnim.ts",
+     "src/components/pesquisas/pesquisasComum.ts",
+     "src/mocks/pesquisasClimaMock.ts",
+     "src/pages/PesquisasClimaPage.tsx"
+    ]
+   },
    {
     "sha": "61145b4",
     "date": "2026-11-25",
@@ -345223,29 +346290,13 @@
     "files": [
      "supabase/functions/processar-agendamentos/config.ts"
     ]
-   },
-   {
-    "sha": "bd79c79",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: filtra destinatarios orfaos em alertas-dp para nao violar FK (#850)",
-    "files": [
-     "supabase/functions/alertas-dp/index.ts"
-    ]
-   },
-   {
-    "sha": "20ff226",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: troca import dinamico de rateLimit por estatico nas edges que retornavam 500 (#849)",
-    "files": [
-     "supabase/functions/alertas-dp/index.ts",
-     "supabase/functions/enviar-relatorio/index.ts",
-     "supabase/functions/processar-agendamentos/index.ts"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "scripts/.bundle-budget.json",
+    5
+   ],
    [
     "package-lock.json",
     5
@@ -345255,19 +346306,11 @@
     5
    ],
    [
-    "scripts/.bundle-budget.json",
-    4
-   ],
-   [
     ".github/workflows/canonical-migrations.yml",
     4
    ],
    [
     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-    3
-   ],
-   [
-    "supabase/functions/alertas-dp/index.ts",
     3
    ],
    [
@@ -345291,39 +346334,43 @@
     2
    ],
    [
-    "src/components/horas-extras/AcoesDaLinha.tsx",
+    "docs/auditoria/estado/WORKFLOWS_STATUS.md",
     1
    ],
    [
-    "src/components/horas-extras/AprovacoesPendentes.tsx",
+    "src/components/__tests__/IndicadorPesquisa.test.tsx",
     1
    ],
    [
-    "src/components/horas-extras/CabecalhoSolicitacoes.tsx",
+    "src/components/__tests__/PesquisasClimaGrade.test.ts",
     1
    ],
    [
-    "src/components/horas-extras/HistoricoSolicitacoes.tsx",
+    "src/components/__tests__/PesquisasClimaJanelasCascata.test.tsx",
     1
    ],
    [
-    "src/components/horas-extras/HorasExtrasKpis.tsx",
+    "src/components/pesquisas/BarraAdesao.tsx",
     1
    ],
    [
-    "src/components/horas-extras/NovaSolicitacaoDialog.tsx",
+    "src/components/pesquisas/CardPesquisa.tsx",
     1
    ],
    [
-    "src/components/horas-extras/SolicitacaoDetalhesDialog.tsx",
+    "src/components/pesquisas/IndicadorPesquisa.tsx",
     1
    ],
    [
-    "src/components/horas-extras/__tests__/AnimacaoDetalhesSolicitacao.test.tsx",
+    "src/components/pesquisas/PilulaFiltroPesquisa.tsx",
     1
    ],
    [
-    "src/components/horas-extras/__tests__/AnimacaoNovaSolicitacao.test.tsx",
+    "src/components/pesquisas/__tests__/BarraAdesao.test.tsx",
+    1
+   ],
+   [
+    "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts",
     1
    ]
   ]

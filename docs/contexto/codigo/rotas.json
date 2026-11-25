@@ -23813,6 +23813,7 @@
     "useHoleritesColaborador",
     "useHorasExtras",
     "useIdentidadesGenero",
+    "useInView",
     "useIncidentesColaborador",
     "useIsMobile",
     "useJornadaHorarios",
@@ -23823,6 +23824,7 @@
     "useMedidasDisciplinaresColaborador",
     "useMemo",
     "useMetasColaborador",
+    "useMovimentoReduzido",
     "useMutation",
     "useNavigate",
     "useNavigationGuard",
@@ -23990,6 +23992,7 @@
     "useMedidasDisciplinares",
     "useMedidasDisciplinaresColaborador",
     "useMetasColaborador",
+    "useMovimentoReduzido",
     "useNavigationGuard",
     "useNotificacoes",
     "useNotification",
@@ -24261,7 +24264,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 225
+   "arquivos_puxados": 242
   },
   {
    "protegida": true,

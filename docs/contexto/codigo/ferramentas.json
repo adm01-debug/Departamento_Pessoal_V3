@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2096)",
+   "TypeScript (2111)",
    "SQL (1335)",
    "Markdown (347)",
    "JavaScript (136)",
@@ -1637,6 +1637,7 @@
    "VITE_HOMOLOG_ORIGEM",
    "VITE_NINEBOX_MODO_REAL",
    "VITE_PDI_MOCK",
+   "VITE_PESQUISAS_MOCK",
    "VITE_PONTO_MOCK",
    "VITE_SENTRY_DSN",
    "VITE_SENTRY_RELEASE",
@@ -1751,6 +1752,7 @@
    "VITE_HOMOLOG_ORIGEM",
    "VITE_NINEBOX_MODO_REAL",
    "VITE_PDI_MOCK",
+   "VITE_PESQUISAS_MOCK",
    "VITE_PONTO_MOCK",
    "VITE_TREINAMENTOS_MOCK",
    "VITE_TREINAMENTOS_PREVIEW_PROGRESSO"

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 686,
+ "total": 690,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -5584,6 +5584,68 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/pesquisas/BarraAdesao.tsx",
+   "exports": [
+    "BarraAdesao",
+    "BarraAdesaoProps"
+   ],
+   "export_default": null,
+   "linhas": 57,
+   "dominio": "components/pesquisas",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/pesquisas/CardPesquisa.tsx",
+   "exports": [
+    "CardPesquisa",
+    "CardPesquisaProps"
+   ],
+   "export_default": null,
+   "linhas": 347,
+   "dominio": "components/pesquisas",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/pesquisas/IndicadorPesquisa.tsx",
+   "exports": [
+    "IndicadorPesquisa",
+    "IndicadorPesquisaProps"
+   ],
+   "export_default": null,
+   "linhas": 113,
+   "dominio": "components/pesquisas",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/pesquisas/PilulaFiltroPesquisa.tsx",
+   "exports": [
+    "PilulaFiltroPesquisa",
+    "PilulaFiltroPesquisaProps"
+   ],
+   "export_default": null,
+   "linhas": 76,
+   "dominio": "components/pesquisas",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ponto/AssinarEspelhoDialog.tsx",
    "exports": [
     "AssinarEspelhoDialog"
@@ -8063,7 +8125,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 237,
+   "usado_por": 236,
    "orfao": false
   },
   {
@@ -8078,7 +8140,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 388,
+   "usado_por": 389,
    "orfao": false
   },
   {
@@ -8113,7 +8175,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 288,
+   "usado_por": 287,
    "orfao": false
   },
   {
@@ -8128,7 +8190,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 21,
+   "usado_por": 22,
    "orfao": false
   },
   {
@@ -8373,7 +8435,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 38,
+   "usado_por": 39,
    "orfao": false
   },
   {
@@ -8405,7 +8467,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 40,
+   "usado_por": 43,
    "orfao": false
   },
   {
@@ -8556,7 +8618,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -10748,7 +10810,7 @@
     "PesquisasClimaPage"
    ],
    "export_default": "PesquisasClimaPage",
-   "linhas": 252,
+   "linhas": 776,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"

@@ -3384,6 +3384,30 @@
    "src/components/ui/select.tsx",
    "src/types/pcs.ts"
   ],
+  "src/components/pesquisas/BarraAdesao.tsx": [
+   "src/components/pesquisas/barraAdesaoAnim.ts",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/pesquisas/CardPesquisa.tsx": [
+   "src/components/pesquisas/BarraAdesao.tsx",
+   "src/components/pesquisas/pesquisasComum.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/pesquisas/IndicadorPesquisa.tsx": [
+   "src/components/ui/entrada-cards.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/pesquisas/PilulaFiltroPesquisa.tsx": [
+   "src/components/avaliacao/chipFiltroComum.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/pesquisas/barraAdesaoAnim.ts": [
+   "src/components/ui/progressMotion.ts"
+  ],
   "src/components/ponto/AssinarEspelhoDialog.tsx": [
    "src/components/ui/alert.tsx",
    "src/components/ui/badge.tsx",
@@ -5762,6 +5786,9 @@
    "src/mocks/colaboradoresMock.ts",
    "src/utils/dateLocal.ts"
   ],
+  "src/mocks/pesquisasClimaMock.ts": [
+   "src/mocks/colaboradoresMock.ts"
+  ],
   "src/mocks/pontoGeoMock.ts": [
    "src/utils/dateLocal.ts",
    "src/utils/pontoGeofencing.ts"
@@ -7228,18 +7255,28 @@
   ],
   "src/pages/PesquisasClimaPage.tsx": [
    "src/components/PageTitle.tsx",
+   "src/components/avaliacao/chipFiltroComum.ts",
    "src/components/layout/index.ts",
-   "src/components/ui/badge.tsx",
+   "src/components/pesquisas/BarraAdesao.tsx",
+   "src/components/pesquisas/CardPesquisa.tsx",
+   "src/components/pesquisas/IndicadorPesquisa.tsx",
+   "src/components/pesquisas/PilulaFiltroPesquisa.tsx",
+   "src/components/pesquisas/pesquisasComum.ts",
    "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
    "src/components/ui/dialog.tsx",
+   "src/components/ui/entrada-cards.tsx",
    "src/components/ui/input.tsx",
    "src/components/ui/label.tsx",
+   "src/components/ui/notification-center.tsx",
    "src/components/ui/select.tsx",
    "src/components/ui/spinner.tsx",
    "src/components/ui/switch.tsx",
    "src/components/ui/textarea.tsx",
    "src/hooks/index.ts",
+   "src/lib/motionMode.ts",
+   "src/mocks/pesquisasClimaMock.ts",
    "src/services/pesquisaService.ts"
   ],
   "src/pages/PlanoCargosSalariosPage.tsx": [

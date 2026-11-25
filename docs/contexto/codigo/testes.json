@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 841,
+ "total": 849,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 796
+  "unit": 804
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 704
+   "arquivos": 712
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -2427,6 +2427,15 @@
    "casos": 8
   },
   {
+   "arquivo": "src/components/__tests__/IndicadorPesquisa.test.tsx",
+   "tipo": "unit",
+   "linhas": 164,
+   "testa": [
+    "src/components/pesquisas/IndicadorPesquisa.tsx"
+   ],
+   "casos": 9
+  },
+  {
    "arquivo": "src/components/__tests__/InlineTabs.test.tsx",
    "tipo": "unit",
    "linhas": 571,
@@ -3143,6 +3152,20 @@
     "src/components/PermissionRoute.tsx"
    ],
    "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/PesquisasClimaGrade.test.ts",
+   "tipo": "unit",
+   "linhas": 69,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/__tests__/PesquisasClimaJanelasCascata.test.tsx",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [],
+   "casos": 5
   },
   {
    "arquivo": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
@@ -4034,6 +4057,54 @@
     "src/components/layout/AppSidebar.tsx"
    ],
    "casos": 3
+  },
+  {
+   "arquivo": "src/components/pesquisas/__tests__/BarraAdesao.test.tsx",
+   "tipo": "unit",
+   "linhas": 46,
+   "testa": [
+    "src/components/pesquisas/BarraAdesao.tsx"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts",
+   "tipo": "unit",
+   "linhas": 110,
+   "testa": [
+    "src/components/pesquisas/barraAdesaoAnim.ts",
+    "src/components/ui/progressMotion.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
+   "tipo": "unit",
+   "linhas": 358,
+   "testa": [
+    "src/components/pesquisas/CardPesquisa.tsx",
+    "src/components/pesquisas/pesquisasComum.ts"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
+   "tipo": "unit",
+   "linhas": 244,
+   "testa": [
+    "src/components/pesquisas/pesquisasComum.ts"
+   ],
+   "casos": 20
+  },
+  {
+   "arquivo": "src/components/pesquisas/__tests__/PilulaFiltroPesquisa.test.tsx",
+   "tipo": "unit",
+   "linhas": 109,
+   "testa": [
+    "src/components/avaliacao/chipFiltroComum.ts",
+    "src/components/pesquisas/PilulaFiltroPesquisa.tsx"
+   ],
+   "casos": 6
   },
   {
    "arquivo": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
@@ -7887,6 +7958,7 @@
   "src/components/avaliacao/auditoriaFeedback.ts": 1,
   "src/components/avaliacao/barraProgresso.tsx": 1,
   "src/components/avaliacao/barraProgressoAnim.ts": 1,
+  "src/components/avaliacao/chipFiltroComum.ts": 1,
   "src/components/avaliacao/criacaoFeedback.ts": 1,
   "src/components/avaliacao/desempenhoDemoStore.ts": 2,
   "src/components/avaliacao/edicaoFeedback.ts": 1,
@@ -8116,6 +8188,12 @@
   "src/components/organograma/organogramaCascade.ts": 2,
   "src/components/organograma/organogramaHeaderReveal.ts": 1,
   "src/components/organograma/organogramaReveal.ts": 3,
+  "src/components/pesquisas/BarraAdesao.tsx": 1,
+  "src/components/pesquisas/CardPesquisa.tsx": 1,
+  "src/components/pesquisas/IndicadorPesquisa.tsx": 1,
+  "src/components/pesquisas/PilulaFiltroPesquisa.tsx": 1,
+  "src/components/pesquisas/barraAdesaoAnim.ts": 1,
+  "src/components/pesquisas/pesquisasComum.ts": 2,
   "src/components/ponto/AssinarEspelhoDialog.tsx": 1,
   "src/components/ponto/EspelhosPapelPanel.tsx": 1,
   "src/components/ponto/GerarAEJDialog.tsx": 1,
@@ -8235,6 +8313,7 @@
   "src/components/ui/filter-chip.tsx": 1,
   "src/components/ui/index.ts": 1,
   "src/components/ui/popover.tsx": 1,
+  "src/components/ui/progressMotion.ts": 1,
   "src/components/ui/select.tsx": 1,
   "src/components/ui/status-badge.tsx": 1,
   "src/components/ui/table-row-reveal.ts": 1,

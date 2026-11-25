@@ -201,7 +201,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 324,
+   "testes": 327,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -1025,6 +1025,7 @@
    },
    "importado_por_outros_modulos": [
     "components/banco-horas",
+    "components/pesquisas",
     "components/premiacoes",
     "components/recrutamento",
     "hooks",
@@ -4555,6 +4556,49 @@
    ]
   },
   {
+   "modulo": "components/pesquisas",
+   "arquivos": 6,
+   "testes": 5,
+   "linhas": 1060,
+   "itens_menu": [],
+   "telas": [],
+   "rotas_http": [],
+   "componentes": 4,
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "hooks_definidos": [],
+   "edges": [],
+   "tabelas": [],
+   "rpcs": [],
+   "buckets": [],
+   "canais_realtime": [],
+   "env": [
+    "DEV"
+   ],
+   "flags": [],
+   "papeis": [],
+   "diretos": {
+    "edges": [],
+    "tabelas": [],
+    "rpcs": []
+   },
+   "importado_por_outros_modulos": [
+    "pages"
+   ],
+   "depende_de_modulos": [
+    "components/avaliacao",
+    "components/ui",
+    "lib"
+   ],
+   "pacotes_externos": [
+    "@radix-ui/react-progress",
+    "date-fns",
+    "framer-motion",
+    "lucide-react"
+   ]
+  },
+  {
    "modulo": "components/ponto",
    "arquivos": 30,
    "testes": 0,
@@ -7198,6 +7242,7 @@
     "components/onboarding",
     "components/organograma",
     "components/pcs",
+    "components/pesquisas",
     "components/ponto",
     "components/portal",
     "components/premiacoes",
@@ -8853,6 +8898,7 @@
     "components/obrigacoes",
     "components/onboarding",
     "components/organograma",
+    "components/pesquisas",
     "components/ponto",
     "components/portal",
     "components/premiacoes",
@@ -8912,9 +8958,9 @@
   },
   {
    "modulo": "mocks",
-   "arquivos": 4,
+   "arquivos": 5,
    "testes": 0,
-   "linhas": 3793,
+   "linhas": 3978,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -8932,6 +8978,7 @@
     "VITE_COLABORADORES_MOCK",
     "VITE_DESEMPENHO_MOCK",
     "VITE_NINEBOX_MODO_REAL",
+    "VITE_PESQUISAS_MOCK",
     "VITE_PONTO_MOCK",
     "VITE_TREINAMENTOS_MOCK"
    ],
@@ -8964,7 +9011,7 @@
    "modulo": "pages",
    "arquivos": 115,
    "testes": 0,
-   "linhas": 46290,
+   "linhas": 46814,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -9878,6 +9925,7 @@
     "VITE_HOMOLOG_ORIGEM",
     "VITE_NINEBOX_MODO_REAL",
     "VITE_PDI_MOCK",
+    "VITE_PESQUISAS_MOCK",
     "VITE_PONTO_MOCK",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
@@ -10080,6 +10128,7 @@
     "components/obrigacoes",
     "components/organograma",
     "components/pcs",
+    "components/pesquisas",
     "components/ponto",
     "components/portal",
     "components/premiacoes",

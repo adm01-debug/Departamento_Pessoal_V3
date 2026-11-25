@@ -1,20 +1,20 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1400,
- "arestas": 6890,
+ "nos": 1407,
+ "arestas": 6915,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 388
+   "importado_por": 389
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 320
+   "importado_por": 324
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 288
+   "importado_por": 287
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
@@ -22,7 +22,7 @@
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 237
+   "importado_por": 236
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -118,7 +118,11 @@
   },
   {
    "arquivo": "src/components/ui/cascade-motion.ts",
-   "importado_por": 42
+   "importado_por": 43
+  },
+  {
+   "arquivo": "src/components/ui/entrada-cards.tsx",
+   "importado_por": 43
   },
   {
    "arquivo": "src/components/ui/tooltip.tsx",
@@ -133,16 +137,12 @@
    "importado_por": 40
   },
   {
-   "arquivo": "src/components/ui/entrada-cards.tsx",
+   "arquivo": "src/components/ui/dropdown-menu.tsx",
    "importado_por": 40
   },
   {
    "arquivo": "src/types/entities.ts",
    "importado_por": 40
-  },
-  {
-   "arquivo": "src/components/ui/dropdown-menu.tsx",
-   "importado_por": 39
   },
   {
    "arquivo": "src/services/index.ts",
@@ -260,13 +260,13 @@
  "modulos_mais_acoplados": [
   {
    "modulo": "pages",
-   "depende_de": 57,
+   "depende_de": 58,
    "importado_por": 1
   },
   {
    "modulo": "components/ui",
    "depende_de": 8,
-   "importado_por": 49
+   "importado_por": 50
   },
   {
    "modulo": "hooks",
@@ -291,7 +291,7 @@
   {
    "modulo": "lib",
    "depende_de": 1,
-   "importado_por": 38
+   "importado_por": 39
   },
   {
    "modulo": "components/dashboard",
@@ -309,14 +309,14 @@
    "importado_por": 11
   },
   {
+   "modulo": "components/avaliacao",
+   "depende_de": 7,
+   "importado_por": 8
+  },
+  {
    "modulo": "schemas",
    "depende_de": 2,
    "importado_por": 13
-  },
-  {
-   "modulo": "components/avaliacao",
-   "depende_de": 7,
-   "importado_por": 7
   },
   {
    "modulo": "components/colaborador-detalhes",
