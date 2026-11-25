@@ -7,22 +7,22 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (572)",
+   "src/components (577)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
   "hooks": [
-   "src/hooks (104)",
+   "src/hooks (105)",
    "src/components (12)",
    "src/contexts (4)"
   ],
   "servicos_logica": [
    "src/services (100)",
-   "src/utils (37)",
+   "src/utils (39)",
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (712)",
+   "co-localizado (__tests__) (714)",
    "co-localizado (*.test) (78)",
    "e2e/ (33)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (690)"
+  ".tsx (695)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: resgata os cards de resumo do ponto (indicadores, equipe, pendencias e fechamento) (#886)",
+   "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)",
    "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)",
    "feat: resgata a tela de pesquisas de clima do port do Muri (#885)",
-   "feat: resgata a tela de solicitacoes de horas extras do port do Muri (#884)",
-   "feat: resgata o painel de geofencing do ponto com mapa real (#883)",
-   "docs: registra o resgate da tela de Turnos e o lote canonico aplicado (#882)"
+   "feat: resgata a tela de solicitacoes de horas extras do port do Muri (#884)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

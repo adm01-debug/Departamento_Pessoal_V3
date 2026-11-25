@@ -1,28 +1,28 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1407,
- "arestas": 6915,
+ "nos": 1416,
+ "arestas": 6960,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 389
+   "importado_por": 393
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 324
+   "importado_por": 327
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 287
+   "importado_por": 291
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 275
+   "importado_por": 276
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 236
+   "importado_por": 239
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -46,7 +46,7 @@
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
-   "importado_por": 135
+   "importado_por": 136
   },
   {
    "arquivo": "src/components/ui/table.tsx",
@@ -82,7 +82,7 @@
   },
   {
    "arquivo": "src/utils/dateLocal.ts",
-   "importado_por": 70
+   "importado_por": 71
   },
   {
    "arquivo": "supabase/functions/_shared/rateLimit.ts",
@@ -113,6 +113,10 @@
    "importado_por": 51
   },
   {
+   "arquivo": "src/components/dashboard/MetricCard.tsx",
+   "importado_por": 46
+  },
+  {
    "arquivo": "src/utils/format.ts",
    "importado_por": 46
   },
@@ -133,10 +137,6 @@
    "importado_por": 41
   },
   {
-   "arquivo": "src/components/dashboard/MetricCard.tsx",
-   "importado_por": 40
-  },
-  {
    "arquivo": "src/components/ui/dropdown-menu.tsx",
    "importado_por": 40
   },
@@ -153,16 +153,16 @@
    "importado_por": 33
   },
   {
+   "arquivo": "src/lib/motionMode.ts",
+   "importado_por": 32
+  },
+  {
    "arquivo": "src/services/piiAccessLogService.ts",
    "importado_por": 32
   },
   {
    "arquivo": "supabase/functions/_shared/authz.ts",
    "importado_por": 32
-  },
-  {
-   "arquivo": "src/components/ui/skeleton.tsx",
-   "importado_por": 31
   }
  ],
  "ciclos": {
@@ -225,7 +225,6 @@
   "src/components/notifications/NotificationCenter.tsx",
   "src/components/notifications/index.ts",
   "src/components/ponto/PontoLeaderboard.tsx",
-  "src/components/ponto/vermelhoVibrante.ts",
   "src/components/ui/data-table.tsx",
   "src/components/ui/flow-hover-button.tsx",
   "src/components/ui/form.tsx",

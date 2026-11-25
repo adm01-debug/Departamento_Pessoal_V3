@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3cb33da5c8` · branch `main` · 2026-11-25 16:18 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `58dd46c647` · branch `main` · 2026-11-25 16:47 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1563,7 +1563,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `conversao` | escreve | `src/components/recrutamento/analyticsComum.ts` |
 | `tipo` | `course` | compara | `src/services/trainingImages/briefing.ts`<br>`supabase/functions/_shared/trainingImages/briefing.ts` |
 | `tipo` | `cpf` | compara | `supabase/functions/pix-lote/index.ts` |
-| `tipo` | `credito` | compara, escreve, filtra | `src/pages/DashboardPage.tsx`<br>`src/pages/PontoPage.tsx`<br>`src/services/bancoHorasService.ts`<br>`supabase/functions/processar-ponto/index.ts` |
+| `tipo` | `credito` | compara, escreve, filtra | `src/components/ponto/PontoBancoHorasCard.tsx`<br>`src/pages/DashboardPage.tsx`<br>`src/pages/PontoPage.tsx`<br>`src/services/bancoHorasService.ts`<br>`supabase/functions/processar-ponto/index.ts` |
 | `tipo` | `culpa_reciproca` | compara | `src/utils/rescisaoCalc.ts`<br>`supabase/functions/calcular-rescisao/motor.ts` |
 | `tipo` | `currency` | escreve | `src/components/premiacoes/RewardsSimulator.tsx` |
 | `tipo` | `custom` | escreve | `src/mocks/pesquisasClimaMock.ts` |
@@ -1658,8 +1658,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `revogar` | compara, escreve | `src/components/ponto/relogio/RelogiosPanel.tsx` |
 | `tipo` | `risco` | escreve | `src/components/avaliacao/nineBoxComum.ts` |
 | `tipo` | `rotacionar` | compara, escreve | `src/components/ponto/relogio/RelogiosPanel.tsx` |
-| `tipo` | `saida` | compara, escreve | `src/components/ponto/PontoClockRegister.tsx`<br>`src/pages/ControleAcessoPage.tsx`<br>`supabase/functions/processar-ponto/index.ts`<br>`supabase/functions/processar-ponto/logica.ts` |
-| `tipo` | `saida_almoco` | escreve | `src/components/ponto/PontoClockRegister.tsx` |
+| `tipo` | `saida` | compara, escreve | `src/components/ponto/PontoClockRegister.tsx`<br>`src/pages/ControleAcessoPage.tsx`<br>`src/utils/pontoEquipe.ts`<br>`supabase/functions/processar-ponto/index.ts`<br>`supabase/functions/processar-ponto/logica.ts` |
+| `tipo` | `saida_almoco` | compara, escreve | `src/components/ponto/PontoClockRegister.tsx`<br>`src/utils/pontoEquipe.ts` |
 | `tipo` | `satisfacao` | escreve | `src/mocks/pesquisasClimaMock.ts` |
 | `tipo` | `saude` | escreve | `src/mocks/colaboradoresMock.ts`<br>`src/pages/PlanosSaudePage.tsx` |
 | `tipo` | `seguro` | escreve | `src/mocks/colaboradoresMock.ts` |
@@ -1722,7 +1722,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `assinada` | compara, escreve | `src/pages/AdminEpisFichasPage.tsx` |
 | `status` | `assinado` | compara, escreve | `src/components/contratos/ContratosVencendoPanel.tsx`<br>`src/components/portal/PortalDocumentosTab.tsx`<br>`src/hooks/useAssinaturas.ts`<br>`src/pages/ContratosGeradosPage.tsx` |
 | `status` | `ativa` | compara, escreve, filtra | `src/components/pesquisas/pesquisasComum.ts`<br>`src/mocks/pesquisasClimaMock.ts`<br>`src/pages/PesquisasClimaPage.tsx`<br>`supabase/functions/gerar-ltcat-os/index.ts` |
-| `status` | `ativo` | compara, escreve, filtra | `src/components/dashboard/useMorningBriefing.ts`<br>`src/components/descontos/EmprestimosTable.tsx`<br>`src/components/descontos/FinancialSummaryCards.tsx`<br>`src/components/descontos/NewLoanDialog.tsx`<br>`src/components/desligamentos/NovoDesligamentoDialog.tsx`<br>… +58 |
+| `status` | `ativo` | compara, escreve, filtra | `src/components/dashboard/useMorningBriefing.ts`<br>`src/components/descontos/EmprestimosTable.tsx`<br>`src/components/descontos/FinancialSummaryCards.tsx`<br>`src/components/descontos/NewLoanDialog.tsx`<br>`src/components/desligamentos/NovoDesligamentoDialog.tsx`<br>… +59 |
 | `status` | `ativos` | compara | `src/components/admissoes/GestaoKits.tsx` |
 | `status` | `calculada` | compara, escreve | `src/services/folhaPagamentoService.ts`<br>`supabase/functions/calcular-folha/index.ts`<br>`supabase/functions/fechar-folha/index.ts` |
 | `status` | `calculado` | compara, escreve | `src/components/desligamentos/trilhaDerivacoes.ts`<br>`src/components/premiacoes/PagamentosTabela.tsx`<br>`src/components/premiacoes/pagamentosComum.ts`<br>`src/services/rescisaoService.ts` |
@@ -3281,6 +3281,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const { empresaAtual } = useEmpresas(); const [open, setOpen] = useState(false); const [loading, setLoading] = useState(false); const [inicio, setInicio] = useState(''); const [fim, setFim] = useState(''); const [resultado, setResultado] = useState<{ hash: string; bytes: number; marcacoes: number; colaboradores: number; sem_pis: number; } | null>(null); const handleGerar = async () => { if (!empresaAtual?.id) return toast.error('Selecione uma empresa'); if (!inicio || !fim) return toast.error('I …
   ```
+- **calcularIndicadoresPonto(registrosSemana: RegistroIndicador[] = [])** — `src/components/ponto/indicadoresPonto.ts`
+  ```
+  const comEntrada = registrosSemana.filter((registro) => !!registro?.entrada_1); const pontuais = comEntrada.filter((registro) => !Number(registro?.atraso_minutos)).length; const pontualidade = comEntrada.length > 0 ? Math.round((pontuais / comEntrada.length) * 100) : 0; const diasComRegistro = new Set(registrosSemana.map((registro) => registro?.data).filter(Boolean)).size; const totalTrabalhado = registrosSemana.reduce( (soma, registro) => soma + minutosDeDuracao(registro?.horas_trabalhadas ?? n …
+  ```
 - **Valor({ rotulo, valor }: { rotulo: string; valor: number | null })** — `src/components/premiacoes/AuditoriaEventoDialog.tsx`
   ```
   return ( <div> <dt className="text-[10px] uppercase tracking-wider text-muted-foreground">{rotulo}</dt> <dd className="mt-0.5 text-xs font-medium tabular-nums">{valor === null ? '—' : formatCurrency(valor)}</dd> </div> );
@@ -4468,9 +4472,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `* `chipFiltroComum`). Fundo em tint de 10%, borda em 35% e texto na cor cheia` | `src/components/pesquisas/pesquisasComum.ts` |
 | `podem gerar horas extras a 100%.` | `src/components/ponto/GestaoPontoAnalytics.tsx` |
 | `transition={{ delay: idx * 0.05 }}` | `src/components/ponto/PontoAuditTimeline.tsx` |
+| `é escuro, então 40% de alfa sumiria por completo na tela.` | `src/components/ponto/PontoBancoHorasCard.tsx` |
 | `// 100% independente do resultado (achado da auditoria — "teatro").` | `src/components/ponto/PontoClockRegister.tsx` |
 | `// até 60% — os 40% restantes refletem trabalho assíncrono REAL` | `src/components/ponto/PontoClockRegister.tsx` |
 | `transition={{ duration: 1, delay: i * 0.05 }}` | `src/components/ponto/PontoClockRegister.tsx` |
+| `(14% no tema claro, 22% no escuro). */}` | `src/components/ponto/PontoEquipeStatusCard.tsx` |
 | `if (dx <= w * 0.7 && dy <= h * 0.7) return z;` | `src/components/ponto/PontoGeoAnalytics.tsx` |
 | `() => [topo, Math.round(topo * 0.75), Math.round(topo * 0.5), Math.round(topo * 0.25), 0],` | `src/components/ponto/PontoGeoDistancia.tsx` |
 | `* borda de 1,5 px na cor cheia e fundo da mesma cor a 20%. A última posição é a` | `src/components/ponto/PontoGeoDistancia.tsx` |
@@ -4588,9 +4594,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: i * 0.05 }}` | `src/pages/LGPDPage.tsx` |
 | `transition={{ delay: i * 0.06 }}` | `src/pages/LGPDPage.tsx` |
 | `transition={{ delay: 0.3 + i * 0.1 }}` | `src/pages/LoginPage.tsx` |
-| `transition={{ delay: i * 0.02 }}` | `src/pages/NotificacoesPage.tsx` |
-| `transition={{ delay: i * 0.05 }}` | `src/pages/NotificacoesPage.tsx` |
-| … +101 linhas — lista completa em `context.json` | |
+| … +103 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -4791,9 +4795,14 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `REVEAL_MAX_STAGGERED_BLOCKS` | `8` | `src/components/organograma/organogramaReveal.ts` |
 | `REVEAL_CLOSE_WAVE_STEP` | `0.05` | `src/components/organograma/organogramaReveal.ts` |
 | `REVEAL_MAX_STAGGERED_CLOSE_BLOCKS` | `3` | `src/components/organograma/organogramaReveal.ts` |
+| `SLOT_ENTRADA_CARD` | `6` | `src/components/ponto/PontoEquipeStatusCard.tsx` |
+| `ENTRADA_INDICADOR_ESCALA` | `0.9` | `src/components/ponto/PontoEquipeStatusCard.tsx` |
+| `ENTRADA_INDICADOR_INTERVALO_S` | `0.1` | `src/components/ponto/PontoEquipeStatusCard.tsx` |
+| `SLOT_ENTRADA_CARD` | `9` | `src/components/ponto/PontoFechamentoCard.tsx` |
 | `TILE` | `256` | `src/components/ponto/PontoGeoAnalytics.tsx` |
 | `FOLGA` | `6` | `src/components/ponto/PontoGeoDistancia.tsx` |
 | `MINIMO_PONTOS_CALOR` | `5` | `src/components/ponto/PontoGeofencingPainel.tsx` |
+| `DIAS_NA_SEMANA` | `7` | `src/components/ponto/indicadoresPonto.ts` |
 | `VERMELHO_TEXTO` | `'text-[#FF4545]'` | `src/components/ponto/vermelhoVibrante.ts` |
 | `VERMELHO_TRACO` | `'stroke-[#EF4444]'` | `src/components/ponto/vermelhoVibrante.ts` |
 | `VERMELHO_SOLIDO` | `'bg-[#EF4444]'` | `src/components/ponto/vermelhoVibrante.ts` |
@@ -4893,12 +4902,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `SIDEBAR_COOKIE_MAX_AGE` | `60` | `src/components/ui/sidebar.tsx` |
 | `SIDEBAR_WIDTH` | `'16rem'` | `src/components/ui/sidebar.tsx` |
 | `SIDEBAR_WIDTH_MOBILE` | `'18rem'` | `src/components/ui/sidebar.tsx` |
-| `INICIO_LINHAS` | `0.52` | `src/components/ui/table-row-reveal.ts` |
-| `PASSO_LINHAS` | `0.04` | `src/components/ui/table-row-reveal.ts` |
-| `TOAST_LIMIT` | `1` | `src/components/ui/use-toast.ts` |
-| `SUPORTE_MAILTO` | `'mailto:suporte@promobrindes.com.br?subject='` | `src/components/ui/user-profile-menu.tsx` |
-| `NODE_W` | `160` | `src/components/workflows/WorkflowDesigner.tsx` |
-| … +200 linhas — lista completa em `context.json` | | |
+| … +207 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5163,6 +5167,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | 500 | `src/hooks/useDocumentos.ts` |
 | 1 | `src/hooks/useExecutiveDashboard.ts` |
 | 50 | `src/hooks/useNotificacoes.ts` |
+| 1000 | `src/hooks/usePontoDashboard.ts` |
+| 5000 | `src/hooks/usePontoDashboard.ts` |
 | 1 | `src/hooks/useSystemHealth.ts` |
 | 1 | `src/hooks/useSystemHealthHistory.ts` |
 | 500 | `src/hooks/ferias/useAlertasPagamentoD2.ts` |
@@ -5628,7 +5634,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (10225 testes em 804 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10260 testes em 806 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5783,6 +5789,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/baseService.test.ts` | 18 | BaseService.listar · returns data and total from supabase · returns empty data with total 0 when supabase returns null · queries page 2 with correct range offset … |
 | `src/services/__tests__/documentUploadService.test.ts` | 18 | documentUploadService · uploadDocumentFile · valida, envia o arquivo pro bucket e devolve o storage_path/meta · o primeiro segmento do path é sempre a empresa … |
 | `src/services/trainingImages/__tests__/briefing.test.ts` | 18 | briefing por assunto · panificação → padaria, fermentação e pães · segurança do trabalho → proteção e ambiente sinalizado · programação/tecnologia → software e ambiente técnico … |
+| `src/utils/__tests__/pontoDuracao.test.ts` | 18 | pontoDuracao · minutosDeDuracao · converte HH:MM em minutos · ignora os segundos de HH:MM:SS (formato gravado pela edge function) … |
 | `src/utils/__tests__/uploadValidation.test.ts` | 18 | validateUploadFile · accepts a valid PDF file · accepts a valid JPEG image · throws when file exceeds size limit … |
 | `scripts/tests/inventario-banco.test.mjs` | 17 | banco.sql tem as secoes esperadas e cada uma devolve a coluna j · banco.sql so le: nenhum comando de escrita e nada do command do cron · banco.sql: nome de tabela entra escapado na regex de citada_no_banco · banco.sql: count(*) exato so sem RLS no caminho (tabela sem RLS ou papel que ignora RLS) … |
 | `src/components/__tests__/DesligamentoDetailSheetCalculo.test.tsx` | 17 | DesligamentoDetailSheet — parâmetros do cálculo da rescisão · a tela oferece os parâmetros que o motor aceita · manda ao motor os parâmetros escolhidos na tela, não defaults fixos · o payload carrega TODOS os campos do motor, inclusive os das modalidades … |
@@ -5801,6 +5808,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/tabelas/__tests__/documentosService.test.ts` | 17 | documentoTemplatesService · listar queries documento_templates · listar returns [] when data is null · criar calls insert on documento_templates … |
 | `src/utils/__tests__/cursorPagination.test.ts` | 17 | cursorPagination · encodeCursor/decodeCursor round-trip · round-trip: ${c.column}=${c.value} · numeric value is preserved as number … |
 | `src/utils/__tests__/dateLocal.test.ts` | 17 | dateLocal · formata YYYY-MM-DD com zero-padding no fuso local · não sofre shift de UTC quando a hora local é próxima da meia-noite · retorna string vazia para entrada inválida (contrato defensivo) … |
+| `src/utils/__tests__/pontoEquipe.test.ts` | 17 | pontoEquipe · resumirEquipeDoDia · devolve zeros quando não há batidas nem colaboradores · separa quem está em intervalo de almoço (subconjunto de emJornada) … |
 | `src/utils/importacao/__tests__/parser.test.ts` | 17 | validators · valida CPFs corretos e rejeita inválidos · normalizarCPF remove máscara e preenche zeros · parseDate lida com dd/mm/yyyy, ISO e serial Excel … |
 | `supabase/functions/calcular-rescisao/motor.test.ts` | 17 | sem justa causa: multa FGTS fora do líquido (GRRF) · aviso proporcional Lei 12.506: 6 anos → 48 dias · termino_contrato empregador → indenização art. 479 (50% dos dias restantes) · termino_contrato empregado → indenização art. 480 nos descontos, sem multa … |
 | `supabase/functions/ingest-ponto-rep/logica.test.ts` | 17 | vincula por CPF mesmo com formatação diferente · CPF sem zero à esquerda casa com CPF completo · sem CPF cai para PIS e depois matrícula · chave ambígua não vincula e não tenta a próxima … |
@@ -5930,9 +5938,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/colaboradorService.recontratacao.test.ts` | 11 | colaboradorService.recontratar · exige empresaId (isolamento de tenant) · exige data_admissao · atualiza o MESMO colaborador.id (status ativo, data_desligamento null) e cria vínculo tipo  … |
 | `src/services/__tests__/pontoMonitorService.test.ts` | 11 | pontoMonitorService.logEvent · inserts event into ponto_auditoria · includes usuario_id from auth.getUser · swallows DB errors silently (no throw) … |
 | `src/utils/__tests__/regrasSolicitacaoFerias.test.ts` | 11 | resumirUsoPorPeriodo · soma gozo, abono e partes; rejeitadas/canceladas contam só como parte · validarSaldoFerias · aceita 30 dias sem abono e 20 + 10 de abono … |
-| `src/utils/__tests__/safeError.test.ts` | 11 | safeErrorMessage · returns fallback for null/undefined error · returns custom fallback when specified · returns user-friendly message for duplicate key error … |
-| `src/utils/__tests__/secureJson.test.ts` | 11 | secureJsonParse · parses simple valid JSON · parses JSON arrays · strips __proto__ keys to prevent prototype pollution … |
-| … +504 linhas — lista completa em `context.json` | | |
+| … +506 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6300,4 +6306,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * HABILITAÇÃO (regra ÚNICA, a MESMA do servidor — `pode_aprovar_colaborador` | `src/components/avaliacao/feedbackCanonico.ts` |
 | ENCAMINHAMENTO (RH/admin) — visível apenas para quem pode encaminhar E na | `src/components/avaliacao/feedbackCanonico.ts` |
 | VALIDAÇÃO DO POTENCIAL (RH) — controle LEGADO. O fluxo atual termina na | `src/components/avaliacao/feedbackCanonico.ts` |
-| … +1052 linhas — lista completa em `context.json` | |
+| … +1066 linhas — lista completa em `context.json` | |

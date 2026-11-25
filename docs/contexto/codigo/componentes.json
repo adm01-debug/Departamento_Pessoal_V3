@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 690,
+ "total": 695,
  "orfaos": 25,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -2974,7 +2974,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 35,
+   "usado_por": 41,
    "orfao": false
   },
   {
@@ -5825,6 +5825,21 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/ponto/PontoBancoHorasCard.tsx",
+   "exports": [
+    "BancoHorasResumo",
+    "PontoBancoHorasCard"
+   ],
+   "export_default": null,
+   "linhas": 222,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ponto/PontoCharts.tsx",
    "exports": [
     "PontoCharts"
@@ -5858,6 +5873,40 @@
    "tabelas": [
     "colaboradores"
    ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoEquipeStatusCard.tsx",
+   "exports": [
+    "PontoEquipeStatusCard"
+   ],
+   "export_default": null,
+   "linhas": 277,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useEntradaCardConcluida",
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoFechamentoCard.tsx",
+   "exports": [
+    "PontoFechamentoCard"
+   ],
+   "export_default": null,
+   "linhas": 201,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useEntradaCardConcluida",
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
    "edges": [],
    "usado_por": 1,
    "orfao": false
@@ -5965,6 +6014,20 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/ponto/PontoIndicadoresKpi.tsx",
+   "exports": [
+    "PontoIndicadoresKpi"
+   ],
+   "export_default": null,
+   "linhas": 50,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ponto/PontoLeaderboard.tsx",
    "exports": [
     "PontoLeaderboard"
@@ -5985,6 +6048,20 @@
    ],
    "export_default": null,
    "linhas": 74,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoPendenciasCard.tsx",
+   "exports": [
+    "PontoPendenciasCard"
+   ],
+   "export_default": null,
+   "linhas": 138,
    "dominio": "components/ponto",
    "hooks_locais": [],
    "tabelas": [],
@@ -8125,7 +8202,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 236,
+   "usado_por": 239,
    "orfao": false
   },
   {
@@ -8140,7 +8217,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 389,
+   "usado_por": 393,
    "orfao": false
   },
   {
@@ -8175,7 +8252,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 287,
+   "usado_por": 291,
    "orfao": false
   },
   {
@@ -10881,12 +10958,15 @@
     "PontoPage"
    ],
    "export_default": "PontoPage",
-   "linhas": 723,
+   "linhas": 735,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
+    "useColaboradoresEquipePonto",
     "useEmpresas",
-    "usePontoOffline"
+    "usePontoOffline",
+    "useRegistrosPontoEmpresa",
+    "useSolicitacoesAjustePontoPendentes"
    ],
    "tabelas": [
     "banco_horas",

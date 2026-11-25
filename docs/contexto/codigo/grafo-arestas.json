@@ -3522,6 +3522,15 @@
    "src/services/auditoriaService.ts",
    "src/services/exportService.ts"
   ],
+  "src/components/ponto/PontoBancoHorasCard.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ponto/acoesCardsPonto.ts",
+   "src/components/ponto/vermelhoVibrante.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts",
+   "src/utils/pontoDuracao.ts"
+  ],
   "src/components/ponto/PontoCharts.tsx": [
    "src/components/ui/card.tsx",
    "src/contexts/index.ts",
@@ -3541,6 +3550,28 @@
    "src/services/loggerService.ts",
    "src/services/pontoOfflineService.ts",
    "src/utils/safeError.ts"
+  ],
+  "src/components/ponto/PontoEquipeStatusCard.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/entradaGlobal.ts",
+   "src/hooks/useEntradaCardConcluida.ts",
+   "src/hooks/usePontoDashboard.ts",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts",
+   "src/utils/pontoEquipe.ts"
+  ],
+  "src/components/ponto/PontoFechamentoCard.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/entradaGlobal.ts",
+   "src/components/ui/progressMotion.ts",
+   "src/hooks/useEntradaCardConcluida.ts",
+   "src/lib/motionMode.ts"
   ],
   "src/components/ponto/PontoGeoAnalytics.tsx": [
    "src/components/ui/badge.tsx",
@@ -3603,6 +3634,10 @@
    "src/schemas/validate.ts",
    "src/services/notificacoesService.ts"
   ],
+  "src/components/ponto/PontoIndicadoresKpi.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ponto/indicadoresPonto.ts"
+  ],
   "src/components/ponto/PontoLeaderboard.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/card.tsx"
@@ -3612,6 +3647,14 @@
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/integrations/supabase/types.ts"
+  ],
+  "src/components/ponto/PontoPendenciasCard.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ponto/vermelhoVibrante.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
   ],
   "src/components/ponto/PontoStreakCard.tsx": [
    "src/components/ui/badge.tsx",
@@ -3634,6 +3677,10 @@
   ],
   "src/components/ponto/acoesCardsPonto.ts": [
    "src/lib/utils.ts"
+  ],
+  "src/components/ponto/indicadoresPonto.ts": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/utils/pontoDuracao.ts"
   ],
   "src/components/ponto/relogio/JustificativasRelogioTab.tsx": [
    "src/components/ui/button.tsx",
@@ -5653,6 +5700,11 @@
    "src/services/pontosService.ts",
    "src/utils/safeError.ts"
   ],
+  "src/hooks/usePontoDashboard.ts": [
+   "src/hooks/useEmpresas.ts",
+   "src/integrations/supabase/client.ts",
+   "src/utils/dateLocal.ts"
+  ],
   "src/hooks/usePontoGeofencing.ts": [
    "src/integrations/supabase/client.ts",
    "src/services/index.ts",
@@ -7340,9 +7392,14 @@
    "src/components/ponto/ImportarAFDTDialog.tsx",
    "src/components/ponto/PontoAdjustmentRequests.tsx",
    "src/components/ponto/PontoAuditTimeline.tsx",
+   "src/components/ponto/PontoBancoHorasCard.tsx",
    "src/components/ponto/PontoCharts.tsx",
    "src/components/ponto/PontoClockRegister.tsx",
+   "src/components/ponto/PontoEquipeStatusCard.tsx",
+   "src/components/ponto/PontoFechamentoCard.tsx",
    "src/components/ponto/PontoGeofencingPainel.tsx",
+   "src/components/ponto/PontoIndicadoresKpi.tsx",
+   "src/components/ponto/PontoPendenciasCard.tsx",
    "src/components/ponto/PontoStreakCard.tsx",
    "src/components/ponto/PontoTodayCard.tsx",
    "src/components/ponto/PontoWeekSummary.tsx",
@@ -7353,12 +7410,14 @@
    "src/components/ui/tabs.tsx",
    "src/contexts/index.ts",
    "src/hooks/index.ts",
+   "src/hooks/usePontoDashboard.ts",
    "src/integrations/supabase/client.ts",
    "src/lib/utils.ts",
    "src/services/edgeFunctionsService.ts",
    "src/services/index.ts",
    "src/services/loggerService.ts",
    "src/utils/dateLocal.ts",
+   "src/utils/pontoEquipe.ts",
    "src/utils/safeError.ts"
   ],
   "src/pages/PortalPage.tsx": [

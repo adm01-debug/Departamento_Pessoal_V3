@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3cb33da5c8f164c7dd52ae8c6ccd691dbf6d36a5",
+  "sha": "58dd46c64783d21d8596ffece4aed9f5825f6924",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 16:18 UTC",
-  "files_total": 4183,
-  "code_files": 3587,
-  "code_lines": 529665
+  "generated_at": "2026-11-25 16:47 UTC",
+  "files_total": 4194,
+  "code_files": 3598,
+  "code_lines": 531203
  },
  "version": "1.3.2",
- "facts_hash": "40637ae201b36bd3",
+ "facts_hash": "06a210ca20b6dbe2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,8 +388,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1335,
-   ".tsx": 1107,
-   ".ts": 1004,
+   ".tsx": 1112,
+   ".ts": 1010,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -97617,7 +97617,7 @@
      "validar_potencial_avaliacao",
      "verificar_espelho_ponto"
     ],
-    "deps_count": 255
+    "deps_count": 267
    },
    {
     "path": "",
@@ -103056,7 +103056,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1108,
+  "components_count": 1114,
   "hooks": [
    {
     "name": "useContacts",
@@ -103809,6 +103809,18 @@
    {
     "name": "usePonto",
     "file": "src/hooks/usePonto.ts"
+   },
+   {
+    "name": "useColaboradoresEquipePonto",
+    "file": "src/hooks/usePontoDashboard.ts"
+   },
+   {
+    "name": "useRegistrosPontoEmpresa",
+    "file": "src/hooks/usePontoDashboard.ts"
+   },
+   {
+    "name": "useSolicitacoesAjustePontoPendentes",
+    "file": "src/hooks/usePontoDashboard.ts"
    },
    {
     "name": "usePontoGeofencing",
@@ -104719,8 +104731,8 @@
   },
   {
    "module": "src/components",
-   "files": 1108,
-   "lines": 209757,
+   "files": 1114,
+   "lines": 210753,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105054,8 +105066,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 209,
-   "lines": 24448,
+   "files": 210,
+   "lines": 24607,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105081,6 +105093,7 @@
     "periodos_aquisitivos",
     "permissions",
     "personnel_budget",
+    "registros_ponto",
     "solicitacoes_ajuste_ponto",
     "sst_cat",
     "sst_exposicao_riscos",
@@ -105249,11 +105262,11 @@
     "src/hooks/usePermissions.ts",
     "src/hooks/usePiiMask.ts",
     "src/hooks/usePonto.ts",
+    "src/hooks/usePontoDashboard.ts",
     "src/hooks/usePontoGeofencing.ts",
     "src/hooks/usePontoMelhorado.ts",
     "src/hooks/usePontoOffline.ts",
-    "src/hooks/usePontosAbertos.ts",
-    "src/hooks/useProximosEventos.ts"
+    "src/hooks/usePontosAbertos.ts"
    ]
   },
   {
@@ -105423,7 +105436,7 @@
   {
    "module": "src/pages",
    "files": 145,
-   "lines": 51684,
+   "lines": 51696,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -106273,8 +106286,8 @@
   },
   {
    "module": "src/utils",
-   "files": 73,
-   "lines": 9778,
+   "files": 77,
+   "lines": 10149,
    "tables": [
     "folha_itens",
     "rubricas_folha"
@@ -106299,6 +106312,8 @@
     "passwordPolicy.ts: PasswordValidation, validatePassword, checkPasswordBreach, validatePasswordFull",
     "pgInterval.ts: parsePgIntervalToHours",
     "piiMask.ts: maskCpfDisplay, maskBankAccount, maskPisDisplay, maskEmail, maskGeneric, maskPiiDeep",
+    "pontoDuracao.ts: MINUTOS_POR_HORA, minutosDeDuracao, formatarMinutosDuracao, horasDecimaisDeMinutos",
+    "pontoEquipe.ts: BatidaEquipe, ResumoEquipeDia, resumirEquipeDoDia, temSaidaPendente",
     "pontoGeofencing.ts: PeriodoGeo, IntervaloGeo, PERIODOS_GEO, UnidadeGeografica, PontoGeografico, FaixaDistancia",
     "regrasSolicitacaoFerias.ts: DIAS_AVISO_FERIAS, FeriasLancada, UsoPeriodo, USO_VAZIO, resumirUsoPorPeriodo, validarSaldoFerias",
     "rescisaoCalc.ts: normalizarTipoRescisao, SeguroDesempregoInfo, RescisaoResult, LinhaBaseCalculo, aliquotaEfetiva, RescisaoParams",
@@ -106364,6 +106379,8 @@
     "src/utils/passwordPolicy.ts",
     "src/utils/pgInterval.ts",
     "src/utils/piiMask.ts",
+    "src/utils/pontoDuracao.ts",
+    "src/utils/pontoEquipe.ts",
     "src/utils/pontoGeofencing.ts",
     "src/utils/regrasSolicitacaoFerias.ts",
     "src/utils/rescisaoCalc.ts",
@@ -106393,6 +106410,8 @@
     "src/utils/__tests__/passwordPolicy.test.ts",
     "src/utils/__tests__/pgInterval.test.ts",
     "src/utils/__tests__/piiMask.test.ts",
+    "src/utils/__tests__/pontoDuracao.test.ts",
+    "src/utils/__tests__/pontoEquipe.test.ts",
     "src/utils/__tests__/pontoGeofencing.test.ts",
     "src/utils/__tests__/regrasSolicitacaoFerias.test.ts",
     "src/utils/__tests__/rescisaoCalc.test.ts",
@@ -107514,6 +107533,7 @@
      "src/hooks/useImportacaoColaboradores.ts",
      "src/hooks/useNotificacoes.ts",
      "src/hooks/useOrganograma.ts",
+     "src/hooks/usePontoDashboard.ts",
      "src/integrations/supabase/__tests__/clientBridge.test.ts",
      "src/pages/AdminAgendamentoExamesPage.tsx",
      "src/pages/AdminCatPage.tsx",
@@ -109534,6 +109554,7 @@
      "src/components/ponto/GestaoRegistrosPonto.tsx",
      "src/components/ponto/PontoCharts.tsx",
      "src/components/ponto/PontoStreakCard.tsx",
+     "src/hooks/usePontoDashboard.ts",
      "src/pages/PontoPage.tsx",
      "src/pages/PortalPage.tsx",
      "src/services/folha/calculoLoteService.ts",
@@ -109706,6 +109727,7 @@
     "select": [
      "src/components/ponto/PontoAdjustmentRequests.tsx",
      "src/hooks/useExecutiveDashboard.ts",
+     "src/hooks/usePontoDashboard.ts",
      "src/hooks/usePontoMelhorado.ts",
      "src/pages/DashboardPage.tsx"
     ],
@@ -111591,6 +111613,7 @@
    ],
    "solicitacoes_ajuste_ponto": [
     "empresa_id",
+    "id",
     "status"
    ],
    "solicitacoes_hora_extra": [
@@ -123706,12 +123729,36 @@
     "text": "* Formato MÍNIMO que os cartões/indicadores consomem. As linhas de `pesquisas`"
    },
    {
+    "file": "src/components/ponto/PontoBancoHorasCard.tsx",
+    "text": "embaixo, separados apenas por fios discretos (`border-border`)."
+   },
+   {
+    "file": "src/components/ponto/PontoBancoHorasCard.tsx",
+    "text": "regra continua visível por dois canais: o `+`/`-` do próprio texto e a cor"
+   },
+   {
     "file": "src/components/ponto/PontoClockRegister.tsx",
     "text": "(upload + validação biométrica), não mais um timer decorativo até"
    },
    {
     "file": "src/components/ponto/PontoClockRegister.tsx",
     "text": "biometria — risco trabalhista), mas o resultado real da validação"
+   },
+   {
+    "file": "src/components/ponto/PontoEquipeStatusCard.tsx",
+    "text": "`resumirEquipeDoDia` — a MESMA regra usada pelo card de Pendências e pelo"
+   },
+   {
+    "file": "src/components/ponto/PontoEquipeStatusCard.tsx",
+    "text": "* Regra de jornada (ver `utils/pontoEquipe`): está em jornada quem tem batida"
+   },
+   {
+    "file": "src/components/ponto/PontoEquipeStatusCard.tsx",
+    "text": "Regra de jornada em `resumirEquipeDoDia` (mesma usada pelos cards de"
+   },
+   {
+    "file": "src/components/ponto/PontoEquipeStatusCard.tsx",
+    "text": "sólido saturado. Os rótulos seguem os nomes reais da regra de jornada"
    },
    {
     "file": "src/components/ponto/PontoGeoMapa.tsx",
@@ -123748,6 +123795,10 @@
    {
     "file": "src/components/ponto/acoesCardsPonto.ts",
     "text": "* Cada utilitário aqui já existia nos três botões; foram apenas reunidos num"
+   },
+   {
+    "file": "src/components/ponto/indicadoresPonto.ts",
+    "text": "página e os testes — a regra de negócio não pode morar dentro do componente"
    },
    {
     "file": "src/components/portal/PortalDocumentosTab.tsx",
@@ -124516,6 +124567,18 @@
    {
     "file": "src/hooks/usePermissions.ts",
     "text": "como \"sem permissão\" — a guarda mostra o estado de erro, não \"Acesso Restrito\"."
+   },
+   {
+    "file": "src/hooks/usePontoDashboard.ts",
+    "text": "* Regra de tenant: toda consulta filtra por `empresa_id` da empresa ativa e"
+   },
+   {
+    "file": "src/hooks/usePontoDashboard.ts",
+    "text": "* Colaborador com vínculo ativo — o mínimo para contar e nomear a equipe. */"
+   },
+   {
+    "file": "src/hooks/usePontoDashboard.ts",
+    "text": "* `limit(5000)` é teto de segurança: uma empresa de 200 pessoas × 31 dias gera"
    },
    {
     "file": "src/hooks/useProximosEventos.ts",
@@ -125604,6 +125667,22 @@
    {
     "file": "src/utils/piiMask.ts",
     "text": "estruturas cíclicas usa WeakSet — não há limite de profundidade, então"
+   },
+   {
+    "file": "src/utils/pontoDuracao.ts",
+    "text": "Aqui existe uma única regra, coberta por"
+   },
+   {
+    "file": "src/utils/pontoEquipe.ts",
+    "text": "pergunta — por isso a regra vive aqui, pura e testável, longe do JSX."
+   },
+   {
+    "file": "src/utils/pontoEquipe.ts",
+    "text": "* Regra de jornada: a jornada está ENCERRADA quando a ÚLTIMA batida do"
+   },
+   {
+    "file": "src/utils/pontoEquipe.ts",
+    "text": "* Registro com entrada e sem saída = saída não marcada (mesma regra de"
    },
    {
     "file": "src/utils/pontoGeofencing.ts",
@@ -151898,6 +151977,26 @@
     "value": "3"
    },
    {
+    "file": "src/components/ponto/PontoEquipeStatusCard.tsx",
+    "name": "SLOT_ENTRADA_CARD",
+    "value": "6"
+   },
+   {
+    "file": "src/components/ponto/PontoEquipeStatusCard.tsx",
+    "name": "ENTRADA_INDICADOR_ESCALA",
+    "value": "0.9"
+   },
+   {
+    "file": "src/components/ponto/PontoEquipeStatusCard.tsx",
+    "name": "ENTRADA_INDICADOR_INTERVALO_S",
+    "value": "0.1"
+   },
+   {
+    "file": "src/components/ponto/PontoFechamentoCard.tsx",
+    "name": "SLOT_ENTRADA_CARD",
+    "value": "9"
+   },
+   {
     "file": "src/components/ponto/PontoGeoAnalytics.tsx",
     "name": "TILE",
     "value": "256"
@@ -151911,6 +152010,11 @@
     "file": "src/components/ponto/PontoGeofencingPainel.tsx",
     "name": "MINIMO_PONTOS_CALOR",
     "value": "5"
+   },
+   {
+    "file": "src/components/ponto/indicadoresPonto.ts",
+    "name": "DIAS_NA_SEMANA",
+    "value": "7"
    },
    {
     "file": "src/components/ponto/vermelhoVibrante.ts",
@@ -152518,6 +152622,11 @@
     "value": "5"
    },
    {
+    "file": "src/hooks/usePontoDashboard.ts",
+    "name": "STALE_TIME_RESUMO",
+    "value": "60"
+   },
+   {
     "file": "src/hooks/usePontoGeofencing.ts",
     "name": "RAIO_PADRAO_METROS",
     "value": "200"
@@ -152841,6 +152950,11 @@
     "file": "src/utils/piiMask.ts",
     "name": "MASK_CHAR",
     "value": "'•'"
+   },
+   {
+    "file": "src/utils/pontoDuracao.ts",
+    "name": "MINUTOS_POR_HORA",
+    "value": "60"
    },
    {
     "file": "src/utils/pontoGeofencing.ts",
@@ -156782,6 +156896,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/ponto/PontoBancoHorasCard.tsx",
+    "field": "tipo",
+    "value": "credito",
+    "kind": "escreve"
+   },
+   {
     "file": "src/components/ponto/PontoClockRegister.tsx",
     "field": "tipo",
     "value": "entrada",
@@ -158862,6 +158982,24 @@
     "field": "tipo",
     "value": "entrada",
     "kind": "escreve"
+   },
+   {
+    "file": "src/hooks/usePontoDashboard.ts",
+    "field": "status",
+    "value": "pendente",
+    "kind": "compara"
+   },
+   {
+    "file": "src/hooks/usePontoDashboard.ts",
+    "field": "status",
+    "value": "ativo",
+    "kind": "filtra"
+   },
+   {
+    "file": "src/hooks/usePontoDashboard.ts",
+    "field": "status",
+    "value": "pendente",
+    "kind": "filtra"
    },
    {
     "file": "src/hooks/usePontoMelhorado.ts",
@@ -162076,50 +162214,8 @@
    {
     "file": "src/pages/PontoPage.tsx",
     "field": "tipo",
-    "value": "credito",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/pages/PontoPage.tsx",
-    "field": "tipo",
     "value": "entrada",
     "kind": "escreve"
-   },
-   {
-    "file": "src/pages/PontoPage.tsx",
-    "field": "tipo",
-    "value": "credito",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/PontoPage.tsx",
-    "field": "tipo",
-    "value": "credito",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/PontoPage.tsx",
-    "field": "tipo",
-    "value": "credito",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/PontoPage.tsx",
-    "field": "tipo",
-    "value": "credito",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/PontoPage.tsx",
-    "field": "tipo",
-    "value": "credito",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/PontoPage.tsx",
-    "field": "tipo",
-    "value": "credito",
-    "kind": "compara"
    },
    {
     "file": "src/pages/PontoPage.tsx",
@@ -163541,6 +163637,18 @@
     "file": "src/utils/folhaCalc.ts",
     "field": "tipo",
     "value": "desconto",
+    "kind": "compara"
+   },
+   {
+    "file": "src/utils/pontoEquipe.ts",
+    "field": "tipo",
+    "value": "saida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/utils/pontoEquipe.ts",
+    "field": "tipo",
+    "value": "saida_almoco",
     "kind": "compara"
    },
    {
@@ -166682,6 +166790,12 @@
     "name": "GerarAFDDialog",
     "params": "",
     "body": "const { empresaAtual } = useEmpresas(); const [open, setOpen] = useState(false); const [loading, setLoading] = useState(false); const [inicio, setInicio] = useState(''); const [fim, setFim] = useState(''); const [resultado, setResultado] = useState<{ hash: string; bytes: number; marcacoes: number; colaboradores: number; sem_pis: number; } | null>(null); const handleGerar = async () => { if (!empresaAtual?.id) return toast.error('Selecione uma empresa'); if (!inicio || !fim) return toast.error('I …"
+   },
+   {
+    "file": "src/components/ponto/indicadoresPonto.ts",
+    "name": "calcularIndicadoresPonto",
+    "params": "registrosSemana: RegistroIndicador[] = []",
+    "body": "const comEntrada = registrosSemana.filter((registro) => !!registro?.entrada_1); const pontuais = comEntrada.filter((registro) => !Number(registro?.atraso_minutos)).length; const pontualidade = comEntrada.length > 0 ? Math.round((pontuais / comEntrada.length) * 100) : 0; const diasComRegistro = new Set(registrosSemana.map((registro) => registro?.data).filter(Boolean)).size; const totalTrabalhado = registrosSemana.reduce( (soma, registro) => soma + minutosDeDuracao(registro?.horas_trabalhadas ?? n …"
    },
    {
     "file": "src/components/premiacoes/AuditoriaEventoDialog.tsx",
@@ -169826,6 +169940,10 @@
     "line": "transition={{ delay: idx * 0.05 }}"
    },
    {
+    "file": "src/components/ponto/PontoBancoHorasCard.tsx",
+    "line": "é escuro, então 40% de alfa sumiria por completo na tela."
+   },
+   {
     "file": "src/components/ponto/PontoClockRegister.tsx",
     "line": "// 100% independente do resultado (achado da auditoria — \"teatro\")."
    },
@@ -169836,6 +169954,10 @@
    {
     "file": "src/components/ponto/PontoClockRegister.tsx",
     "line": "transition={{ duration: 1, delay: i * 0.05 }}"
+   },
+   {
+    "file": "src/components/ponto/PontoEquipeStatusCard.tsx",
+    "line": "(14% no tema claro, 22% no escuro). */}"
    },
    {
     "file": "src/components/ponto/PontoGeoAnalytics.tsx",
@@ -209352,6 +209474,146 @@
     "name": "masks without domain entirely for invalid email"
    },
    {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "pontoDuracao"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "minutosDeDuracao"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "converte HH:MM em minutos"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "ignora os segundos de HH:MM:SS (formato gravado pela edge function)"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "interpreta débito com sinal negativo"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "interpreta número como horas decimais"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "devolve 0 para entrada ausente ou inválida (contrato defensivo)"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "mantém 60 minutos por hora"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "formatarMinutosDuracao"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "formata minutos como HH:MM com zero-padding"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "prefixa o sinal negativo e nunca mostra "
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "prefixa "
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "devolve --:-- para valor não finito em vez de NaN:NaN"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "arredonda a fração de minuto"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "horasDecimaisDeMinutos"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "converte minutos em horas decimais com 2 casas"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "devolve 0 para valor não finito (eixo do gráfico nunca recebe NaN)"
+   },
+   {
+    "file": "src/utils/__tests__/pontoDuracao.test.ts",
+    "name": "faz ida e volta minutos → HH:MM → minutos"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "pontoEquipe"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "resumirEquipeDoDia"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "devolve zeros quando não há batidas nem colaboradores"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "separa quem está em intervalo de almoço (subconjunto de emJornada)"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "conta cada colaborador uma única vez"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "não considera jornada encerrada quando a última batida é saida_almoco"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "volta a contar o colaborador em jornada se ele bateu entrada depois da saída"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "assume a última batida da lista como a válida (ordem cronológica)"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "normaliza o tipo antes de comparar (maiúsculas e espaços)"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "calcula cobertura e colaboradores sem batida"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "limita a cobertura a 100% quando há mais batidas que colaboradores ativos"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "ignora batidas sem colaborador_id"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "nunca devolve número negativo"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "temSaidaPendente"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "marca pendência quando há entrada e nenhuma saída"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "não marca pendência quando a saída foi registrada"
+   },
+   {
+    "file": "src/utils/__tests__/pontoEquipe.test.ts",
+    "name": "não marca pendência em dia sem entrada (folga, feriado, falta)"
+   },
+   {
     "file": "src/utils/__tests__/pontoGeofencing.test.ts",
     "name": "pontoGeofencing · distância e situação"
    },
@@ -238412,6 +238674,14 @@
     "limit": "50"
    },
    {
+    "file": "src/hooks/usePontoDashboard.ts",
+    "limit": "1000"
+   },
+   {
+    "file": "src/hooks/usePontoDashboard.ts",
+    "limit": "5000"
+   },
+   {
     "file": "src/hooks/useSystemHealth.ts",
     "limit": "1"
    },
@@ -240980,6 +241250,15 @@
       "compara:src/components/pesquisas/pesquisasComum.ts",
       "escreve:src/mocks/pesquisasClimaMock.ts"
      ],
+     "credito": [
+      "compara:src/pages/DashboardPage.tsx",
+      "compara:src/pages/PontoPage.tsx",
+      "compara:src/services/bancoHorasService.ts",
+      "escreve:src/components/ponto/PontoBancoHorasCard.tsx",
+      "escreve:src/pages/PontoPage.tsx",
+      "escreve:supabase/functions/processar-ponto/index.ts",
+      "filtra:supabase/functions/processar-ponto/index.ts"
+     ],
      "entrada": [
       "compara:src/pages/ControleAcessoPage.tsx",
       "compara:supabase/functions/processar-ponto-offline/index.ts",
@@ -240996,6 +241275,7 @@
       "escreve:src/services/pontoService.ts"
      ],
      "saida_almoco": [
+      "compara:src/utils/pontoEquipe.ts",
       "escreve:src/components/ponto/PontoClockRegister.tsx"
      ],
      "retorno_almoco": [
@@ -241004,6 +241284,7 @@
      ],
      "saida": [
       "compara:src/pages/ControleAcessoPage.tsx",
+      "compara:src/utils/pontoEquipe.ts",
       "compara:supabase/functions/processar-ponto/index.ts",
       "compara:supabase/functions/processar-ponto/logica.ts",
       "escreve:src/components/ponto/PontoClockRegister.tsx"
@@ -241307,14 +241588,6 @@
      "admissoes": [
       "escreve:src/pages/DashboardPage.tsx"
      ],
-     "credito": [
-      "compara:src/pages/DashboardPage.tsx",
-      "compara:src/pages/PontoPage.tsx",
-      "compara:src/services/bancoHorasService.ts",
-      "escreve:src/pages/PontoPage.tsx",
-      "escreve:supabase/functions/processar-ponto/index.ts",
-      "filtra:supabase/functions/processar-ponto/index.ts"
-     ],
      "reembolso": [
       "escreve:src/pages/DespesasPage.tsx"
      ],
@@ -241517,6 +241790,7 @@
       "compara:src/components/ferias/FeriasRelatorioDialog.tsx",
       "compara:src/components/ponto/PontoAdjustmentRequests.tsx",
       "compara:src/hooks/useAssinaturas.ts",
+      "compara:src/hooks/usePontoDashboard.ts",
       "compara:src/pages/AdminEpisFichasPage.tsx",
       "compara:src/pages/DespesasPage.tsx",
       "compara:src/pages/ESocialPage.tsx",
@@ -241554,6 +241828,7 @@
       "escreve:supabase/functions/processar-agendamentos/filaNotificacoes.ts",
       "escreve:supabase/functions/processar-agendamentos/index.ts",
       "filtra:src/hooks/useExecutiveDashboard.ts",
+      "filtra:src/hooks/usePontoDashboard.ts",
       "filtra:src/pages/DashboardPage.tsx",
       "filtra:src/pages/PortalPage.tsx",
       "filtra:src/services/cnabService.ts",
@@ -241937,6 +242212,7 @@
       "filtra:src/hooks/useExecutiveDashboard.ts",
       "filtra:src/hooks/useNotificacoes.ts",
       "filtra:src/hooks/useOrganograma.ts",
+      "filtra:src/hooks/usePontoDashboard.ts",
       "filtra:src/pages/AdminPontoDivergenciasPage.tsx",
       "filtra:src/pages/CalculadoraRescisaoPage.tsx",
       "filtra:src/pages/ConveniosPage.tsx",
@@ -294999,6 +295275,28 @@
     "transition={{ delay: idx * 0.05 }}"
    ]
   },
+  "src/components/ponto/PontoBancoHorasCard.tsx": {
+   "path": "src/components/ponto/PontoBancoHorasCard.tsx",
+   "lines": 222,
+   "exports": [
+    "interface BancoHorasResumo",
+    "function PontoBancoHorasCard"
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "credito",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "embaixo, separados apenas por fios discretos (`border-border`).",
+    "regra continua visível por dois canais: o `+`/`-` do próprio texto e a cor"
+   ],
+   "percents": [
+    "é escuro, então 40% de alfa sumiria por completo na tela."
+   ]
+  },
   "src/components/ponto/PontoCharts.tsx": {
    "path": "src/components/ponto/PontoCharts.tsx",
    "lines": 176,
@@ -295123,6 +295421,49 @@
    ],
    "pagination": [
     "1"
+   ]
+  },
+  "src/components/ponto/PontoEquipeStatusCard.tsx": {
+   "path": "src/components/ponto/PontoEquipeStatusCard.tsx",
+   "lines": 277,
+   "exports": [
+    "function PontoEquipeStatusCard"
+   ],
+   "params": [
+    {
+     "name": "SLOT_ENTRADA_CARD",
+     "value": "6"
+    },
+    {
+     "name": "ENTRADA_INDICADOR_ESCALA",
+     "value": "0.9"
+    },
+    {
+     "name": "ENTRADA_INDICADOR_INTERVALO_S",
+     "value": "0.1"
+    }
+   ],
+   "rule_comments": [
+    "`resumirEquipeDoDia` — a MESMA regra usada pelo card de Pendências e pelo",
+    "* Regra de jornada (ver `utils/pontoEquipe`): está em jornada quem tem batida",
+    "Regra de jornada em `resumirEquipeDoDia` (mesma usada pelos cards de",
+    "sólido saturado. Os rótulos seguem os nomes reais da regra de jornada"
+   ],
+   "percents": [
+    "(14% no tema claro, 22% no escuro). */}"
+   ]
+  },
+  "src/components/ponto/PontoFechamentoCard.tsx": {
+   "path": "src/components/ponto/PontoFechamentoCard.tsx",
+   "lines": 201,
+   "exports": [
+    "function PontoFechamentoCard"
+   ],
+   "params": [
+    {
+     "name": "SLOT_ENTRADA_CARD",
+     "value": "9"
+    }
    ]
   },
   "src/components/ponto/PontoGeoAnalytics.tsx": {
@@ -295311,6 +295652,13 @@
     "const diffHoras = (agora.getTime() - dataBatida.getTime()) / (1000 * 60 * 60);"
    ]
   },
+  "src/components/ponto/PontoIndicadoresKpi.tsx": {
+   "path": "src/components/ponto/PontoIndicadoresKpi.tsx",
+   "lines": 50,
+   "exports": [
+    "function PontoIndicadoresKpi"
+   ]
+  },
   "src/components/ponto/PontoLeaderboard.tsx": {
    "path": "src/components/ponto/PontoLeaderboard.tsx",
    "lines": 75,
@@ -295345,6 +295693,13 @@
      "value": "atraso",
      "kind": "compara"
     }
+   ]
+  },
+  "src/components/ponto/PontoPendenciasCard.tsx": {
+   "path": "src/components/ponto/PontoPendenciasCard.tsx",
+   "lines": 138,
+   "exports": [
+    "function PontoPendenciasCard"
    ]
   },
   "src/components/ponto/PontoStreakCard.tsx": {
@@ -295405,6 +295760,32 @@
     "* `hover:text-primary-glow` = `--primary-glow` (68 100% 58% no claro, 60% no",
     "* `text-primary` = `--primary` (68 100% 48% — o mesmo valor nos dois temas).",
     "* escala de 125% do `<html>` só os converte em 30px / 15px / 10px / 12,5px na"
+   ]
+  },
+  "src/components/ponto/indicadoresPonto.ts": {
+   "path": "src/components/ponto/indicadoresPonto.ts",
+   "lines": 108,
+   "exports": [
+    "interface RegistroIndicador",
+    "interface IndicadorPonto",
+    "const DIAS_NA_SEMANA",
+    "function calcularIndicadoresPonto"
+   ],
+   "params": [
+    {
+     "name": "DIAS_NA_SEMANA",
+     "value": "7"
+    }
+   ],
+   "rule_comments": [
+    "página e os testes — a regra de negócio não pode morar dentro do componente"
+   ],
+   "calc_fns": [
+    {
+     "name": "calcularIndicadoresPonto",
+     "params": "registrosSemana: RegistroIndicador[] = []",
+     "body": "const comEntrada = registrosSemana.filter((registro) => !!registro?.entrada_1); const pontuais = comEntrada.filter((registro) => !Number(registro?.atraso_minutos)).length; const pontualidade = comEntrada.length > 0 ? Math.round((pontuais / comEntrada.length) * 100) : 0; const diasComRegistro = new Set(registrosSemana.map((registro) => registro?.data).filter(Boolean)).size; const totalTrabalhado = registrosSemana.reduce( (soma, registro) => soma + minutosDeDuracao(registro?.horas_trabalhadas ?? n …"
+    }
    ]
   },
   "src/components/ponto/vermelhoVibrante.ts": {
@@ -305049,6 +305430,97 @@
     "usePonto"
    ]
   },
+  "src/hooks/usePontoDashboard.ts": {
+   "path": "src/hooks/usePontoDashboard.ts",
+   "lines": 159,
+   "exports": [
+    "interface PeriodoApuracao",
+    "interface ColaboradorEquipe",
+    "interface RegistroPontoResumo",
+    "function periodoDoMesCorrente",
+    "function useColaboradoresEquipePonto",
+    "function useRegistrosPontoEmpresa",
+    "function useSolicitacoesAjustePontoPendentes"
+   ],
+   "tables": [
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "registros_ponto",
+     "op": "select"
+    },
+    {
+     "table": "solicitacoes_ajuste_ponto",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "colaboradores": [
+     "empresa_id",
+     "id",
+     "nome_completo",
+     "status"
+    ],
+    "registros_ponto": [
+     "atraso_minutos",
+     "colaborador_id",
+     "data",
+     "empresa_id",
+     "entrada_1",
+     "entrada_2",
+     "horas_extras",
+     "horas_falta",
+     "horas_trabalhadas",
+     "id",
+     "saida_1",
+     "saida_2"
+    ],
+    "solicitacoes_ajuste_ponto": [
+     "empresa_id",
+     "id",
+     "status"
+    ]
+   },
+   "params": [
+    {
+     "name": "STALE_TIME_RESUMO",
+     "value": "60"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "pendente",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "ativo",
+     "kind": "filtra"
+    },
+    {
+     "field": "status",
+     "value": "pendente",
+     "kind": "filtra"
+    }
+   ],
+   "rule_comments": [
+    "* Regra de tenant: toda consulta filtra por `empresa_id` da empresa ativa e",
+    "* Colaborador com vínculo ativo — o mínimo para contar e nomear a equipe. */",
+    "* `limit(5000)` é teto de segurança: uma empresa de 200 pessoas × 31 dias gera"
+   ],
+   "hooks": [
+    "useColaboradoresEquipePonto",
+    "useRegistrosPontoEmpresa",
+    "useSolicitacoesAjustePontoPendentes"
+   ],
+   "pagination": [
+    "1000",
+    "5000"
+   ]
+  },
   "src/hooks/usePontoGeofencing.ts": {
    "path": "src/hooks/usePontoGeofencing.ts",
    "lines": 160,
@@ -314474,7 +314946,7 @@
   },
   "src/pages/PontoPage.tsx": {
    "path": "src/pages/PontoPage.tsx",
-   "lines": 723,
+   "lines": 735,
    "exports": [
     "function PontoPage"
    ],
@@ -314563,43 +315035,8 @@
     },
     {
      "field": "tipo",
-     "value": "credito",
-     "kind": "escreve"
-    },
-    {
-     "field": "tipo",
      "value": "entrada",
      "kind": "escreve"
-    },
-    {
-     "field": "tipo",
-     "value": "credito",
-     "kind": "compara"
-    },
-    {
-     "field": "tipo",
-     "value": "credito",
-     "kind": "compara"
-    },
-    {
-     "field": "tipo",
-     "value": "credito",
-     "kind": "compara"
-    },
-    {
-     "field": "tipo",
-     "value": "credito",
-     "kind": "compara"
-    },
-    {
-     "field": "tipo",
-     "value": "credito",
-     "kind": "compara"
-    },
-    {
-     "field": "tipo",
-     "value": "credito",
-     "kind": "compara"
     },
     {
      "field": "tipo",
@@ -328621,6 +329058,52 @@
     "estruturas cíclicas usa WeakSet — não há limite de profundidade, então"
    ]
   },
+  "src/utils/pontoDuracao.ts": {
+   "path": "src/utils/pontoDuracao.ts",
+   "lines": 77,
+   "exports": [
+    "const MINUTOS_POR_HORA",
+    "function minutosDeDuracao",
+    "function formatarMinutosDuracao",
+    "function horasDecimaisDeMinutos"
+   ],
+   "params": [
+    {
+     "name": "MINUTOS_POR_HORA",
+     "value": "60"
+    }
+   ],
+   "rule_comments": [
+    "Aqui existe uma única regra, coberta por"
+   ]
+  },
+  "src/utils/pontoEquipe.ts": {
+   "path": "src/utils/pontoEquipe.ts",
+   "lines": 88,
+   "exports": [
+    "interface BatidaEquipe",
+    "interface ResumoEquipeDia",
+    "function resumirEquipeDoDia",
+    "function temSaidaPendente"
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "saida",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "saida_almoco",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "pergunta — por isso a regra vive aqui, pura e testável, longe do JSX.",
+    "* Regra de jornada: a jornada está ENCERRADA quando a ÚLTIMA batida do",
+    "* Registro com entrada e sem saída = saída não marcada (mesma regra de"
+   ]
+  },
   "src/utils/pontoGeofencing.ts": {
    "path": "src/utils/pontoGeofencing.ts",
    "lines": 408,
@@ -329480,6 +329963,55 @@
     "masks local part keeping first and last char",
     "masks entire local part when very short",
     "masks without domain entirely for invalid email"
+   ]
+  },
+  "src/utils/__tests__/pontoDuracao.test.ts": {
+   "path": "src/utils/__tests__/pontoDuracao.test.ts",
+   "lines": 87,
+   "is_test": true,
+   "tests": [
+    "pontoDuracao",
+    "minutosDeDuracao",
+    "converte HH:MM em minutos",
+    "ignora os segundos de HH:MM:SS (formato gravado pela edge function)",
+    "interpreta débito com sinal negativo",
+    "interpreta número como horas decimais",
+    "devolve 0 para entrada ausente ou inválida (contrato defensivo)",
+    "mantém 60 minutos por hora",
+    "formatarMinutosDuracao",
+    "formata minutos como HH:MM com zero-padding",
+    "prefixa o sinal negativo e nunca mostra ",
+    "prefixa ",
+    "devolve --:-- para valor não finito em vez de NaN:NaN",
+    "arredonda a fração de minuto",
+    "horasDecimaisDeMinutos",
+    "converte minutos em horas decimais com 2 casas",
+    "devolve 0 para valor não finito (eixo do gráfico nunca recebe NaN)",
+    "faz ida e volta minutos → HH:MM → minutos"
+   ]
+  },
+  "src/utils/__tests__/pontoEquipe.test.ts": {
+   "path": "src/utils/__tests__/pontoEquipe.test.ts",
+   "lines": 119,
+   "is_test": true,
+   "tests": [
+    "pontoEquipe",
+    "resumirEquipeDoDia",
+    "devolve zeros quando não há batidas nem colaboradores",
+    "separa quem está em intervalo de almoço (subconjunto de emJornada)",
+    "conta cada colaborador uma única vez",
+    "não considera jornada encerrada quando a última batida é saida_almoco",
+    "volta a contar o colaborador em jornada se ele bateu entrada depois da saída",
+    "assume a última batida da lista como a válida (ordem cronológica)",
+    "normaliza o tipo antes de comparar (maiúsculas e espaços)",
+    "calcula cobertura e colaboradores sem batida",
+    "limita a cobertura a 100% quando há mais batidas que colaboradores ativos",
+    "ignora batidas sem colaborador_id",
+    "nunca devolve número negativo",
+    "temSaidaPendente",
+    "marca pendência quando há entrada e nenhuma saída",
+    "não marca pendência quando a saída foi registrada",
+    "não marca pendência em dia sem entrada (folga, feriado, falta)"
    ]
   },
   "src/utils/__tests__/pontoGeofencing.test.ts": {
@@ -345536,10 +346068,38 @@
   }
  },
  "git": {
-  "sha": "3cb33da5c8f164c7dd52ae8c6ccd691dbf6d36a5",
+  "sha": "58dd46c64783d21d8596ffece4aed9f5825f6924",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "58dd46c",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: resgata os cards de resumo do ponto (indicadores, equipe, pendencias e fechamento) (#886)",
+    "files": [
+     "scripts/.bundle-budget.json",
+     "src/components/ponto/PontoBancoHorasCard.tsx",
+     "src/components/ponto/PontoEquipeStatusCard.tsx",
+     "src/components/ponto/PontoFechamentoCard.tsx",
+     "src/components/ponto/PontoIndicadoresKpi.tsx",
+     "src/components/ponto/PontoPendenciasCard.tsx",
+     "src/components/ponto/indicadoresPonto.ts",
+     "src/hooks/usePontoDashboard.ts",
+     "src/pages/PontoPage.tsx",
+     "src/utils/__tests__/pontoDuracao.test.ts",
+     "src/utils/__tests__/pontoEquipe.test.ts",
+     "src/utils/pontoDuracao.ts",
+     "src/utils/pontoEquipe.ts"
+    ]
+   },
+   {
+    "sha": "adc0f56",
+    "date": "2026-11-25",
+    "author": "github-actions[bot]",
+    "subject": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)",
+    "files": []
+   },
    {
     "sha": "3cb33da",
     "date": "2026-11-25",
@@ -346269,33 +346829,12 @@
      "src/hooks/use-stagger-cards.ts",
      "src/services/colaboradorDetalhesService.ts"
     ]
-   },
-   {
-    "sha": "066f553",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "fix: impede que destinatario nao-roteavel derrube o lote de alertas por e-mail (#852)",
-    "files": [
-     "supabase/functions/_shared/outboundDelivery.test.ts",
-     "supabase/functions/_shared/outboundDelivery.ts",
-     "supabase/functions/alertas-dp/index.ts",
-     "supabase/functions/processar-agendamentos/filaNotificacoes.ts"
-    ]
-   },
-   {
-    "sha": "59be355",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "chore: remove config.ts orfao de processar-agendamentos (#851)",
-    "files": [
-     "supabase/functions/processar-agendamentos/config.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    5
+    6
    ],
    [
     "package-lock.json",
@@ -346314,6 +346853,10 @@
     3
    ],
    [
+    "src/pages/PontoPage.tsx",
+    2
+   ],
+   [
     "supabase/migrations/20260719170000_security_indexes_constraints.verify.sql",
     2
    ],
@@ -346330,47 +346873,43 @@
     2
    ],
    [
-    "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
-    2
-   ],
-   [
-    "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    "src/components/ponto/PontoBancoHorasCard.tsx",
     1
    ],
    [
-    "src/components/__tests__/IndicadorPesquisa.test.tsx",
+    "src/components/ponto/PontoEquipeStatusCard.tsx",
     1
    ],
    [
-    "src/components/__tests__/PesquisasClimaGrade.test.ts",
+    "src/components/ponto/PontoFechamentoCard.tsx",
     1
    ],
    [
-    "src/components/__tests__/PesquisasClimaJanelasCascata.test.tsx",
+    "src/components/ponto/PontoIndicadoresKpi.tsx",
     1
    ],
    [
-    "src/components/pesquisas/BarraAdesao.tsx",
+    "src/components/ponto/PontoPendenciasCard.tsx",
     1
    ],
    [
-    "src/components/pesquisas/CardPesquisa.tsx",
+    "src/components/ponto/indicadoresPonto.ts",
     1
    ],
    [
-    "src/components/pesquisas/IndicadorPesquisa.tsx",
+    "src/hooks/usePontoDashboard.ts",
     1
    ],
    [
-    "src/components/pesquisas/PilulaFiltroPesquisa.tsx",
+    "src/utils/__tests__/pontoDuracao.test.ts",
     1
    ],
    [
-    "src/components/pesquisas/__tests__/BarraAdesao.test.tsx",
+    "src/utils/__tests__/pontoEquipe.test.ts",
     1
    ],
    [
-    "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts",
+    "src/utils/pontoDuracao.ts",
     1
    ]
   ]

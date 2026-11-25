@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3cb33da5c8f164c7dd52ae8c6ccd691dbf6d36a5",
+  "commit": "58dd46c64783d21d8596ffece4aed9f5825f6924",
   "branch": "main",
-  "data_commit": "2026-11-25T13:04:21-03:00",
+  "data_commit": "2026-11-25T13:46:23-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "58dd46c",
+    "data": "2026-11-25",
+    "assunto": "feat: resgata os cards de resumo do ponto (indicadores, equipe, pendencias e fechamento) (#886)"
+   },
+   {
+    "sha": "adc0f56",
+    "data": "2026-11-25",
+    "assunto": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)"
+   },
    {
     "sha": "3cb33da",
     "data": "2026-11-25",
@@ -121,19 +131,9 @@
     "sha": "fb2d3e0",
     "data": "2026-11-23",
     "assunto": "chore(deps): bump the minor-patch group across 1 directory with 3 updates (#858)"
-   },
-   {
-    "sha": "0cec124",
-    "data": "2026-11-23",
-    "assunto": "chore(deps): bump minor-patch group (18 updates, resgate da #846) (#857)"
-   },
-   {
-    "sha": "c058153",
-    "data": "2026-11-23",
-    "assunto": "chore(deps-dev): bump the testing group with 2 updates (#845)"
    }
   ],
-  "arquivos_mudados_7d": 750,
+  "arquivos_mudados_7d": 756,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -176,11 +176,11 @@
     "mudancas": 43
    },
    {
-    "pasta": "src/components/dashboard",
-    "mudancas": 37
+    "pasta": "src/components/ponto",
+    "mudancas": 43
    },
    {
-    "pasta": "src/components/ponto",
+    "pasta": "src/components/dashboard",
     "mudancas": 37
    },
    {
@@ -193,7 +193,7 @@
    },
    {
     "pasta": "src/utils/__tests__",
-    "mudancas": 32
+    "mudancas": 34
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 289
+    "commits": 288
    },
    {
     "autor": "dependabot[bot]",
@@ -309,26 +309,26 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 5
+    "commits": 6
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 4169,
-  "arquivos_codigo": 2254,
-  "linhas_codigo": 455347,
+  "arquivos_total": 4180,
+  "arquivos_codigo": 2265,
+  "linhas_codigo": 456885,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 86,
-  "componentes": 690,
-  "hooks": 126,
+  "componentes": 695,
+  "hooks": 127,
   "edge_functions": 68,
   "tabelas": 438,
   "migrations": 1261,
   "cron_jobs": 43,
-  "testes": 849,
+  "testes": 851,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 347
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1108,
-   "linhas": 209757
+   "arquivos": 1114,
+   "linhas": 210753
   },
   "src/constants": {
    "arquivos": 7,
@@ -659,8 +659,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 209,
-   "linhas": 24448
+   "arquivos": 210,
+   "linhas": 24607
   },
   "src/i18n": {
    "arquivos": 2,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 145,
-   "linhas": 51684
+   "linhas": 51696
   },
   "src/providers": {
    "arquivos": 4,
@@ -715,8 +715,8 @@
    "linhas": 891
   },
   "src/utils": {
-   "arquivos": 73,
-   "linhas": 9778
+   "arquivos": 77,
+   "linhas": 10149
   },
   "stylelint.config.js": {
    "arquivos": 1,

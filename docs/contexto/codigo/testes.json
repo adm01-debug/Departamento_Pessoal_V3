@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 849,
+ "total": 851,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 804
+  "unit": 806
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 712
+   "arquivos": 714
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -7257,6 +7257,24 @@
    "casos": 15
   },
   {
+   "arquivo": "src/utils/__tests__/pontoDuracao.test.ts",
+   "tipo": "unit",
+   "linhas": 87,
+   "testa": [
+    "src/utils/pontoDuracao.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/utils/__tests__/pontoEquipe.test.ts",
+   "tipo": "unit",
+   "linhas": 119,
+   "testa": [
+    "src/utils/pontoEquipe.ts"
+   ],
+   "casos": 14
+  },
+  {
    "arquivo": "src/utils/__tests__/pontoGeofencing.test.ts",
    "tipo": "unit",
    "linhas": 238,
@@ -8602,6 +8620,8 @@
   "src/utils/passwordPolicy.ts": 1,
   "src/utils/pgInterval.ts": 1,
   "src/utils/piiMask.ts": 5,
+  "src/utils/pontoDuracao.ts": 1,
+  "src/utils/pontoEquipe.ts": 1,
   "src/utils/pontoGeofencing.ts": 2,
   "src/utils/regrasSolicitacaoFerias.ts": 1,
   "src/utils/rescisaoCalc.ts": 2,
@@ -8765,6 +8785,7 @@
    "src/hooks/useColetoresPonto.ts",
    "src/hooks/useEntradaCardConcluida.ts",
    "src/hooks/useJornadaOnboarding.ts",
+   "src/hooks/usePontoDashboard.ts",
    "src/hooks/usePontoGeofencing.ts",
    "src/hooks/useVinculos.ts",
    "src/i18n/useTranslation.ts",

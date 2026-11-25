@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 190,
+ "total": 192,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
@@ -10,7 +10,7 @@
   "python": 5,
   "schemas": 25,
   "services": 100,
-  "utils": 37
+  "utils": 39
  },
  "arquivos": [
   {
@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 248,
+   "usado_por": 249,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -743,7 +743,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 29,
+   "usado_por": 31,
    "usado_por_modulos": [
     "components/avaliacao",
     "components/banco-horas",
@@ -957,7 +957,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 323,
+   "usado_por": 326,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -5322,7 +5322,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 63,
+   "usado_por": 64,
    "usado_por_modulos": [
     "components/admissoes",
     "components/banco-horas",
@@ -5874,6 +5874,59 @@
     "hooks"
    ],
    "coberto_por_testes": 5,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/pontoDuracao.ts",
+   "camada": "utils",
+   "exports": [
+    "MINUTOS_POR_HORA",
+    "formatarMinutosDuracao",
+    "horasDecimaisDeMinutos",
+    "minutosDeDuracao"
+   ],
+   "export_default": null,
+   "linhas": 77,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "components/ponto"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/pontoEquipe.ts",
+   "camada": "utils",
+   "exports": [
+    "BatidaEquipe",
+    "ResumoEquipeDia",
+    "resumirEquipeDoDia",
+    "temSaidaPendente"
+   ],
+   "export_default": null,
+   "linhas": 88,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "components/ponto",
+    "pages"
+   ],
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {
