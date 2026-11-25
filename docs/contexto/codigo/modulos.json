@@ -201,7 +201,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 339,
+   "testes": 340,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -948,7 +948,7 @@
    "modulo": "components/avaliacao",
    "arquivos": 84,
    "testes": 0,
-   "linhas": 23322,
+   "linhas": 23297,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -9032,7 +9032,7 @@
    "modulo": "pages",
    "arquivos": 115,
    "testes": 0,
-   "linhas": 46985,
+   "linhas": 46984,
    "itens_menu": [
     "Admissões",
     "Afastamentos",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8697240d1ae3b546910c6f01f4216f03bb3d1751",
+  "commit": "8324c3db7e8ab6873a86c95def80770fb75bf31a",
   "branch": "main",
-  "data_commit": "2026-11-25T19:16:45-03:00",
+  "data_commit": "2026-11-25T20:06:09-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "8324c3d",
+    "data": "2026-11-25",
+    "assunto": "fix: remove seletor duplicado de ciclo do Nine-Box (#899)"
+   },
    {
     "sha": "8697240",
     "data": "2026-11-25",
@@ -126,22 +131,17 @@
     "sha": "ce83bb0",
     "data": "2026-11-24",
     "assunto": "feat: banco de horas com extrato filtravel, KPIs e exportacao CSV (#873)"
-   },
-   {
-    "sha": "2669333",
-    "data": "2026-11-24",
-    "assunto": "feat(avaliacao): Ver todos dos Talentos em destaque abre a janela completa (resgate do trabalho do Muri) (#870)"
    }
   ],
-  "arquivos_mudados_7d": 792,
+  "arquivos_mudados_7d": 795,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 395
+    "mudancas": 392
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 119
+    "mudancas": 118
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -149,11 +149,11 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 96
+    "mudancas": 95
    },
    {
     "pasta": "src/components/avaliacao",
-    "mudancas": 92
+    "mudancas": 93
    },
    {
     "pasta": "src/components/colaborador-detalhes",
@@ -180,11 +180,11 @@
     "mudancas": 43
    },
    {
-    "pasta": "src/components/dashboard",
-    "mudancas": 39
+    "pasta": ".github/workflows/canonical-migrations.yml",
+    "mudancas": 38
    },
    {
-    "pasta": ".github/workflows/canonical-migrations.yml",
+    "pasta": "src/components/dashboard",
     "mudancas": 38
    },
    {
@@ -207,18 +207,18 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 19
+    "mudancas": 18
    },
    {
     "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
     "mudancas": 14
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 12
+    "arquivo": "package.json",
+    "mudancas": 11
    },
    {
-    "arquivo": "package.json",
+    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 11
    },
    {
@@ -234,19 +234,19 @@
     "mudancas": 10
    },
    {
-    "arquivo": "src/index.css",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "src/schemas/tableColumns.ts",
-    "mudancas": 9
-   },
-   {
     "arquivo": "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
     "mudancas": 8
    },
    {
     "arquivo": "scripts/automation.config.json",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/index.css",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/schemas/tableColumns.ts",
     "mudancas": 8
    },
    {
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4232,
-  "arquivos_codigo": 2311,
-  "linhas_codigo": 468389,
+  "arquivos_total": 4233,
+  "arquivos_codigo": 2312,
+  "linhas_codigo": 468448,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 438,
   "migrations": 1267,
   "cron_jobs": 43,
-  "testes": 870,
+  "testes": 871,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 347
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1158,
-   "linhas": 221662
+   "arquivos": 1159,
+   "linhas": 221722
   },
   "src/constants": {
    "arquivos": 7,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 146,
-   "linhas": 51978
+   "linhas": 51977
   },
   "src/providers": {
    "arquivos": 4,
@@ -786,7 +786,7 @@
   },
   {
    "arquivo": "src/pages/AvaliacaoPage.tsx",
-   "linhas": 1582
+   "linhas": 1581
   },
   {
    "arquivo": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",

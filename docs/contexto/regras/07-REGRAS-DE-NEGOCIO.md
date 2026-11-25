@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8697240d1a` · branch `main` · 2026-11-25 22:20 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8324c3db7e` · branch `main` · 2026-11-25 23:10 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -5664,7 +5664,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (10484 testes em 825 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10488 testes em 826 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5968,7 +5968,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx` | 11 | CandidatoDetalhesDialog · mostra identificação, cargo, departamento e etapa atual · destaca SOMENTE a etapa efetiva do candidato no indicador · não inventa contato ausente (nem  … |
 | `src/components/recrutamento/__tests__/VagaCard.test.tsx` | 11 | VagaCard — identidade, funil e ações reais · mostra título, departamento, modalidade, competências e o funil completo · abre o Pipeline pelo botão Gerenciar Vaga · mantém apenas ações reais e não duplica Gerenciar no menu … |
 | `src/components/recrutamento/__tests__/pipelineEtapas.test.ts` | 11 | pipelineEtapas — configuração e leitura do board · define as cinco etapas na ordem do processo com tokens distintos · normaliza o vocabulário REAL do banco e isola o desconhecido em  · resolve a etapa visual pelos aliases do banco … |
-| … +525 linhas — lista completa em `context.json` | | |
+| … +526 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

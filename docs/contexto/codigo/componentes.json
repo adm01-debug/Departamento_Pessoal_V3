@@ -1080,7 +1080,7 @@
     "NineBoxFiltros"
    ],
    "export_default": null,
-   "linhas": 238,
+   "linhas": 218,
    "dominio": "components/avaliacao",
    "hooks_locais": [],
    "tabelas": [],
@@ -1196,7 +1196,7 @@
     "NineBoxTab"
    ],
    "export_default": null,
-   "linhas": 419,
+   "linhas": 414,
    "dominio": "components/avaliacao",
    "hooks_locais": [],
    "tabelas": [],
@@ -9963,7 +9963,7 @@
     "AvaliacaoPage"
    ],
    "export_default": "AvaliacaoPage",
-   "linhas": 1582,
+   "linhas": 1581,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",

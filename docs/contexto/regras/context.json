@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8697240d1ae3b546910c6f01f4216f03bb3d1751",
+  "sha": "8324c3db7e8ab6873a86c95def80770fb75bf31a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 22:20 UTC",
-  "files_total": 4246,
-  "code_files": 3650,
-  "code_lines": 542982
+  "generated_at": "2026-11-25 23:10 UTC",
+  "files_total": 4247,
+  "code_files": 3651,
+  "code_lines": 543041
  },
  "version": "1.3.2",
- "facts_hash": "42fcc5901afa51e9",
+ "facts_hash": "b5f1fea6ebe55a8d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1341,
-   ".tsx": 1143,
+   ".tsx": 1144,
    ".ts": 1025,
    ".mjs": 110,
    ".js": 15,
@@ -103061,7 +103061,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1158,
+  "components_count": 1159,
   "hooks": [
    {
     "name": "useContacts",
@@ -104736,8 +104736,8 @@
   },
   {
    "module": "src/components",
-   "files": 1158,
-   "lines": 221662,
+   "files": 1159,
+   "lines": 221722,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105443,7 +105443,7 @@
   {
    "module": "src/pages",
    "files": 146,
-   "lines": 51978,
+   "lines": 51977,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -183565,6 +183565,22 @@
    {
     "file": "src/components/__tests__/NineBoxAprovacaoIntegracao.test.tsx",
     "name": "sem pendências de fluxo nem risco, o banner continua ausente"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxCicloUnico.test.tsx",
+    "name": "Nine-Box — seletor de ciclo único (só o do topo)"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxCicloUnico.test.tsx",
+    "name": "a barra de filtros tem exatamente dois combobox: Departamento e Cargo"
+   },
+   {
+    "file": "src/components/__tests__/NineBoxCicloUnico.test.tsx",
+    "name": "não existe mais o seletor "
+   },
+   {
+    "file": "src/components/__tests__/NineBoxCicloUnico.test.tsx",
+    "name": "nenhum arquivo da cadeia repassa "
    },
    {
     "file": "src/components/__tests__/NineBoxConsolidacao.test.tsx",
@@ -282734,6 +282750,17 @@
     "sem pendências de fluxo nem risco, o banner continua ausente"
    ]
   },
+  "src/components/__tests__/NineBoxCicloUnico.test.tsx": {
+   "path": "src/components/__tests__/NineBoxCicloUnico.test.tsx",
+   "lines": 85,
+   "is_test": true,
+   "tests": [
+    "Nine-Box — seletor de ciclo único (só o do topo)",
+    "a barra de filtros tem exatamente dois combobox: Departamento e Cargo",
+    "não existe mais o seletor ",
+    "nenhum arquivo da cadeia repassa "
+   ]
+  },
   "src/components/__tests__/NineBoxConsolidacao.test.tsx": {
    "path": "src/components/__tests__/NineBoxConsolidacao.test.tsx",
    "lines": 547,
@@ -287564,7 +287591,7 @@
   },
   "src/components/avaliacao/NineBoxFiltros.tsx": {
    "path": "src/components/avaliacao/NineBoxFiltros.tsx",
-   "lines": 238,
+   "lines": 218,
    "exports": [
     "function NineBoxFiltros"
    ],
@@ -287653,7 +287680,7 @@
   },
   "src/components/avaliacao/NineBoxTab.tsx": {
    "path": "src/components/avaliacao/NineBoxTab.tsx",
-   "lines": 419,
+   "lines": 414,
    "exports": [
     "function NineBoxTab"
    ],
@@ -314399,7 +314426,7 @@
   },
   "src/pages/AvaliacaoPage.tsx": {
    "path": "src/pages/AvaliacaoPage.tsx",
-   "lines": 1582,
+   "lines": 1581,
    "exports": [
     "function AvaliacaoPage"
    ],
@@ -348890,10 +348917,23 @@
   }
  },
  "git": {
-  "sha": "8697240d1ae3b546910c6f01f4216f03bb3d1751",
+  "sha": "8324c3db7e8ab6873a86c95def80770fb75bf31a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "8324c3d",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "fix: remove seletor duplicado de ciclo do Nine-Box (#899)",
+    "files": [
+     "src/components/__tests__/NineBoxCicloUnico.test.tsx",
+     "src/components/avaliacao/NineBoxFiltros.tsx",
+     "src/components/avaliacao/NineBoxTab.tsx",
+     "src/components/avaliacao/nineBoxMock.ts",
+     "src/pages/AvaliacaoPage.tsx"
+    ]
+   },
    {
     "sha": "8697240",
     "date": "2026-11-25",
@@ -349697,15 +349737,6 @@
      "supabase/migrations/20261124120000_dreno_search_path_extensao.sql",
      "supabase/migrations/20261124120000_dreno_search_path_extensao.verify.sql"
     ]
-   },
-   {
-    "sha": "8893aba",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: sidecar do dreno devolve 'ok' literal no caso inerte (#864)",
-    "files": [
-     "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -349730,6 +349761,10 @@
     3
    ],
    [
+    "src/components/avaliacao/NineBoxTab.tsx",
+    2
+   ],
+   [
     "src/components/recrutamento/AnalyticsRecrutamento.tsx",
     2
    ],
@@ -349744,6 +349779,22 @@
    [
     "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.verify.sql",
     2
+   ],
+   [
+    "src/components/__tests__/NineBoxCicloUnico.test.tsx",
+    1
+   ],
+   [
+    "src/components/avaliacao/NineBoxFiltros.tsx",
+    1
+   ],
+   [
+    "src/components/avaliacao/nineBoxMock.ts",
+    1
+   ],
+   [
+    "src/pages/AvaliacaoPage.tsx",
+    1
    ],
    [
     "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql",
@@ -349767,26 +349818,6 @@
    ],
    [
     "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/PontoCentralAjustesFiltros.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/PontoCentralAjustesPainel.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/PontoCentralAjustesTabelaSelecao.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/centralAjustes.test.ts",
-    1
-   ],
-   [
-    "src/components/__tests__/centralAuditoria.test.ts",
     1
    ]
   ]

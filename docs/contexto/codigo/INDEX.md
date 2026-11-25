@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8697240d1ae3b546910c6f01f4216f03bb3d1751` (2026-11-25T19:16:45-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8324c3db7e8ab6873a86c95def80770fb75bf31a` (2026-11-25T20:06:09-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2168), SQL (1341), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2169), SQL (1341), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 4232 |
-| arquivos_codigo | 2311 |
-| linhas_codigo | 468389 |
+| arquivos_total | 4233 |
+| arquivos_codigo | 2312 |
+| linhas_codigo | 468448 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 438 |
 | migrations | 1267 |
 | cron_jobs | 43 |
-| testes | 870 |
+| testes | 871 |
 | workflows | 21 |
 | scripts | 138 |
 | docs_md | 347 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (595), src/pages (110), src/contexts (3)
 - hooks: src/hooks (105), src/components (12), src/contexts (4)
 - servicos_logica: src/services (100), src/utils (39), src/schemas (25)
-- testes: co-localizado (__tests__) (733), co-localizado (*.test) (78), e2e/ (33)
+- testes: co-localizado (__tests__) (734), co-localizado (*.test) (78), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -404,25 +404,25 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 29906 nós · 68181 arestas · 2812 comunidades · grafo do commit `8697240d`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (481), button.tsx (457), @tanstack/react-query (452), lucide-react (439), useEmpresas (350), vitest (335), App.tsx (332), TreinamentosPage.tsx (199), ColaboradorDetalhesPage.tsx (188), PagamentosTab.tsx (187), rateLimit.ts (177)
+- 29912 nós · 68192 arestas · 2848 comunidades · grafo do commit `8324c3db`
+- comunidades maiores: lucide-react (573), button.tsx (505), client.ts (492), 20260831_corrected_public.sql (485), canonical_schema.sql (481), useEmpresas (398), cn (252), App.tsx (218), vitest (212), react (208), @testing-library/react (200), contract.ts (191)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), formatDateLocalISO() (src/utils/dateLocal.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (38)
 - scripts/canonical-invariants.sql (21)
-- inventario/estado/rotas.json (19)
+- inventario/estado/rotas.json (18)
 - docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
-- src/integrations/supabase/types.ts (12)
 - package.json (11)
+- src/integrations/supabase/types.ts (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
 - package-lock.json (10)
-- src/index.css (9)
-- src/schemas/tableColumns.ts (9)
 - docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md (8)
 - scripts/automation.config.json (8)
+- src/index.css (8)
+- src/schemas/tableColumns.ts (8)
 - docs/auditoria/sql-preservado/README.md (7)
 - src/pages/CalculadoraRescisaoPage.tsx (7)
 
@@ -663,6 +663,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-25 `8324c3d` fix: remove seletor duplicado de ciclo do Nine-Box (#899)
 - 2026-11-25 `8697240` fix: prevent_empty_empresa_id compara uuid com text e para de derrubar toda escrita (#897)
 - 2026-11-25 `3c8c484` chore: resgata testes do port que ainda valem na main e fecha a re-auditoria do resgate (#896)
 - 2026-11-25 `1d76c02` feat: resgata Central de Ajustes e Auditoria do Ponto do port do Muri (#895)
@@ -677,7 +678,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `58dd46c` feat: resgata os cards de resumo do ponto (indicadores, equipe, pendencias e fechamento) (#886)
 - 2026-11-25 `adc0f56` docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)
 - 2026-11-25 `3cb33da` docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)
-- 2026-11-25 `05b201e` feat: resgata a tela de pesquisas de clima do port do Muri (#885)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
