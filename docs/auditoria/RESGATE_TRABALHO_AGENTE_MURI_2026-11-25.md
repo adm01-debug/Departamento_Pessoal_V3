@@ -335,3 +335,44 @@ adotado nos testes da `main`).
 `typecheck` e `typecheck:tests` limpos · `audit:ratchet-any-tests` **0 → 0** (baseline intocado) ·
 `audit:ratchet-warnings` 1/1 · `prettier --check` OK · `vitest run` dos 2 arquivos: **2 arquivos / 17
 testes verdes** · `lint:ci` só com o warning pré-existente de `src/types/uiRecord.ts`.
+
+### 12.5 Fora de `src/` — as fatias que ainda não tinham sido cruzadas
+
+O mapa do §10 cobria só `src/`. O port tem 378 arquivos que a `main` não tem, assim distribuídos:
+
+| Pasta               | Exclusivos | Situação                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/`          | 158        | 152 são `_tmp-*`/`_medir-*` (diagnóstico de layout descartável). Os 6 sem `_` (`gerar-esquema-mock`, `limpar-cache-vite`, `postcss-escala-rem`, `sync-lockfiles.cjs/.sh`, `verificar-escala-global`) não são referenciados por nenhum código/CI da `main` — `gerar-esquema-mock` e `limpar-cache` têm 0 referências, e `escala-rem`/`escala-global`/`sync-lockfiles` só aparecem como nome de token CSS ou menção em documento antigo |
+| `src/`              | 138        | §10 (produção) + §12.3 (testes)                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `docs/`             | 60         | documentação da linhagem do port (ADR, `API_REFERENCE`, `ARCHITECTURE`); a `main` tem o próprio conjunto curado                                                                                                                                                                                                                                                                                                                       |
+| `supabase/`         | 18         | **todas com equivalente na `main`** — ver abaixo                                                                                                                                                                                                                                                                                                                                                                                      |
+| `e2e/`              | 4          | specs de cobertura (`audit-checklist`, `fuzz-testing`, `ninebox-aprovacao`, `premiacoes-auditoria`); exigem o ambiente autenticado que ainda está vermelho na `main`                                                                                                                                                                                                                                                                  |
+| `src/assets/banks/` | 14         | 13 logos + `SOURCES.md`, **excluídos de propósito**: `src/lib/bankBrand.ts` da `main` é byte a byte igual ao do port e documenta a medição que reprovou o `audit:bundle` com os PNGs embutidos (o fallback é sigla sobre a cor oficial)                                                                                                                                                                                               |
+
+As 18 do `supabase/` (14 migrations + 1 rollback + 3 arquivos de função) foram cruzadas uma a uma:
+
+| Migration do port                                                                  | Equivalente na `main`                                                       |
+| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `20260724120000_atomic_rate_limit_rpc`                                             | `edge_rate_limit_check` presente                                            |
+| `20260724130000_codex_p1_function_overload_and_auth_gap`                           | `contrato_estender_expiracao` presente                                      |
+| `20260724140000_t007_backup_logs_rls`                                              | `backup_logs_select`/`_insert` presentes                                    |
+| `20260818000000_p2_037_deprecate_legacy_tables`                                    | `20260818000001_p2_037_deprecate_legacy_tables.sql`                         |
+| `20260819000000_p0_fix_user_empresa_id_rls`                                        | `user_empresa_id` presente                                                  |
+| `20260820000000_p0_fix_auditoria_rpc`                                              | `listar_auditoria`/`registrar_auditoria` presentes                          |
+| `20260821000000_p0_rls_dashboard_audit`                                            | `20260912190000_p0_identity_rls_authz.sql` (+ fortificações posteriores)    |
+| `20260925120000_document_upload_storage_columns`                                   | `20261117170300_documentos_colunas_storage.sql`                             |
+| `20260925130000_storage_documentos_delete_tenant_scope`                            | `20261117170000_storage_documentos_delete_tenant_scope.sql` + `.verify.sql` |
+| `20261005000000_onboarding_kits_rls_additive` / `…010000_onboarding_audit_trigger` | `audit_tarefas_onboarding` presente                                         |
+| `20261005020000_onboarding_modelo_b_convergencia`                                  | `20261119170000_onboarding_converge_modelo_b.sql` + `.verify.sql`           |
+| `20261026090000_ciclos_exclusao_autorizada`                                        | `bloquear_exclusao_ciclo_com_dependencias` presente                         |
+
+Dos 3 arquivos de função: `enviar-esocial/signer.ts` é cópia órfã — a `main` já importa `./utils/signer.ts`;
+`external-db-bridge/debug-test.ts` e `metricas/contract_test.ts` são scripts de teste soltos.
+
+### 12.6 Branches de preservação (sem PR)
+
+Seis branches `claude/*` existem só para guardar o estado do port (nenhuma tem PR): `feat-resgata-trabalho-muri`
+(= o próprio `296a01873`), `chore-preserva-stash-muri`, `feat-integracao-trabalho-muri`, `feat-integracao-muri-3way`,
+`chore-preserva-wip-medicao-muri` e `feat-resgata-ui-muri`. O conteúdo exclusivo delas é exatamente o que as
+tabelas do §12.3 e do §12.5 já cobrem (port + `docs/` + testes do port). Nenhuma branch foi apagada nesta rodada:
+apagar é irreversível e o ganho seria zero.
