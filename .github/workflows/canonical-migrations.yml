@@ -277,7 +277,8 @@ jobs:
             20260725100000_p3_060_backup_logs.sql \
             20260804000000_p0_010_write_policies_provisoes.sql \
             20260817000000_p4_071_indices_compostos_top20.sql \
-            20261124150000_backup_logs_rls_policy.sql
+            20261124150000_backup_logs_rls_policy.sql \
+            20261125120000_secdef_refresh_dashboard_views_revoke.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -325,10 +326,25 @@ jobs:
             echo 'CANONICAL_MIGRATION_DRY_RUN_OK'
             exit 0
           fi
+          # As migrations do repo trazem BEGIN;/COMMIT; proprios. Dentro do
+          # wrapper BEGIN...ROLLBACK abaixo, o COMMIT interno COMMITA o lote
+          # simulado: o que ja rodou fica de verdade no banco mesmo quando a
+          # migration seguinte falha e o ROLLBACK nunca e alcancado. Foi o que
+          # aconteceu no run 45595150531 (25/11/2026): 4 migrations do lote
+          # ficaram no canonico sem entrada no ledger. A simulacao passa a ler
+          # copias sem BEGIN;/COMMIT; soltos - eles sao redundantes dentro do
+          # wrapper e so existem nos arquivos para uso manual no psql.
+          sim_dir="$(mktemp -d)"
+          sim_migrations=()
+          for migration in "${migrations[@]}"; do
+            sim_file="$sim_dir/$(basename "$migration")"
+            grep -viE '^[[:space:]]*(BEGIN|COMMIT)[[:space:]]*;[[:space:]]*$' "$migration" > "$sim_file" || true
+            sim_migrations+=("$sim_file")
+          done
           sidecar_out="$(mktemp)"
           {
             echo 'BEGIN;'
-            for migration in "${migrations[@]}"; do
+            for migration in "${sim_migrations[@]}"; do
               printf '\\i %s\n' "$migration"
             done
             if [ "${#sidecars[@]}" -gt 0 ]; then
