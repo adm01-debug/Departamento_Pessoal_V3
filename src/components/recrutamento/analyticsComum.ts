@@ -103,6 +103,35 @@ export interface DesempenhoVaga {
   conversao: number;
 }
 
+/**
+ * SITUAÇÃO da vaga para o detalhamento (janela "Ver todas").
+ *
+ * `aberta`/`pausada`/`encerrada` são as leituras REAIS do campo `vagas.status`;
+ * o que não cair em nenhum dos conjuntos de `situacaoDaVaga` é `indefinida`
+ * ("Não informado") — nada é reclassificado por conta própria.
+ */
+export type SituacaoVaga = 'aberta' | 'pausada' | 'encerrada' | 'indefinida';
+
+/**
+ * Linha do detalhamento — o MESMO registro de `DesempenhoVaga` (mesmos
+ * `candidatos`, `contratados` e `conversao`) acrescido do que só a janela
+ * precisa: situação legível, departamento, candidatos em andamento, a foto do
+ * pipeline por etapa e o tempo médio do processo.
+ */
+export interface DetalheVaga extends DesempenhoVaga {
+  situacao: SituacaoVaga;
+  /** Rótulo legível da situação (`Aberta`, `Pausada`, `Encerrada`, `Não informado`). */
+  statusRotulo: string;
+  /** `vagas.departamento` normalizado; `null` quando a vaga não informa. */
+  departamento: string | null;
+  /** Candidaturas da vaga que ainda NÃO terminaram (contratação, desistência, reprovação). */
+  emProcesso: number;
+  /** Quantidade de candidaturas por etapa, na ordem de `ETAPAS`. */
+  porEtapa: { id: EtapaPipelineId; label: string; total: number }[];
+  /** Média de dias entre `created_at` e a última movimentação; `null` sem amostra. */
+  tempoMedioDias: number | null;
+}
+
 export interface IndicadorGeral {
   id: 'tempo-contratacao' | 'candidatos-vaga' | 'desistencia' | 'aceitacao';
   label: string;
@@ -139,6 +168,8 @@ export interface AnalyticsRecrutamento {
   tempos: TempoEtapa[];
   atencao: PontoAtencao[];
   vagas: DesempenhoVaga[];
+  /** Mesmas vagas do card, enriquecidas para a janela "Ver todas". */
+  detalhes: DetalheVaga[];
   indicadores: IndicadorGeral[];
 }
 
@@ -344,6 +375,136 @@ export function construirDesempenhoVagas(vagas: VagaRow[], candidaturas: Candida
 }
 
 /* ─── Pontos de atenção (regras do próprio funil, sem IA) ─────────────────── */
+
+/* ─── Detalhamento por vaga (janela "Ver todas") ──────────────────────────── */
+
+/** Status que significam "vaga em andamento" (ver `SituacaoVaga`). */
+const SITUACAO_ABERTA = new Set(['aberta', 'aberto', 'open', 'ativa', 'ativo']);
+/** Status de vaga parada — nenhum fluxo do módulo grava este valor hoje. */
+const SITUACAO_PAUSADA = new Set(['pausada', 'pausado', 'suspensa', 'suspenso', 'em pausa']);
+/** Status de vaga concluída (`fechada` é o valor gravado; o resto são sinônimos). */
+const SITUACAO_ENCERRADA = new Set([
+  'fechada',
+  'fechado',
+  'closed',
+  'encerrada',
+  'encerrado',
+  'inativa',
+  'inativo',
+  'concluida',
+  'concluido',
+]);
+
+/** Rótulo de cada situação — o único texto aceito na interface. */
+export const ROTULO_SITUACAO: Record<SituacaoVaga, string> = {
+  aberta: 'Aberta',
+  pausada: 'Pausada',
+  encerrada: 'Encerrada',
+  indefinida: 'Não informado',
+};
+
+/** Normaliza `vagas.status` (sem acento, minúsculo) e classifica a situação. */
+export function situacaoDaVaga(status: string | null | undefined): SituacaoVaga {
+  const valor = (status ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+  if (SITUACAO_ABERTA.has(valor)) return 'aberta';
+  if (SITUACAO_PAUSADA.has(valor)) return 'pausada';
+  if (SITUACAO_ENCERRADA.has(valor)) return 'encerrada';
+  return 'indefinida';
+}
+
+/**
+ * Enriquecimento do desempenho por vaga para a janela de detalhamento.
+ *
+ * A base é `construirDesempenhoVagas` — o MESMO cálculo que alimenta o card —,
+ * então `candidatos`, `contratados`, `conversao` e a ORDEM da lista são
+ * idênticos aos do resumo: abrir o modal nunca "corrige" um número da tela.
+ *
+ * O que é acrescentado vem só dos registros já carregados:
+ *   • `departamento` ..... `vagas.departamento`;
+ *   • `emProcesso` ....... candidaturas que ainda não terminaram, pela MESMA
+ *                          definição de `encerrada` usada nos indicadores;
+ *   • `porEtapa` ......... contagem por `candidaturas.etapa` (vazio = triagem),
+ *                          exatamente como `construirFunil`;
+ *   • `tempoMedioDias` ... média de dias entre `created_at` e `updated_at`
+ *                          (ou a referência). Sem amostra, `null` — a janela
+ *                          mostra "não disponível" em vez de um número.
+ */
+export function construirDetalheVagas(
+  vagas: VagaRow[],
+  candidaturas: CandidaturaComRelacoes[],
+  referencia: Date
+): DetalheVaga[] {
+  const resumos = construirDesempenhoVagas(vagas, candidaturas);
+  const vagaPorId = new Map(vagas.map((vaga) => [vaga.id, vaga]));
+
+  return resumos.map((resumo) => {
+    const daVaga = candidaturas.filter((candidatura) => candidatura.vaga_id === resumo.id);
+
+    const contagem = new Map<string, number>();
+    for (const candidatura of daVaga) {
+      const etapa = candidatura.etapa || 'triagem';
+      contagem.set(etapa, (contagem.get(etapa) ?? 0) + 1);
+    }
+
+    const tempos = daVaga
+      .map((candidatura) => {
+        const inicio = dataValida(candidatura.created_at);
+        if (!inicio) return null;
+        const fim = dataValida(candidatura.updated_at) ?? referencia;
+        const dias = differenceInCalendarDays(fim, inicio);
+        return dias >= 0 ? dias : null;
+      })
+      .filter((dias): dias is number => dias !== null);
+
+    const situacao = situacaoDaVaga(resumo.status);
+    const departamento = vagaPorId.get(resumo.id)?.departamento?.trim();
+
+    return {
+      ...resumo,
+      situacao,
+      statusRotulo: ROTULO_SITUACAO[situacao],
+      departamento: departamento ? departamento : null,
+      emProcesso: daVaga.filter((candidatura) => !encerrada(candidatura)).length,
+      porEtapa: ETAPAS.map((etapa) => ({
+        id: etapa.id,
+        label: etapa.label,
+        total: contagem.get(etapa.id) ?? 0,
+      })),
+      tempoMedioDias:
+        tempos.length > 0 ? Math.round(tempos.reduce((soma, dias) => soma + dias, 0) / tempos.length) : null,
+    };
+  });
+}
+
+export interface ResumoDesempenhoVagas {
+  /** Vagas consideradas no recorte. */
+  vagas: number;
+  /** Candidaturas somadas das vagas consideradas (mesma régua do card). */
+  candidatos: number;
+  /** Contratações concluídas somadas. */
+  contratacoes: number;
+  /** Candidaturas ainda em andamento somadas. */
+  emProcesso: number;
+  /** Contratações ÷ candidaturas do recorte, em % (0 sem candidaturas). */
+  conversao: number;
+}
+
+/** Os quatro KPIs da janela — sempre sobre a base INTEIRA do recorte. */
+export function resumirDesempenhoVagas(detalhes: readonly DetalheVaga[]): ResumoDesempenhoVagas {
+  const candidatos = detalhes.reduce((soma, vaga) => soma + vaga.candidatos, 0);
+  const contratacoes = detalhes.reduce((soma, vaga) => soma + vaga.contratados, 0);
+  return {
+    vagas: detalhes.length,
+    candidatos,
+    contratacoes,
+    emProcesso: detalhes.reduce((soma, vaga) => soma + vaga.emProcesso, 0),
+    conversao: candidatos > 0 ? arredondar((contratacoes / candidatos) * 100) : 0,
+  };
+}
 
 export function construirPontosDeAtencao({
   candidaturas,
@@ -707,6 +868,7 @@ export function construirAnalytics(entrada: EntradaAnalytics): AnalyticsRecrutam
       referencia,
     }),
     vagas: construirDesempenhoVagas(entrada.vagas, entrada.candidaturas),
+    detalhes: construirDetalheVagas(entrada.vagas, entrada.candidaturas, referencia),
     indicadores: construirIndicadores({ ...entrada, referencia }),
   };
 }

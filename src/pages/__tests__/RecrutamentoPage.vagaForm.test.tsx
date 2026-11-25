@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -55,6 +55,15 @@ async function abrirFormulario() {
   return { user, dialog };
 }
 
+/**
+ * Preenche um campo de texto em UM evento. O `user.type` digita tecla por tecla
+ * e, com a suíte inteira rodando em paralelo, o jsdom reagia entre as teclas e
+ * embaralhava o valor — o teste falhava só no run completo.
+ */
+function preencher(elemento: HTMLElement, texto: string) {
+  fireEvent.change(elemento, { target: { value: texto } });
+}
+
 describe('RecrutamentoPage — formulário de vaga completo', () => {
   beforeEach(() => {
     criarVaga.mockReset();
@@ -65,22 +74,19 @@ describe('RecrutamentoPage — formulário de vaga completo', () => {
     renderizar();
     const { user, dialog } = await abrirFormulario();
 
-    await user.type(within(dialog).getByPlaceholderText('Ex: Desenvolvedor Senior'), 'Pessoa Desenvolvedora Sênior');
-    await user.type(within(dialog).getByPlaceholderText('Ex: Desenvolvedor Full Stack'), 'Desenvolvedor Full Stack');
-    await user.type(within(dialog).getByPlaceholderText('Ex: Tecnologia'), 'Tecnologia');
-    await user.type(within(dialog).getByPlaceholderText('Remoto, Híbrido, Presencial'), 'Remoto');
+    preencher(within(dialog).getByPlaceholderText('Ex: Desenvolvedor Senior'), 'Pessoa Desenvolvedora Sênior');
+    preencher(within(dialog).getByPlaceholderText('Ex: Desenvolvedor Full Stack'), 'Desenvolvedor Full Stack');
+    preencher(within(dialog).getByPlaceholderText('Ex: Tecnologia'), 'Tecnologia');
+    preencher(within(dialog).getByPlaceholderText('Remoto, Híbrido, Presencial'), 'Remoto');
 
     await user.click(within(dialog).getByRole('combobox'));
     await user.click(await screen.findByRole('option', { name: 'CLT' }));
 
-    await user.type(within(dialog).getByPlaceholderText('4500'), '4500');
-    await user.type(within(dialog).getByPlaceholderText('6000'), '6000');
-    await user.type(
-      within(dialog).getByPlaceholderText(/Contexto da área/i),
-      'Time de produto, escopo de ponta a ponta.'
-    );
-    await user.type(within(dialog).getByPlaceholderText(/Plano de saúde/i), 'Plano de saúde, vale-refeição.');
-    await user.type(within(dialog).getByPlaceholderText(/React, TypeScript/i), 'React, TypeScript');
+    preencher(within(dialog).getByPlaceholderText('4500'), '4500');
+    preencher(within(dialog).getByPlaceholderText('6000'), '6000');
+    preencher(within(dialog).getByPlaceholderText(/Contexto da área/i), 'Time de produto, escopo de ponta a ponta.');
+    preencher(within(dialog).getByPlaceholderText(/Plano de saúde/i), 'Plano de saúde, vale-refeição.');
+    preencher(within(dialog).getByPlaceholderText(/React, TypeScript/i), 'React, TypeScript');
 
     await user.click(within(dialog).getByRole('button', { name: 'Publicar Vaga' }));
 
@@ -105,9 +111,9 @@ describe('RecrutamentoPage — formulário de vaga completo', () => {
     renderizar();
     const { user, dialog } = await abrirFormulario();
 
-    await user.type(within(dialog).getByPlaceholderText('Ex: Desenvolvedor Senior'), 'Vaga invertida');
-    await user.type(within(dialog).getByPlaceholderText('4500'), '6000');
-    await user.type(within(dialog).getByPlaceholderText('6000'), '4500');
+    preencher(within(dialog).getByPlaceholderText('Ex: Desenvolvedor Senior'), 'Vaga invertida');
+    preencher(within(dialog).getByPlaceholderText('4500'), '6000');
+    preencher(within(dialog).getByPlaceholderText('6000'), '4500');
 
     expect(await within(dialog).findByText(/faixa máxima deve ser maior ou igual/i)).toBeInTheDocument();
     expect(within(dialog).getByRole('button', { name: 'Publicar Vaga' })).toBeDisabled();
