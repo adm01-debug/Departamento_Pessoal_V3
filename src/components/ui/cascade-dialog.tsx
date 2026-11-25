@@ -3,7 +3,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import { cascadeContainerVariants, cascadeOverlayVariants, cascadeShellVariants } from './cascade-motion';
+import {
+  CASCADE_SAIDA_PADRAO,
+  cascadeContainerVariantsPara,
+  cascadeOverlayVariants,
+  cascadeShellVariants,
+  type PerfilSaidaCascata,
+} from './cascade-motion';
 
 /**
  * ============================================================================
@@ -27,6 +33,14 @@ import { cascadeContainerVariants, cascadeOverlayVariants, cascadeShellVariants 
  * o `delay` com que a caixa começa a encolher, para ela só fechar depois que o
  * último bloco já sumiu.
  *
+ * `perfilSaida` é o único ajuste de ritmo admitido e ele só vale para o
+ * FECHAMENTO: o padrão (`CASCADE_SAIDA_PADRAO`) reproduz exatamente os números
+ * históricos (0,12 s entre blocos, caixa em 0,55 s) e é o que todas as janelas
+ * usam sem passar nada. Janelas de LISTA — um bloco por linha — passam
+ * `CASCADE_SAIDA_RAPIDA`, senão o fechamento cresce com o número de linhas
+ * (1,67 s com 7 talentos, 3,2 s com 20) e o X parece não responder. A ABERTURA
+ * é a mesma nos dois perfis: a cascata de entrada é a assinatura do sistema.
+ *
  * O consumidor desenha os blocos: envolva cada filho em
  * `<motion.div variants={cascadeItemVariants}>` para ele participar da cascata.
  * ============================================================================
@@ -48,6 +62,14 @@ export interface CascadeDialogFrameProps {
    * comportamento do popup "Pendências" permanece idêntico.
    */
   onCloseAutoFocus?: (event: Event) => void;
+  /**
+   * Perfil de SAÍDA (ver `PerfilSaidaCascata` em `./cascade-motion`). Opcional:
+   * omitido = `CASCADE_SAIDA_PADRAO`, o comportamento histórico (0,12 s entre
+   * blocos, sem teto). Janelas cujo conteúdo É uma lista — onde cada linha é um
+   * bloco — passam `CASCADE_SAIDA_RAPIDA` para o fechamento não crescer com o
+   * número de linhas (ex.: "Talentos em destaque": 1,67 s → 0,62 s).
+   */
+  perfilSaida?: PerfilSaidaCascata;
   children: ReactNode;
 }
 
@@ -58,6 +80,7 @@ export function CascadeDialogFrame({
   className,
   contentClassName = 'p-5 space-y-3',
   onCloseAutoFocus,
+  perfilSaida = CASCADE_SAIDA_PADRAO,
   children,
 }: CascadeDialogFrameProps) {
   return (
@@ -68,7 +91,7 @@ export function CascadeDialogFrame({
             <DialogPrimitive.Overlay asChild forceMount>
               <motion.div
                 className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-                variants={cascadeOverlayVariants(blocks)}
+                variants={cascadeOverlayVariants(blocks, perfilSaida)}
                 initial="closed"
                 animate="open"
                 exit="closed"
@@ -81,7 +104,7 @@ export function CascadeDialogFrame({
                   className
                 )}
                 style={{ transformOrigin: 'top center' }}
-                variants={cascadeShellVariants(blocks)}
+                variants={cascadeShellVariants(blocks, perfilSaida)}
                 initial="closed"
                 animate="open"
                 exit="closed"
@@ -92,7 +115,7 @@ export function CascadeDialogFrame({
                 </DialogPrimitive.Close>
 
                 <motion.div
-                  variants={cascadeContainerVariants}
+                  variants={cascadeContainerVariantsPara(blocks, perfilSaida)}
                   initial="closed"
                   animate="open"
                   exit="closed"

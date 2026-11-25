@@ -452,7 +452,11 @@ describe('cancelamento com justificativa', () => {
     await usuario.click(botao(/Cancelar avaliação/));
     await usuario.type(await screen.findByLabelText(/Motivo do cancelamento/i), 'abc');
     await usuario.click(botao('Cancelar'));
-    await waitFor(() => expect(screen.queryByLabelText(/Motivo do cancelamento/i)).toBeNull());
+    // A saida pela cascata do sistema desmonta o dialogo perto de 1,1 s
+    // (acima do timeout padrao de 1 s do waitFor).
+    await waitFor(() => expect(screen.queryByLabelText(/Motivo do cancelamento/i)).toBeNull(), {
+      timeout: 2500,
+    });
     expect(servico.finalizarFeedback).not.toHaveBeenCalled();
   });
 
@@ -747,7 +751,11 @@ describe('atualização da interface após o sucesso', () => {
     expect(invalidar).toHaveBeenCalledWith({ queryKey: ['ninebox'] });
     expect(invalidar).toHaveBeenCalledWith({ queryKey: ['ninebox_360'] });
     expect(invalidar).toHaveBeenCalledWith({ queryKey: ['ninebox_consolidacoes'] });
-    await waitFor(() => expect(screen.queryByLabelText(/Motivo do cancelamento/i)).toBeNull());
+    // A saida pela cascata do sistema desmonta o dialogo perto de 1,1 s
+    // (acima do timeout padrao de 1 s do waitFor).
+    await waitFor(() => expect(screen.queryByLabelText(/Motivo do cancelamento/i)).toBeNull(), {
+      timeout: 2500,
+    });
     expect(toasts.success).toHaveBeenCalledWith(expect.stringContaining('cancelada'));
   });
 });

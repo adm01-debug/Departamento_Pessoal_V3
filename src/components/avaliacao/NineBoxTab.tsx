@@ -5,6 +5,7 @@ import { NineBoxFiltros } from './NineBoxFiltros';
 import { NineBoxFocoBanner } from './NineBoxFocoBanner';
 import { NineBoxKpis, type IndicadorNineBox } from './NineBoxKpis';
 import { NineBoxLateral } from './NineBoxLateral';
+import { NineBoxTalentosDialog } from './NineBoxTalentosDialog';
 import { NineBoxMatriz } from './NineBoxMatriz';
 import { NineBoxQuadranteDialog } from './NineBoxQuadranteDialog';
 // ⚠️ TEMPORÁRIO — mock visual do Nine-Box. Remover este import junto com o
@@ -126,6 +127,9 @@ export function NineBoxTab({
   // sairia sem animação (é o `aberto` que dispara o `exit` do `AnimatePresence`).
   const [quadranteAtivo, setQuadranteAtivo] = useState<QuadranteKey | null>(null);
   const [quadranteAberto, setQuadranteAberto] = useState(false);
+
+  // Janela "Ver todos" de Talentos em destaque.
+  const [talentosAberto, setTalentosAberto] = useState(false);
 
   /* ⚠️ TEMPORÁRIO — MOCK VISUAL DO NINE-BOX (ver `nineBoxMock.ts`) ⚠️
      Injeta colaboradores e feedbacks fictícios SÓ nesta aba, depois de receber
@@ -383,7 +387,7 @@ export function NineBoxTab({
             porQuadrante={(chave) => pontosDoQuadrante(filtrados, chave)}
             onAbrirQuadrante={abrirQuadrante}
           />
-          <NineBoxLateral indice={7} ranking={ranking} insights={insights} />
+          <NineBoxLateral indice={7} ranking={ranking} insights={insights} onVerTodos={() => setTalentosAberto(true)} />
         </div>
 
         <NineBoxQuadranteDialog
@@ -391,6 +395,22 @@ export function NineBoxTab({
           aberto={quadranteAberto}
           onOpenChange={setQuadranteAberto}
           pessoas={quadranteAtivo ? pontosDoQuadrante(filtrados, quadranteAtivo) : []}
+        />
+
+        {/* "Ver todos" dos Talentos em destaque — MESMA janela do popup
+
+            "Pendências" (`AnimatedCascadeDialog`), com a lista completa do
+
+            ranking do recorte. Fica FORA dos cards e recebe o ranking inteiro,
+
+            não as 3 linhas da vitrine. */}
+
+        <NineBoxTalentosDialog
+          aberto={talentosAberto}
+
+          onOpenChange={setTalentosAberto}
+
+          ranking={ranking}
         />
       </div>
     </EntradaPresenca>

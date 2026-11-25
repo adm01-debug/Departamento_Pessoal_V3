@@ -58,13 +58,23 @@ export function EmptyState({
   );
 }
 
-export function EmptySearch({ search, onClear }: { search?: string; onClear?: () => void }) {
+export function EmptySearch({
+  search,
+  onClear,
+  className,
+}: {
+  search?: string;
+  onClear?: () => void;
+  /** Ajustes de geometria do chamador (ex.: `py` reduzido dentro de um card denso). */
+  className?: string;
+}) {
   return (
     <EmptyState
       icon={Search}
       title="Nenhum resultado encontrado"
       description={search ? `Não encontramos resultados para "${search}"` : 'Tente ajustar seus filtros'}
       action={onClear ? { label: 'Limpar busca', onClick: onClear } : undefined}
+      className={className}
     />
   );
 }

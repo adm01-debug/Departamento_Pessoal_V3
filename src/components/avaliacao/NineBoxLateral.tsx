@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import {
@@ -30,7 +29,9 @@ import {
  *
  *   1. TALENTOS EM DESTAQUE — ranking real (soma das duas notas) com as notas
  *      de desempenho e potencial de cada pessoa e o quadrante em que ela caiu.
- *      "Ver todos" expande/recolhe a MESMA lista (nenhuma navegação fictícia);
+ *      O card mostra os 3 primeiros; "Ver todos" abre a JANELA COMPLETA
+ *      (`NineBoxTalentosDialog`), que usa o mesmo `AnimatedCascadeDialog` do
+ *      popup "Pendências" — mesma entrada, mesmo véu, mesma cascata;
  *   2. INSIGHTS — o card de RECOMENDAÇÕES: peso visual maior (gradiente âmbar
  *      translúcido + glow discreto), cabeçalho com ícone em caixa e subtítulo,
  *      lista com números/palavras-chave em destaque, o item mais grave num
@@ -59,6 +60,12 @@ interface NineBoxLateralProps {
   ranking: PontoNineBox[];
   /** Insights já estruturados, do mais grave para o menos (`lerInsightsEstruturados`). */
   insights: InsightEstruturado[];
+  /**
+   * Abre a janela com TODOS os talentos em destaque (`NineBoxTalentosDialog`).
+   * O estado mora no pai (`NineBoxTab`), ao lado da janela do quadrante: o card
+   * só avisa que o botão foi acionado e continua sendo uma vitrine de 3 linhas.
+   */
+  onVerTodos?: () => void;
 }
 
 /** Ícone e caixa de cada tipo de insight — mesmos tons dos KPIs e do banner. */
@@ -84,9 +91,11 @@ function itemInsight(reduzirMovimento: boolean) {
   };
 }
 
-export function NineBoxLateral({ indice = 12, ranking, insights }: NineBoxLateralProps) {
-  const [verTodos, setVerTodos] = useState(false);
-  const lista = verTodos ? ranking : ranking.slice(0, 3);
+export function NineBoxLateral({ indice = 12, ranking, insights, onVerTodos }: NineBoxLateralProps) {
+  // O card é a VITRINE: sempre os 3 primeiros do ranking. "Ver todos" não
+  // expande esta lista (o card manteria a altura da coluna e empurraria os
+  // Insights); ele abre a janela completa, com a animação de "Pendências".
+  const lista = ranking.slice(0, 3);
   const reduzirMovimento = useMovimentoReduzido();
 
   return (
@@ -103,11 +112,11 @@ export function NineBoxLateral({ indice = 12, ranking, insights }: NineBoxLatera
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setVerTodos((v) => !v)}
+            onClick={() => onVerTodos?.()}
             disabled={ranking.length <= 3}
             className="h-7 shrink-0 gap-1 px-2 text-[11px] text-muted-foreground hover:text-foreground disabled:opacity-40"
           >
-            {verTodos ? 'Ver menos' : 'Ver todos'}
+            Ver todos
             <ArrowRight className="h-3 w-3" />
           </Button>
         </div>

@@ -2,7 +2,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { motion } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
 import { CascadeDialogFrame } from './cascade-dialog';
-import { cascadeItemVariants } from './cascade-motion';
+import { cascadeItemVariants, type PerfilSaidaCascata } from './cascade-motion';
 
 export interface AnimatedCascadeDialogProps {
   open: boolean;
@@ -17,6 +17,9 @@ export interface AnimatedCascadeDialogProps {
   /** Sobrepõe a largura padrão (`max-w-[460px]`, compacta) — usar só quando
    * o conteúdo genuinamente precisa de mais espaço (ex.: tabela). */
   className?: string;
+  /** Perfil de SAIDA (opcional): janelas cujo conteudo E uma lista passam
+   * `CASCADE_SAIDA_RAPIDA` para o fechamento nao crescer com o numero de itens. */
+  perfilSaida?: PerfilSaidaCascata;
 }
 
 // A coreografia (números, variants e timing) mora em `./cascade-motion.ts`; a
@@ -33,6 +36,7 @@ export function AnimatedCascadeDialog({
   emptyMessage,
   items,
   className,
+  perfilSaida,
 }: AnimatedCascadeDialogProps) {
   // Cabeçalho + cada item cascateiam juntos: o cabeçalho entra primeiro
   // (índice 0) e, no fechamento, some por último — a caixa só começa a
@@ -41,7 +45,13 @@ export function AnimatedCascadeDialog({
   const totalItens = items.length + 1;
 
   return (
-    <CascadeDialogFrame open={open} onOpenChange={onOpenChange} blocks={totalItens} className={className}>
+    <CascadeDialogFrame
+      open={open}
+      onOpenChange={onOpenChange}
+      blocks={totalItens}
+      className={className}
+      perfilSaida={perfilSaida}
+    >
       <motion.div variants={cascadeItemVariants}>
         <DialogPrimitive.Title className="flex items-center gap-2 font-display text-[17px] font-semibold leading-snug tracking-tight">
           <TitleIcon className={titleIconClassName ?? 'h-4 w-4 text-primary'} /> {title}
