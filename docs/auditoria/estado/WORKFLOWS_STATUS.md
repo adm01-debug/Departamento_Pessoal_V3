@@ -26,40 +26,40 @@ comita e abre um PR com `gh pr create` — nunca abre PR vazio.
 
 <!-- REPORT:START -->
 
-> Última execução automática: 2026-11-18 (workflows-report.yml)
+> Última execução automática: 2026-11-25 (workflows-report.yml)
 
 # Relatório de Workflows
 
 | Workflow | Median (min) | P95 (min) | Runs |
 |----------|-------------|-----------|------|
-| Automação local | 0 | 1 | 50 |
-| Branch Hygiene Audit | 4 | 4 | 1 |
-| Canonical Supabase — Edge Functions | 2 | 33 | 49 |
-| Canonical database — scoped migrations | 2 | 32 | 39 |
-| Canonical database — read-only security probes | 853 ⚠️ | 34284 | 23 |
-| Canonical database — read-only SQL diagnostic | 6965 ⚠️ | 7115 | 41 |
-| Continuous Integration & Delivery | 7 | 10 | 38 |
-| Contexto para agentes de IA (10 min) | 2 | 8 | 47 |
+| Automação local | 0 | 1 | 48 |
+| Branch Hygiene Audit | 4 | 4 | 3 |
+| Canonical Supabase — Edge Functions | 2 | 6 | 48 |
+| Canonical database — scoped migrations | 1 | 1 | 48 |
+| Canonical database — read-only security probes | 353 ⚠️ | 34284 | 25 |
+| Canonical database — read-only SQL diagnostic | 1 | 1 | 50 |
+| Continuous Integration & Delivery | 9 | 11 | 44 |
+| Contexto para agentes de IA (10 min) | 1 | 5 | 50 |
 | DB Migration Tests (PLANO_100) | 0 | 7 | 34 |
-| Manual & Preview Deploy | 1 | 2 | 49 |
-| E2E Tests (Playwright) | 2 | 15 | 49 |
-| Gitleaks | 0 | 1 | 50 |
-| Environment Healthcheck | 0 | 34 | 50 |
-| Inventário do estado real (semanal) | 2 | 3 | 3 |
+| Manual & Preview Deploy | 1 | 3 | 49 |
+| E2E Tests (Playwright) | 2 | 8 | 48 |
+| Gitleaks | 1 | 1 | 48 |
+| Environment Healthcheck | 0 | 23 | 50 |
+| Inventário do estado real (semanal) | 2 | 3 | 5 |
 | .github/workflows/main.yml | 0 | 0 | 3 |
 | Notifica falha na main | — | — | 0 |
-| OSSF Scorecard | 1 | 1 | 5 |
-| Post-deploy smoke | 1 | 1 | 9 |
-| Ruleset sync | 0 | 0 | 8 |
-| Security Scan & Code Quality | 3 | 4 | 45 |
-| Settings Guard | 0 | 2 | 8 |
+| OSSF Scorecard | 1 | 1 | 6 |
+| Post-deploy smoke | 1 | 3 | 8 |
+| Ruleset sync | 0 | 0 | 9 |
+| Security Scan & Code Quality | 4 | 5 | 46 |
+| Settings Guard | 0 | 2 | 15 |
 | Temp Prettier Dump | 0 | 2 | 6 |
-| Workflow lint (actionlint) | 2 | 35 | 48 |
-| Workflows report | 1 | 16 | 5 |
-| Copilot | 4 | 15 | 19 |
+| Workflow lint (actionlint) | 0 | 2 | 50 |
+| Workflows report | 1 | 16 | 6 |
+| Copilot | 5 | 15 | 20 |
 | Copilot cloud agent | 2 | 2 | 2 |
 | Dependabot Updates | 3 | 9 | 50 |
-| Dependency Graph | 1 | 1 | 3 |
+| Dependency Graph | 1 | 1 | 4 |
 
 <!-- REPORT:END -->
 
