@@ -104480,7 +104480,7 @@
         "comment": null,
         "config": null,
         "definition": null,
-        "definition_sha": "f87937cecb4b15b8",
+        "definition_sha": "60896cca26aed676",
         "execute_api_roles": "anon, authenticated, service_role",
         "execute_public": true,
         "is_trigger_fn": true,

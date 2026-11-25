@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-25 23:22 UTC
+
+- **functions** alterado (1): `public.prevent_empty_empresa_id()`
+
 ## 2026-11-25 18:19 UTC
 
 - **functions** alterado (5): `public.get_auth_empresa_id()`, `public.has_role(_user_id uuid, _role app_role)`, `public.is_admin(_user_id uuid)`, `public.pertence_a_empresa(_empresa_id uuid)`, `public.record_backup_run(p_empresa_id uuid, p_status text, p_duration_ms integer, p_records integer, p_tables integer, p_error text, p_created_by uuid, p_metadata jsonb)`
