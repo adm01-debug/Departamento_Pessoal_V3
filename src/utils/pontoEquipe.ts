@@ -48,16 +48,18 @@ export interface ResumoEquipeDia {
  *                    a monta em ordem cronológica; aqui basta a última vista).
  * @param totalAtivos colaboradores ativos da empresa (denominador da cobertura).
  */
-export function resumirEquipeDoDia(
-  batidas: BatidaEquipe[] = [],
-  totalAtivos = 0
-): ResumoEquipeDia {
+export function resumirEquipeDoDia(batidas: BatidaEquipe[] = [], totalAtivos = 0): ResumoEquipeDia {
   const ultimaBatida = new Map<string, string>();
 
   batidas.forEach((batida) => {
     const id = batida?.colaborador_id;
     if (!id) return;
-    ultimaBatida.set(id, String(batida?.tipo ?? '').trim().toLowerCase());
+    ultimaBatida.set(
+      id,
+      String(batida?.tipo ?? '')
+        .trim()
+        .toLowerCase()
+    );
   });
 
   const comBatida = ultimaBatida.size;
@@ -80,9 +82,6 @@ export function resumirEquipeDoDia(
  * `PontoInconsistencyPanel`, tipo `forgotten_out`). Serve de pendência de
  * apuração no fechamento.
  */
-export function temSaidaPendente(registro: {
-  entrada_1?: string | null;
-  saida_1?: string | null;
-}): boolean {
+export function temSaidaPendente(registro: { entrada_1?: string | null; saida_1?: string | null }): boolean {
   return !!registro?.entrada_1 && !registro?.saida_1;
 }

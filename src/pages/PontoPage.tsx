@@ -505,7 +505,11 @@ export default function PontoPage() {
           </div>
         </motion.div>
 
-        <Tabs value={abaPrincipal} onValueChange={(valor) => setAbaPrincipal(valor as 'meu-ponto' | 'gestao')} className="space-y-6">
+        <Tabs
+          value={abaPrincipal}
+          onValueChange={(valor) => setAbaPrincipal(valor as 'meu-ponto' | 'gestao')}
+          className="space-y-6"
+        >
           <TabsList className="bg-muted/50 p-1 rounded-xl">
             <TabsTrigger
               value="meu-ponto"
