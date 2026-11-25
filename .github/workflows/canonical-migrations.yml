@@ -283,7 +283,8 @@ jobs:
             20260817000000_p4_071_indices_compostos_top20.sql \
             20261124150000_backup_logs_rls_policy.sql \
             20261125120000_secdef_refresh_dashboard_views_revoke.sql \
-            20261125130000_provisoes_folha_tenant_pertence.sql
+            20261125130000_provisoes_folha_tenant_pertence.sql \
+            20261125140000_backup_logs_revoke_anon_e_tenant_real.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
