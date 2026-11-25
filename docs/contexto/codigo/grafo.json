@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1422,
- "arestas": 6982,
+ "nos": 1425,
+ "arestas": 6993,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -10,7 +10,7 @@
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 329
+   "importado_por": 330
   },
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -37,12 +37,12 @@
    "importado_por": 160
   },
   {
-   "arquivo": "src/utils/safeError.ts",
+   "arquivo": "src/components/ui/select.tsx",
    "importado_por": 141
   },
   {
-   "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 140
+   "arquivo": "src/utils/safeError.ts",
+   "importado_por": 141
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
@@ -226,7 +226,6 @@
   "src/components/notifications/index.ts",
   "src/components/ponto/PontoLeaderboard.tsx",
   "src/components/ui/data-table.tsx",
-  "src/components/ui/flow-hover-button.tsx",
   "src/components/ui/form.tsx",
   "src/components/ui/masked-input.tsx",
   "src/components/ui/page-header.tsx",

@@ -1849,7 +1849,7 @@
    "modulo": "components/dashboard",
    "arquivos": 23,
    "testes": 0,
-   "linhas": 4617,
+   "linhas": 4624,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -5733,13 +5733,13 @@
   },
   {
    "modulo": "components/recrutamento",
-   "arquivos": 31,
-   "testes": 15,
-   "linhas": 8116,
+   "arquivos": 34,
+   "testes": 19,
+   "linhas": 8582,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 20,
+   "componentes": 21,
    "hooks_locais": [
     "useAuth",
     "useEntradaKanbanColuna",
@@ -5809,7 +5809,9 @@
     "date-fns",
     "framer-motion",
     "lucide-react",
-    "recharts"
+    "papaparse",
+    "recharts",
+    "sonner"
    ]
   },
   {

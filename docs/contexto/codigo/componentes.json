@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 697,
- "orfaos": 25,
+ "total": 698,
+ "orfaos": 24,
  "nomes_duplicados": {
   "AlertasRHWidget": [
    "src/components/dashboard/analytics/widgets.tsx",
@@ -2919,7 +2919,7 @@
     "DashboardHeader"
    ],
    "export_default": null,
-   "linhas": 61,
+   "linhas": 68,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [],
@@ -6515,6 +6515,20 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/recrutamento/AnalyticsBarraFiltros.tsx",
+   "exports": [
+    "AnalyticsBarraFiltros"
+   ],
+   "export_default": null,
+   "linhas": 146,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/recrutamento/AnalyticsEvolucao.tsx",
    "exports": [
     "AnalyticsEvolucao"
@@ -6592,7 +6606,7 @@
     "AnalyticsRecrutamento"
    ],
    "export_default": null,
-   "linhas": 288,
+   "linhas": 338,
    "dominio": "components/recrutamento",
    "hooks_locais": [],
    "tabelas": [],
@@ -8607,8 +8621,8 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 0,
-   "orfao": true
+   "usado_por": 2,
+   "orfao": false
   },
   {
    "arquivo": "src/components/ui/form.tsx",
@@ -8867,7 +8881,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 139,
+   "usado_por": 140,
    "orfao": false
   },
   {

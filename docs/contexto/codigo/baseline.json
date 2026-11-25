@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "43dd2de7f4192339d40542fdb4d8bc52c1255fed",
+  "commit": "c697595dd1ed8bd0160efcc6eddb5422819d0a80",
   "branch": "main",
-  "data_commit": "2026-11-25T15:04:00-03:00",
+  "data_commit": "2026-11-25T15:28:16-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c697595",
+    "data": "2026-11-25",
+    "assunto": "feat: resgata recorte de período/vaga e exportação CSV da Analytics (port do Muri) (#891)"
+   },
    {
     "sha": "43dd2de",
     "data": "2026-11-25",
@@ -126,14 +131,9 @@
     "sha": "bb8ebe2",
     "data": "2026-11-24",
     "assunto": "fix: nao reexecuta o script da extensao pg_cron/pg_net no canonico (#862)"
-   },
-   {
-    "sha": "084b528",
-    "data": "2026-11-24",
-    "assunto": "chore: pina por hash os tres pip install sinalizados pelo Scorecard (#861)"
    }
   ],
-  "arquivos_mudados_7d": 768,
+  "arquivos_mudados_7d": 772,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -141,7 +141,7 @@
    },
    {
     "pasta": "src/components/ui",
-    "mudancas": 118
+    "mudancas": 119
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -165,7 +165,7 @@
    },
    {
     "pasta": "src/components/recrutamento",
-    "mudancas": 58
+    "mudancas": 66
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -180,11 +180,11 @@
     "mudancas": 43
    },
    {
-    "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 37
+    "pasta": "src/components/dashboard",
+    "mudancas": 38
    },
    {
-    "pasta": "src/components/dashboard",
+    "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 37
    },
    {
@@ -242,11 +242,11 @@
     "mudancas": 9
    },
    {
-    "arquivo": "docs/auditoria/sql-preservado/README.md",
-    "mudancas": 7
+    "arquivo": "src/index.css",
+    "mudancas": 8
    },
    {
-    "arquivo": "src/index.css",
+    "arquivo": "docs/auditoria/sql-preservado/README.md",
     "mudancas": 7
    },
    {
@@ -286,15 +286,15 @@
     "mudancas": 5
    },
    {
+    "arquivo": "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    "mudancas": 5
+   },
+   {
     "arquivo": "docs/pendencias/_ordem.md",
     "mudancas": 5
    },
    {
     "arquivo": "src/App.tsx",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "src/components/desligamentos/index.ts",
     "mudancas": 5
    }
   ],
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4192,
-  "arquivos_codigo": 2273,
-  "linhas_codigo": 459419,
+  "arquivos_total": 4199,
+  "arquivos_codigo": 2280,
+  "linhas_codigo": 460426,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 86,
-  "componentes": 697,
+  "componentes": 698,
   "hooks": 127,
   "edge_functions": 68,
   "tabelas": 438,
   "migrations": 1265,
   "cron_jobs": 43,
-  "testes": 853,
+  "testes": 857,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 347
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1121,
-   "linhas": 213018
+   "arquivos": 1128,
+   "linhas": 214025
   },
   "src/constants": {
    "arquivos": 7,
@@ -1185,7 +1185,6 @@
    "src/components/notifications/NotificationCenter.tsx",
    "src/components/ponto/PontoLeaderboard.tsx",
    "src/components/ui/data-table.tsx",
-   "src/components/ui/flow-hover-button.tsx",
    "src/components/ui/form.tsx",
    "src/components/ui/masked-input.tsx",
    "src/components/ui/page-header.tsx",

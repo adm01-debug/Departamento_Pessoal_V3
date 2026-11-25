@@ -1965,6 +1965,7 @@
   ],
   "src/components/dashboard/DashboardHeader.tsx": [
    "src/components/ui/button.tsx",
+   "src/components/ui/flow-hover-button.tsx",
    "src/lib/utils.ts"
   ],
   "src/components/dashboard/DonutChart.tsx": [
@@ -3945,6 +3946,13 @@
    "src/components/recrutamento/analyticsComum.ts",
    "src/lib/utils.ts"
   ],
+  "src/components/recrutamento/AnalyticsBarraFiltros.tsx": [
+   "src/components/recrutamento/analyticsFiltros.ts",
+   "src/components/recrutamento/analyticsVisual.ts",
+   "src/components/ui/flow-hover-button.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/utils.ts"
+  ],
   "src/components/recrutamento/AnalyticsEvolucao.tsx": [
    "src/components/recrutamento/AnalyticsPainel.tsx",
    "src/components/recrutamento/analyticsComum.ts",
@@ -3973,6 +3981,7 @@
   "src/components/recrutamento/AnalyticsRecrutamento.tsx": [
    "src/components/dashboard/AnimatedNumber.tsx",
    "src/components/recrutamento/AnalyticsAtencao.tsx",
+   "src/components/recrutamento/AnalyticsBarraFiltros.tsx",
    "src/components/recrutamento/AnalyticsEvolucao.tsx",
    "src/components/recrutamento/AnalyticsFunil.tsx",
    "src/components/recrutamento/AnalyticsIndicadores.tsx",
@@ -3980,6 +3989,8 @@
    "src/components/recrutamento/AnalyticsTempo.tsx",
    "src/components/recrutamento/AnalyticsVagas.tsx",
    "src/components/recrutamento/analyticsComum.ts",
+   "src/components/recrutamento/analyticsFiltros.ts",
+   "src/components/recrutamento/analyticsRelatorio.ts",
    "src/components/ui/card.tsx",
    "src/components/ui/entrada-cards.tsx",
    "src/components/ui/info-tooltip.tsx",
@@ -4113,6 +4124,12 @@
   "src/components/recrutamento/analyticsComum.ts": [
    "src/components/recrutamento/pipelineEtapas.ts",
    "src/types/recrutamento.ts"
+  ],
+  "src/components/recrutamento/analyticsFiltros.ts": [
+   "src/components/recrutamento/analyticsComum.ts"
+  ],
+  "src/components/recrutamento/analyticsRelatorio.ts": [
+   "src/components/recrutamento/analyticsComum.ts"
   ],
   "src/components/recrutamento/analyticsVagasFiltros.ts": [
    "src/components/recrutamento/analyticsComum.ts",

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `43dd2de7f4` · branch `main` · 2026-11-25 18:04 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c697595dd1` · branch `main` · 2026-11-25 18:29 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1878,6 +1878,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | TomAnalytics | primary \| info \| chart4 \| success \| warning | `src/components/recrutamento/AnalyticsPainel.tsx` |
 | SeveridadeAtencao | alta \| media \| baixa | `src/components/recrutamento/analyticsComum.ts` |
 | SituacaoVaga | aberta \| pausada \| encerrada \| indefinida | `src/components/recrutamento/analyticsComum.ts` |
+| PeriodoAnalytics | tudo \| 30 \| 90 \| 180 \| 365 | `src/components/recrutamento/analyticsFiltros.ts` |
 | FiltroSituacao | todas \| aberta \| pausada \| encerrada | `src/components/recrutamento/analyticsVagasFiltros.ts` |
 | OrdenacaoDesempenho | candidatos \| maior-conversao \| menor-conversao \| titulo | `src/components/recrutamento/analyticsVagasFiltros.ts` |
 | SituacaoCandidato | todas \| em_processo \| contratados \| reprovados \| arquivados | `src/components/recrutamento/candidatosComum.ts` |
@@ -4852,6 +4853,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `DIAS_ALERTA_ETAPA` | `21` | `src/components/recrutamento/analyticsComum.ts` |
 | `DIAS_ALERTA_VAGA` | `15` | `src/components/recrutamento/analyticsComum.ts` |
 | `DIA_MS` | `24` | `src/components/recrutamento/analyticsComum.ts` |
+| `PERIODO_PADRAO` | `'tudo'` | `src/components/recrutamento/analyticsFiltros.ts` |
+| `VAGA_TODAS` | `'todas'` | `src/components/recrutamento/analyticsFiltros.ts` |
+| `DIA_MS` | `24` | `src/components/recrutamento/analyticsFiltros.ts` |
 | `SUPERFICIE_INTERNA` | `'border border-border/50 bg-[hsl(var(--foreground)/0.045)]'` | `src/components/recrutamento/analyticsVisual.ts` |
 | `TRILHA_BARRA` | `'block h-1.5 overflow-hidden rounded-full bg-border/40'` | `src/components/recrutamento/analyticsVisual.ts` |
 | `TRILHA_BARRA_VAGA` | `'block h-[8px] overflow-hidden rounded-full bg-border/40'` | `src/components/recrutamento/analyticsVisual.ts` |
@@ -4903,10 +4907,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `STALE_TIME` | `60` | `src/components/turnos/useTurnosEscalas.ts` |
 | `ROTULO_LINHAS_POR_PAGINA` | `'Linhas por página'` | `src/components/ui/app-pagination.tsx` |
 | `YEAR_WINDOW` | `12` | `src/components/ui/calendar.tsx` |
-| `CASCADE_SHELL_OPEN_DURATION` | `0.9` | `src/components/ui/cascade-motion.ts` |
-| `CASCADE_SHELL_CLOSE_DURATION` | `0.55` | `src/components/ui/cascade-motion.ts` |
-| `CASCADE_ITEM_STAGGER` | `0.12` | `src/components/ui/cascade-motion.ts` |
-| … +224 linhas — lista completa em `context.json` | | |
+| … +227 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -4955,6 +4956,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `const timer = window.setTimeout(limparBloqueioClique, 1500);` | `src/components/recrutamento/PipelineBoard.tsx` |
 | `timerBloqueio.current = window.setTimeout(() => setBloqueioInicial(false), 1200);` | `src/components/recrutamento/PipelineCard.tsx` |
 | `const DIA_MS = 24 * 60 * 60 * 1000;` | `src/components/recrutamento/analyticsComum.ts` |
+| `const DIA_MS = 24 * 60 * 60 * 1000;` | `src/components/recrutamento/analyticsFiltros.ts` |
 | `staleTime: 5 * 60 * 1000,` | `src/components/seguranca/PolicyAuditPanel.tsx` |
 | `return Math.max(0, ms / (1000 * 60 * 60 * 24 * 30.4));` | `src/components/sst/SSTEPIsTab.tsx` |
 | `const em30dias = new Date(hoje.getTime() + 30 * 24 * 60 * 60 * 1000);` | `src/components/sst/SSTExamesTab.tsx` |
@@ -5528,6 +5530,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Não foi possível excluir o cenário. | `src/components/premiacoes/RewardsSimulator.tsx` |
 | Não foi possível salvar o cenário. | `src/components/premiacoes/RewardsSimulator.tsx` |
 |            className={cn(              | `src/components/recrutamento/AnalyticsRecrutamento.tsx` |
+| Não foi possível exportar o relatório. | `src/components/recrutamento/AnalyticsRecrutamento.tsx` |
 |          className= | `src/components/recrutamento/CandidatosPainel.tsx` |
 |          data-pipeline-erro         className= | `src/components/recrutamento/PipelineBoard.tsx` |
 |          data-vagas-erro         className= | `src/components/recrutamento/VagasPainel.tsx` |
@@ -5562,8 +5565,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 |        className= | `src/components/treinamentos/TreinamentosCatalogo.tsx` |
 |        className= | `src/components/treinamentos/TreinamentosTabela.tsx` |
 | Erro ao desvincular curso | `src/components/treinamentos/TrilhaCursosSection.tsx` |
-| Erro ao vincular | `src/components/treinamentos/TrilhaCursosSection.tsx` |
-| … +720 linhas — lista completa em `context.json` | |
+| … +721 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5638,7 +5640,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (10289 testes em 808 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10316 testes em 812 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5942,7 +5944,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/pages/__tests__/CalculadoraRescisaoImportar.test.tsx` | 11 | CalculadoraRescisaoPage — importar colaborador · o seletor é um combobox com busca, não uma lista de rolagem · a busca filtra a lista pelo nome digitado · a busca aceita a matrícula e separa homônimos … |
 | `src/services/__tests__/bancoHorasConfigService.test.ts` | 11 | bancoHorasConfigService.buscar · returns config for empresa · returns null when no config exists · filters by empresa_id … |
 | `src/services/__tests__/colaboradorService.recontratacao.test.ts` | 11 | colaboradorService.recontratar · exige empresaId (isolamento de tenant) · exige data_admissao · atualiza o MESMO colaborador.id (status ativo, data_desligamento null) e cria vínculo tipo  … |
-| … +508 linhas — lista completa em `context.json` | | |
+| … +512 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

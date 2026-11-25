@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "43dd2de7f4192339d40542fdb4d8bc52c1255fed",
+  "sha": "c697595dd1ed8bd0160efcc6eddb5422819d0a80",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 18:04 UTC",
-  "files_total": 4206,
-  "code_files": 3610,
-  "code_lines": 533957
+  "generated_at": "2026-11-25 18:29 UTC",
+  "files_total": 4213,
+  "code_files": 3617,
+  "code_lines": 534964
  },
  "version": "1.3.2",
- "facts_hash": "db8585f565445b80",
+ "facts_hash": "8e0bc4666dac260e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,8 +388,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1339,
-   ".tsx": 1116,
-   ".ts": 1014,
+   ".tsx": 1119,
+   ".ts": 1018,
    ".mjs": 110,
    ".js": 15,
    ".cjs": 11,
@@ -98285,7 +98285,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 253
+    "deps_count": 257
    },
    {
     "path": "",
@@ -99985,7 +99985,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 78
+    "deps_count": 79
    }
   ],
   "edge_functions": [
@@ -103060,7 +103060,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1121,
+  "components_count": 1128,
   "hooks": [
    {
     "name": "useContacts",
@@ -104735,8 +104735,8 @@
   },
   {
    "module": "src/components",
-   "files": 1121,
-   "lines": 213018,
+   "files": 1128,
+   "lines": 214025,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -116645,6 +116645,11 @@
     "values": "aberta | pausada | encerrada | indefinida"
    },
    {
+    "file": "src/components/recrutamento/analyticsFiltros.ts",
+    "name": "PeriodoAnalytics",
+    "values": "tudo | 30 | 90 | 180 | 365"
+   },
+   {
     "file": "src/components/recrutamento/analyticsVagasFiltros.ts",
     "name": "FiltroSituacao",
     "values": "todas | aberta | pausada | encerrada"
@@ -118275,6 +118280,10 @@
    {
     "file": "src/components/recrutamento/AnalyticsRecrutamento.tsx",
     "msg": "\n          className={cn(\n            "
+   },
+   {
+    "file": "src/components/recrutamento/AnalyticsRecrutamento.tsx",
+    "msg": "Não foi possível exportar o relatório."
    },
    {
     "file": "src/components/recrutamento/CandidatosPainel.tsx",
@@ -152286,6 +152295,21 @@
     "value": "24"
    },
    {
+    "file": "src/components/recrutamento/analyticsFiltros.ts",
+    "name": "PERIODO_PADRAO",
+    "value": "'tudo'"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsFiltros.ts",
+    "name": "VAGA_TODAS",
+    "value": "'todas'"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsFiltros.ts",
+    "name": "DIA_MS",
+    "value": "24"
+   },
+   {
     "file": "src/components/recrutamento/analyticsVisual.ts",
     "name": "SUPERFICIE_INTERNA",
     "value": "'border border-border/50 bg-[hsl(var(--foreground)/0.045)]'"
@@ -168622,6 +168646,10 @@
    },
    {
     "file": "src/components/recrutamento/analyticsComum.ts",
+    "line": "const DIA_MS = 24 * 60 * 60 * 1000;"
+   },
+   {
+    "file": "src/components/recrutamento/analyticsFiltros.ts",
     "line": "const DIA_MS = 24 * 60 * 60 * 1000;"
    },
    {
@@ -189633,6 +189661,22 @@
     "name": "status desconhecido continua caindo em "
    },
    {
+    "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.recorte.test.tsx",
+    "name": "AnalyticsRecrutamento — barra de recorte"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.recorte.test.tsx",
+    "name": "mostra período, vaga e Exportar junto do título"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.recorte.test.tsx",
+    "name": "não oferece recorte nem exportação quando a leitura falhou"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.recorte.test.tsx",
+    "name": "Exportar baixa o CSV do recorte que está na tela"
+   },
+   {
     "file": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
     "name": "AnalyticsRecrutamento"
    },
@@ -189955,6 +189999,98 @@
    {
     "file": "src/components/recrutamento/__tests__/analyticsComum.test.ts",
     "name": "não conta duas vezes quem está em proposta e já é contratado"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsExportarAnimacao.test.tsx",
+    "name": "Exportar (Analytics) × Sincronizar (Dashboard)"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsExportarAnimacao.test.tsx",
+    "name": "usa a mesma implementação de onda do Sincronizar"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsExportarAnimacao.test.tsx",
+    "name": "pinta a onda e inverte o conteúdo com as MESMAS classes do Sincronizar"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsExportarAnimacao.test.tsx",
+    "name": "mantém a identidade do botão (e não herdou a do Sincronizar)"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsExportarAnimacao.test.tsx",
+    "name": "não desalinha a barra de recorte (Exportar é o último controle da linha)"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
+    "name": "analyticsFiltros — período"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
+    "name": "o padrão não recorta nada"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
+    "name": "janela de 30 dias conta a partir da data de referência da base"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
+    "name": "registro sem data legível não é excluído pelo período"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
+    "name": "analyticsFiltros — vaga"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
+    "name": "recorta candidaturas, vagas e candidatos pelo mesmo critério"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
+    "name": "combina período e vaga sem perder coerência"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
+    "name": "analyticsFiltros — utilitários"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
+    "name": "traduz o período em dias e em rótulo"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
+    "name": "sinaliza recorte ativo só quando algo foi escolhido"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
+    "name": "analyticsRelatorio — linhas"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
+    "name": "cobre todos os blocos exibidos na aba"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
+    "name": "usa o valor exibido nos KPIs (não recalcula nada)"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
+    "name": "analyticsRelatorio — csv"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
+    "name": "começa pelo cabeçalho fixo"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
+    "name": "nomeia o arquivo pela data de referência"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
+    "name": "analyticsRelatorio — download"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
+    "name": "dispara o download e devolve o nome do arquivo"
    },
    {
     "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
@@ -290144,7 +290280,7 @@
   },
   "src/components/dashboard/DashboardHeader.tsx": {
    "path": "src/components/dashboard/DashboardHeader.tsx",
-   "lines": 61,
+   "lines": 68,
    "exports": [
     "function DashboardHeader"
    ]
@@ -297535,6 +297671,13 @@
     "Regras: permanência &gt; 21 dias, vaga parada &gt; 15 dias e conversão &lt; 60%."
    ]
   },
+  "src/components/recrutamento/AnalyticsBarraFiltros.tsx": {
+   "path": "src/components/recrutamento/AnalyticsBarraFiltros.tsx",
+   "lines": 146,
+   "exports": [
+    "function AnalyticsBarraFiltros"
+   ]
+  },
   "src/components/recrutamento/AnalyticsEvolucao.tsx": {
    "path": "src/components/recrutamento/AnalyticsEvolucao.tsx",
    "lines": 162,
@@ -297586,12 +297729,13 @@
   },
   "src/components/recrutamento/AnalyticsRecrutamento.tsx": {
    "path": "src/components/recrutamento/AnalyticsRecrutamento.tsx",
-   "lines": 288,
+   "lines": 338,
    "exports": [
     "function AnalyticsRecrutamento"
    ],
    "errors": [
-    "\n          className={cn(\n            "
+    "\n          className={cn(\n            ",
+    "Não foi possível exportar o relatório."
    ]
   },
   "src/components/recrutamento/AnalyticsTempo.tsx": {
@@ -298066,6 +298210,57 @@
     "// quando ALGUÉM chegou à etapa seguinte — 0% por amostra vazia não é alerta."
    ]
   },
+  "src/components/recrutamento/analyticsFiltros.ts": {
+   "path": "src/components/recrutamento/analyticsFiltros.ts",
+   "lines": 116,
+   "exports": [
+    "type PeriodoAnalytics",
+    "interface OpcaoPeriodo",
+    "const PERIODOS_ANALYTICS",
+    "const PERIODO_PADRAO",
+    "const VAGA_TODAS",
+    "interface FiltrosAnalytics",
+    "const FILTROS_PADRAO",
+    "function diasDoPeriodo",
+    "function rotuloDoPeriodo",
+    "function temFiltroAtivo",
+    "function filtrarEntradaAnalytics"
+   ],
+   "enums": [
+    {
+     "name": "PeriodoAnalytics",
+     "values": "tudo | 30 | 90 | 180 | 365"
+    }
+   ],
+   "params": [
+    {
+     "name": "PERIODO_PADRAO",
+     "value": "'tudo'"
+    },
+    {
+     "name": "VAGA_TODAS",
+     "value": "'todas'"
+    },
+    {
+     "name": "DIA_MS",
+     "value": "24"
+    }
+   ],
+   "temporal": [
+    "const DIA_MS = 24 * 60 * 60 * 1000;"
+   ]
+  },
+  "src/components/recrutamento/analyticsRelatorio.ts": {
+   "path": "src/components/recrutamento/analyticsRelatorio.ts",
+   "lines": 154,
+   "exports": [
+    "interface LinhaRelatorio",
+    "function linhasDoRelatorio",
+    "function csvDoRelatorio",
+    "function nomeArquivoRelatorio",
+    "function baixarRelatorioCsv"
+   ]
+  },
   "src/components/recrutamento/analyticsVagasFiltros.ts": {
    "path": "src/components/recrutamento/analyticsVagasFiltros.ts",
    "lines": 112,
@@ -298518,6 +298713,17 @@
     "function gradienteDaVaga"
    ]
   },
+  "src/components/recrutamento/__tests__/AnalyticsRecrutamento.recorte.test.tsx": {
+   "path": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.recorte.test.tsx",
+   "lines": 93,
+   "is_test": true,
+   "tests": [
+    "AnalyticsRecrutamento — barra de recorte",
+    "mostra período, vaga e Exportar junto do título",
+    "não oferece recorte nem exportação quando a leitura falhou",
+    "Exportar baixa o CSV do recorte que está na tela"
+   ]
+  },
   "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx": {
    "path": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
    "lines": 149,
@@ -298661,6 +298867,71 @@
     "declara a etapa desconhecida em vez de descartá-la",
     "preserva a vaga sem status fora da contagem de abertas",
     "não conta duas vezes quem está em proposta e já é contratado"
+   ]
+  },
+  "src/components/recrutamento/__tests__/analyticsExportarAnimacao.test.tsx": {
+   "path": "src/components/recrutamento/__tests__/analyticsExportarAnimacao.test.tsx",
+   "lines": 164,
+   "is_test": true,
+   "rule_comments": [
+    "`BOTAO_ACAO` e NÃO pode ter sido herdada do Sincronizar.",
+    "deixa uma regra por grupo, então a onda não disputa com o cinza."
+   ],
+   "tests": [
+    "Exportar (Analytics) × Sincronizar (Dashboard)",
+    "usa a mesma implementação de onda do Sincronizar",
+    "pinta a onda e inverte o conteúdo com as MESMAS classes do Sincronizar",
+    "mantém a identidade do botão (e não herdou a do Sincronizar)",
+    "não desalinha a barra de recorte (Exportar é o último controle da linha)"
+   ]
+  },
+  "src/components/recrutamento/__tests__/analyticsFiltros.test.ts": {
+   "path": "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
+   "lines": 166,
+   "is_test": true,
+   "params": [
+    {
+     "name": "RECENTE",
+     "value": "'2026-08-05T12:00:00Z'"
+    },
+    {
+     "name": "INTERMEDIARIA",
+     "value": "'2026-08-01T12:00:00Z'"
+    },
+    {
+     "name": "ANTIGA",
+     "value": "'2026-01-10T12:00:00Z'"
+    }
+   ],
+   "rule_comments": [
+    "* Recorte da barra de ações da Analytics. A regra que importa: o filtro é"
+   ],
+   "tests": [
+    "analyticsFiltros — período",
+    "o padrão não recorta nada",
+    "janela de 30 dias conta a partir da data de referência da base",
+    "registro sem data legível não é excluído pelo período",
+    "analyticsFiltros — vaga",
+    "recorta candidaturas, vagas e candidatos pelo mesmo critério",
+    "combina período e vaga sem perder coerência",
+    "analyticsFiltros — utilitários",
+    "traduz o período em dias e em rótulo",
+    "sinaliza recorte ativo só quando algo foi escolhido"
+   ]
+  },
+  "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts": {
+   "path": "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
+   "lines": 111,
+   "is_test": true,
+   "tests": [
+    "analyticsRelatorio — linhas",
+    "cobre todos os blocos exibidos na aba",
+    "usa o valor exibido nos KPIs (não recalcula nada)",
+    "analyticsRelatorio — csv",
+    "começa pelo cabeçalho fixo",
+    "nomeia o arquivo pela data de referência",
+    "analyticsRelatorio — download",
+    "dispara o download e devolve o nome do arquivo"
    ]
   },
   "src/components/recrutamento/__tests__/candidatosComum.test.ts": {
@@ -346647,10 +346918,31 @@
   }
  },
  "git": {
-  "sha": "43dd2de7f4192339d40542fdb4d8bc52c1255fed",
+  "sha": "c697595dd1ed8bd0160efcc6eddb5422819d0a80",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "c697595",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "feat: resgata recorte de período/vaga e exportação CSV da Analytics (port do Muri) (#891)",
+    "files": [
+     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+     "scripts/.bundle-budget.json",
+     "src/components/dashboard/DashboardHeader.tsx",
+     "src/components/recrutamento/AnalyticsBarraFiltros.tsx",
+     "src/components/recrutamento/AnalyticsRecrutamento.tsx",
+     "src/components/recrutamento/__tests__/AnalyticsRecrutamento.recorte.test.tsx",
+     "src/components/recrutamento/__tests__/analyticsExportarAnimacao.test.tsx",
+     "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
+     "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
+     "src/components/recrutamento/analyticsFiltros.ts",
+     "src/components/recrutamento/analyticsRelatorio.ts",
+     "src/components/ui/flow-hover-button.tsx",
+     "src/index.css"
+    ]
+   },
    {
     "sha": "43dd2de",
     "date": "2026-11-25",
@@ -347404,22 +347696,12 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "0cec124",
-    "date": "2026-11-23",
-    "author": "adm01-debug",
-    "subject": "chore(deps): bump minor-patch group (18 updates, resgate da #846) (#857)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    7
+    8
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -347427,15 +347709,15 @@
    ],
    [
     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-    4
+    5
    ],
    [
-    "package-lock.json",
-    3
+    "src/components/recrutamento/AnalyticsRecrutamento.tsx",
+    2
    ],
    [
-    "package.json",
-    3
+    "src/index.css",
+    2
    ],
    [
     "src/pages/__tests__/RecrutamentoPage.vagaForm.test.tsx",
@@ -347443,6 +347725,14 @@
    ],
    [
     "src/pages/PontoPage.tsx",
+    2
+   ],
+   [
+    "package-lock.json",
+    2
+   ],
+   [
+    "package.json",
     2
    ],
    [
@@ -347462,39 +347752,31 @@
     2
    ],
    [
-    "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql",
+    "src/components/dashboard/DashboardHeader.tsx",
     1
    ],
    [
-    "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.verify.sql",
+    "src/components/recrutamento/AnalyticsBarraFiltros.tsx",
     1
    ],
    [
-    "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.sql",
+    "src/components/recrutamento/__tests__/AnalyticsRecrutamento.recorte.test.tsx",
     1
    ],
    [
-    "supabase/migrations/20261125130000_provisoes_folha_tenant_pertence.verify.sql",
+    "src/components/recrutamento/__tests__/analyticsExportarAnimacao.test.tsx",
     1
    ],
    [
-    "src/components/recrutamento/AnalyticsRecrutamento.tsx",
+    "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
     1
    ],
    [
-    "src/components/recrutamento/AnalyticsVagas.tsx",
+    "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
     1
    ],
    [
-    "src/components/recrutamento/DesempenhoVagasDialog.tsx",
-    1
-   ],
-   [
-    "src/components/recrutamento/__tests__/analyticsComum.test.ts",
-    1
-   ],
-   [
-    "src/components/recrutamento/__tests__/desempenhoVagasModal.test.tsx",
+    "src/components/recrutamento/analyticsFiltros.ts",
     1
    ]
   ]

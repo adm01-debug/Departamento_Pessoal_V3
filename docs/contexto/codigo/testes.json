@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 853,
+ "total": 857,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 808
+  "unit": 812
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 716
+   "arquivos": 720
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -4117,6 +4117,36 @@
    "casos": 18
   },
   {
+   "arquivo": "src/components/recrutamento/__tests__/analyticsExportarAnimacao.test.tsx",
+   "tipo": "unit",
+   "linhas": 164,
+   "testa": [
+    "src/components/dashboard/DashboardHeader.tsx",
+    "src/components/recrutamento/AnalyticsBarraFiltros.tsx",
+    "src/components/recrutamento/analyticsFiltros.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/analyticsFiltros.test.ts",
+   "tipo": "unit",
+   "linhas": 166,
+   "testa": [
+    "src/components/recrutamento/analyticsFiltros.ts",
+    "src/types/recrutamento.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.recorte.test.tsx",
+   "tipo": "unit",
+   "linhas": 93,
+   "testa": [
+    "src/components/recrutamento/AnalyticsRecrutamento.tsx"
+   ],
+   "casos": 3
+  },
+  {
    "arquivo": "src/components/recrutamento/__tests__/AnalyticsRecrutamento.test.tsx",
    "tipo": "unit",
    "linhas": 149,
@@ -4124,6 +4154,16 @@
     "src/components/recrutamento/AnalyticsRecrutamento.tsx"
    ],
    "casos": 6
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
+   "tipo": "unit",
+   "linhas": 111,
+   "testa": [
+    "src/components/recrutamento/analyticsComum.ts",
+    "src/components/recrutamento/analyticsRelatorio.ts"
+   ],
+   "casos": 5
   },
   {
    "arquivo": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
@@ -8069,7 +8109,7 @@
   "src/components/dashboard/AnalyticsSection.tsx": 1,
   "src/components/dashboard/AnimatedNumber.tsx": 1,
   "src/components/dashboard/BarChartWidget.tsx": 1,
-  "src/components/dashboard/DashboardHeader.tsx": 1,
+  "src/components/dashboard/DashboardHeader.tsx": 2,
   "src/components/dashboard/DonutChart.tsx": 1,
   "src/components/dashboard/EventTimeline.tsx": 1,
   "src/components/dashboard/MetricCard.tsx": 5,
@@ -8273,7 +8313,8 @@
   "src/components/premiacoes/pagamentosComum.ts": 1,
   "src/components/premiacoes/premiacoesComum.ts": 5,
   "src/components/premiacoes/simuladorRoiComum.ts": 1,
-  "src/components/recrutamento/AnalyticsRecrutamento.tsx": 1,
+  "src/components/recrutamento/AnalyticsBarraFiltros.tsx": 1,
+  "src/components/recrutamento/AnalyticsRecrutamento.tsx": 2,
   "src/components/recrutamento/AnalyticsVagas.tsx": 1,
   "src/components/recrutamento/CandidatoDetalhesDialog.tsx": 1,
   "src/components/recrutamento/CandidatoTimeline.tsx": 1,
@@ -8282,7 +8323,9 @@
   "src/components/recrutamento/PipelineBoard.tsx": 1,
   "src/components/recrutamento/VagaCard.tsx": 1,
   "src/components/recrutamento/VagasPainel.tsx": 1,
-  "src/components/recrutamento/analyticsComum.ts": 2,
+  "src/components/recrutamento/analyticsComum.ts": 3,
+  "src/components/recrutamento/analyticsFiltros.ts": 2,
+  "src/components/recrutamento/analyticsRelatorio.ts": 1,
   "src/components/recrutamento/analyticsVagasFiltros.ts": 1,
   "src/components/recrutamento/candidatosComum.ts": 1,
   "src/components/recrutamento/competenciasComum.ts": 1,
@@ -8620,7 +8663,7 @@
   "src/types/entities.ts": 8,
   "src/types/medidasDisciplinares.ts": 6,
   "src/types/pcs.ts": 1,
-  "src/types/recrutamento.ts": 9,
+  "src/types/recrutamento.ts": 10,
   "src/types/timelineEvent.ts": 1,
   "src/utils/afastamentoPDF.ts": 1,
   "src/utils/auditLogger.ts": 2,

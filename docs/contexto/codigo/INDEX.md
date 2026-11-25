@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `43dd2de7f4192339d40542fdb4d8bc52c1255fed` (2026-11-25T15:04:00-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c697595dd1ed8bd0160efcc6eddb5422819d0a80` (2026-11-25T15:28:16-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2130), SQL (1339), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2137), SQL (1339), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 4192 |
-| arquivos_codigo | 2273 |
-| linhas_codigo | 459419 |
+| arquivos_total | 4199 |
+| arquivos_codigo | 2280 |
+| linhas_codigo | 460426 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
 | itens_menu | 97 |
 | modulos | 86 |
-| componentes | 697 |
+| componentes | 698 |
 | hooks | 127 |
 | edge_functions | 68 |
 | tabelas | 438 |
 | migrations | 1265 |
 | cron_jobs | 43 |
-| testes | 853 |
+| testes | 857 |
 | workflows | 21 |
 | scripts | 138 |
 | docs_md | 347 |
 
 ## Onde ficam as coisas
 - telas: src/pages (110), src/components (1)
-- componentes: src/components (579), src/pages (110), src/contexts (3)
+- componentes: src/components (580), src/pages (110), src/contexts (3)
 - hooks: src/hooks (105), src/components (12), src/contexts (4)
 - servicos_logica: src/services (100), src/utils (39), src/schemas (25)
-- testes: co-localizado (__tests__) (716), co-localizado (*.test) (78), e2e/ (33)
+- testes: co-localizado (__tests__) (720), co-localizado (*.test) (78), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -98,7 +98,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/ponto | 0 | 0 | 36 | 159 | 36 | 141 |
 | components/portal | 0 | 0 | 5 | 4 | 28 | 87 |
 | components/premiacoes | 0 | 0 | 23 | 148 | 33 | 138 |
-| components/recrutamento | 0 | 0 | 31 | 4 | 0 | 6 |
+| components/recrutamento | 0 | 0 | 34 | 4 | 0 | 6 |
 | components/settings | 0 | 0 | 11 | 150 | 33 | 174 |
 | components/sst | 0 | 0 | 11 | 6 | 2 | 9 |
 | components/treinamentos | 0 | 0 | 47 | 1 | 28 | 82 |
@@ -396,7 +396,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - tabelas_usadas_sem_definicao: 0
 - tabelas_com_drift_migration_vs_types: 81 — ex.: admissao_tokens, admissoes, afastamentos
 - rpcs_sem_definicao: 4 — ex.: aplicar_medida_folha_ponto, complete_admission_esocial_event, drenar_fila_limpeza_lgpd
-- componentes_orfaos: 25 — ex.: src/components/admissoes/OnboardingDashboard.tsx, src/components/animate-ui/components/animate/tabs.tsx, src/components/avaliacao/NineBoxMatrix.tsx
+- componentes_orfaos: 24 — ex.: src/components/admissoes/OnboardingDashboard.tsx, src/components/animate-ui/components/animate/tabs.tsx, src/components/avaliacao/NineBoxMatrix.tsx
 - componentes_com_nome_duplicado: 24 — ex.: AlertasRHWidget, CadastroIncompletoWidget, CamposCustomizadosTab
 - scripts_orfaos: 0
 - env_usadas_nao_declaradas: 22 — ex.: CI, DEV, GITHUB_ACTIONS
@@ -404,8 +404,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 29593 nós · 67079 arestas · 2840 comunidades · grafo do commit `43dd2de7`
-- comunidades maiores: lucide-react (548), 20260831_corrected_public.sql (493), canonical_schema.sql (481), useEmpresas (467), button.tsx (415), @tanstack/react-query (371), client.ts (362), ColaboradorDetalhesPage.tsx (294), vitest (264), react (196), rateLimit.ts (188), cn (172)
+- 29632 nós · 67220 arestas · 2806 comunidades · grafo do commit `c697595d`
+- comunidades maiores: lucide-react (501), 20260831_corrected_public.sql (493), canonical_schema.sql (481), useEmpresas (412), button.tsx (406), @tanstack/react-query (379), cn (301), vitest (246), App.tsx (237), react (221), "public"."empresas" (164), ref_node_child_process (163)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -421,8 +421,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
 - scripts/automation.config.json (10)
 - src/schemas/tableColumns.ts (9)
+- src/index.css (8)
 - docs/auditoria/sql-preservado/README.md (7)
-- src/index.css (7)
 - src/pages/CalculadoraRescisaoPage.tsx (7)
 - src/pages/ColaboradoresPage.tsx (7)
 
@@ -663,6 +663,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-25 `c697595` feat: resgata recorte de período/vaga e exportação CSV da Analytics (port do Muri) (#891)
 - 2026-11-25 `43dd2de` fix(db): fecha record_backup_run para anon e tira backup_logs do claim de JWT (#890)
 - 2026-11-25 `c71a391` fix: policies de escrita de provisoes_folha e historico_calculos_folha usam pertence_a_empresa (#881)
 - 2026-11-25 `ced6c84` feat: resgata a janela Ver todas do desempenho de vagas (port do Muri) (#888)
@@ -677,7 +678,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `2a62b11` feat: resgata a tela de Turnos do agente Muri (calendario, escalas e dialogos) (#875)
 - 2026-11-25 `4046e24` fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)
 - 2026-11-25 `ced7abd` fix: p4_071 nao aborta mais o lote aditivo no canônico (#879)
-- 2026-11-25 `014b447` fix: lote aditivo aplica no canônico, sem EXECUTE anon em refresh_dashboard_views e validate que reverte (#877)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
