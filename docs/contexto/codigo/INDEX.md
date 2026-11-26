@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d131539c69575edd3afe95acd896830bdff6feda` (2026-11-26T14:28:57-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `76140dc9aed27ec1ae60947ffb5b4f10fbecf2b6` (2026-11-26T14:47:41-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -404,24 +404,24 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 30008 nós · 68359 arestas · 2876 comunidades · grafo do commit `d131539c`
+- 30008 nós · 68359 arestas · 2876 comunidades · grafo do commit `76140dc9`
 - comunidades maiores: useEmpresas (529), 20260831_corrected_public.sql (485), canonical_schema.sql (481), card.tsx (421), lucide-react (405), cn (332), vitest (310), client.ts (284), contract.ts (217), framer-motion (184), react (174), MetricCard.tsx (171)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), formatDateLocalISO() (src/utils/dateLocal.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (40)
-- scripts/canonical-invariants.sql (22)
+- scripts/canonical-invariants.sql (23)
 - inventario/estado/rotas.json (17)
 - docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
 - src/integrations/supabase/types.ts (13)
 - docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md (11)
-- package.json (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
+- package.json (10)
 - src/schemas/tableColumns.ts (10)
-- package-lock.json (9)
 - scripts/automation.config.json (9)
+- package-lock.json (8)
 - src/index.css (8)
 - docs/auditoria/sql-preservado/README.md (7)
 - src/pages/CalculadoraRescisaoPage.tsx (7)
@@ -664,6 +664,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-26 `76140dc` fix: invariantes do canônico voltam a rodar (limite de 100 args) (#910)
 - 2026-11-26 `d131539` fix: retencao de logs volta a purgar no canonico (job 35 falhava todo dia) (#909)
 - 2026-11-26 `9af3c57` feat: registra execucoes de backup e expoe painel de saude no Admin Operacao (#908)
 - 2026-11-26 `c215d18` fix: destrava o envio de documentos da contratacao publica e remove policies sem consumidor (#906)
@@ -678,7 +679,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `b4f3428` docs: fecha a causa raiz do E2E vermelho e a fatia de turnos no ledger do resgate (#898)
 - 2026-11-25 `8324c3d` fix: remove seletor duplicado de ciclo do Nine-Box (#899)
 - 2026-11-25 `8697240` fix: prevent_empty_empresa_id compara uuid com text e para de derrubar toda escrita (#897)
-- 2026-11-25 `3c8c484` chore: resgata testes do port que ainda valem na main e fecha a re-auditoria do resgate (#896)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

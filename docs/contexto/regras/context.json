@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d131539c69575edd3afe95acd896830bdff6feda",
+  "sha": "76140dc9aed27ec1ae60947ffb5b4f10fbecf2b6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-26 17:42 UTC",
+  "generated_at": "2026-11-26 18:16 UTC",
   "files_total": 4266,
   "code_files": 3670,
-  "code_lines": 545232
+  "code_lines": 545236
  },
  "version": "1.3.2",
- "facts_hash": "64f124439975b999",
+ "facts_hash": "10c5827d49505276",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -104733,7 +104733,7 @@
   {
    "module": "scripts",
    "files": 156,
-   "lines": 35453,
+   "lines": 35457,
    "tables": [
     "a",
     "anexos",
@@ -273905,7 +273905,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 468,
+   "lines": 472,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -350037,10 +350037,19 @@
   }
  },
  "git": {
-  "sha": "d131539c69575edd3afe95acd896830bdff6feda",
+  "sha": "76140dc9aed27ec1ae60947ffb5b4f10fbecf2b6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "76140dc",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: invariantes do canônico voltam a rodar (limite de 100 args) (#910)",
+    "files": [
+     "scripts/canonical-invariants.sql"
+    ]
+   },
    {
     "sha": "d131539",
     "date": "2026-11-26",
@@ -350472,37 +350481,6 @@
      "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
      "src/pages/HorasExtrasPage.tsx"
     ]
-   },
-   {
-    "sha": "645def6",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "feat: resgata o painel de geofencing do ponto com mapa real (#883)",
-    "files": [
-     "docs/ponto-geofencing.md",
-     "package-lock.json",
-     "package.json",
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/PontoGeoDistancia.test.tsx",
-     "src/components/__tests__/PontoGeoEstrutura.test.ts",
-     "src/components/__tests__/PontoGeofencingPainel.test.tsx",
-     "src/components/ponto/PontoGeoDistancia.tsx",
-     "src/components/ponto/PontoGeoMapa.tsx",
-     "src/components/ponto/PontoGeoRegistros.tsx",
-     "src/components/ponto/PontoGeofencingPainel.tsx",
-     "src/components/ponto/acoesCardsPonto.ts",
-     "src/components/ponto/vermelhoVibrante.ts",
-     "src/components/ui/__tests__/filter-chip-brilho.test.tsx",
-     "src/components/ui/crescimentoBarras.ts",
-     "src/components/ui/filter-chip.tsx",
-     "src/hooks/usePontoGeofencing.ts",
-     "src/index.css",
-     "src/mocks/pontoGeoMock.ts",
-     "src/pages/PontoPage.tsx",
-     "src/services/batidasPontoService.ts",
-     "src/utils/__tests__/pontoGeofencing.test.ts",
-     "src/utils/pontoGeofencing.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -350511,28 +350489,24 @@
     8
    ],
    [
-    "scripts/.bundle-budget.json",
-    8
-   ],
-   [
     ".github/workflows/canonical-migrations.yml",
     7
    ],
    [
-    "src/pages/PontoPage.tsx",
-    4
+    "scripts/.bundle-budget.json",
+    7
+   ],
+   [
+    "scripts/canonical-invariants.sql",
+    3
    ],
    [
     ".github/workflows/ci.yml",
     3
    ],
    [
-    "src/index.css",
+    "src/pages/PontoPage.tsx",
     3
-   ],
-   [
-    "scripts/canonical-invariants.sql",
-    2
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -350547,15 +350521,15 @@
     2
    ],
    [
-    "package.json",
-    2
-   ],
-   [
     "scripts/audit-schema-drift.mjs",
     2
    ],
    [
     "supabase/migrations/20261126090000_storage_policies_buckets_app.sql",
+    2
+   ],
+   [
+    "src/index.css",
     2
    ],
    [
@@ -350584,6 +350558,10 @@
    ],
    [
     "src/components/admin/__tests__/BackupHealthSection.test.tsx",
+    1
+   ],
+   [
+    "src/pages/AdminOperacaoPage.tsx",
     1
    ]
   ]

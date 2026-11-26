@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d131539c69575edd3afe95acd896830bdff6feda",
+  "commit": "76140dc9aed27ec1ae60947ffb5b4f10fbecf2b6",
   "branch": "main",
-  "data_commit": "2026-11-26T14:28:57-03:00",
+  "data_commit": "2026-11-26T14:47:41-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "76140dc",
+    "data": "2026-11-26",
+    "assunto": "fix: invariantes do canônico voltam a rodar (limite de 100 args) (#910)"
+   },
    {
     "sha": "d131539",
     "data": "2026-11-26",
@@ -126,11 +131,6 @@
     "sha": "08dd398",
     "data": "2026-11-25",
     "assunto": "feat: formulario de vaga coleta cargo, contrato, faixa e beneficios (#887)"
-   },
-   {
-    "sha": "58dd46c",
-    "data": "2026-11-25",
-    "assunto": "feat: resgata os cards de resumo do ponto (indicadores, equipe, pendencias e fechamento) (#886)"
    }
   ],
   "arquivos_mudados_7d": 768,
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 22
+    "mudancas": 23
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -222,10 +222,6 @@
     "mudancas": 11
    },
    {
-    "arquivo": "package.json",
-    "mudancas": 11
-   },
-   {
     "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
     "mudancas": 11
    },
@@ -234,16 +230,20 @@
     "mudancas": 10
    },
    {
+    "arquivo": "package.json",
+    "mudancas": 10
+   },
+   {
     "arquivo": "src/schemas/tableColumns.ts",
     "mudancas": 10
    },
    {
-    "arquivo": "package-lock.json",
+    "arquivo": "scripts/automation.config.json",
     "mudancas": 9
    },
    {
-    "arquivo": "scripts/automation.config.json",
-    "mudancas": 9
+    "arquivo": "package-lock.json",
+    "mudancas": 8
    },
    {
     "arquivo": "src/index.css",

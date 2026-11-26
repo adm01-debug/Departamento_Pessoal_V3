@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-26 18:16 UTC
+
+- **functions** alterado (1): `public.enforce_log_retention()`
+- **migrations** adicionado (1): `20261126150000_fix_enforce_log_retention_metricas_processamento`
+
 ## 2026-11-26 17:12 UTC
 
 - **functions** alterado (2): `public.alert_stale_backup()`, `public.record_backup_run(p_empresa_id uuid, p_status text, p_duration_ms integer, p_records integer, p_tables integer, p_error text, p_created_by uuid, p_metadata jsonb)`

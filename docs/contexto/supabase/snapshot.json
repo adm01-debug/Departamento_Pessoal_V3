@@ -97356,9 +97356,17 @@
             {
               "file": "supabase/migrations/20261014120000_fix_cron_jobs_onda3b.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.verify.sql",
+              "hits": 3
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 4,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -97369,7 +97377,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "1c54cc906e9cbcef",
+        "definition_sha": "dbd568d8c02f6f50",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -151074,6 +151082,12 @@
         "statements": 1,
         "statements_sha": "fd4f23a73b85cd4a",
         "version": "20261126140000"
+      },
+      {
+        "name": "fix_enforce_log_retention_metricas_processamento",
+        "statements": 1,
+        "statements_sha": "ecaaa51947debe18",
+        "version": "20261126150000"
       }
     ],
     "policies": [

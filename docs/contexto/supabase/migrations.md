@@ -1148,3 +1148,4 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261126120000 | [storage_documentos_admissao_sem_policy](migrations/20261126120000_storage_documentos_admissao_sem_policy.sql) | 1 |
 | 20261126130000 | [storage_documentos_admissao_rh_read](migrations/20261126130000_storage_documentos_admissao_rh_read.sql) | 1 |
 | 20261126140000 | [documentos_admissao_substituicao](migrations/20261126140000_documentos_admissao_substituicao.sql) | 1 |
+| 20261126150000 | [fix_enforce_log_retention_metricas_processamento](migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql) | 1 |

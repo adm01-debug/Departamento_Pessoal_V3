@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: invariantes do canônico voltam a rodar (limite de 100 args) (#910)",
    "fix: retencao de logs volta a purgar no canonico (job 35 falhava todo dia) (#909)",
    "feat: registra execucoes de backup e expoe painel de saude no Admin Operacao (#908)",
    "fix: destrava o envio de documentos da contratacao publica e remove policies sem consumidor (#906)",
-   "docs: registra a auditoria de Storage e o fechamento do drift de ledger (#905)",
-   "fix: gate de drift nao reprova PR que adiciona migration (#907)"
+   "docs: registra a auditoria de Storage e o fechamento do drift de ledger (#905)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

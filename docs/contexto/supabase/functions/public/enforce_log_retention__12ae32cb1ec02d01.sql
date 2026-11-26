@@ -5,6 +5,7 @@ CREATE OR REPLACE FUNCTION public.enforce_log_retention()
  SET search_path TO 'public'
 AS $function$
 DECLARE
+  v_started_at TIMESTAMPTZ := clock_timestamp();
   v_audit_deleted BIGINT := 0;
   v_alerts_deleted BIGINT := 0;
   v_telemetry_deleted BIGINT := 0;
@@ -52,10 +53,22 @@ BEGIN
     'executed_at', now()
   );
 
-  -- Registra o resultado
+  -- Registra o resultado. Colunas reais de metricas_processamento
+  -- (20260522151147) e mesmo contrato do monitor das edges.
+  -- O bloco EXCEPTION e proposital: metrica quebrada nao pode abortar (nem
+  -- desfazer) a retencao.
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='metricas_processamento') THEN
-    INSERT INTO public.metricas_processamento (tipo, valor, metadata, timestamp)
-    VALUES ('retention_cleanup', (v_audit_deleted + v_alerts_deleted + v_telemetry_deleted + v_metricas_deleted + v_login_deleted), v_result, now());
+    BEGIN
+      INSERT INTO public.metricas_processamento (funcao_nome, status, tempo_execucao_ms, timestamp)
+      VALUES (
+        'enforce_log_retention',
+        'success',
+        GREATEST(0, (EXTRACT(EPOCH FROM (clock_timestamp() - v_started_at)) * 1000)::int),
+        now()
+      );
+    EXCEPTION WHEN OTHERS THEN
+      NULL;
+    END;
   END IF;
 
   RETURN v_result;
