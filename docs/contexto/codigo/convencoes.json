@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: bump das actions por SHA com catalogo action-pins coerente (substitui #863) (#876)",
    "docs: fecha a causa raiz do E2E vermelho e a fatia de turnos no ledger do resgate (#898)",
    "fix: remove seletor duplicado de ciclo do Nine-Box (#899)",
    "fix: prevent_empty_empresa_id compara uuid com text e para de derrubar toda escrita (#897)",
-   "chore: resgata testes do port que ainda valem na main e fecha a re-auditoria do resgate (#896)",
-   "feat: resgata Central de Ajustes e Auditoria do Ponto do port do Muri (#895)"
+   "chore: resgata testes do port que ainda valem na main e fecha a re-auditoria do resgate (#896)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

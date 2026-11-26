@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b4f3428d1e9ac0a71ba356fbabf1534b1a6d0a13",
+  "commit": "256e836b916d9702ee0a6d53b19cb09be62621dd",
   "branch": "main",
-  "data_commit": "2026-11-25T20:14:52-03:00",
+  "data_commit": "2026-11-26T06:57:54-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "256e836",
+    "data": "2026-11-26",
+    "assunto": "chore: bump das actions por SHA com catalogo action-pins coerente (substitui #863) (#876)"
+   },
    {
     "sha": "b4f3428",
     "data": "2026-11-25",
@@ -126,14 +131,9 @@
     "sha": "014b447",
     "data": "2026-11-25",
     "assunto": "fix: lote aditivo aplica no canônico, sem EXECUTE anon em refresh_dashboard_views e validate que reverte (#877)"
-   },
-   {
-    "sha": "d30e8fb",
-    "data": "2026-11-25",
-    "assunto": "infra: leva 7 migrations aditivas de observabilidade ao canônico + sidecars .verify (#869)"
    }
   ],
-  "arquivos_mudados_7d": 786,
+  "arquivos_mudados_7d": 783,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",

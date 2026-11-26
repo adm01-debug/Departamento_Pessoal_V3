@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "b4f3428d1e9ac0a71ba356fbabf1534b1a6d0a13",
+  "sha": "256e836b916d9702ee0a6d53b19cb09be62621dd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-26 00:34 UTC",
+  "generated_at": "2026-11-26 09:58 UTC",
   "files_total": 4247,
   "code_files": 3651,
   "code_lines": 543041
@@ -348917,10 +348917,23 @@
   }
  },
  "git": {
-  "sha": "b4f3428d1e9ac0a71ba356fbabf1534b1a6d0a13",
+  "sha": "256e836b916d9702ee0a6d53b19cb09be62621dd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "256e836",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "chore: bump das actions por SHA com catalogo action-pins coerente (substitui #863) (#876)",
+    "files": [
+     ".github/workflows/ci.yml",
+     ".github/workflows/ossf-scorecard.yml",
+     ".github/workflows/security.yml",
+     ".github/workflows/workflow-lint.yml",
+     "infra/github/action-pins.json"
+    ]
+   },
    {
     "sha": "b4f3428",
     "date": "2026-11-25",
@@ -349726,15 +349739,6 @@
      "supabase/migrations/20260729161300_placeholder_ledger_remoto.sql",
      "supabase/migrations/20260729161541_placeholder_ledger_remoto.sql"
     ]
-   },
-   {
-    "sha": "3ffaebd",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: guard to_regclass nas policies de backup_logs (apply abortava) (#867)",
-    "files": [
-     "supabase/migrations/20260816000000_p1_024_policies_orfas.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -349779,6 +349783,26 @@
     2
    ],
    [
+    ".github/workflows/ci.yml",
+    1
+   ],
+   [
+    ".github/workflows/ossf-scorecard.yml",
+    1
+   ],
+   [
+    ".github/workflows/security.yml",
+    1
+   ],
+   [
+    ".github/workflows/workflow-lint.yml",
+    1
+   ],
+   [
+    "infra/github/action-pins.json",
+    1
+   ],
+   [
     "src/components/__tests__/NineBoxCicloUnico.test.tsx",
     1
    ],
@@ -349796,26 +349820,6 @@
    ],
    [
     "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.verify.sql",
-    1
-   ],
-   [
-    "src/components/__tests__/BancoHorasCabecalho.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/ColaboradorCamposCustomizadosTab.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/AuditoriaPonto.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
     1
    ]
   ]
