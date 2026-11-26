@@ -592,6 +592,20 @@ jobs:
         # quebra só aparece em runtime como PGRST200. Também reprova FKs
         # duplicadas, que reintroduzem a ambiguidade de relacionamento.
         run: node scripts/audit-embed-hints.mjs
+      - name: Migration no repositório sem registro no ledger de produção
+        if: steps.db-access.outputs.skip_live != 'true'
+        # A-036: o lote de hardening de RLS de 19-31/07/2026 ficou no
+        # repositório sem nunca ter rodado em produção, e nenhum gate
+        # comparava repositório x banco vivo — todo achado "corrigido no
+        # código" nesse intervalo era enganoso. Este é o único script do job
+        # que lê `supabase_migrations.schema_migrations` (metadado de
+        # escrituração, não dado de negócio).
+        # Corte em 13/10/2026: antes disso a convenção de gravar no ledger
+        # nunca foi seguida de forma consistente (a maior parte do histórico
+        # foi aplicada por um caminho que não escreve nessa tabela), então
+        # avaliar o histórico inteiro reprovaria ~40% das migrations. Daqui
+        # pra frente, migration nova que entrar no repo sem registro reprova.
+        run: node scripts/audit-schema-drift.mjs --since=20261013
       - name: Resumo da integridade do banco (GITHUB_STEP_SUMMARY)
         if: always()
         run: |
