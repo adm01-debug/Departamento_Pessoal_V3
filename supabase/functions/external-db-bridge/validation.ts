@@ -134,6 +134,10 @@ export const RPC_ALLOWLIST = new Set<string>([
   "get_dlq_stats", "folha_conflict_stats", "get_query_telemetry",
   "get_idempotency_health", "get_cron_jobs_health",
   "get_security_alerts_summary", "resolve_security_alert",
+  // P3-060: alerta de backup atrasado (>24h sem sucesso). INVOKER, não
+  // SECURITY DEFINER: quem limita as linhas é a policy tenant de backup_logs
+  // (backup_logs_tenant_all) aplicada ao chamador autenticado.
+  "alert_stale_backup",
   "get_audit_trail", "listar_auditoria", "registrar_auditoria", "search_audit_unified",
   "log_frontend_error", "record_pii_access", "sec_audit_policies",
   "claim_admission_esocial_event", "complete_admission_esocial_event", "fail_admission_esocial_event",
