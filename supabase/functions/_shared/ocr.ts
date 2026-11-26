@@ -9,6 +9,7 @@
  * arquivo — aqui so falta ler o texto dele.
  */
 import { safeFetchWithRetry } from './safe-fetch.ts';
+import { CircuitBreaker } from './circuitBreaker.ts';
 import { AI_CHAT_URL, AI_NO_THINKING, aiApiKey, aiModel } from './aiProvider.ts';
 
 // `identidade` aceita RG **ou** CNH: o campo da UI é único ("RG ou CNH") e o
@@ -27,6 +28,29 @@ const OCR_DOC_TYPE_LABEL: Record<OcrDocType, string> = {
 };
 
 export const OCR_FALLBACK_ERROR = 'Nao foi possivel processar o documento automaticamente.';
+export const OCR_CIRCUIT_ERROR = 'Conferencia automatica indisponivel no momento.';
+
+/**
+ * Provedor de IA fora do ar: `safeFetchWithRetry` ja limita cada chamada
+ * (30 s x 3 tentativas), mas sem breaker CADA candidato pagava esse tempo
+ * inteiro enquanto o provedor seguia degradado — o envio fica bloqueado
+ * esperando o OCR. O estado vive no isolate (mesma semantica do breaker do
+ * push), o que basta para parar de enfileirar espera em serie.
+ */
+const ocrBreaker = new CircuitBreaker({
+  failureThreshold: 3,
+  resetTimeoutMs: 60_000,
+  successThreshold: 1,
+});
+
+/** Uso em teste: descarta o estado acumulado pelo isolate. */
+export function resetarBreakerOcr(): void {
+  ocrBreaker.reset();
+}
+
+export function estadoBreakerOcr(): string {
+  return ocrBreaker.estado();
+}
 
 export type OcrResult = {
   valid: boolean;
@@ -75,12 +99,23 @@ export async function runDocumentOcr(fileUrl: string, docType: OcrDocType): Prom
     return { ok: false, status: 503, error: 'Servico OCR nao configurado' };
   }
 
+  // A tolerancia RG<->CNH vale SO para `identidade` (o campo unico "RG ou CNH"
+  // da UI). Aplicada a todos os tipos, ela instruia o provedor a aceitar uma CNH
+  // no lugar de um CPF ou de um comprovante de residencia — validando o anexo
+  // errado.
+  const tolerancia = docType === 'identidade'
+    ? `
+    O campo e unico ("RG ou CNH") e o candidato nao informa qual dos dois
+    anexou: se o arquivo for RG ou CNH legivel, trate como valido e informe o
+    que encontrou.`
+    : `
+    Nao aceite documento de outro tipo: se o arquivo nao for do tipo declarado,
+    marque valid=false e diga em error qual documento parece ser.`;
+
   const systemPrompt = `Voce e um especialista em OCR de documentos brasileiros (RG, CPF, CNH, Comprovante de Residencia).
     Sua tarefa e extrair os dados do documento fornecido e retornar APENAS um objeto JSON estruturado.
     Nao inclua explicacoes ou texto fora do JSON.
-    O tipo declarado pelo usuario e o que se espera do arquivo; se o arquivo for
-    um documento de identidade valido de outro formato aceito (RG ou CNH), trate
-    como valido e informe o que encontrou.
+    O tipo declarado pelo usuario e o que se espera do arquivo.${tolerancia}
 
     Campos esperados no JSON:
     - valid: boolean (indica se o documento e legivel e do tipo correto)
@@ -100,36 +135,51 @@ export async function runDocumentOcr(fileUrl: string, docType: OcrDocType): Prom
 
   const userPrompt = `Analise este documento do tipo: ${OCR_DOC_TYPE_LABEL[docType]}.`;
 
-  const aiResponse = await safeFetchWithRetry(
-    AI_CHAT_URL,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${aiKey}`,
+  // Fora de hora: com o circuito aberto o envio responde na hora com o fallback
+  // em vez de esperar o timeout inteiro para descobrir que o provedor caiu.
+  const geracao = ocrBreaker.permite();
+  if (geracao === null) {
+    return { ok: false, status: 503, error: OCR_CIRCUIT_ERROR };
+  }
+
+  let aiResponse: Response;
+  try {
+    aiResponse = await safeFetchWithRetry(
+      AI_CHAT_URL,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${aiKey}`,
+        },
+        body: JSON.stringify({
+          model: aiModel(),
+          ...AI_NO_THINKING,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: [{ type: 'text', text: userPrompt }, { type: 'image_url', image_url: { url: fileUrl } }] },
+          ],
+          response_format: { type: 'json_object' },
+          max_tokens: 1000,
+        }),
+        timeoutMs: 30_000,
+        tag: 'openai',
       },
-      body: JSON.stringify({
-        model: aiModel(),
-        ...AI_NO_THINKING,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: [{ type: 'text', text: userPrompt }, { type: 'image_url', image_url: { url: fileUrl } }] },
-        ],
-        response_format: { type: 'json_object' },
-        max_tokens: 1000,
-      }),
-      timeoutMs: 30_000,
-      tag: 'openai',
-    },
-    { maxAttempts: 3, baseDelayMs: 2_000, tag: 'openai' }
-  );
+      { maxAttempts: 3, baseDelayMs: 2_000, tag: 'openai' }
+    );
+  } catch (err) {
+    ocrBreaker.registrarFalha(geracao);
+    throw err;
+  }
 
   if (!aiResponse.ok) {
+    ocrBreaker.registrarFalha(geracao);
     return { ok: false, status: 502, error: 'Erro no servico de OCR' };
   }
 
   const aiData = await aiResponse.json();
   const content = aiData.choices?.[0]?.message?.content || '{}';
+  ocrBreaker.registrarSucesso(geracao);
 
   try {
     return { ok: true, result: JSON.parse(content) };

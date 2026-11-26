@@ -39,6 +39,7 @@ const arquivo = {
   validado_em: null,
   validado_por: null,
   observacoes: null,
+  substituido_em: null,
   created_at: '2026-11-26T10:00:00Z',
   updated_at: '2026-11-26T10:00:00Z',
 };
@@ -87,5 +88,24 @@ describe('ArquivosAdmissaoLista', () => {
     await userEvent.click(await screen.findByRole('button', { name: /Abrir/i }));
 
     expect(await screen.findByText(/Não foi possível abrir o arquivo/i)).toBeTruthy();
+  });
+
+  it('marca a versão antiga como substituída e deixa a vigente na frente', async () => {
+    listar.mockResolvedValue([
+      {
+        ...arquivo,
+        id: 'doc-antigo',
+        nome_arquivo: 'cpf-antigo.pdf',
+        substituido_em: '2026-11-26T11:00:00Z',
+      },
+      { ...arquivo, id: 'doc-novo', nome_arquivo: 'cpf-novo.pdf' },
+    ]);
+    render(<ArquivosAdmissaoLista admissaoId="adm-1" />);
+
+    await screen.findByText('substituído');
+    const nomes = screen
+      .getAllByText(/cpf-(antigo|novo)\.pdf/)
+      .map((n) => n.textContent?.split(' · ')[0]);
+    expect(nomes).toEqual(['cpf-novo.pdf', 'cpf-antigo.pdf']);
   });
 });

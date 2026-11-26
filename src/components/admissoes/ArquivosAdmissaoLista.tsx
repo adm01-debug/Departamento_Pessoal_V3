@@ -63,6 +63,16 @@ export function ArquivosAdmissaoLista({ admissaoId }: ArquivosAdmissaoListaProps
     }
   }, []);
 
+  // Envio novo do mesmo tipo não apaga o anterior: a migration
+  // 20261126140000 fecha a versão antiga em `substituido_em` (trigger BEFORE
+  // INSERT). O RH precisa continuar conseguindo abrir o histórico, então a
+  // lista mostra vigentes primeiro e o antigo fica marcado e esmaecido.
+  const ordenados = [...arquivos].sort((a, b) => {
+    const av = a.substituido_em ? 1 : 0;
+    const bv = b.substituido_em ? 1 : 0;
+    return av - bv;
+  });
+
   if (isLoading) {
     return (
       <p className="flex items-center gap-1.5 px-2 py-1 text-xs text-muted-foreground">
@@ -82,15 +92,23 @@ export function ArquivosAdmissaoLista({ admissaoId }: ArquivosAdmissaoListaProps
   return (
     <div className="space-y-1">
       <ul className="divide-y divide-border/60">
-        {arquivos.map((arquivo) => {
+        {ordenados.map((arquivo) => {
           const tamanho = formatarTamanho(arquivo.tamanho_bytes);
+          const substituido = Boolean(arquivo.substituido_em);
           return (
-            <li key={arquivo.id} className="flex items-center gap-2 px-2 py-1">
+            <li
+              key={arquivo.id}
+              className={cn('flex items-center gap-2 px-2 py-1', substituido && 'opacity-60')}
+            >
               <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-xs text-foreground">
                   {TIPO_LABEL[arquivo.tipo] ?? arquivo.tipo}
-                  {arquivo.validado && <span className="ml-2 text-success">validado</span>}
+                  {substituido ? (
+                    <span className="ml-2 text-[10px] text-muted-foreground">substituído</span>
+                  ) : (
+                    arquivo.validado && <span className="ml-2 text-success">validado</span>
+                  )}
                 </p>
                 <p className="truncate text-[10px] text-muted-foreground">
                   {arquivo.nome_arquivo}
