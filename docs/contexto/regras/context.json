@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1c255962838174f577c3f14743dc89ef5de54de2",
+  "sha": "cd4ba1a9765b1ab8d28f71e7b1afa92a39a11d2c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-26 11:16 UTC",
+  "generated_at": "2026-11-26 11:34 UTC",
   "files_total": 4249,
   "code_files": 3653,
   "code_lines": 543344
  },
  "version": "1.3.2",
- "facts_hash": "528ee413b47c33b2",
+ "facts_hash": "571249602564e10e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -51546,7 +51546,7 @@
     "roles": "authenticated",
     "mode": "permissive",
     "using": "",
-    "check": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid()::text ) )",
+    "check": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid() ) )",
     "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
    },
    {
@@ -51555,7 +51555,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid()::text ) )",
+    "using": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid() ) )",
     "check": "",
     "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
    },
@@ -222631,7 +222631,7 @@
     "roles": "authenticated",
     "mode": "permissive",
     "using": "",
-    "check": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid()::text ) )",
+    "check": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid() ) )",
     "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
    },
    {
@@ -222640,7 +222640,7 @@
     "cmd": "SELECT",
     "roles": "authenticated",
     "mode": "permissive",
-    "using": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid()::text ) )",
+    "using": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid() ) )",
     "check": "",
     "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
    },
@@ -349223,10 +349223,19 @@
   }
  },
  "git": {
-  "sha": "1c255962838174f577c3f14743dc89ef5de54de2",
+  "sha": "cd4ba1a9765b1ab8d28f71e7b1afa92a39a11d2c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "cd4ba1a",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: compara storage.objects.owner (uuid) com auth.uid() sem cast para text (#902)",
+    "files": [
+     "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+    ]
+   },
    {
     "sha": "1c25596",
     "date": "2026-11-26",
@@ -349713,25 +349722,6 @@
      "src/pages/BancoHorasPage.tsx",
      "src/services/bancoHorasService.ts"
     ]
-   },
-   {
-    "sha": "2669333",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "feat(avaliacao): Ver todos dos Talentos em destaque abre a janela completa (resgate do trabalho do Muri) (#870)",
-    "files": [
-     "src/components/__tests__/CascadeSaidaPerfis.test.ts",
-     "src/components/__tests__/CascadeSaidaRapidaAnimacao.test.tsx",
-     "src/components/__tests__/FeedbackAcoesRodape.test.tsx",
-     "src/components/__tests__/NineBoxTalentosDialog.test.tsx",
-     "src/components/__tests__/NineBoxTalentosDialogSaidaRapida.test.tsx",
-     "src/components/avaliacao/NineBoxLateral.tsx",
-     "src/components/avaliacao/NineBoxTab.tsx",
-     "src/components/avaliacao/NineBoxTalentosDialog.tsx",
-     "src/components/ui/animated-cascade-dialog.tsx",
-     "src/components/ui/cascade-dialog.tsx",
-     "src/components/ui/cascade-motion.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -349756,7 +349746,7 @@
     3
    ],
    [
-    "src/components/avaliacao/NineBoxTab.tsx",
+    "supabase/migrations/20261126090000_storage_policies_buckets_app.sql",
     2
    ],
    [
@@ -349774,10 +349764,6 @@
    [
     "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.verify.sql",
     2
-   ],
-   [
-    "supabase/migrations/20261126090000_storage_policies_buckets_app.sql",
-    1
    ],
    [
     "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql",
@@ -349809,6 +349795,10 @@
    ],
    [
     "src/components/avaliacao/NineBoxFiltros.tsx",
+    1
+   ],
+   [
+    "src/components/avaliacao/NineBoxTab.tsx",
     1
    ],
    [

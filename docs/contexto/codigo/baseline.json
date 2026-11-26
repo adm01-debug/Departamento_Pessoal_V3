@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1c255962838174f577c3f14743dc89ef5de54de2",
+  "commit": "cd4ba1a9765b1ab8d28f71e7b1afa92a39a11d2c",
   "branch": "main",
-  "data_commit": "2026-11-26T08:16:11-03:00",
+  "data_commit": "2026-11-26T08:33:37-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "cd4ba1a",
+    "data": "2026-11-26",
+    "assunto": "fix: compara storage.objects.owner (uuid) com auth.uid() sem cast para text (#902)"
+   },
    {
     "sha": "1c25596",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "2a62b11",
     "data": "2026-11-25",
     "assunto": "feat: resgata a tela de Turnos do agente Muri (calendario, escalas e dialogos) (#875)"
-   },
-   {
-    "sha": "4046e24",
-    "data": "2026-11-25",
-    "assunto": "fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)"
    }
   ],
-  "arquivos_mudados_7d": 781,
+  "arquivos_mudados_7d": 777,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 18
+    "mudancas": 17
    },
    {
     "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
