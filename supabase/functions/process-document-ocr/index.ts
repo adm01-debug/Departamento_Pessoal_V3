@@ -4,30 +4,11 @@ import { z } from 'npm:zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
-import { safeFetchWithRetry } from '../_shared/safe-fetch.ts';
-import { AI_CHAT_URL, AI_NO_THINKING, aiApiKey, aiModel } from '../_shared/aiProvider.ts';
-
-function isAllowedFileUrl(urlStr: string): boolean {
-  try {
-    const url = new URL(urlStr);
-    const h = url.hostname;
-    if (h === 'localhost' || h === '127.0.0.1' || h.startsWith('192.168.') ||
-        h.startsWith('10.') || h.startsWith('172.16.') || h === '0.0.0.0' ||
-        h === '169.254.169.254' || h.endsWith('.internal') || h.endsWith('.local')) {
-      return false;
-    }
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    if (!supabaseUrl) return false;
-    const supabaseHost = new URL(supabaseUrl).hostname;
-    return url.hostname === supabaseHost && url.pathname.includes('/storage/v1/');
-  } catch {
-    return false;
-  }
-}
+import { isAllowedFileUrl, OCR_DOC_TYPES, runDocumentOcr } from '../_shared/ocr.ts';
 
 const BodySchema = z.object({
   fileUrl: z.string().url().max(2048).refine(isAllowedFileUrl, { message: 'URL de arquivo não permitida' }),
-  docType: z.enum(['cpf', 'rg', 'cnh', 'comprovante_residencia', 'generic']).optional().default('generic'),
+  docType: z.enum(OCR_DOC_TYPES).optional().default('generic'),
 });
 
 function json(body: unknown, status = 200): Response {
@@ -81,68 +62,14 @@ serve(async (req: Request): Promise<Response> => {
     }
     const { fileUrl, docType } = parsed.data;
 
-    const aiKey = aiApiKey();
-    if (!aiKey) {
-      return json({ valid: false, confidence: 0, error: 'Serviço OCR não configurado' }, 503);
+    // O provedor de IA baixa a URL assinada/publica do proprio projeto
+    // (isAllowedFileUrl restringe a isso).
+    const ocr = await runDocumentOcr(fileUrl, docType);
+    if (!ocr.ok) {
+      return json({ valid: false, confidence: 0, error: ocr.error }, ocr.status);
     }
 
-    const systemPrompt = `Você é um especialista em OCR de documentos brasileiros (RG, CPF, CNH, Comprovante de Residência).
-    Sua tarefa é extrair os dados do documento fornecido e retornar APENAS um objeto JSON estruturado.
-    Não inclua explicações ou texto fora do JSON.
-
-    Campos esperados no JSON:
-    - valid: boolean (indica se o documento é legível e do tipo correto)
-    - confidence: number (0-1)
-    - extractedData: {
-        nome?: string,
-        cpf?: string (formatado),
-        data_nascimento?: string (YYYY-MM-DD),
-        rg?: string,
-        logradouro?: string,
-        bairro?: string,
-        cidade?: string,
-        uf?: string,
-        cep?: string
-      }
-    - error?: string (se valid for false)`;
-
-    const userPrompt = `Analise este documento do tipo: ${docType}.`;
-
-    const aiResponse = await safeFetchWithRetry(
-      AI_CHAT_URL,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${aiKey}`,
-        },
-        body: JSON.stringify({
-          model: aiModel(),
-          ...AI_NO_THINKING,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: [{ type: 'text', text: userPrompt }, { type: 'image_url', image_url: { url: fileUrl } }] },
-          ],
-          response_format: { type: 'json_object' },
-          max_tokens: 1000,
-        }),
-        timeoutMs: 30_000,
-        tag: 'openai',
-      },
-      { maxAttempts: 3, baseDelayMs: 2_000, tag: 'openai' }
-    );
-
-    if (!aiResponse.ok) {
-      return json({ valid: false, confidence: 0, error: 'Erro no serviço de OCR' }, 502);
-    }
-
-    const aiData = await aiResponse.json();
-    const content = aiData.choices?.[0]?.message?.content || '{}';
-
-    let result: unknown;
-    try { result = JSON.parse(content); } catch { result = { valid: false, confidence: 0, error: 'Resposta inválida do OCR' }; }
-
-    return json(result);
+    return json(ocr.result);
   } catch (error: unknown) {
     try { captureException(error, { fn: 'process-document-ocr' }); } catch { /* noop */ }
     return json({ valid: false, confidence: 0, error: 'Erro interno no OCR' }, 500);

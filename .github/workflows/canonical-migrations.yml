@@ -281,9 +281,19 @@ jobs:
           # metadado de escrituracao: nada de public, nada gravavel.
           # A 20261126090000 segue na lista porque o apply pula versao ja
           # registrada no ledger.
+          # 26/11/2026 (lote 3): 20261126120000 desfaz a parte da 090000 que
+          # estava errada -- as duas policies de `documentos-admissao`. O bucket
+          # nao tem consumidor autenticado (o unico uso era o portal publico
+          # /contratacao, sem sessao) e o documento do candidato passa pela edge
+          # `admissao-publica` no bucket `documentos`. Volta ao estado que a
+          # 20261117193000 fixou de proposito: bucket sem policy,
+          # deny-by-default.
           for migration in \
             20261126090000_storage_policies_buckets_app.sql \
-            20261126100000_grant_ci_auditor_migration_ledger.sql
+            20261126100000_grant_ci_auditor_migration_ledger.sql \
+            20261126120000_storage_documentos_admissao_sem_policy.sql \
+            20261126130000_storage_documentos_admissao_rh_read.sql \
+            20261126140000_documentos_admissao_substituicao.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then

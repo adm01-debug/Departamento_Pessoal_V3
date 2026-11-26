@@ -14,8 +14,12 @@ SELECT jsonb_build_object(
     -- mode=verify, que conferem o ledger por versao ("ledger OK versao X") e
     -- por leitura direta do catalogo — mas ESTA assercao nao provou nada deles.
     -- Atualizada aqui; ver docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md §18.6.
+    -- 26/11/2026 (lote 3): aponta para a ULTIMA versao do lote atual
+    -- (20261126140000). A assercao do workflow e `ledger_count === 1`, entao a
+    -- versao aqui precisa ser a do lote corrente — apontar para
+    -- 20261123090000 aprovava contando um registro antigo ja aplicado.
     WHERE version IN (
-      '20261123090000'
+      '20261126140000'
     )
   ),
   'notificacoes_chk_wide', EXISTS (

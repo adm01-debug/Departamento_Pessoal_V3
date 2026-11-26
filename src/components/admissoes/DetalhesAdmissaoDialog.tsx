@@ -105,6 +105,7 @@ import { cn } from '@/lib/utils';
 import { formatCurrency, formatDate, formatDateLong, formatDateTime } from '@/utils/format';
 import { safeErrorMessage } from '@/utils/safeError';
 import { ETAPA_BADGE, ETAPA_LABELS, proximaAcaoDaEtapa } from './admissoesComum';
+import { ArquivosAdmissaoLista } from './ArquivosAdmissaoLista';
 import { diasAteHoje, iniciais, inicioDoDia } from './admissoesDerivacoes';
 import {
   AlertCircle,
@@ -1186,6 +1187,16 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                               );
                             })}
                           </ul>
+                          {/* Anexos que o candidato enviou pelo portal público
+                              /contratacao. O registro sempre existiu em
+                              `documentos_admissao`, mas nenhuma tela o lia — daí o
+                              RH nunca conseguia abrir o documento enviado. */}
+                          <div className="mt-3 border-t border-border/40 pt-2">
+                            <h4 className="mb-1 px-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                              Arquivos enviados pelo candidato
+                            </h4>
+                            <ArquivosAdmissaoLista admissaoId={a.id} />
+                          </div>
                         </section>
                       </div>
 

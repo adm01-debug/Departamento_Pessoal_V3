@@ -6947,6 +6947,7 @@ export type Database = {
           id: string
           nome_arquivo: string
           observacoes: string | null
+          substituido_em: string | null
           tamanho_bytes: number | null
           tipo: string
           updated_at: string
@@ -6961,6 +6962,7 @@ export type Database = {
           id?: string
           nome_arquivo: string
           observacoes?: string | null
+          substituido_em?: string | null
           tamanho_bytes?: number | null
           tipo: string
           updated_at?: string
@@ -6975,6 +6977,7 @@ export type Database = {
           id?: string
           nome_arquivo?: string
           observacoes?: string | null
+          substituido_em?: string | null
           tamanho_bytes?: number | null
           tipo?: string
           updated_at?: string

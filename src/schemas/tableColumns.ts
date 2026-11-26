@@ -1451,6 +1451,7 @@ export const TABLE_COLUMNS: Record<string, readonly string[]> = {
     'id',
     'nome_arquivo',
     'observacoes',
+    'substituido_em',
     'tamanho_bytes',
     'tipo',
     'updated_at',

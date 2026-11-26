@@ -5,6 +5,7 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { getClientIp } from '../_shared/clientIp.ts';
+import { isOcrDocType, OCR_FALLBACK_ERROR, runDocumentOcr, type OcrDocType } from '../_shared/ocr.ts';
 
 /**
  * admissao-publica — upload de documentos do portal público /contratacao.
@@ -14,6 +15,10 @@ import { getClientIp } from '../_shared/clientIp.ts';
  * service_role. Esta função valida o token de admissão (entropia >= 16,
  * não expirado — mesma guarda da RPC get_admissao_por_token) e faz o
  * upload no bucket `documentos` com escopo de path por admissão.
+ *
+ * Com `ocr=true` no formulário ela também roda o OCR do documento
+ * (`_shared/ocr.ts`) e devolve o resultado em `ocr` — o candidato é anônimo e
+ * não tem como ler o próprio arquivo depois do upload.
  *
  * As escritas JSON do portal vão pelas RPCs admissao_* (migration
  * 20261002103000); esta função existe só porque Storage exige service_role
@@ -69,6 +74,19 @@ serve(async (req: Request): Promise<Response> => {
       return createErrorResponse('Extensão não permitida (pdf, jpg, png, webp)', 400, 'BAD_REQUEST', undefined, req);
     }
 
+    // OCR opcional, pedido junto do upload: o candidato não tem sessão e não
+    // conseguiria ler o próprio arquivo depois (nenhuma policy concede SELECT a
+    // `anon`). Só os tipos que a UI mapeia entram aqui.
+    const wantOcr = String(form.get('ocr') ?? '') === 'true';
+    let ocrDocType: OcrDocType | null = null;
+    if (wantOcr) {
+      const docType = String(form.get('doc_type') ?? '');
+      if (!isOcrDocType(docType)) {
+        return createErrorResponse('Tipo de documento inválido para OCR', 400, 'BAD_REQUEST', undefined, req);
+      }
+      ocrDocType = docType;
+    }
+
     // Valida o token exatamente como public._admissao_token_row:
     // match exato + não expirado (NULL = legado sem expiração).
     const { data: tokenRow, error: tokenErr } = await supabase
@@ -114,8 +132,38 @@ serve(async (req: Request): Promise<Response> => {
       return createErrorResponse('Documento enviado, mas falhou ao registrar', 500, 'REGISTER_FAILED', undefined, req);
     }
 
+    // OCR é best-effort: o documento já está salvo e registrado, então uma
+    // falha de OCR (provedor fora do ar, arquivo ilegível) não pode derrubar o
+    // envio — o RH confere manualmente. Por isso o try/catch local: sem ele uma
+    // exceção de rede do provedor (safeFetchWithRetry relança ao esgotar as
+    // tentativas) cairia no catch geral e devolveria 500 para um documento já
+    // gravado, fazendo o candidato reenviar e duplicar o registro.
+    // PDF não é imagem: o provedor recebe a URL como `image_url`, então só
+    // imagem é enviada ao OCR. O envio do PDF continua valendo.
+    let ocr: unknown = null;
+    if (ocrDocType && file.type.startsWith('image/')) {
+      try {
+        const { data: signed, error: signErr } = await supabase.storage
+          .from(BUCKET)
+          .createSignedUrl(storagePath, 300);
+        if (signErr || !signed?.signedUrl) {
+          await captureException(signErr ?? new Error('signed url indisponível'), {
+            fn: 'admissao-publica',
+            step: 'createSignedUrl',
+          });
+          ocr = { valid: false, confidence: 0, error: OCR_FALLBACK_ERROR };
+        } else {
+          const run = await runDocumentOcr(signed.signedUrl, ocrDocType);
+          ocr = run.ok ? run.result : { valid: false, confidence: 0, error: run.error };
+        }
+      } catch (ocrErr) {
+        await captureException(ocrErr, { fn: 'admissao-publica', step: 'ocr' });
+        ocr = { valid: false, confidence: 0, error: OCR_FALLBACK_ERROR };
+      }
+    }
+
     return new Response(
-      JSON.stringify({ ok: true, path: storagePath }),
+      JSON.stringify({ ok: true, path: storagePath, ocr }),
       { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
     );
   } catch (err) {
