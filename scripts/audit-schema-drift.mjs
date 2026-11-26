@@ -65,6 +65,14 @@ import path from 'node:path';
 // Exemplo: --since=20260924 (data em que a convenção de ledger foi adotada).
 const sinceArg = process.argv.find(a => a.startsWith('--since='));
 const SINCE_VERSION = sinceArg ? sinceArg.split('=')[1] : null;
+
+// --warn-only  — achado de migration sem registro vira aviso, sem exit 1.
+// Usado em pull_request: a política do repo só permite `apply` a partir de
+// `main` (gate de branch do canonical-migrations.yml), então uma migration
+// nova em PR não pode estar no ledger por construção — reprovar ali seria um
+// falso negativo estrutural em toda PR que adiciona migration. Em push na
+// `main`/`workflow_dispatch` o gate continua reprovando de verdade.
+const WARN_ONLY = process.argv.includes('--warn-only');
 // O filtro é comparação de string com a versão: valor não numérico
 // (--since=abc, --since=2026-09-24) descartava TODAS as migrations e saía "OK".
 if (sinceArg && !/^\d{8,14}$/.test(SINCE_VERSION)) {
@@ -148,16 +156,22 @@ function main() {
   }
 
   if (naoAplicadas.length > 0) {
-    console.error(
+    const log = WARN_ONLY ? console.warn : console.error;
+    log(
       `[schema-drift] ${naoAplicadas.length} migration(ões) no repositório sem registro no ledger de produção:`
     );
-    naoAplicadas.forEach((v) => console.error(`  ✖ ${v}`));
-    console.error(
+    naoAplicadas.forEach((v) => log(`  ✖ ${v}`));
+    log(
       '\n  Isso não prova ausência de aplicação (ver limitação no topo do arquivo), mas é o sinal' +
       '\n  mais forte disponível sem uma auditoria semântica por objeto. Investigar antes de tratar' +
       '\n  qualquer achado corrigido nessas migrations como resolvido em produção.'
     );
-    return 1;
+    if (!WARN_ONLY) return 1;
+    console.warn(
+      `[schema-drift] AVISO — ${naoAplicadas.length} migration(ões) sem registro no ledger; ` +
+        'o gate reprova quando isso acontece em push na main.'
+    );
+    return 0;
   }
 
   const escopo = SINCE_VERSION ? `${localFiltrado.size} desde ${SINCE_VERSION}` : `${local.size}`;

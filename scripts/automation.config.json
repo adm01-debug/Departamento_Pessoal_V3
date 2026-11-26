@@ -2915,6 +2915,22 @@
                                                "manual"
                                            ],
                               "reason":  "Legado mantido no fluxo existente; referências literais: .github/workflows/ci.yml (glob scripts/tests/inventario-*.test.mjs). O dispatcher não executa esta operação."
+                          },
+                          {
+                              "id":  "legacy-8c1f4a7d2be90356",
+                              "kind":  "legacy",
+                              "files":  [
+                                            "scripts/tests/audit-schema-drift-warn-only.test.mjs"
+                                        ],
+                              "manual":  [
+                                             "node",
+                                             "--test",
+                                             "scripts/tests/audit-schema-drift-warn-only.test.mjs"
+                                         ],
+                              "triggers":  [
+                                               "manual"
+                                           ],
+                              "reason":  "Contrato do gate de drift (--warn-only). Referências literais: package.json (test:drift-gate, ci:verify) e .github/workflows/ci.yml (passo Contrato do gate de drift). O dispatcher não executa esta operação."
                           }
                       ],
     "ci":  [

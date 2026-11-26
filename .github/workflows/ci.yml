@@ -592,6 +592,11 @@ jobs:
         # quebra só aparece em runtime como PGRST200. Também reprova FKs
         # duplicadas, que reintroduzem a ambiguidade de relacionamento.
         run: node scripts/audit-embed-hints.mjs
+      - name: Contrato do gate de drift (--warn-only em pull_request)
+        # Roda o script de verdade com um psql falso e ledger vazio: prova que
+        # migration sem registro reprova em main e vira aviso em PR. É puro
+        # (não toca banco), então roda mesmo sem o alvo canônico disponível.
+        run: npm run test:drift-gate
       - name: Migration no repositório sem registro no ledger de produção
         if: steps.db-access.outputs.skip_live != 'true'
         # A-036: o lote de hardening de RLS de 19-31/07/2026 ficou no
@@ -605,7 +610,12 @@ jobs:
         # foi aplicada por um caminho que não escreve nessa tabela), então
         # avaliar o histórico inteiro reprovaria ~40% das migrations. Daqui
         # pra frente, migration nova que entrar no repo sem registro reprova.
-        run: node scripts/audit-schema-drift.mjs --since=20261013
+        # Em pull_request o achado é aviso (--warn-only): o canonical-
+        # migrations.yml só aceita `apply` a partir de `main`, então nenhuma
+        # PR que adiciona migration consegue satisfazer o gate antes do merge
+        # — reprovar ali bloquearia toda PR de migration por construção. Em
+        # push na main o gate reprova de verdade.
+        run: node scripts/audit-schema-drift.mjs --since=20261013 ${{ github.event_name == 'pull_request' && '--warn-only' || '' }}
       - name: Resumo da integridade do banco (GITHUB_STEP_SUMMARY)
         if: always()
         run: |
