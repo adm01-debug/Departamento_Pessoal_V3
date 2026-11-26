@@ -583,3 +583,172 @@ Dos 33 pendentes, os que mais importam por tema (RLS, Storage, `search_path`) s�
 `Supabase Preview` continua vermelho **por decisÃ£o de processo, nÃ£o por bug**: sÃ³ fecha com a reconciliaÃ§Ã£o
 completa (Gates Aâ€“E) e um projeto de staging hospedado. NÃ£o Ã© check bloqueante de merge â€” nenhuma PR fica
 presa por ele. O que nÃ£o se deve fazer Ã© tratÃ¡-lo como "uma migration quebrada" e reescrever histÃ³rico.
+
+---
+
+## 15. Storage: privacidade e escopo por tenant dos buckets (26/11/2026)
+
+Único tema do bloco de 26/11 que nenhum dos 5 audits do CI cobria: os gates
+`audit-rls-pii`, `audit-rls-least-privilege`, `audit-rls-tenant-open`,
+`audit-secdef-authz` e `audit-embed-hints` varrem `public`; `storage.objects`
+não estava em nenhum.
+
+### 15.1 Método
+
+Duas fontes cruzadas, nunca uma só:
+
+1. **Código** — todo `from('bucket')`, `.upload(...)`, `.createSignedUrl(...)` e
+   `getPublicUrl(...)` em `src/` e em `supabase/functions/`.
+2. **Banco vivo** — `storage.buckets` e `pg_catalog.pg_policies` filtrado por
+   `schemaname = 'storage' AND tablename = 'objects'`.
+
+O cruzamento é o que importa: bucket existente e usado pelo client **sem**
+policy não dá erro em nenhum lugar do repositório — o Supabase simplesmente
+responde `403` no upload e "Object not found" na assinatura, em runtime.
+
+### 15.2 O que foi encontrado
+
+20 buckets, 11 sem nenhuma policy. Desses 11, **8 têm consumidor no client** —
+ou seja, funcionalidade entregue no app que o banco rejeitava.
+
+| Bucket | Path usado no código | Operação real |
+|---|---|---|
+| `avatars` | `${user.id}/avatar.${ext}` (`PerfilPage.tsx:199`) | upload com `upsert` |
+| `documentos-admissao` | `temp/${uuid}` (`useDocumentOCR.ts:33`) | upload + leitura |
+| `ferias-avisos` | `${empresaId}/${ferias.id}.pdf` (`useAssinarAvisoFerias.ts:44`) | upload com `upsert` + assinatura |
+| `ferias-coletivas-comunicados` | `${empresaId}/${coletivaId}/${fn}` (`useGerarComunicadoColetivas.ts:67`) | upload com `upsert` + assinatura |
+| `medidas-contestacoes` | `${empresaId}/${medidaId}/${uuid}-${file.name}` (`medidasDisciplinaresService.ts:172`) | upload + assinatura |
+| `medidas-disciplinares` | `${medida.empresa_id}/${medida_id}/documento-${Date.now()}.html` (`gerar-medida-disciplinar-pdf/index.ts:203`) | escrita por `service_role` + assinatura no client |
+| `ponto-biometria` | `${colab.empresa_id}/${colab.id}/${Date.now()}.jpg` (`PontoClockRegister.tsx:192`) | upload |
+| `contratos-trabalho` | `${empresaId}/${admissao_id}/contrato-${Date.now()}.html` (`gerar-contrato-pdf/index.ts:173`) | escrita por `service_role` + assinatura no client |
+
+Os outros 9 buckets já funcionavam: têm policy e por isso serviram de
+referência de estilo (`pol_documentos_*`, `pol_tenant_*`,
+`pol_afastamentos_insert_authenticated`).
+
+### 15.3 Isolamento adotado
+
+Mesmo contrato das policies vivas, sem inventar padrão novo:
+
+```sql
+bucket_id = 'X'
+AND public.user_belongs_to_empresa(
+      auth.uid(), public.storage_path_empresa_id(name))
+```
+
+- `storage_path_empresa_id(name)` devolve **NULL** quando a primeira pasta do
+  path não é UUID — evita o erro de cast que derrubou as migrations antigas, e
+  NULL em predicado de policy significa negação (fail-closed).
+- `owner` foi usado só onde o path não carrega tenant (`avatars`,
+  `documentos-admissao/temp/`). `storage.objects.owner` é **uuid** no canônico:
+  comparar com `auth.uid()::text` fazia o `CREATE POLICY` falhar direto no DDL
+  com `operator does not exist: uuid = text` (PR #902).
+- `documentos-admissao` aceita dois caminhos: `${empresaId}/...` (isolado por
+  tenant) e `temp/${uuid}` (rascunho do próprio usuário, `owner = auth.uid()`).
+  A alternativa seria proibir o `temp/`, o que quebraria o fluxo de OCR que já
+  está no ar.
+
+### 15.4 Prova em produção
+
+Migration `20261126090000_storage_policies_buckets_app.sql` aplicada pelo
+`canonical-migrations` em 26/11/2026 — `validate` verde, `apply` verde,
+`verify` verde (sidecar devolveu `ok`).
+
+Query de verificação no canônico:
+
+```sql
+SELECT (SELECT count(*) FROM pg_catalog.pg_policies
+         WHERE schemaname='storage' AND tablename='objects'
+           AND policyname IN (...as 17...))            AS minhas_17,
+       (SELECT count(*) FROM pg_catalog.pg_policies
+         WHERE schemaname='storage' AND tablename='objects'
+           AND policyname='admissao_docs_insert_public') AS furo_public;
+-- minhas_17 | furo_public
+--         17 |           0
+```
+
+### 15.5 O trabalho do agente anterior que foi reaproveitado e o que foi descartado
+
+As migrations `20260719150000_storage_bucket_security_hardening` e
+`20260724150000_t008_storage_tenant_path_scope` nunca foram aplicadas ao
+canônico. Elas **não** foram reaproveitadas como DDL, por dois motivos
+verificados:
+
+1. Derivam o tenant com `((storage.foldername(name))[1])::uuid` — estoura cast
+   em qualquer path cuja primeira pasta não seja UUID, e policy que estoura é
+   policy que nega tudo.
+2. A `20260719150000` declara `admissao_docs_insert_public` com `TO public`,
+   isto é, upload **sem sessão**. A nova migration faz `DROP POLICY IF EXISTS`
+   nesse nome exato: se aquela migration algum dia entrar num replay, o furo
+   não volta.
+
+O que **foi** reaproveitado: o mapa de buckets que ela documentava e a
+intenção de escopo por tenant. O comentário dela sobre "fluxo por token" em
+`ContratacaoPage` está obsoleto — essa página não faz upload em
+`documentos-admissao`.
+
+### 15.6 Pendências de app identificadas (não são DDL, não foram corrigidas aqui)
+
+1. `src/hooks/useDocumentOCR.ts:40` usa `getPublicUrl` em bucket **privado**. A
+   URL devolvida é `/object/public/...`, que não serve o arquivo. O correto é
+   `createSignedUrl`, como já é feito em `useAssinarAvisoFerias.ts:71` e
+   `useGerarComunicadoColetivas.ts:91`.
+2. O mesmo hook grava em `temp/${uuid}`, sem `empresaId` no path. A policy
+   aceita (é o rascunho do dono), mas isso impede qualquer varredura por
+   tenant — o rascunho fica órfão se o usuário abandonar o fluxo.
+
+Ambos são correção de app, em PR separada, e não bloqueiam as policies acima.
+
+---
+
+## 16. Fechamento do drift de ledger (26/11/2026)
+
+### 16.1 A pergunta que precisava de resposta
+
+33 migrations estavam no repositório sem registro em
+`supabase_migrations.schema_migrations`. Isso podia significar duas coisas
+muito diferentes: (a) só escrituração, ou (b) funcionalidade realmente ausente
+em produção. A diferença decide se há incidente.
+
+### 16.2 Medição
+
+1172 arquivos locais, 1132 versões no ledger, 40 ausentes:
+
+- 7 legados (`001`..`007`), anteriores ao versionamento.
+- 33 versionadas, de `20260317001935` a `20261012130000`.
+
+As 33 foram conferidas **objeto por objeto** contra o schema vivo: nenhum
+objeto consumido pelo app depende delas. Nenhuma RPC citada em `src/` ou em
+`supabase/functions/` está ausente. As ausências reais são índices, materialized
+views e RPCs **sem consumidor**.
+
+Conclusão: **(a) dívida de escrituração, não funcionalidade ausente.**
+
+### 16.3 Gate ligado (para não repetir)
+
+`scripts/audit-schema-drift.mjs` existia desde o incidente A-036 e nunca tinha
+sido ligado: sem corte de data reprovava ~40% do histórico, porque a convenção
+de gravar no ledger nunca foi seguida de forma consistente neste projeto.
+
+Agora roda no job `db-integrity-live` com `--since=20261013` — o menor corte que
+zera o gate sem esconder migration nova (a última ausente é `20261012130000`).
+
+Saída real do CI em 26/11/2026:
+
+```text
+[schema-drift] Filtro --since=20261013: ignorando 1065 migration(ões) históricas.
+[schema-drift] OK — 109 desde 20261013 migration(ões), todas com registro no ledger.
+```
+
+Antes disso foi preciso dar ao `ci_auditor` (role de `SUPABASE_DB_URL_READONLY`)
+`USAGE` em `supabase_migrations` e `SELECT` em `schema_migrations` —
+`20261126100000_grant_ci_auditor_migration_ledger.sql`. Sem o grant o gate
+reprovava por credencial, que é o pior desfecho possível: falso vermelho
+permanente, ou (se alguém "consertasse" ignorando o erro) falso verde.
+
+### 16.4 Observação registrada, não corrigida
+
+`refresh_dashboard_mvs()` tenta refrescar `mv_status_change_daily` e
+`mv_anomalies_hourly`, que não existem no schema vivo. O erro acontece dentro
+de um job de cron, sem ninguém olhando: falha silenciosa diária. Fora do escopo
+deste bloco — fica registrado para não se perder.
