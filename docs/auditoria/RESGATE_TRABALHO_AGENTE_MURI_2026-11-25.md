@@ -523,16 +523,16 @@ Medido em 26/11 pelo `canonical-sql-diag.yml` com `allow_pii=true`
 (`SELECT array_to_string(array_agg(version ORDER BY version), ' ') FROM supabase_migrations.schema_migrations`,
 leitura total — o caminho sem `allow_pii` roda sob `ci_auditor` e não enxerga `supabase_migrations`):
 
-| medida (main `7f047bcdd`, 26/11/2026, run 45829436413)   | valor  |
-| -------------------------------------------------------- | ------ |
-| versões no ledger canônico                               | 1141   |
-| — legadas (7 de `001`..`007` + 51 de 16 dígitos)         | 58     |
-| — com prefixo de 14 dígitos                              | 1083   |
-| arquivos `supabase/migrations/*.sql` (sem `.verify.sql`) | 1174   |
-| — legadas (as mesmas 58)                                 | 58     |
-| — com prefixo de 14 dígitos                              | 1116   |
-| **migrations no repo sem entrada no ledger**             | **33** |
-| entradas no ledger sem arquivo no repo                   | 0      |
+| medida (main `7f047bcdd`, 26/11/2026, run 45829436413)              | valor  |
+| ------------------------------------------------------------------- | ------ |
+| versões no ledger canônico                                          | 1141   |
+| — legadas (7 de `001`..`007` + 26 de 16 dígitos + 25 de 17 dígitos) | 58     |
+| — com prefixo de 14 dígitos                                         | 1083   |
+| arquivos `supabase/migrations/*.sql` (sem `.verify.sql`)            | 1174   |
+| — legadas (as mesmas 58)                                            | 58     |
+| — com prefixo de 14 dígitos                                         | 1116   |
+| **migrations no repo sem entrada no ledger**                        | **33** |
+| entradas no ledger sem arquivo no repo                              | 0      |
 
 As 58 legadas se cancelam dos dois lados. As 33 ausentes são todas de 14 dígitos
 (`20260317001935` … `20261012130000`), o ledger é subconjunto estrito do repositório (não
@@ -566,7 +566,9 @@ exatamente o que o runbook proíbe:
 - regra 4 — nada de `migration repair` para deixar a lista visualmente verde;
 - Gate B — "Não 'corrigir para continuar' na mesma execução: isso destruiria a prova do histórico real".
 
-O Preview lê o ledger do branch, e o ledger canônico tem 1139 versões. Não há migration nova pendente por
+O Preview lê o ledger do branch, e o ledger canônico tinha 1141 versões na
+medição de §14.3 (1139 numa leitura anterior do mesmo dia — ver a nota de
+instabilidade). Não há migration nova pendente por
 trabalho desta sessão: as 33 são histórico de 03 → 10/2026. Reescrevê-las apaga a evidência que a
 reconciliação usa e continua sem provar qual DDL realmente está materializado no banco.
 
@@ -626,16 +628,16 @@ responde `403` no upload e "Object not found" na assinatura, em runtime.
 20 buckets, 11 sem nenhuma policy. Desses 11, **8 têm consumidor no client** —
 ou seja, funcionalidade entregue no app que o banco rejeitava.
 
-| Bucket | Path usado no código | Operação real |
-|---|---|---|
-| `avatars` | `${user.id}/avatar.${ext}` (`PerfilPage.tsx:199`) | upload com `upsert` |
-| `documentos-admissao` | `temp/${uuid}` (`useDocumentOCR.ts:33`) | upload + leitura |
-| `ferias-avisos` | `${empresaId}/${ferias.id}.pdf` (`useAssinarAvisoFerias.ts:44`) | upload com `upsert` + assinatura |
-| `ferias-coletivas-comunicados` | `${empresaId}/${coletivaId}/${fn}` (`useGerarComunicadoColetivas.ts:67`) | upload com `upsert` + assinatura |
-| `medidas-contestacoes` | `${empresaId}/${medidaId}/${uuid}-${file.name}` (`medidasDisciplinaresService.ts:172`) | upload + assinatura |
-| `medidas-disciplinares` | `${medida.empresa_id}/${medida_id}/documento-${Date.now()}.html` (`gerar-medida-disciplinar-pdf/index.ts:203`) | escrita por `service_role` + assinatura no client |
-| `ponto-biometria` | `${colab.empresa_id}/${colab.id}/${Date.now()}.jpg` (`PontoClockRegister.tsx:192`) | upload |
-| `contratos-trabalho` | `${empresaId}/${admissao_id}/contrato-${Date.now()}.html` (`gerar-contrato-pdf/index.ts:173`) | escrita por `service_role` + assinatura no client |
+| Bucket                         | Path usado no código                                                                                           | Operação real                                     |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `avatars`                      | `${user.id}/avatar.${ext}` (`PerfilPage.tsx:199`)                                                              | upload com `upsert`                               |
+| `documentos-admissao`          | `temp/${uuid}` (`useDocumentOCR.ts:33`)                                                                        | upload + leitura                                  |
+| `ferias-avisos`                | `${empresaId}/${ferias.id}.pdf` (`useAssinarAvisoFerias.ts:44`)                                                | upload com `upsert` + assinatura                  |
+| `ferias-coletivas-comunicados` | `${empresaId}/${coletivaId}/${fn}` (`useGerarComunicadoColetivas.ts:67`)                                       | upload com `upsert` + assinatura                  |
+| `medidas-contestacoes`         | `${empresaId}/${medidaId}/${uuid}-${file.name}` (`medidasDisciplinaresService.ts:172`)                         | upload + assinatura                               |
+| `medidas-disciplinares`        | `${medida.empresa_id}/${medida_id}/documento-${Date.now()}.html` (`gerar-medida-disciplinar-pdf/index.ts:203`) | escrita por `service_role` + assinatura no client |
+| `ponto-biometria`              | `${colab.empresa_id}/${colab.id}/${Date.now()}.jpg` (`PontoClockRegister.tsx:192`)                             | upload                                            |
+| `contratos-trabalho`           | `${empresaId}/${admissao_id}/contrato-${Date.now()}.html` (`gerar-contrato-pdf/index.ts:173`)                  | escrita por `service_role` + assinatura no client |
 
 Os outros 9 buckets já funcionavam: têm policy e por isso serviram de
 referência de estilo (`pol_documentos_*`, `pol_tenant_*`,
@@ -693,9 +695,9 @@ verificados:
    em qualquer path cuja primeira pasta não seja UUID, e policy que estoura é
    policy que nega tudo.
 2. A `20260719150000` declara `admissao_docs_insert_public` com `TO public`,
-   isto é, upload **sem sessão**. A nova migration faz `DROP POLICY IF EXISTS`
-   nesse nome exato: se aquela migration algum dia entrar num replay, o furo
-   não volta.
+   isto é, upload **sem sessão**. A `20261126090000` já faz `DROP POLICY IF
+EXISTS` nesse nome exato (linhas 87-89 do arquivo): se aquela migration algum
+   dia entrar num replay, o furo não volta.
 
 O que **foi** reaproveitado: o mapa de buckets que ela documentava e a
 intenção de escopo por tenant. O comentário dela sobre "fluxo por token" em
@@ -705,8 +707,13 @@ intenção de escopo por tenant. O comentário dela sobre "fluxo por token" em
 — sem sessão e contra um bucket privado — e devolvia `getPublicUrl`, que rende
 `/object/public/...` e nunca serve o arquivo. O envio correto (edge function
 `admissao-publica` com `service_role` depois de validar o token, no bucket
-`documentos`) foi implementado na PR #906, junto com a remoção da policy pública
-que sustentava o furo.
+`documentos`) foi implementado na PR #906, junto com a remoção das duas policies
+que a `20261126090000` havia criado em `documentos-admissao`
+(`pol_admissao_docs_insert_tenant_ou_temp` e `pol_admissao_docs_select_tenant_ou_temp`,
+ambas `TO authenticated` — nenhuma das duas alcançava `anon`, então o upload do
+candidato seguia negado por RLS). A policy realmente pública
+(`admissao_docs_insert_public`, `TO public`, da `20260719150000` que nunca foi
+aplicada no canônico) já tinha sido removida na própria `20261126090000`.
 
 ### 15.6 Pendências de app identificadas (corrigidas na PR #906)
 
@@ -751,7 +758,7 @@ Medição única e datada — a tabela completa está em §14.3. Em `main` `7f04
 contra o ledger lido no run 45829436413: 1174 arquivos locais, 1141 versões no
 ledger, **33 ausentes**.
 
-- As 58 legadas (7 de `001`..`007` + 51 de 16 dígitos) existem dos dois lados e se
+- As 58 legadas (7 de `001`..`007` + 26 de 16 dígitos + 25 de 17 dígitos) existem dos dois lados e se
   cancelam; não entram na conta das ausentes.
 - 33 versionadas de 14 dígitos, de `20260317001935` a `20261012130000`.
 - 0 entradas no ledger sem arquivo correspondente no repositório.
@@ -807,7 +814,8 @@ pode estar no ledger antes do merge. Confirmado no run 45818640337 (job
 registro no ledger` → exit 1.
 
 Corrigido na #907: o passo do `ci.yml` passa `--warn-only` quando
-`github.event_name == 'pull_request'`; em `push` na `main` e em
+`github.event_name == 'pull_request'` (`.github/workflows/ci.yml:618` no head
+desta PR); em `push` na `main` e em
 `workflow_dispatch` continua reprovando. Com pendências, o script emite
 `[schema-drift] AVISO — N migration(ões) sem registro no ledger` em vez de
 afirmar "todas com registro no ledger". Contrato coberto por
