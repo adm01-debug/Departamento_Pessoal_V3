@@ -492,97 +492,112 @@ porque o cascade tenta apagar linhas de `audit_log` — proteção deliberada, m
 criada em `folhas_pagamento` pela prova foi apagada (`DELETE` → 200) e o `PATCH` de prova tocou apenas
 `updated_at` de um colaborador real.
 
-## 14. `Supabase Preview` vermelho â€” causa raiz e por que NÃƒO se corrige com patch (26/11/2026)
+## 14. `Supabase Preview` vermelho — causa raiz e por que NÃO se corrige com patch (26/11/2026)
 
 ### 14.1 O que o check reporta
 
-Lido direto do check-run do app `supabase` (`gh api repos/â€¦/commits/<sha>/check-runs`):
+Lido direto do check-run do app `supabase` (`gh api repos/…/commits/<sha>/check-runs`):
 
 ```
 ERROR: cannot change name of view column "empresa_id" to "total_ativos" (SQLSTATE 42P16)
-At statement: 0 â€” supabase/migrations/20260317001935_1663bc94-c134-4084-9b08-4b4257a48256.sql
+At statement: 0 — supabase/migrations/20260317001935_1663bc94-c134-4084-9b08-4b4257a48256.sql
 ```
 
-O erro Ã© idÃªntico nos 21 commits consecutivos da `main` (verificado de `2a62b1124` a `256e836b9`): nÃ£o Ã©
-regressÃ£o de nenhuma PR recente, nem da #876.
+O erro é idêntico nos 21 commits consecutivos da `main` (verificado de `2a62b1124` a `256e836b9`): não é
+regressão de nenhuma PR recente, nem da #876.
 
 ### 14.2 Causa raiz
 
-O Preview cria um branch a partir do banco canÃ´nico (schema **e** ledger) e aplica apenas as migrations
-**ausentes do ledger**. A primeira delas Ã© `20260317001935_1663bc94-â€¦`, que faz
+O Preview cria um branch a partir do banco canônico (schema **e** ledger) e aplica apenas as migrations
+**ausentes do ledger**. A primeira delas é `20260317001935_1663bc94-…`, que faz
 `CREATE OR REPLACE VIEW public.vw_dashboard_time` **sem `DROP`** com as colunas
-`total_ativos/em_ferias/afastados/desligados/total_geral`, enquanto o banco jÃ¡ tem a forma entregue por
-`20260515183113_fe3fb304-â€¦` â€” `(empresa_id, total_colaboradores, ativos, afastados)`, confirmada em
-`supabase/baseline/20260831_canonical/canonical_schema.sql:17869`. O Postgres nÃ£o permite renomear coluna
+`total_ativos/em_ferias/afastados/desligados/total_geral`, enquanto o banco já tem a forma entregue por
+`20260515183113_fe3fb304-…` — `(empresa_id, total_colaboradores, ativos, afastados)`, confirmada em
+`supabase/baseline/20260831_canonical/canonical_schema.sql:17869`. O Postgres não permite renomear coluna
 existente em `CREATE OR REPLACE VIEW` â†’ `42P16`. O check aborta na primeira dessas migrations e por isso
-nÃ£o chega a listar as demais.
+não chega a listar as demais.
 
-### 14.3 O drift Ã© real, medido, e jÃ¡ estava documentado no repositÃ³rio
+### 14.3 O drift é real, medido, e já estava documentado no repositório
 
 Medido em 26/11 pelo `canonical-sql-diag.yml` com `allow_pii=true`
 (`SELECT array_to_string(array_agg(version ORDER BY version), ' ') FROM supabase_migrations.schema_migrations`,
-leitura total â€” o caminho sem `allow_pii` roda sob `ci_auditor` e nÃ£o enxerga `supabase_migrations`):
+leitura total — o caminho sem `allow_pii` roda sob `ci_auditor` e não enxerga `supabase_migrations`):
 
-| medida                                                   | valor  |
+| medida (main `7f047bcdd`, 26/11/2026, run 45829436413)   | valor  |
 | -------------------------------------------------------- | ------ |
-| versÃµes no ledger canÃ´nico                             | 1139   |
-| arquivos `supabase/migrations/*.sql` (sem `.verify.sql`) | 1172   |
-| **migrations sem entrada no ledger**                     | **33** |
+| versões no ledger canônico                               | 1141   |
+| — legadas (7 de `001`..`007` + 51 de 16 dígitos)         | 58     |
+| — com prefixo de 14 dígitos                              | 1083   |
+| arquivos `supabase/migrations/*.sql` (sem `.verify.sql`) | 1174   |
+| — legadas (as mesmas 58)                                 | 58     |
+| — com prefixo de 14 dígitos                              | 1116   |
+| **migrations no repo sem entrada no ledger**             | **33** |
+| entradas no ledger sem arquivo no repo                   | 0      |
 
-O repositÃ³rio jÃ¡ tinha o inventÃ¡rio e o procedimento para isso, e o diagnÃ³stico bate com o registrado:
+As 58 legadas se cancelam dos dois lados. As 33 ausentes são todas de 14 dígitos
+(`20260317001935` … `20261012130000`), o ledger é subconjunto estrito do repositório (não
+há registro de migration que não exista no código) e a soma fecha: 1083 + 33 = 1116
+versões de 14 dígitos no repositório.
 
-- `scripts/audit-schema-drift.mjs` â€” o gate que compara repositÃ³rio Ã— ledger existe, mas estÃ¡ **fora do CI
-  desde 24/09/2026** com justificativa no prÃ³prio arquivo: a convenÃ§Ã£o de gravar no ledger nunca foi seguida
-  ("reprova ~40% das migrations existentes â€” inutilizÃ¡vel como gate").
-- `scripts/db/derive-pending-migrations.mjs` â€” deriva exatamente a mesma lista (falha fechado acima de 20
-  pendentes, `DEFAULT_MAX_PENDING`, porque acima disso Ã© reconciliaÃ§Ã£o histÃ³rica, nÃ£o lote novo).
-- `infra/runbooks/RECONCILIACAO_DRIFT_MIGRATIONS.md` â€” "CondiÃ§Ã£o atual": em 31/08/2026 os Gates B, C e E
-  reprovaram e o projeto de staging hospedado nunca foi fornecido; `migration repair` e a ativaÃ§Ã£o do squash
-  seguem **bloqueados** por decisÃ£o registrada.
-- O mesmo fenÃ´meno Ã© a origem do incidente A-036 (lote de RLS de 19â€“31/07/2026 presente no repo e nunca
+Os totais absolutos **não são estáveis** e não devem ser lidos como constante: no
+mesmo dia o ledger foi de 1132 → 1139 → 1141 e o repositório de 1172 → 1174,
+conforme PRs eram mergeadas e aplicadas ao banco. O número que importa é a
+**diferença** (33), medida sempre no mesmo instante para os dois lados.
+
+O repositório já tinha o inventário e o procedimento para isso, e o diagnóstico bate com o registrado:
+
+- `scripts/audit-schema-drift.mjs` — o gate que compara repositório × ledger existe, mas está **fora do CI
+  desde 24/09/2026** com justificativa no próprio arquivo: a convenção de gravar no ledger nunca foi seguida
+  ("reprova ~40% das migrations existentes — inutilizável como gate").
+- `scripts/db/derive-pending-migrations.mjs` — deriva exatamente a mesma lista (falha fechado acima de 20
+  pendentes, `DEFAULT_MAX_PENDING`, porque acima disso é reconciliação histórica, não lote novo).
+- `infra/runbooks/RECONCILIACAO_DRIFT_MIGRATIONS.md` — "Condição atual": em 31/08/2026 os Gates B, C e E
+  reprovaram e o projeto de staging hospedado nunca foi fornecido; `migration repair` e a ativação do squash
+  seguem **bloqueados** por decisão registrada.
+- O mesmo fenômeno é a origem do incidente A-036 (lote de RLS de 19–31/07/2026 presente no repo e nunca
   aplicado ao banco vivo).
 
-### 14.4 Por que nÃ£o abrir PR reescrevendo as 33 migrations
+### 14.4 Por que não abrir PR reescrevendo as 33 migrations
 
-Fazer as 33 arquivarem `DROP VIEW IF EXISTS` antes dos `CREATE OR REPLACE` deixaria o Preview verde, mas Ã©
-exatamente o que o runbook proÃ­be:
+Fazer as 33 arquivarem `DROP VIEW IF EXISTS` antes dos `CREATE OR REPLACE` deixaria o Preview verde, mas é
+exatamente o que o runbook proíbe:
 
-- regra 3 â€” nada de `db push`/replay enquanto existir diff fÃ­sico nÃ£o explicado (Gate C reprovado);
-- regra 4 â€” nada de `migration repair` para deixar a lista visualmente verde;
-- Gate B â€” "NÃ£o 'corrigir para continuar' na mesma execuÃ§Ã£o: isso destruiria a prova do histÃ³rico real".
+- regra 3 — nada de `db push`/replay enquanto existir diff físico não explicado (Gate C reprovado);
+- regra 4 — nada de `migration repair` para deixar a lista visualmente verde;
+- Gate B — "Não 'corrigir para continuar' na mesma execução: isso destruiria a prova do histórico real".
 
-O Preview lÃª o ledger do branch, e o ledger canÃ´nico tem 1139 versÃµes. NÃ£o hÃ¡ migration nova pendente por
-trabalho desta sessÃ£o: as 33 sÃ£o histÃ³rico de 03 â†’ 10/2026. ReescrevÃª-las apaga a evidÃªncia que a
-reconciliaÃ§Ã£o usa e continua sem provar qual DDL realmente estÃ¡ materializado no banco.
+O Preview lê o ledger do branch, e o ledger canônico tem 1139 versões. Não há migration nova pendente por
+trabalho desta sessão: as 33 são histórico de 03 → 10/2026. Reescrevê-las apaga a evidência que a
+reconciliação usa e continua sem provar qual DDL realmente está materializado no banco.
 
-### 14.5 NÃ£o hÃ¡ exposiÃ§Ã£o de seguranÃ§a â€” verificado no banco vivo
+### 14.5 Não há exposição de segurança — verificado no banco vivo
 
-No commit atual da `main` (`256e836b9`), os dois checks que leem o banco de produÃ§Ã£o passaram:
+No commit atual da `main` (`256e836b9`), os dois checks que leem o banco de produção passaram:
 
 ```
-success    Integridade do banco canÃ´nico (live)
-success    RLS live (pÃ³s-merge, nÃ£o bloqueante)
+success    Integridade do banco canônico (live)
+success    RLS live (pós-merge, não bloqueante)
 ```
 
-O job `Integridade do banco canÃ´nico (live)` (`.github/workflows/ci.yml:485`) executa os cinco audits contra
-o banco vivo â€” `audit-db-search-path.mjs`, `audit-rls-pii.mjs`, `audit-rls-least-privilege.mjs`,
+O job `Integridade do banco canônico (live)` (`.github/workflows/ci.yml:485`) executa os cinco audits contra
+o banco vivo — `audit-db-search-path.mjs`, `audit-rls-pii.mjs`, `audit-rls-least-privilege.mjs`,
 `audit-rls-tenant-open.mjs`, `audit-secdef-authz.mjs` (`ci.yml:548-587`). Como os audits passam lendo o
-schema real, os efeitos de seguranÃ§a das 33 migrations ausentes do ledger estÃ£o materializados em produÃ§Ã£o:
-o drift Ã© de **escrituraÃ§Ã£o**, nÃ£o de comportamento. Nenhuma correÃ§Ã£o de RLS/search_path estÃ¡ faltando em
-produÃ§Ã£o por causa dele.
+schema real, os efeitos de segurança das 33 migrations ausentes do ledger estão materializados em produção:
+o drift é de **escrituração**, não de comportamento. Nenhuma correção de RLS/search_path está faltando em
+produção por causa dele.
 
-Dos 33 pendentes, os que mais importam por tema (RLS, Storage, `search_path`) sÃ£o
+Dos 33 pendentes, os que mais importam por tema (RLS, Storage, `search_path`) são
 `20260719150000_storage_bucket_security_hardening`, `20260719191000_empresa_id_not_null_constraints`,
 `20260724000700_fix_rls_recrutamento_onboarding`,
 `20260724000900_fix_rls_atrasos_adicionais_gratificacoes`, `20260724140001_t007_backup_logs_rls`,
 `20260724150000_t008_storage_tenant_path_scope`, `20260816000000_p1_024_policies_orfas` e
 `20260912151000_p1_function_search_path` / `20260912152000_p0_pgcrypto_routine_search_path`.
 
-### 14.6 ConsequÃªncia
+### 14.6 Consequência
 
-`Supabase Preview` continua vermelho **por decisÃ£o de processo, nÃ£o por bug**: sÃ³ fecha com a reconciliaÃ§Ã£o
-completa (Gates Aâ€“E) e um projeto de staging hospedado. NÃ£o Ã© check bloqueante de merge â€” nenhuma PR fica
-presa por ele. O que nÃ£o se deve fazer Ã© tratÃ¡-lo como "uma migration quebrada" e reescrever histÃ³rico.
+`Supabase Preview` continua vermelho **por decisão de processo, não por bug**: só fecha com a reconciliação
+completa (Gates A–E) e um projeto de staging hospedado. Não é check bloqueante de merge — nenhuma PR fica
+presa por ele. O que não se deve fazer é tratá-lo como "uma migration quebrada" e reescrever histórico.
 
 ---
 
@@ -684,10 +699,16 @@ verificados:
 
 O que **foi** reaproveitado: o mapa de buckets que ela documentava e a
 intenção de escopo por tenant. O comentário dela sobre "fluxo por token" em
-`ContratacaoPage` está obsoleto — essa página não faz upload em
-`documentos-admissao`.
+`ContratacaoPage` descrevia o caminho certo, mas o código de `main` não o seguia:
+`src/hooks/useDocumentOCR.ts` (linhas 33/40/53 em `42d5a1c4`) fazia
+`storage.from('documentos-admissao').upload(...)` direto do navegador do candidato
+— sem sessão e contra um bucket privado — e devolvia `getPublicUrl`, que rende
+`/object/public/...` e nunca serve o arquivo. O envio correto (edge function
+`admissao-publica` com `service_role` depois de validar o token, no bucket
+`documentos`) foi implementado na PR #906, junto com a remoção da policy pública
+que sustentava o furo.
 
-### 15.6 Pendências de app identificadas (não são DDL, não foram corrigidas aqui)
+### 15.6 Pendências de app identificadas (corrigidas na PR #906)
 
 1. `src/hooks/useDocumentOCR.ts:40` usa `getPublicUrl` em bucket **privado**. A
    URL devolvida é `/object/public/...`, que não serve o arquivo. O correto é
@@ -697,7 +718,21 @@ intenção de escopo por tenant. O comentário dela sobre "fluxo por token" em
    aceita (é o rascunho do dono), mas isso impede qualquer varredura por
    tenant — o rascunho fica órfão se o usuário abandonar o fluxo.
 
-Ambos são correção de app, em PR separada, e não bloqueiam as policies acima.
+Resolução (PR #906, branch `claude/fix-ocr-admissao-publica-261126-1230`):
+
+1. O envio do candidato passa a ser feito pela edge function `admissao-publica`
+   com `service_role`, depois de validar o token — o Storage nega INSERT a `anon`
+   de propósito, e o upload direto do navegador era o defeito de origem (não o tipo
+   de URL). A leitura pelo RH usa `createSignedUrl` de 5 minutos no mesmo bucket
+   `documentos`.
+2. A policy pública que sustentava esse caminho é removida por
+   `supabase/migrations/20261126120000_storage_documentos_admissao_sem_policy.sql`,
+   que deixa `documentos-admissao` sem policy (deny-by-default) como decisão
+   registrada em `20261117193000`.
+
+A leitura por tenant é `documentos_select_admissao_tenant` (`20261126130000`), que usa
+`storage_path_admissao_id()` — não `((storage.foldername(name))[1])::uuid`, que estoura
+cast em path cuja primeira pasta não é UUID.
 
 ---
 
@@ -712,10 +747,19 @@ em produção. A diferença decide se há incidente.
 
 ### 16.2 Medição
 
-1172 arquivos locais, 1132 versões no ledger, 40 ausentes:
+Medição única e datada — a tabela completa está em §14.3. Em `main` `7f047bcdd`,
+contra o ledger lido no run 45829436413: 1174 arquivos locais, 1141 versões no
+ledger, **33 ausentes**.
 
-- 7 legados (`001`..`007`), anteriores ao versionamento.
-- 33 versionadas, de `20260317001935` a `20261012130000`.
+- As 58 legadas (7 de `001`..`007` + 51 de 16 dígitos) existem dos dois lados e se
+  cancelam; não entram na conta das ausentes.
+- 33 versionadas de 14 dígitos, de `20260317001935` a `20261012130000`.
+- 0 entradas no ledger sem arquivo correspondente no repositório.
+
+Um número anterior neste documento (1132 no ledger × 40 ausentes) era de uma leitura
+anterior do mesmo dia, antes de duas PRs serem aplicadas — a diferença vem do momento
+da medição, não dos sete arquivos legados (esses aparecem nos dois lados). Ver a nota
+de instabilidade em §14.3.
 
 As 33 foram conferidas **objeto por objeto** contra o schema vivo: nenhum
 objeto consumido pelo app depende delas. Nenhuma RPC citada em `src/` ou em
