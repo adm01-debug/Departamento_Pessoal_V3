@@ -265,27 +265,15 @@ jobs:
           # escrita de provisoes_folha e de historico_calculos_folha. Elas liam
           # app_metadata->>'empresa_id' do JWT (claim forjavel pelo cliente) e o
           # gate de RLS sobre PII reprovava. Passam a usar public.pertence_a_empresa.
+          # 26/11/2026: a lista abaixo e o LOTE ATUAL, com UM alvo - as
+          # policies de Storage que faltam nos buckets consumidos pelo app
+          # (auditoria de 26/11/2026: 20 buckets, 11 sem nenhuma policy, 8
+          # usados pelo client). As 19 migrations que estavam aqui
+          # (20261123090000 ... 20261125200000) saem do lote e voltam num
+          # dispatch proprio: 20 arquivos de uma vez tornariam impossivel
+          # atribuir um efeito em producao a um unico lote.
           for migration in \
-            20261123090000_ponto_rep_converter_batidas.sql \
-            20261122090000_recibos_ferias_criar_tabela_ausente.sql \
-            20261122110000_ponto_rep_funcionarios_mascara_cpf.sql \
-            20261122110500_ponto_rep_vinculo_unicidade_reversa.sql \
-            20261122130000_indices_fk_join_ponto_pix.sql \
-            20261123150000_ponto_rep_feriados_horarios.sql \
-            20261122041500_guias_fgts_digital_rls_por_empresa.sql \
-            20261124120000_dreno_search_path_extensao.sql \
-            20260719170000_security_indexes_constraints.sql \
-            20260719190000_audit_delete_trigger.sql \
-            20260719193000_security_monitoring_views.sql \
-            20260724140000_p4_072_mv_dashboards.sql \
-            20260725100000_p3_060_backup_logs.sql \
-            20260804000000_p0_010_write_policies_provisoes.sql \
-            20260817000000_p4_071_indices_compostos_top20.sql \
-            20261124150000_backup_logs_rls_policy.sql \
-            20261125120000_secdef_refresh_dashboard_views_revoke.sql \
-            20261125130000_provisoes_folha_tenant_pertence.sql \
-            20261125140000_backup_logs_revoke_anon_e_tenant_real.sql \
-            20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql
+            20261126090000_storage_policies_buckets_app.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
