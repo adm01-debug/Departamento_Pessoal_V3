@@ -11,6 +11,13 @@ const { maybeSingleMock, enviarLinkMock, toastMock, workflowMock } = vi.hoisted(
 
 vi.mock('sonner', () => ({ toast: toastMock }));
 
+// A lista de anexos dispara a própria consulta (useQuery) e tem teste dedicado
+// em ArquivosAdmissaoLista.test.tsx. Aqui ela é isolada para os testes do
+// diálogo não exigirem QueryClientProvider em cada render.
+vi.mock('@/components/admissoes/ArquivosAdmissaoLista', () => ({
+  ArquivosAdmissaoLista: () => null,
+}));
+
 vi.mock('react-router-dom', () => ({ useNavigate: () => vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => {

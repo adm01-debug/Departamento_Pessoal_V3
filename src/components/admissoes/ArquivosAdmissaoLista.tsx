@@ -18,6 +18,18 @@ const TIPO_LABEL: Record<string, string> = {
   ctps: 'Carteira de trabalho',
 };
 
+/**
+ * O tipo vem de um INSERT do candidato (token público) e não é validado por
+ * enum no banco: um valor como "constructor" cairia em Object.prototype e o
+ * React abortaria o render. Só rótulos próprios do mapa são usados.
+ */
+function rotuloTipo(tipo: string | null | undefined): string {
+  if (typeof tipo === 'string' && Object.prototype.hasOwnProperty.call(TIPO_LABEL, tipo)) {
+    return TIPO_LABEL[tipo];
+  }
+  return typeof tipo === 'string' && tipo.trim() ? tipo : 'Documento';
+}
+
 function formatarTamanho(bytes: number | null): string | null {
   if (!bytes || bytes <= 0) return null;
   const mb = bytes / (1024 * 1024);
@@ -42,21 +54,37 @@ interface ArquivosAdmissaoListaProps {
 export function ArquivosAdmissaoLista({ admissaoId }: ArquivosAdmissaoListaProps) {
   const [abrindoId, setAbrindoId] = useState<string | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [linkBloqueado, setLinkBloqueado] = useState<{ id: string; url: string } | null>(null);
 
-  const { data: arquivos = [], isLoading } = useQuery({
+  const { data: arquivos = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['documentos-admissao', admissaoId],
     queryFn: () => documentosAdmissaoService.listar(admissaoId),
     enabled: Boolean(admissaoId),
+    // O candidato pode enviar/trocar um documento enquanto o RH tem os detalhes
+    // abertos: sem isso o cache de 5 minutos esconderia o envio novo.
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   const abrir = useCallback(async (arquivo: Tables<'documentos_admissao'>) => {
     setErro(null);
+    setLinkBloqueado(null);
     setAbrindoId(arquivo.id);
+    // A aba precisa nascer no gesto do clique: depois do await o navegador não
+    // considera mais ação do usuário e o pop-up é bloqueado sem erro visível.
+    const janela = window.open('about:blank', '_blank');
+    if (janela) janela.opener = null;
     try {
       const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(arquivo.url, 300);
       if (error || !data?.signedUrl) throw error ?? new Error('URL assinada indisponível');
-      window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
+      if (janela) {
+        janela.location.replace(data.signedUrl);
+      } else {
+        setLinkBloqueado({ id: arquivo.id, url: data.signedUrl });
+        setErro('O navegador bloqueou a nova aba. Use o link "Abrir arquivo".');
+      }
     } catch {
+      janela?.close();
       setErro('Não foi possível abrir o arquivo. Tente novamente.');
     } finally {
       setAbrindoId(null);
@@ -78,6 +106,24 @@ export function ArquivosAdmissaoLista({ admissaoId }: ArquivosAdmissaoListaProps
       <p className="flex items-center gap-1.5 px-2 py-1 text-xs text-muted-foreground">
         <Loader2 className="h-3 w-3 animate-spin" /> Carregando anexos…
       </p>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-1 px-2 py-1">
+        <p className="flex items-center gap-1 text-xs text-destructive-vivid">
+          <AlertCircle className="h-3 w-3" /> Não foi possível carregar os anexos.
+        </p>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-7 gap-1 rounded-lg px-2 text-[11px]"
+          onClick={() => void refetch()}
+        >
+          Tentar de novo
+        </Button>
+      </div>
     );
   }
 
@@ -103,7 +149,7 @@ export function ArquivosAdmissaoLista({ admissaoId }: ArquivosAdmissaoListaProps
               <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-xs text-foreground">
-                  {TIPO_LABEL[arquivo.tipo] ?? arquivo.tipo}
+                  {rotuloTipo(arquivo.tipo)}
                   {substituido ? (
                     <span className="ml-2 text-[10px] text-muted-foreground">substituído</span>
                   ) : (
@@ -115,20 +161,31 @@ export function ArquivosAdmissaoLista({ admissaoId }: ArquivosAdmissaoListaProps
                   {tamanho && ` · ${tamanho}`}
                 </p>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn('h-7 shrink-0 gap-1 rounded-lg px-2 text-[11px]')}
-                disabled={abrindoId === arquivo.id}
-                onClick={() => void abrir(arquivo)}
-              >
-                {abrindoId === arquivo.id ? (
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                ) : (
-                  <ExternalLink className="h-3 w-3" />
-                )}
-                Abrir
-              </Button>
+              {linkBloqueado?.id === arquivo.id ? (
+                <a
+                  href={linkBloqueado.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-7 shrink-0 rounded-lg px-2 text-[11px] font-medium text-primary underline"
+                >
+                  Abrir arquivo
+                </a>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={cn('h-7 shrink-0 gap-1 rounded-lg px-2 text-[11px]')}
+                  disabled={abrindoId === arquivo.id}
+                  onClick={() => void abrir(arquivo)}
+                >
+                  {abrindoId === arquivo.id ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <ExternalLink className="h-3 w-3" />
+                  )}
+                  Abrir
+                </Button>
+              )}
             </li>
           );
         })}

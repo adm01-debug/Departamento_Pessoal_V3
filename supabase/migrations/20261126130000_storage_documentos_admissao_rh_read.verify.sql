@@ -8,7 +8,16 @@ SELECT CASE
        AND pg_catalog.pg_policies.tablename = 'objects'
        AND pg_catalog.pg_policies.policyname = 'documentos_select_admissao_tenant'
        AND pg_catalog.pg_policies.cmd = 'SELECT'
-  ) THEN 'FALHOU: policy documentos_select_admissao_tenant ausente em storage.objects'
+       -- 'authenticated' como role: sem isso a policy poderia existir para outro
+       -- role e o RH seguiria sem ler nada. (a view pg_policies expoe `roles`;
+       -- o oidvector `polroles` so existe na tabela pg_policy)
+       AND 'authenticated' = ANY (pg_catalog.pg_policies.roles)
+       AND pg_catalog.pg_policies.permissive = 'PERMISSIVE'
+       -- predicado, nao so o nome: a migration preserva policy homonima, entao o
+       -- workflow aprovaria uma definicao que nao resolve a empresa da admissao.
+       AND pg_catalog.pg_policies.qual LIKE '%storage_path_admissao_id%'
+       AND pg_catalog.pg_policies.qual LIKE '%user_belongs_to_empresa%'
+  ) THEN 'FALHOU: policy documentos_select_admissao_tenant ausente/incompleta em storage.objects'
   WHEN NOT (
     SELECT c.relrowsecurity
       FROM pg_catalog.pg_class c

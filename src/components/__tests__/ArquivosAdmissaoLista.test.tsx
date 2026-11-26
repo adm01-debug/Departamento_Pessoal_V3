@@ -65,9 +65,10 @@ describe('ArquivosAdmissaoLista', () => {
     expect(screen.getByText(/cpf\.pdf/)).toBeTruthy();
   });
 
-  it('abre o anexo por URL assinada no bucket documentos', async () => {
+  it('abre o anexo em aba criada no clique, com URL assinada', async () => {
     listar.mockResolvedValue([arquivo]);
-    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+    const janela = { opener: {}, location: { replace: vi.fn() } };
+    const open = vi.spyOn(window, 'open').mockImplementation(() => janela as unknown as Window);
     render(<ArquivosAdmissaoLista admissaoId="adm-1" />);
 
     await userEvent.click(await screen.findByRole('button', { name: /Abrir/i }));
@@ -75,9 +76,40 @@ describe('ArquivosAdmissaoLista', () => {
     await waitFor(() => {
       expect(from).toHaveBeenCalledWith('documentos');
       expect(createSignedUrl).toHaveBeenCalledWith('admissao_adm-1/cpf_123.pdf', 300);
+      expect(janela.location.replace).toHaveBeenCalledWith('https://exemplo/signed');
     });
-    expect(open).toHaveBeenCalledWith('https://exemplo/signed', '_blank', 'noopener,noreferrer');
+    expect(janela.opener).toBeNull();
+    expect(open).toHaveBeenCalledWith('about:blank', '_blank');
     open.mockRestore();
+  });
+
+  it('oferece link real quando o navegador bloqueia a nova aba', async () => {
+    listar.mockResolvedValue([arquivo]);
+    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+    render(<ArquivosAdmissaoLista admissaoId="adm-1" />);
+
+    await userEvent.click(await screen.findByRole('button', { name: /Abrir/i }));
+
+    const link = await screen.findByRole('link', { name: /Abrir arquivo/i });
+    expect(link.getAttribute('href')).toBe('https://exemplo/signed');
+    expect(link.getAttribute('target')).toBe('_blank');
+    open.mockRestore();
+  });
+
+  it('distingue falha de consulta de lista vazia', async () => {
+    listar.mockRejectedValue(new Error('sem permissão'));
+    render(<ArquivosAdmissaoLista admissaoId="adm-1" />);
+
+    expect(await screen.findByText(/Não foi possível carregar os anexos/i)).toBeTruthy();
+    expect(screen.getByRole('button', { name: /Tentar de novo/i })).toBeTruthy();
+    expect(screen.queryByText(/Nenhum arquivo enviado/i)).toBeNull();
+  });
+
+  it('não quebra com tipo herdado do protótipo', async () => {
+    listar.mockResolvedValue([{ ...arquivo, tipo: 'constructor' }]);
+    render(<ArquivosAdmissaoLista admissaoId="adm-1" />);
+
+    expect(await screen.findByText('constructor')).toBeTruthy();
   });
 
   it('explica a falha quando a URL assinada não vem', async () => {
