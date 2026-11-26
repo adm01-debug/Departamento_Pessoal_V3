@@ -7,10 +7,6 @@
       "section": "cron"
     },
     {
-      "error": "permission denied for schema supabase_migrations",
-      "section": "migrations"
-    },
-    {
       "error": "permission denied for schema storage",
       "section": "storage"
     },
@@ -27,7 +23,7 @@
       "section": "db_stats.auth"
     }
   ],
-  "gerado_em": "2026-11-26T11:13:12Z",
+  "gerado_em": "2026-11-26T12:20:53Z",
   "gerador": "scripts/supabase_snapshot/snapshot.py",
   "produtor": "supabase-snapshot"
 }

@@ -108286,9 +108286,13 @@
             {
               "file": "supabase/migrations/20261117193000_storage_documentos_tenant_scope.sql",
               "hits": 11
+            },
+            {
+              "file": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql",
+              "hits": 16
             }
           ],
-          "code_total_files": 4,
+          "code_total_files": 5,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -110048,7 +110052,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 34,
+          "code_total_files": 35,
           "cron": [],
           "db": [
             "public.contrato_gerar_token_assinatura",
@@ -144818,6 +144822,108 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_admissao_docs_insert_tenant_ou_temp",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_admissao_docs_select_tenant_ou_temp",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_avatars_delete_owner",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_avatars_insert_owner",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_avatars_select_owner",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_avatars_update_owner",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_comunicados_coletivas_insert_tenant",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_comunicados_coletivas_select_tenant",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_comunicados_coletivas_update_tenant",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_contratos_trabalho_select_tenant",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_ferias_avisos_insert_tenant",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_ferias_avisos_select_tenant",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_ferias_avisos_update_tenant",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_medidas_contestacoes_insert_tenant",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_medidas_contestacoes_select_tenant",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_medidas_disciplinares_select_tenant",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.pol_ponto_biometria_insert_tenant",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "storage.objects.tenant_delete_comprovantes_despesas",
         "severity": "BAIXA"
       },
@@ -145008,7 +145114,5836 @@
         "severity": "INFO"
       }
     ],
-    "migrations": null,
+    "migrations": [
+      {
+        "name": "core_tables",
+        "statements": null,
+        "version": "001"
+      },
+      {
+        "name": "colaboradores",
+        "statements": null,
+        "version": "002"
+      },
+      {
+        "name": "folha_ferias_ponto",
+        "statements": null,
+        "version": "003"
+      },
+      {
+        "name": "beneficios_afastamentos",
+        "statements": null,
+        "version": "004"
+      },
+      {
+        "name": "esocial_auditoria",
+        "statements": null,
+        "version": "005"
+      },
+      {
+        "name": "rls_policies",
+        "statements": null,
+        "version": "006"
+      },
+      {
+        "name": "fixup_missing_columns",
+        "statements": null,
+        "version": "007"
+      },
+      {
+        "name": "crud_improvements",
+        "statements": null,
+        "version": "20240101000000"
+      },
+      {
+        "name": "saved_filters",
+        "statements": null,
+        "version": "20241231000000"
+      },
+      {
+        "name": "entity_versions",
+        "statements": null,
+        "version": "20241231000001"
+      },
+      {
+        "name": "dp_production",
+        "statements": null,
+        "version": "20250102000000"
+      },
+      {
+        "name": "1ee162ed-592a-4876-9937-e7ef9eeb40ab",
+        "statements": null,
+        "version": "20251216163151"
+      },
+      {
+        "name": "5e9236cb-9e7a-4cfc-b4af-28fd14b33aab",
+        "statements": null,
+        "version": "20251216164756"
+      },
+      {
+        "name": "fixup_colaboradores_esocial_cols",
+        "statements": null,
+        "version": "20251216164757"
+      },
+      {
+        "name": "fixup_colaboradores_extra_cols",
+        "statements": null,
+        "version": "20251216164758"
+      },
+      {
+        "name": "dedf6534-1b03-46eb-83f9-c17869c12ab6",
+        "statements": null,
+        "version": "20251216165741"
+      },
+      {
+        "name": "ade849cc-a455-493d-8d48-dae7d9f7e5d0",
+        "statements": null,
+        "version": "20251216170303"
+      },
+      {
+        "name": "18c2435e-fbb6-401a-971a-f97691721229",
+        "statements": null,
+        "version": "20251216170845"
+      },
+      {
+        "name": "dd34c46d-8a2b-48b3-ad7e-84a858cf4532",
+        "statements": null,
+        "version": "20251216171524"
+      },
+      {
+        "name": "38e4cf29-773d-45ec-b021-2e5693734797",
+        "statements": null,
+        "version": "20251216174532"
+      },
+      {
+        "name": "d4e02fb7-340d-4111-b73b-03788b004098",
+        "statements": null,
+        "version": "20251216174736"
+      },
+      {
+        "name": "a4a94e99-8f20-4d56-96a1-ce4bc3608e95",
+        "statements": null,
+        "version": "20251216185708"
+      },
+      {
+        "name": "ed7bd324-10ff-4b37-9fd4-8fca261f3420",
+        "statements": null,
+        "version": "20251216190410"
+      },
+      {
+        "name": "27c48bf7-fcd1-4c91-8dc0-3bb403676255",
+        "statements": null,
+        "version": "20251220131149"
+      },
+      {
+        "name": "0713df91-caee-4948-87f6-6666132af9a7",
+        "statements": null,
+        "version": "20251220131540"
+      },
+      {
+        "name": "fixup_notificacoes_user_id",
+        "statements": null,
+        "version": "20251220131541"
+      },
+      {
+        "name": "c967489d-2302-4f40-b8a0-a872d88aab60",
+        "statements": null,
+        "version": "20251220132737"
+      },
+      {
+        "name": "47523292-e66b-4fa8-bd73-c34e09b08691",
+        "statements": null,
+        "version": "20251220133039"
+      },
+      {
+        "name": "07ac8a88-5e83-476f-900f-e6ea9bc68ff2",
+        "statements": null,
+        "version": "20251220135248"
+      },
+      {
+        "name": "b391397c-d9fc-4e94-a157-0af1e99284a9",
+        "statements": null,
+        "version": "20251220135614"
+      },
+      {
+        "name": "c447a74a-cabb-4b49-adf8-c26dd6c204fc",
+        "statements": null,
+        "version": "20251220140409"
+      },
+      {
+        "name": "d555d554-0c37-495a-bb28-8ff042aa592b",
+        "statements": null,
+        "version": "20251220142910"
+      },
+      {
+        "name": "ea21fcb0-ad15-44f1-8cea-24025d484199",
+        "statements": null,
+        "version": "20251220144559"
+      },
+      {
+        "name": "d8485765-58d8-464d-ab9c-25e44c7115c2",
+        "statements": null,
+        "version": "20251220145056"
+      },
+      {
+        "name": "8b801cd7-7ca6-4978-807f-9d741b8ca4ea",
+        "statements": null,
+        "version": "20251220151012"
+      },
+      {
+        "name": "ce3c033a-f790-4baa-8678-2aa1ed1fc175",
+        "statements": null,
+        "version": "20251220180636"
+      },
+      {
+        "name": "11071631-813d-4532-80a1-156ef4dfa4c0",
+        "statements": null,
+        "version": "20251221214653"
+      },
+      {
+        "name": "fixup_empresa_id_timestamp_tables",
+        "statements": null,
+        "version": "20251228000000"
+      },
+      {
+        "name": "fixup_holerites_missing_cols",
+        "statements": null,
+        "version": "20251228000001"
+      },
+      {
+        "name": "create_dependentes",
+        "statements": null,
+        "version": "2025122813133501"
+      },
+      {
+        "name": "create_jornadas",
+        "statements": null,
+        "version": "2025122813133602"
+      },
+      {
+        "name": "create_escalas",
+        "statements": null,
+        "version": "2025122813133603"
+      },
+      {
+        "name": "create_turnos",
+        "statements": null,
+        "version": "2025122813133704"
+      },
+      {
+        "name": "create_faltas",
+        "statements": null,
+        "version": "2025122813133705"
+      },
+      {
+        "name": "create_atrasos",
+        "statements": null,
+        "version": "2025122813133806"
+      },
+      {
+        "name": "create_adicionais",
+        "statements": null,
+        "version": "2025122813133907"
+      },
+      {
+        "name": "create_gratificacoes",
+        "statements": null,
+        "version": "2025122813133908"
+      },
+      {
+        "name": "create_comissoes",
+        "statements": null,
+        "version": "2025122813134009"
+      },
+      {
+        "name": "create_pensoes",
+        "statements": null,
+        "version": "2025122813134010"
+      },
+      {
+        "name": "create_emprestimos_consignados",
+        "statements": null,
+        "version": "2025122813134111"
+      },
+      {
+        "name": "create_holerites",
+        "statements": null,
+        "version": "2025122813134212"
+      },
+      {
+        "name": "create_recibos_ferias",
+        "statements": null,
+        "version": "2025122813134213"
+      },
+      {
+        "name": "create_recibos_rescisao",
+        "statements": null,
+        "version": "2025122813135714"
+      },
+      {
+        "name": "create_guias_inss",
+        "statements": null,
+        "version": "2025122813135715"
+      },
+      {
+        "name": "create_guias_fgts",
+        "statements": null,
+        "version": "2025122813135816"
+      },
+      {
+        "name": "create_darfs",
+        "statements": null,
+        "version": "2025122813135817"
+      },
+      {
+        "name": "create_grrf",
+        "statements": null,
+        "version": "2025122813135918"
+      },
+      {
+        "name": "create_trct",
+        "statements": null,
+        "version": "2025122813140019"
+      },
+      {
+        "name": "create_homologacoes",
+        "statements": null,
+        "version": "2025122813140020"
+      },
+      {
+        "name": "create_exames_medicos",
+        "statements": null,
+        "version": "2025122813140121"
+      },
+      {
+        "name": "create_asos",
+        "statements": null,
+        "version": "2025122813140122"
+      },
+      {
+        "name": "create_epis",
+        "statements": null,
+        "version": "2025122813140223"
+      },
+      {
+        "name": "create_cas",
+        "statements": null,
+        "version": "2025122813140224"
+      },
+      {
+        "name": "create_treinamentos",
+        "statements": null,
+        "version": "2025122813140325"
+      },
+      {
+        "name": "create_avaliacoes",
+        "statements": null,
+        "version": "2025122813140426"
+      },
+      {
+        "name": "create_dependentes",
+        "statements": null,
+        "version": "20251228131616"
+      },
+      {
+        "name": "create_jornadas",
+        "statements": null,
+        "version": "20251228131617"
+      },
+      {
+        "name": "create_escalas",
+        "statements": null,
+        "version": "20251228131618"
+      },
+      {
+        "name": "create_turnos",
+        "statements": null,
+        "version": "20251228131619"
+      },
+      {
+        "name": "create_faltas",
+        "statements": null,
+        "version": "20251228131620"
+      },
+      {
+        "name": "create_atrasos",
+        "statements": null,
+        "version": "20251228131621"
+      },
+      {
+        "name": "create_adicionais",
+        "statements": null,
+        "version": "20251228131622"
+      },
+      {
+        "name": "create_gratificacoes",
+        "statements": null,
+        "version": "20251228131623"
+      },
+      {
+        "name": "create_comissoes",
+        "statements": null,
+        "version": "20251228131624"
+      },
+      {
+        "name": "create_pensoes",
+        "statements": null,
+        "version": "20251228131625"
+      },
+      {
+        "name": "create_emprestimos_consignados",
+        "statements": null,
+        "version": "20251228131626"
+      },
+      {
+        "name": "create_holerites",
+        "statements": null,
+        "version": "20251228131627"
+      },
+      {
+        "name": "create_recibos_ferias",
+        "statements": null,
+        "version": "20251228131628"
+      },
+      {
+        "name": "create_recibos_rescisao",
+        "statements": null,
+        "version": "20251228131660"
+      },
+      {
+        "name": "create_guias_inss",
+        "statements": null,
+        "version": "20251228131661"
+      },
+      {
+        "name": "create_guias_fgts",
+        "statements": null,
+        "version": "20251228131662"
+      },
+      {
+        "name": "create_darfs",
+        "statements": null,
+        "version": "20251228131663"
+      },
+      {
+        "name": "create_exames_medicos",
+        "statements": null,
+        "version": "20251228131667"
+      },
+      {
+        "name": "create_asos",
+        "statements": null,
+        "version": "20251228131668"
+      },
+      {
+        "name": "create_epis",
+        "statements": null,
+        "version": "20251228131669"
+      },
+      {
+        "name": "create_cas",
+        "statements": null,
+        "version": "20251228131670"
+      },
+      {
+        "name": "create_treinamentos",
+        "statements": null,
+        "version": "20251228131671"
+      },
+      {
+        "name": "create_avaliacoes",
+        "statements": null,
+        "version": "20251228131672"
+      },
+      {
+        "name": "colaboradores_historico",
+        "statements": null,
+        "version": "20251228192542843"
+      },
+      {
+        "name": "folha_competencias",
+        "statements": null,
+        "version": "20251228192543844"
+      },
+      {
+        "name": "folha_rubricas",
+        "statements": null,
+        "version": "20251228192543845"
+      },
+      {
+        "name": "folha_calculos",
+        "statements": null,
+        "version": "20251228192544846"
+      },
+      {
+        "name": "ponto_banco_horas",
+        "statements": null,
+        "version": "20251228192545847"
+      },
+      {
+        "name": "ponto_escalas",
+        "statements": null,
+        "version": "20251228192545848"
+      },
+      {
+        "name": "ponto_compensacoes",
+        "statements": null,
+        "version": "20251228192546849"
+      },
+      {
+        "name": "ferias_programacao",
+        "statements": null,
+        "version": "20251228192546850"
+      },
+      {
+        "name": "ferias_abono",
+        "statements": null,
+        "version": "20251228192547851"
+      },
+      {
+        "name": "rescisao_simulacoes",
+        "statements": null,
+        "version": "20251228192548852"
+      },
+      {
+        "name": "rescisao_homologacoes",
+        "statements": null,
+        "version": "20251228192548853"
+      },
+      {
+        "name": "beneficios_elegibilidade",
+        "statements": null,
+        "version": "20251228192549854"
+      },
+      {
+        "name": "beneficios_movimentacoes",
+        "statements": null,
+        "version": "20251228192549855"
+      },
+      {
+        "name": "esocial_lotes",
+        "statements": null,
+        "version": "20251228192550856"
+      },
+      {
+        "name": "esocial_retornos",
+        "statements": null,
+        "version": "20251228192550857"
+      },
+      {
+        "name": "documentos_assinaturas",
+        "statements": null,
+        "version": "20251228192551858"
+      },
+      {
+        "name": "documentos_versoes",
+        "statements": null,
+        "version": "20251228192551859"
+      },
+      {
+        "name": "treinamentos_certificados",
+        "statements": null,
+        "version": "20251228192552860"
+      },
+      {
+        "name": "treinamentos_avaliacoes",
+        "statements": null,
+        "version": "20251228192552861"
+      },
+      {
+        "name": "sst_exames",
+        "statements": null,
+        "version": "20251228192553862"
+      },
+      {
+        "name": "sst_epis",
+        "statements": null,
+        "version": "20251228192553863"
+      },
+      {
+        "name": "auditoria_logs",
+        "statements": null,
+        "version": "20251228192554864"
+      },
+      {
+        "name": "notificacoes_templates",
+        "statements": null,
+        "version": "20251228192555865"
+      },
+      {
+        "name": "integracao_logs",
+        "statements": null,
+        "version": "20251228192555866"
+      },
+      {
+        "name": "cache_tabelas",
+        "statements": null,
+        "version": "20251228192556867"
+      },
+      {
+        "name": "293f2d4e-53ba-4d3c-8a07-7d30d7e7627e",
+        "statements": null,
+        "version": "20251231120416"
+      },
+      {
+        "name": "43e243cd-475a-4405-b4d9-77b4bfde5fdf",
+        "statements": null,
+        "version": "20251231124528"
+      },
+      {
+        "name": "4c75f540-4be7-4e43-acf9-bc17784818f7",
+        "statements": null,
+        "version": "20251231130337"
+      },
+      {
+        "name": "c0ee8089-6e25-426b-90aa-57132bd2880d",
+        "statements": null,
+        "version": "20251231130956"
+      },
+      {
+        "name": "a44794d3-9ff9-45af-bdf9-68bc1af6d101",
+        "statements": null,
+        "version": "20251231131249"
+      },
+      {
+        "name": "b93cf26f-825e-4c56-a5c0-6cefdcc24bb8",
+        "statements": null,
+        "version": "20251231132429"
+      },
+      {
+        "name": "e06d975c-bcbb-4658-9bbe-0a16c707ac52",
+        "statements": null,
+        "version": "20260306004534"
+      },
+      {
+        "name": "da5427d3-7482-4bdf-9c20-fac8d457be98",
+        "statements": null,
+        "version": "20260306004825"
+      },
+      {
+        "name": "f95140a5-59d9-4050-aef9-0be138b9b381",
+        "statements": null,
+        "version": "20260306004911"
+      },
+      {
+        "name": "d9cc8360-ba1d-4820-81ec-150a9331e3da",
+        "statements": null,
+        "version": "20260306004956"
+      },
+      {
+        "name": "f32c0b56-1cbb-48ce-bc2c-382d06d6be88",
+        "statements": null,
+        "version": "20260306005302"
+      },
+      {
+        "name": "adddbd0e-69e6-454e-9456-f6ae103c1057",
+        "statements": null,
+        "version": "20260306005329"
+      },
+      {
+        "name": "5be7a8a5-9820-476a-9f7a-d51f20ea40f3",
+        "statements": null,
+        "version": "20260306005617"
+      },
+      {
+        "name": "2892b365-46e2-4efa-af63-a97bc84bd942",
+        "statements": null,
+        "version": "20260306005653"
+      },
+      {
+        "name": "26c3c73c-a102-4dd0-9a79-68ab94792f06",
+        "statements": null,
+        "version": "20260306005901"
+      },
+      {
+        "name": "c07d9a87-e33b-44ac-8ce2-c8d69663f254",
+        "statements": null,
+        "version": "20260306010115"
+      },
+      {
+        "name": "15c75912-6900-4203-856d-eba861eafdee",
+        "statements": null,
+        "version": "20260306010225"
+      },
+      {
+        "name": "e1d7f934-fdab-47cd-bbb4-fe652d0db8bd",
+        "statements": null,
+        "version": "20260314204312"
+      },
+      {
+        "name": "05ce1d25-efb6-4c00-9e38-cdd3cf56c3ba",
+        "statements": null,
+        "version": "20260315191331"
+      },
+      {
+        "name": "b1b7216e-7b7b-4ee9-9652-14599621e2df",
+        "statements": null,
+        "version": "20260315193923"
+      },
+      {
+        "name": "8d57b82c-f304-4067-9e43-1cac1c0a7c6c",
+        "statements": null,
+        "version": "20260315195040"
+      },
+      {
+        "name": "066fe7fd-ad10-42ac-b9b2-61490b4b9072",
+        "statements": null,
+        "version": "20260315201157"
+      },
+      {
+        "name": "94c24c18-ea7f-4e37-9f97-8adbf3e33738",
+        "statements": null,
+        "version": "20260315202618"
+      },
+      {
+        "name": "461eeabb-aa34-47a9-a210-b644267eeb44",
+        "statements": null,
+        "version": "20260315202706"
+      },
+      {
+        "name": "5eef123e-5aa4-4387-9c22-3e75d716d1a8",
+        "statements": null,
+        "version": "20260315212539"
+      },
+      {
+        "name": "22f1107b-4396-44b9-bfaf-cf7030e9fecd",
+        "statements": null,
+        "version": "20260315215434"
+      },
+      {
+        "name": "4e9f2068-94a3-4e7d-9916-c4eb39f3ced0",
+        "statements": null,
+        "version": "20260315220807"
+      },
+      {
+        "name": "aff16f44-db8c-4485-88a6-3fc17be8667a",
+        "statements": null,
+        "version": "20260315221402"
+      },
+      {
+        "name": "c195abf9-b6a7-47a0-9894-cb02d6121d62",
+        "statements": null,
+        "version": "20260315221544"
+      },
+      {
+        "name": "df1ab239-f717-4b9d-8905-a0ea0376bb60",
+        "statements": null,
+        "version": "20260315222047"
+      },
+      {
+        "name": "ba6057a1-f7df-4271-8b2e-12448947b960",
+        "statements": null,
+        "version": "20260315223605"
+      },
+      {
+        "name": "d8d6c7e7-5d20-4aa7-8114-49dec16bc7cd",
+        "statements": null,
+        "version": "20260315223659"
+      },
+      {
+        "name": "cdc1e118-a5b5-497a-bb95-d6fcd30cd7fd",
+        "statements": null,
+        "version": "20260315223732"
+      },
+      {
+        "name": "04cb0831-a98d-4be3-a8e9-654c2925fe14",
+        "statements": null,
+        "version": "20260317001800"
+      },
+      {
+        "name": "77c4e14f-abaa-4ae2-b6f0-ac0e6ff1ac57",
+        "statements": null,
+        "version": "20260317001900"
+      },
+      {
+        "name": "fixup_faltas_cols",
+        "statements": null,
+        "version": "20260317001934"
+      },
+      {
+        "name": "fixup_ferias_beneficios_cols",
+        "statements": null,
+        "version": "20260317002430"
+      },
+      {
+        "name": "d47cf6c1-6edb-4f49-b716-fb1fc1278505",
+        "statements": null,
+        "version": "20260317002431"
+      },
+      {
+        "name": "e3edf2b8-4ed4-4e91-9c04-9fc96d5cab81",
+        "statements": null,
+        "version": "20260317003325"
+      },
+      {
+        "name": "7b82a206-b836-4e2a-8ea3-4c32b0360223",
+        "statements": null,
+        "version": "20260317005458"
+      },
+      {
+        "name": "9ff96d52-d8fc-4d84-9e3b-c5a1ae31c4ce",
+        "statements": null,
+        "version": "20260317005518"
+      },
+      {
+        "name": "6b607417-de9c-4b73-a0bd-5aa87acbf54a",
+        "statements": null,
+        "version": "20260317005557"
+      },
+      {
+        "name": "d97e193a-fb41-4e41-b17f-fd67065b6028",
+        "statements": null,
+        "version": "20260317005611"
+      },
+      {
+        "name": "ab20d4cd-5708-41d7-b798-7b69d9b87917",
+        "statements": null,
+        "version": "20260317125552"
+      },
+      {
+        "name": "5c1fd87f-9096-49ed-b02f-246629f449cd",
+        "statements": null,
+        "version": "20260317160026"
+      },
+      {
+        "name": "906b4dee-a9e3-4033-8b6d-1ce8b49f1bfb",
+        "statements": null,
+        "version": "20260317160500"
+      },
+      {
+        "name": "71e014ec-b346-44d8-aa39-d9e11a913676",
+        "statements": null,
+        "version": "20260317222200"
+      },
+      {
+        "name": "7b441d65-aec7-4866-9e55-97a14741b16c",
+        "statements": null,
+        "version": "20260317222231"
+      },
+      {
+        "name": "eaa8d2e8-6c9b-48df-91c1-2103b17744c9",
+        "statements": null,
+        "version": "20260317222251"
+      },
+      {
+        "name": "60cecf5e-ac05-46ba-98cb-947f9f03fa99",
+        "statements": null,
+        "version": "20260317222622"
+      },
+      {
+        "name": "0d293c22-1aea-472b-a37d-2dbbe96714d4",
+        "statements": null,
+        "version": "20260317222959"
+      },
+      {
+        "name": "9cbafdf2-f2ad-4dee-9c2b-e877384d2f4c",
+        "statements": null,
+        "version": "20260317223255"
+      },
+      {
+        "name": "087d2e41-1994-49da-8aa5-d6bbec9b2dd5",
+        "statements": null,
+        "version": "20260317223725"
+      },
+      {
+        "name": "ac5dccb8-781c-4e1d-9b4a-3bb64296e894",
+        "statements": null,
+        "version": "20260323120607"
+      },
+      {
+        "name": "b18ef88b-ec9d-4690-b15b-b99e1aa75a75",
+        "statements": null,
+        "version": "20260402112748"
+      },
+      {
+        "name": "a1190af1-df52-42c0-82a4-b2f6a04f4e92",
+        "statements": null,
+        "version": "20260402140645"
+      },
+      {
+        "name": "328135ac-4071-499e-b543-e97f991f731c",
+        "statements": null,
+        "version": "20260402140700"
+      },
+      {
+        "name": "dc623548-85e7-4957-b5ce-ac9eff825e06",
+        "statements": null,
+        "version": "20260508195703"
+      },
+      {
+        "name": "502f30f8-6ab6-4f23-8e1d-f55fa12dbc6c",
+        "statements": null,
+        "version": "20260508200723"
+      },
+      {
+        "name": "99ae1647-8e19-4a36-bd8d-e8b3b3e41581",
+        "statements": null,
+        "version": "20260508200907"
+      },
+      {
+        "name": "997b6590-590f-4482-bef8-c7008c08a18b",
+        "statements": null,
+        "version": "20260508201011"
+      },
+      {
+        "name": "c669c005-c025-45e0-a2ca-18291f8360a1",
+        "statements": null,
+        "version": "20260508201201"
+      },
+      {
+        "name": "0036a5cc-4300-4c11-b3a8-db846ada4eec",
+        "statements": null,
+        "version": "20260508201229"
+      },
+      {
+        "name": "983340fb-37b8-43fd-b5ec-01f4eb3ae24e",
+        "statements": null,
+        "version": "20260508204629"
+      },
+      {
+        "name": "5d11ffba-c81c-42c4-a91d-afc861621b7d",
+        "statements": null,
+        "version": "20260508204832"
+      },
+      {
+        "name": "a14383bd-faa6-4785-81b4-e0ed279ab3d6",
+        "statements": null,
+        "version": "20260508204933"
+      },
+      {
+        "name": "3f7550fb-cc8c-49c0-9580-0116b8fa110f",
+        "statements": null,
+        "version": "20260509113912"
+      },
+      {
+        "name": "20cebfeb-515c-468f-a265-09459fb92b56",
+        "statements": null,
+        "version": "20260509114144"
+      },
+      {
+        "name": "f2f36e05-f12c-4885-92cd-fe74548fa9d4",
+        "statements": null,
+        "version": "20260509114212"
+      },
+      {
+        "name": "13a3f04f-e7a5-4dbe-bbc5-292357983ed2",
+        "statements": null,
+        "version": "20260509114240"
+      },
+      {
+        "name": "a9f2edbd-524a-42e4-85a9-6620552b6c64",
+        "statements": null,
+        "version": "20260509114418"
+      },
+      {
+        "name": "2ef117de-b8d7-4af9-bced-335a2839baa2",
+        "statements": null,
+        "version": "20260509115302"
+      },
+      {
+        "name": "33636fa8-8ba3-4fc5-be12-5876f53b106d",
+        "statements": null,
+        "version": "20260509115855"
+      },
+      {
+        "name": "67b9b2ec-6cec-4208-85d1-fac0b543d22a",
+        "statements": null,
+        "version": "20260509120300"
+      },
+      {
+        "name": "03e1533f-b165-4618-be38-8eb25a1da535",
+        "statements": null,
+        "version": "20260509122342"
+      },
+      {
+        "name": "42dba63d-6414-446b-84a7-bb9371442b22",
+        "statements": null,
+        "version": "20260509122856"
+      },
+      {
+        "name": "e609f845-6013-4e73-a469-a7df6a1615c3",
+        "statements": null,
+        "version": "20260509123437"
+      },
+      {
+        "name": "8f618a10-3e8e-4e67-a347-9ce392fd521c",
+        "statements": null,
+        "version": "20260509123800"
+      },
+      {
+        "name": "afdb500c-7f07-4cf2-8871-2019640dd2ea",
+        "statements": null,
+        "version": "20260509123902"
+      },
+      {
+        "name": "dbd05100-314e-47ac-878f-98bbcf660cb1",
+        "statements": null,
+        "version": "20260509124932"
+      },
+      {
+        "name": "99c1492d-7997-494c-80c7-878f204fd0b0",
+        "statements": null,
+        "version": "20260509125936"
+      },
+      {
+        "name": "2e3e0571-201c-4a43-bf9c-6248c7f090bd",
+        "statements": null,
+        "version": "20260509133327"
+      },
+      {
+        "name": "d7d6b185-9616-4b51-9ac2-8c942d0dfb0b",
+        "statements": null,
+        "version": "20260509144707"
+      },
+      {
+        "name": "107408e5-380c-4553-af2a-f97bdb584ab5",
+        "statements": null,
+        "version": "20260509151903"
+      },
+      {
+        "name": "58e5d00c-d453-439c-b88f-c6cceab6e489",
+        "statements": null,
+        "version": "20260509152739"
+      },
+      {
+        "name": "5bf8f9c0-7b46-443c-9d80-07c769f965dc",
+        "statements": null,
+        "version": "20260509153525"
+      },
+      {
+        "name": "8b84a5bc-7b3a-4025-bdf3-32ae07bdd70c",
+        "statements": null,
+        "version": "20260509153953"
+      },
+      {
+        "name": "411fcf1e-69c1-4ac2-9387-383ecdff070d",
+        "statements": null,
+        "version": "20260509173546"
+      },
+      {
+        "name": "4a2d0f1d-ae8b-44db-a4cf-1979dd0f353a",
+        "statements": null,
+        "version": "20260509181501"
+      },
+      {
+        "name": "bd40ae34-d8ba-4e0c-bbcc-59570dbaaf21",
+        "statements": null,
+        "version": "20260509182643"
+      },
+      {
+        "name": "274ae2b8-4b8b-4b81-87d7-e0669c73a295",
+        "statements": null,
+        "version": "20260509182847"
+      },
+      {
+        "name": "d6d2a30f-bc06-4e82-af6c-35fffa808d92",
+        "statements": null,
+        "version": "20260509183003"
+      },
+      {
+        "name": "1ce453e2-22bf-4f8e-babb-fcd4847ae9b0",
+        "statements": null,
+        "version": "20260509183921"
+      },
+      {
+        "name": "93765bfe-340c-4c2c-ad40-0a97c612b9f2",
+        "statements": null,
+        "version": "20260509184201"
+      },
+      {
+        "name": "9e484f49-3bba-42c6-b492-fdf3ea4967f4",
+        "statements": null,
+        "version": "20260509184633"
+      },
+      {
+        "name": "f9e5cae7-b34f-4345-9db0-cb8a3a6ebe9f",
+        "statements": null,
+        "version": "20260510123154"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260511141726"
+      },
+      {
+        "name": "301063c3-c283-49c8-8fb7-b716095c30fa",
+        "statements": null,
+        "version": "20260511141729"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260511141751"
+      },
+      {
+        "name": "fbb1c650-11a6-4d85-9f05-7fdf9e979d96",
+        "statements": null,
+        "version": "20260511141753"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260511141836"
+      },
+      {
+        "name": "16270fe4-a92f-422c-ab3e-292568e6fadc",
+        "statements": null,
+        "version": "20260511141842"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260511141859"
+      },
+      {
+        "name": "28584797-2dd2-4bb8-9fd5-910c770895a2",
+        "statements": null,
+        "version": "20260511141901"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260511141935"
+      },
+      {
+        "name": "e4343b7c-443e-4fcd-99ca-351d073af25e",
+        "statements": null,
+        "version": "20260511141937"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260511142000"
+      },
+      {
+        "name": "6559cc40-0690-42e7-b01e-4bf400c83658",
+        "statements": null,
+        "version": "20260511142002"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260511202937"
+      },
+      {
+        "name": "0fd721dc-d222-47ac-9985-962098c4ef56",
+        "statements": null,
+        "version": "20260511202940"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260511203842"
+      },
+      {
+        "name": "2e82056f-4c72-4240-bc83-1b8c26d683c2",
+        "statements": null,
+        "version": "20260511203845"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260511205215"
+      },
+      {
+        "name": "3cc02608-e559-488e-a856-a35901cde34d",
+        "statements": null,
+        "version": "20260511205218"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260511205508"
+      },
+      {
+        "name": "1bc4addf-6fde-409a-a52d-1c4f101833d3",
+        "statements": null,
+        "version": "20260511205511"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260512142102"
+      },
+      {
+        "name": "1f4ccc51-b612-41e0-960c-ac851d1c5f4f",
+        "statements": null,
+        "version": "20260512142106"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260512142410"
+      },
+      {
+        "name": "e2886d2c-be8c-4053-8ff0-a69f7ca39387",
+        "statements": null,
+        "version": "20260512142413"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260512142558"
+      },
+      {
+        "name": "9fe295a6-5736-4c05-9ca5-d4c4c0552d8a",
+        "statements": null,
+        "version": "20260512142601"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260512143044"
+      },
+      {
+        "name": "af6f8506-51e4-4d91-89bc-1dc787d60271",
+        "statements": null,
+        "version": "20260512143047"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260512143251"
+      },
+      {
+        "name": "b2edd72e-33da-46cc-b941-c5cf175a6ef8",
+        "statements": null,
+        "version": "20260512143254"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260512143653"
+      },
+      {
+        "name": "88d18f35-2446-4cfa-93a4-b07f95b503b5",
+        "statements": null,
+        "version": "20260512143657"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260512171330"
+      },
+      {
+        "name": "554bc54e-838b-4114-9ff2-1458fae3d052",
+        "statements": null,
+        "version": "20260512171333"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260512171533"
+      },
+      {
+        "name": "7484a0bb-1c15-4bef-9ebf-ef6fcd9d23df",
+        "statements": null,
+        "version": "20260512171536"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260512171642"
+      },
+      {
+        "name": "df8e521f-f948-4865-8d7a-147eeebfa0b4",
+        "statements": null,
+        "version": "20260512171645"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260512171845"
+      },
+      {
+        "name": "d4c539fb-c95f-4086-8acb-c804f477c1c0",
+        "statements": null,
+        "version": "20260512171849"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260512174601"
+      },
+      {
+        "name": "b7ad5f30-38b6-46ab-8c24-5fa09214abfc",
+        "statements": null,
+        "version": "20260512174604"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260512193952"
+      },
+      {
+        "name": "63dfb121-d9ca-43ad-a3ce-cce675439e1c",
+        "statements": null,
+        "version": "20260512193955"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260512194350"
+      },
+      {
+        "name": "47a935ed-b2c9-4422-865a-e8526a4adbc0",
+        "statements": null,
+        "version": "20260512194353"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513140221"
+      },
+      {
+        "name": "4bde874a-1609-4dfc-92ec-3e06c832a453",
+        "statements": null,
+        "version": "20260513140223"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513140624"
+      },
+      {
+        "name": "eb09ea00-f98a-41b0-9506-189ff4d9f227",
+        "statements": null,
+        "version": "20260513140627"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513140653"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513140808"
+      },
+      {
+        "name": "0a52ccd6-48ec-4692-8556-fdc29ba632c5",
+        "statements": null,
+        "version": "20260513140810"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513140910"
+      },
+      {
+        "name": "1e607930-1b1f-473d-afb4-c29129a3b8a4",
+        "statements": null,
+        "version": "20260513140912"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513165145"
+      },
+      {
+        "name": "dba8acd2-8fa3-4894-9e35-5cd1e3954394",
+        "statements": null,
+        "version": "20260513165148"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513174902"
+      },
+      {
+        "name": "5447841d-ebcd-4bb7-b014-b0075bd77040",
+        "statements": null,
+        "version": "20260513174904"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513175759"
+      },
+      {
+        "name": "c4013d3a-61e8-4a23-a705-8dc00b4fd86a",
+        "statements": null,
+        "version": "20260513175801"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513180133"
+      },
+      {
+        "name": "1667c7b4-6b13-4e07-b1de-b6df2a467392",
+        "statements": null,
+        "version": "20260513180136"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513182830"
+      },
+      {
+        "name": "20a60acc-3e79-4009-bf96-f286bedb9c60",
+        "statements": null,
+        "version": "20260513182833"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513182904"
+      },
+      {
+        "name": "7fb450f8-ce7d-4e90-bb3b-f41d0dd7b428",
+        "statements": null,
+        "version": "20260513182906"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513190650"
+      },
+      {
+        "name": "f4602dd4-edce-4d5c-a3c7-69b94e5c9fc7",
+        "statements": null,
+        "version": "20260513190653"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513190902"
+      },
+      {
+        "name": "813d43d2-07db-48ca-b9d9-3e9e047ced64",
+        "statements": null,
+        "version": "20260513190905"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513191017"
+      },
+      {
+        "name": "91f3d927-f670-4595-92a6-0de6b1a83040",
+        "statements": null,
+        "version": "20260513191020"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513191128"
+      },
+      {
+        "name": "77a4a340-9ff8-49a4-aad0-30db56a2f52d",
+        "statements": null,
+        "version": "20260513191130"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513191151"
+      },
+      {
+        "name": "414da01b-2252-4631-921f-609db9598fad",
+        "statements": null,
+        "version": "20260513191154"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513191232"
+      },
+      {
+        "name": "acc0bf4e-697f-4760-9ff5-9d52b28c7cda",
+        "statements": null,
+        "version": "20260513191234"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513191258"
+      },
+      {
+        "name": "63701bda-a368-45cb-ab56-fcd978755c32",
+        "statements": null,
+        "version": "20260513191300"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513191546"
+      },
+      {
+        "name": "9b11aa2c-8ca9-4607-8430-e6831327b858",
+        "statements": null,
+        "version": "20260513191548"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513191800"
+      },
+      {
+        "name": "19b650ee-2412-4e5b-b436-7e7be32777c9",
+        "statements": null,
+        "version": "20260513191802"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513191936"
+      },
+      {
+        "name": "debf0e40-10a1-46a1-80a8-f0cdb01d7505",
+        "statements": null,
+        "version": "20260513191939"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513192523"
+      },
+      {
+        "name": "7d32938f-17f8-4fdb-9b91-e2eb68fafb62",
+        "statements": null,
+        "version": "20260513192525"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513192747"
+      },
+      {
+        "name": "b5058fc2-d067-4afe-a3d1-95ef70138970",
+        "statements": null,
+        "version": "20260513192749"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513193039"
+      },
+      {
+        "name": "b86a4a4c-b171-48a9-b576-41802c9ef3cc",
+        "statements": null,
+        "version": "20260513193042"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513193154"
+      },
+      {
+        "name": "bc992237-d9ae-4c9a-aebb-fcf110a1ff73",
+        "statements": null,
+        "version": "20260513193156"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513194016"
+      },
+      {
+        "name": "e00d6be3-3052-421c-9f9c-736b123cc767",
+        "statements": null,
+        "version": "20260513194019"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513194119"
+      },
+      {
+        "name": "4a8b85e3-3965-47e8-8323-62f12e479070",
+        "statements": null,
+        "version": "20260513194122"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513194304"
+      },
+      {
+        "name": "67ab5170-5496-494b-8daf-55f56d44af9f",
+        "statements": null,
+        "version": "20260513194306"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513194353"
+      },
+      {
+        "name": "0d2a6875-c17c-4c7e-a7e8-cf5ab19aea46",
+        "statements": null,
+        "version": "20260513194355"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513194529"
+      },
+      {
+        "name": "d3108e34-3444-4cc9-8c6d-3a05039b9616",
+        "statements": null,
+        "version": "20260513194531"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513194602"
+      },
+      {
+        "name": "d9a9515d-c19d-4c95-9be2-50e5d2c70c92",
+        "statements": null,
+        "version": "20260513194604"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513194631"
+      },
+      {
+        "name": "97254b06-d271-4c84-b1a3-71a3c485c299",
+        "statements": null,
+        "version": "20260513194635"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260513194714"
+      },
+      {
+        "name": "08d6ad29-65c2-4c81-8d8d-a2b3032f056a",
+        "statements": null,
+        "version": "20260513194716"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260515121405"
+      },
+      {
+        "name": "ebf57e59-c2b4-40ee-9a38-b0b1364b4e18",
+        "statements": null,
+        "version": "20260515121408"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260515183052"
+      },
+      {
+        "name": "5d2a76a6-0367-4d14-933f-7f345ddb3dde",
+        "statements": null,
+        "version": "20260515183054"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260515183111"
+      },
+      {
+        "name": "fe3fb304-0b9d-4e29-8e09-b94e989c6c5f",
+        "statements": null,
+        "version": "20260515183113"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260516132004"
+      },
+      {
+        "name": "a501e4ad-d45a-4862-818f-dae9b067e287",
+        "statements": null,
+        "version": "20260516132007"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260516132153"
+      },
+      {
+        "name": "40a5d387-aaa2-4cbe-9a1a-d7b2d6470d8d",
+        "statements": null,
+        "version": "20260516132155"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260516132441"
+      },
+      {
+        "name": "b0bb19c6-3e73-4f03-8821-27cbd38d9f81",
+        "statements": null,
+        "version": "20260516132444"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260516150855"
+      },
+      {
+        "name": "5f9a23d8-eecc-4ef1-a3e1-5f916d38daca",
+        "statements": null,
+        "version": "20260516150858"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260516155421"
+      },
+      {
+        "name": "e89f14f1-c371-4913-b94d-23f525b2f618",
+        "statements": null,
+        "version": "20260516155424"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260516173551"
+      },
+      {
+        "name": "9fff8648-88fc-419f-976b-5e0f2b6eade3",
+        "statements": null,
+        "version": "20260516173554"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260516174146"
+      },
+      {
+        "name": "54b994a0-12f2-458c-8b62-1a9d72b3cab6",
+        "statements": null,
+        "version": "20260516174149"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260516174826"
+      },
+      {
+        "name": "ba0944ab-b72a-44d2-93a3-9abab3e715e0",
+        "statements": null,
+        "version": "20260516174828"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260516174947"
+      },
+      {
+        "name": "44497428-fc98-423b-9ddf-76102c12b0b9",
+        "statements": null,
+        "version": "20260516174949"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260516175645"
+      },
+      {
+        "name": "835be6f9-b129-4520-bc17-b60bf8d426c1",
+        "statements": null,
+        "version": "20260516175648"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260519125629"
+      },
+      {
+        "name": "be43c050-3599-48b7-a997-9e5584da16c8",
+        "statements": null,
+        "version": "20260519125632"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260520120942"
+      },
+      {
+        "name": "b66bab32-5450-48bd-a13c-e74df6d7de2c",
+        "statements": null,
+        "version": "20260520120947"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260520131304"
+      },
+      {
+        "name": "278e1ff0-fe3b-47e9-af8e-38b653755457",
+        "statements": null,
+        "version": "20260520131308"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260520144306"
+      },
+      {
+        "name": "cb1245dc-0ae4-4fb6-a04c-a6b74738b0e7",
+        "statements": null,
+        "version": "20260520144308"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260520160807"
+      },
+      {
+        "name": "db3825bf-6151-4958-b97a-cf564006fb74",
+        "statements": null,
+        "version": "20260520160810"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260522125602"
+      },
+      {
+        "name": "ff9c3bbb-286d-4360-9d26-3342e4c93227",
+        "statements": null,
+        "version": "20260522125606"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260522142104"
+      },
+      {
+        "name": "56c6019a-7267-4762-abea-bc88fb67baac",
+        "statements": null,
+        "version": "20260522142107"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260522142641"
+      },
+      {
+        "name": "20bfed52-b56e-48b5-a471-0dcea23a3274",
+        "statements": null,
+        "version": "20260522142643"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260522150155"
+      },
+      {
+        "name": "a93b1724-741e-4651-8427-29d4b18fdc14",
+        "statements": null,
+        "version": "20260522150157"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260522150308"
+      },
+      {
+        "name": "36e079ea-f24e-4e0a-886b-67e8e0095365",
+        "statements": null,
+        "version": "20260522150310"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260522151144"
+      },
+      {
+        "name": "134aa53d-d186-4e54-9baf-19e0ee352af6",
+        "statements": null,
+        "version": "20260522151147"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260522151222"
+      },
+      {
+        "name": "9c98ea64-2049-4488-bc9c-cb33a697e4a5",
+        "statements": null,
+        "version": "20260522151224"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260522151427"
+      },
+      {
+        "name": "eb53c433-084d-48f2-bd32-72cdcfdbf543",
+        "statements": null,
+        "version": "20260522151430"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260523154554"
+      },
+      {
+        "name": "61536354-b74b-4775-a1f1-ada966620321",
+        "statements": null,
+        "version": "20260523154556"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260527125758"
+      },
+      {
+        "name": "f2cc5838-a6f5-41c0-84d7-2d5fb3f6cf37",
+        "statements": null,
+        "version": "20260527125800"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260527130228"
+      },
+      {
+        "name": "f198a689-b78b-4ddf-8477-8f92431fb272",
+        "statements": null,
+        "version": "20260527130231"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619145953"
+      },
+      {
+        "name": "dd3786d0-27f0-49fe-9ab7-7e75a3d67d0d",
+        "statements": null,
+        "version": "20260619145955"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619150046"
+      },
+      {
+        "name": "dffec0ec-21e7-4a92-aaa0-f43a60235f8d",
+        "statements": null,
+        "version": "20260619150049"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619150122"
+      },
+      {
+        "name": "59642919-6676-41c6-ae18-05d1b0b4e7c8",
+        "statements": null,
+        "version": "20260619150125"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619150448"
+      },
+      {
+        "name": "8b53656f-1156-4435-a6d2-296649805d58",
+        "statements": null,
+        "version": "20260619150451"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619150612"
+      },
+      {
+        "name": "35447ebf-a55a-49a4-a1c3-37040dd273b5",
+        "statements": null,
+        "version": "20260619150614"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619150653"
+      },
+      {
+        "name": "d351eb28-a928-4282-bd07-2e1264f1fb0b",
+        "statements": null,
+        "version": "20260619150655"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619150740"
+      },
+      {
+        "name": "a0d35ecd-84ca-49ff-b750-dd1d43b2f28a",
+        "statements": null,
+        "version": "20260619150742"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619150828"
+      },
+      {
+        "name": "34f9cfef-7240-434f-82f0-08c6759a322d",
+        "statements": null,
+        "version": "20260619150830"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619153350"
+      },
+      {
+        "name": "5595ddd5-b1e4-49cd-9494-c2f6d322eccf",
+        "statements": null,
+        "version": "20260619153352"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619153614"
+      },
+      {
+        "name": "ccd53f76-f658-4c97-9927-a18db4890cfc",
+        "statements": null,
+        "version": "20260619153616"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619183653"
+      },
+      {
+        "name": "652385c1-3ad1-43be-a35c-3e98f643b11f",
+        "statements": null,
+        "version": "20260619183655"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619184134"
+      },
+      {
+        "name": "d82025a3-2ff8-4c42-b853-81395b9b5da3",
+        "statements": null,
+        "version": "20260619184136"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619184213"
+      },
+      {
+        "name": "b57200ae-dc38-4618-8215-9a9c3888b526",
+        "statements": null,
+        "version": "20260619184215"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260619205619"
+      },
+      {
+        "name": "3a99bd41-5d32-4b65-ac90-6f6610ad707b",
+        "statements": null,
+        "version": "20260619205621"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260627190528"
+      },
+      {
+        "name": "3d39cb13-77fc-4e76-9323-a41bdafe0068",
+        "statements": null,
+        "version": "20260627190530"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260627190754"
+      },
+      {
+        "name": "887b9d75-6806-4a9e-9ec3-7951e97cbe54",
+        "statements": null,
+        "version": "20260627190757"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260628103639"
+      },
+      {
+        "name": "fc381629-3a03-4a2b-a034-d8b4377c56f1",
+        "statements": null,
+        "version": "20260628103642"
+      },
+      {
+        "name": "9ec8a43a-f6a7-47f9-a876-6c6788f8701d",
+        "statements": null,
+        "version": "20260711145433"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260711145436"
+      },
+      {
+        "name": "1308b423-3072-44f6-8780-6261c58dd040",
+        "statements": null,
+        "version": "20260711150410"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260711150412"
+      },
+      {
+        "name": "069a9179-c986-4be9-bfdc-e3bbbf1d3c70",
+        "statements": null,
+        "version": "20260711150513"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260711150517"
+      },
+      {
+        "name": "c98d7ea6-3c0c-48e5-92e2-ca19ac9f63f4",
+        "statements": null,
+        "version": "20260711152748"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260711152752"
+      },
+      {
+        "name": "c75da075-ebf0-487c-a2e8-1a5a3fdc6420",
+        "statements": null,
+        "version": "20260711153353"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260711153400"
+      },
+      {
+        "name": "cff03a04-94c1-410e-862c-b8929436ad6a",
+        "statements": null,
+        "version": "20260711153603"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260711153608"
+      },
+      {
+        "name": "6126e8a8-8d94-4919-991b-7fd7b4d58655",
+        "statements": null,
+        "version": "20260711175817"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260711175820"
+      },
+      {
+        "name": "c4e2ce56-93c3-45f7-a1c3-41d8cfa6436e",
+        "statements": null,
+        "version": "20260711182246"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260711182250"
+      },
+      {
+        "name": "9303fb03-a4a0-48c7-82d3-b10498cf8ef2",
+        "statements": null,
+        "version": "20260711192842"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260711192845"
+      },
+      {
+        "name": "000bb536-accb-40ae-92d7-49573ae1d3d5",
+        "statements": null,
+        "version": "20260712183146"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712183149"
+      },
+      {
+        "name": "0536e2cb-6844-417e-86f6-23fe7e74656a",
+        "statements": null,
+        "version": "20260712184140"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712184143"
+      },
+      {
+        "name": "94a9da9f-81b4-4737-867a-bc078939a53e",
+        "statements": null,
+        "version": "20260712193819"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712193822"
+      },
+      {
+        "name": "a08e07a3-e8ff-4ca2-90c9-a2119f0b21b1",
+        "statements": null,
+        "version": "20260712202243"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712202246"
+      },
+      {
+        "name": "b309f560-f8b7-4061-866d-e8fb64779274",
+        "statements": null,
+        "version": "20260712202725"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712202727"
+      },
+      {
+        "name": "8562a409-33b5-4785-ace8-f055d7993a92",
+        "statements": null,
+        "version": "20260712203121"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712203124"
+      },
+      {
+        "name": "45ceeb52-99de-4d95-9e52-40268f26d0e7",
+        "statements": null,
+        "version": "20260712203223"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712203225"
+      },
+      {
+        "name": "271b19b2-c825-4331-a42e-ee8ed3c9ed37",
+        "statements": null,
+        "version": "20260712205624"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712205627"
+      },
+      {
+        "name": "e90f14f4-f5a0-4be9-b2f8-64cb6c4cec8c",
+        "statements": null,
+        "version": "20260712211719"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712211721"
+      },
+      {
+        "name": "d725dfe0-bd03-404e-9fdf-f24b250680b2",
+        "statements": null,
+        "version": "20260712211818"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712211820"
+      },
+      {
+        "name": "fd8bc9f9-8edb-4c33-918b-1d5b1e783716",
+        "statements": null,
+        "version": "20260712211940"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712211942"
+      },
+      {
+        "name": "d00bd73d-5336-4dc3-add0-12032006ed54",
+        "statements": null,
+        "version": "20260712212039"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712212041"
+      },
+      {
+        "name": "c692263b-72aa-41b9-a72c-ee07698c5723",
+        "statements": null,
+        "version": "20260712212218"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712212228"
+      },
+      {
+        "name": "3e455108-6227-4b98-92b1-86f54bcda510",
+        "statements": null,
+        "version": "20260712212325"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712212327"
+      },
+      {
+        "name": "5801f12c-747a-4d40-93c3-aaf7f2c961c3",
+        "statements": null,
+        "version": "20260712212452"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712212454"
+      },
+      {
+        "name": "55ae5f57-0022-4662-9e43-765fc46fa039",
+        "statements": null,
+        "version": "20260712212615"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712212618"
+      },
+      {
+        "name": "63fa24a8-821c-43f5-bb44-b58a0bd81da2",
+        "statements": null,
+        "version": "20260712212733"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712212737"
+      },
+      {
+        "name": "b1877f49-57bf-4aec-9c48-bc33d212289d",
+        "statements": null,
+        "version": "20260712212841"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712212843"
+      },
+      {
+        "name": "d047bbd8-ce51-4489-ba34-cca9843e27a6",
+        "statements": null,
+        "version": "20260712213138"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712213140"
+      },
+      {
+        "name": "6b730cf1-b93d-4117-8b98-7ff65a2820aa",
+        "statements": null,
+        "version": "20260712213253"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712213256"
+      },
+      {
+        "name": "20d37218-3f4b-4337-a867-a6b356d472c2",
+        "statements": null,
+        "version": "20260712213407"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712213410"
+      },
+      {
+        "name": "4b558d6a-ab2e-4ca8-bdaf-10d0cf550fb4",
+        "statements": null,
+        "version": "20260712213510"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712213513"
+      },
+      {
+        "name": "dddcf8ac-c016-4e29-8965-0b0583429231",
+        "statements": null,
+        "version": "20260712213730"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712213733"
+      },
+      {
+        "name": "2a68d8c6-5402-4526-b55c-9b3f89124bbb",
+        "statements": null,
+        "version": "20260712213908"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712213911"
+      },
+      {
+        "name": "5ded020d-3162-4157-ba2e-724b53d8392b",
+        "statements": null,
+        "version": "20260712214014"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712214016"
+      },
+      {
+        "name": "67343278-b8c1-4404-988f-4eb9e39d2fe7",
+        "statements": null,
+        "version": "20260712214124"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712214127"
+      },
+      {
+        "name": "f48266eb-3c81-4669-8028-d5fdd5247e14",
+        "statements": null,
+        "version": "20260712214246"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712214251"
+      },
+      {
+        "name": "bb225a90-69dd-4aea-a9f7-9f79574948f2",
+        "statements": null,
+        "version": "20260712214444"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712214446"
+      },
+      {
+        "name": "fixup_afastamentos_cols",
+        "statements": null,
+        "version": "20260712214640"
+      },
+      {
+        "name": "fixup_documentos_empresa_id",
+        "statements": null,
+        "version": "20260712214642"
+      },
+      {
+        "name": "fixup_lancamentos_folha_empresa_id",
+        "statements": null,
+        "version": "20260712214643"
+      },
+      {
+        "name": "fixup_audit_log_config_afastamentos_empresa_id",
+        "statements": null,
+        "version": "20260712214644"
+      },
+      {
+        "name": "80ed440d-8dda-45e8-8cce-f01554b6358c",
+        "statements": null,
+        "version": "20260712214656"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712214659"
+      },
+      {
+        "name": "4971f364-3f69-48cd-9150-a55524b1025d",
+        "statements": null,
+        "version": "20260712214929"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712214932"
+      },
+      {
+        "name": "e2abb65e-0d68-4000-9d1c-5fbda7a83e28",
+        "statements": null,
+        "version": "20260712215450"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712215452"
+      },
+      {
+        "name": "349ae8a8-7ed9-41a5-b06c-ea4b8f35c7b5",
+        "statements": null,
+        "version": "20260712215539"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712215541"
+      },
+      {
+        "name": "91ed0762-8b00-4882-be03-5c9c4e538690",
+        "statements": null,
+        "version": "20260712215710"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712215713"
+      },
+      {
+        "name": "8c16ff4b-eb80-4fbb-a8c6-c15c62ed93c7",
+        "statements": null,
+        "version": "20260712215808"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712215811"
+      },
+      {
+        "name": "0c45a861-8424-4178-936a-cae1ebe129b2",
+        "statements": null,
+        "version": "20260712215942"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712215944"
+      },
+      {
+        "name": "357e7479-5b95-4775-b7c3-1287127f20b7",
+        "statements": null,
+        "version": "20260712220109"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712220112"
+      },
+      {
+        "name": "803bf461-91a3-4d53-abd6-41fb5b5f0892",
+        "statements": null,
+        "version": "20260712220248"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712220251"
+      },
+      {
+        "name": "9ea3a239-ab6f-4870-b7bb-55450abe468a",
+        "statements": null,
+        "version": "20260712220352"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712220356"
+      },
+      {
+        "name": "51c839c6-b3da-4861-afdc-3000fbbfcd7e",
+        "statements": null,
+        "version": "20260712222151"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712222156"
+      },
+      {
+        "name": "1d964bbd-0cff-41f7-9bcb-496036476e63",
+        "statements": null,
+        "version": "20260712222252"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712222255"
+      },
+      {
+        "name": "9658add7-04b8-45e4-87fe-8524396ebd14",
+        "statements": null,
+        "version": "20260712222434"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712222438"
+      },
+      {
+        "name": "efdf4704-8024-4e4a-8fd4-414856e9b4fe",
+        "statements": null,
+        "version": "20260712222525"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712222527"
+      },
+      {
+        "name": "0ca2a3f1-2171-4072-bfce-14a5714f35e9",
+        "statements": null,
+        "version": "20260712222818"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712222822"
+      },
+      {
+        "name": "0c34a43a-072a-4c06-8ff7-f2ac782d9041",
+        "statements": null,
+        "version": "20260712223051"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712223053"
+      },
+      {
+        "name": "37a0c478-8c25-4b31-9428-f111211da33c",
+        "statements": null,
+        "version": "20260712231313"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712231316"
+      },
+      {
+        "name": "7c362241-4abe-4970-956e-c985f2c1e683",
+        "statements": null,
+        "version": "20260712232250"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712232255"
+      },
+      {
+        "name": "bef33079-3ce5-42b2-a05a-d9cbdfb9648b",
+        "statements": null,
+        "version": "20260712232435"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712232437"
+      },
+      {
+        "name": "936c8e57-5bce-4539-80fa-e174ecf3ac9b",
+        "statements": null,
+        "version": "20260712232544"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260712232547"
+      },
+      {
+        "name": "c760e8ed-e7ec-4790-ad43-ceadf29673fc",
+        "statements": null,
+        "version": "20260713105424"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260713105426"
+      },
+      {
+        "name": "64ab5dcc-be95-4d7c-9c96-860adf72e2da",
+        "statements": null,
+        "version": "20260713105603"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260713105606"
+      },
+      {
+        "name": "3b3f8561-32fc-4118-9717-5ad41ece5aa5",
+        "statements": null,
+        "version": "20260713105906"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260713105909"
+      },
+      {
+        "name": "2154cbf4-e4c4-4863-9f2b-ca5a517c93de",
+        "statements": null,
+        "version": "20260713110053"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260713110058"
+      },
+      {
+        "name": "3f4be33a-2603-45eb-8719-65aa18ec19cc",
+        "statements": null,
+        "version": "20260713124342"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260713124345"
+      },
+      {
+        "name": "d32d86ab-f249-4220-90ed-9811269e96fd",
+        "statements": null,
+        "version": "20260713124450"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260713124452"
+      },
+      {
+        "name": "7ca546cf-4cfa-4fc5-b42e-3a06d1367387",
+        "statements": null,
+        "version": "20260713124616"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260713124622"
+      },
+      {
+        "name": "fc2bfdf0-5cb2-4318-b4d4-e4b1130bb95b",
+        "statements": null,
+        "version": "20260713124728"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260713124734"
+      },
+      {
+        "name": "a1152a5e-9744-4462-9fc2-f423c57445bb",
+        "statements": null,
+        "version": "20260713124926"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260713124947"
+      },
+      {
+        "name": "10586a25-75f3-4d51-a949-e4a59fded62e",
+        "statements": null,
+        "version": "20260713125122"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260713125132"
+      },
+      {
+        "name": "9b0fb2d4-9542-459f-856c-5848de0fa804",
+        "statements": null,
+        "version": "20260715135944"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260715135949"
+      },
+      {
+        "name": "efa5e879-fa50-4804-8056-d6c860761e86",
+        "statements": null,
+        "version": "20260715151049"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260715151052"
+      },
+      {
+        "name": "30dca9dd-27bf-46ba-a1c7-e1cb3923bf92",
+        "statements": null,
+        "version": "20260715154911"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260715154914"
+      },
+      {
+        "name": "1e130fc2-322b-456c-a2e9-951bc5f6abc8",
+        "statements": null,
+        "version": "20260715164505"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260715164511"
+      },
+      {
+        "name": "392ca7e2-2bbc-474b-8158-ccbc730c890b",
+        "statements": null,
+        "version": "20260715173728"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260715173741"
+      },
+      {
+        "name": "c7892081-2003-4c95-a887-57976b9e54ef",
+        "statements": null,
+        "version": "20260716175930"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260716175934"
+      },
+      {
+        "name": "0ecd2109-adf2-4d73-9e66-51e9608755e9",
+        "statements": null,
+        "version": "20260717133719"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717133723"
+      },
+      {
+        "name": "6bde8bbd-bc8f-4f97-bbb8-6154dec14762",
+        "statements": null,
+        "version": "20260717173733"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717173735"
+      },
+      {
+        "name": "15dfa21c-c3c9-4513-b7ad-5d11535a503d",
+        "statements": null,
+        "version": "20260717173808"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717173810"
+      },
+      {
+        "name": "5f52b019-c350-47af-881e-54b3e2f56712",
+        "statements": null,
+        "version": "20260717174205"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717174208"
+      },
+      {
+        "name": "c43a183e-0f71-42cd-9315-c1c0ed96d8a8",
+        "statements": null,
+        "version": "20260717174243"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717174245"
+      },
+      {
+        "name": "1fedf63f-8379-4511-84f5-39441172d003",
+        "statements": null,
+        "version": "20260717174811"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717174817"
+      },
+      {
+        "name": "5bd9a75c-b238-4140-8865-f10764a5ad68",
+        "statements": null,
+        "version": "20260717175126"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717175128"
+      },
+      {
+        "name": "275a6375-a0ee-4349-99c8-7839f3316fd0",
+        "statements": null,
+        "version": "20260717175440"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717175445"
+      },
+      {
+        "name": "adc46141-8b85-452b-9c05-a67e2a40c23f",
+        "statements": null,
+        "version": "20260717180202"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717180204"
+      },
+      {
+        "name": "c017bf11-6176-48ea-bd8a-cd212c424617",
+        "statements": null,
+        "version": "20260717181245"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717181248"
+      },
+      {
+        "name": "35436d1c-6b4d-4657-a038-2a3abf35d44a",
+        "statements": null,
+        "version": "20260717181814"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717181817"
+      },
+      {
+        "name": "3ecc597a-1b95-4f4e-904d-48f5edd204cc",
+        "statements": null,
+        "version": "20260717182238"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717182244"
+      },
+      {
+        "name": "78f95876-9b1b-4823-9b8e-fb239c27fc88",
+        "statements": null,
+        "version": "20260717185207"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717185211"
+      },
+      {
+        "name": "200bcc63-2c75-402b-8511-8095e2ed32f9",
+        "statements": null,
+        "version": "20260717193052"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717193056"
+      },
+      {
+        "name": "7b88a5fd-a759-445e-b55b-33f0d5653688",
+        "statements": null,
+        "version": "20260717193331"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717193338"
+      },
+      {
+        "name": "e9a5e578-2f71-460e-8db3-ea203d722974",
+        "statements": null,
+        "version": "20260717193547"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717193555"
+      },
+      {
+        "name": "be3ab915-fa3e-4ba9-a364-57b3c19fe8b9",
+        "statements": null,
+        "version": "20260717194148"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717194150"
+      },
+      {
+        "name": "3aa7d1f8-6bfa-4dfc-8957-54dfdb8bb972",
+        "statements": null,
+        "version": "20260717194527"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717194541"
+      },
+      {
+        "name": "d2dc0f6a-2cb4-4912-9095-3d76dc825718",
+        "statements": null,
+        "version": "20260717194940"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717194943"
+      },
+      {
+        "name": "24203a95-6ec6-41db-8637-874cb06077d6",
+        "statements": null,
+        "version": "20260717195217"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717195220"
+      },
+      {
+        "name": "bc0316bd-2e5f-40aa-9911-e8a35c667fc8",
+        "statements": null,
+        "version": "20260717204215"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717204219"
+      },
+      {
+        "name": "385dd061-8f2e-4702-a27c-4ba5db960a78",
+        "statements": null,
+        "version": "20260717204547"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717204551"
+      },
+      {
+        "name": "801fb7ef-21a5-4601-8da0-9f68d2854166",
+        "statements": null,
+        "version": "20260717205116"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717205118"
+      },
+      {
+        "name": "cce7d685-004c-4ab1-8097-4bef28caa0f7",
+        "statements": null,
+        "version": "20260717205327"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260717205330"
+      },
+      {
+        "name": "rls_remediacao_auditoria",
+        "statements": null,
+        "version": "20260718220000"
+      },
+      {
+        "name": "admin_role_management_rpc",
+        "statements": null,
+        "version": "20260718230000"
+      },
+      {
+        "name": "bloqueio_pagamento_rescisao_lgpd",
+        "statements": null,
+        "version": "20260719000000"
+      },
+      {
+        "name": "rls_tenant_scope_critical_tables",
+        "statements": null,
+        "version": "20260719100000"
+      },
+      {
+        "name": "rls_fix_public_access_batch2",
+        "statements": null,
+        "version": "20260719120000"
+      },
+      {
+        "name": "performance_indexes_security_critical",
+        "statements": null,
+        "version": "20260719140000"
+      },
+      {
+        "name": "security_hardening_audit_retention",
+        "statements": null,
+        "version": "20260719160000"
+      },
+      {
+        "name": "security_indexes_constraints",
+        "statements": 1,
+        "statements_sha": "c588dd85819b6317",
+        "version": "20260719170000"
+      },
+      {
+        "name": "security_data_retention_policies",
+        "statements": null,
+        "version": "20260719180000"
+      },
+      {
+        "name": "audit_delete_trigger",
+        "statements": 1,
+        "statements_sha": "085322055bc81573",
+        "version": "20260719190000"
+      },
+      {
+        "name": "account_lockout_policy",
+        "statements": null,
+        "version": "20260719192000"
+      },
+      {
+        "name": "security_monitoring_views",
+        "statements": 1,
+        "statements_sha": "d17fb181240601d7",
+        "version": "20260719193000"
+      },
+      {
+        "name": "fix_desligamentos_rls_tenant_isolation",
+        "statements": null,
+        "version": "20260719200000"
+      },
+      {
+        "name": "add_frontend_log_function",
+        "statements": null,
+        "version": "20260719210000"
+      },
+      {
+        "name": "atomic_ponto_cnab_sequence",
+        "statements": null,
+        "version": "20260719220000"
+      },
+      {
+        "name": "fix_rls_rubricas_eventos_variaveis",
+        "statements": null,
+        "version": "20260719230000"
+      },
+      {
+        "name": "fix_rls_batch3_remaining_tables",
+        "statements": null,
+        "version": "20260719240000"
+      },
+      {
+        "name": "update_frontend_log_rpc",
+        "statements": null,
+        "version": "20260720010000"
+      },
+      {
+        "name": "add_empresa_id_periodos_aquisitivos",
+        "statements": null,
+        "version": "20260720020000"
+      },
+      {
+        "name": "add_empresa_id_tenant_tables",
+        "statements": null,
+        "version": "20260720030000"
+      },
+      {
+        "name": "2cb3dd62-2499-4b2c-8ea5-380ef36e38bc",
+        "statements": null,
+        "version": "20260721204519"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260721204522"
+      },
+      {
+        "name": "create_dp_audit_log",
+        "statements": null,
+        "version": "20260721220000"
+      },
+      {
+        "name": "dcc3f52d-83f3-464f-ac57-9fedb9f70019",
+        "statements": null,
+        "version": "20260721223652"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260721223656"
+      },
+      {
+        "name": "42c8e423-765c-403e-b77b-7f80dfc5334f",
+        "statements": null,
+        "version": "20260722100550"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722100552"
+      },
+      {
+        "name": "35b6be04-0274-4e97-986f-1e45f18286ed",
+        "statements": null,
+        "version": "20260722101753"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722101755"
+      },
+      {
+        "name": "cff5516f-c9c4-40b4-ba86-d83b86e52fcc",
+        "statements": null,
+        "version": "20260722125517"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722125525"
+      },
+      {
+        "name": "14efc847-d702-45a1-8f00-f36e97212a8e",
+        "statements": null,
+        "version": "20260722150652"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722150654"
+      },
+      {
+        "name": "90068dd3-c560-41f1-bd55-09da10f2a0d3",
+        "statements": null,
+        "version": "20260722150821"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722150831"
+      },
+      {
+        "name": "18ed8ca3-00c7-4498-a22c-617bc764611c",
+        "statements": null,
+        "version": "20260722155515"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722155518"
+      },
+      {
+        "name": "b153baf5-7c68-4baa-9dab-8b4d53ab97f5",
+        "statements": null,
+        "version": "20260722155629"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722155631"
+      },
+      {
+        "name": "d1d6c040-e33c-44c1-bbf0-c78223d3fc90",
+        "statements": null,
+        "version": "20260722195737"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722195744"
+      },
+      {
+        "name": "fix_ferias_add_periodo_aquisitivo_id",
+        "statements": null,
+        "version": "20260722195800"
+      },
+      {
+        "name": "2cbd9e27-a488-4aa1-ae80-550203e28f1d",
+        "statements": null,
+        "version": "20260722195821"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722195832"
+      },
+      {
+        "name": "backfill_ferias_periodo_aquisitivo_id",
+        "statements": null,
+        "version": "20260722195850"
+      },
+      {
+        "name": "d2e87d05-b9c0-4539-92e4-a93962868530",
+        "statements": null,
+        "version": "20260722195902"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722195905"
+      },
+      {
+        "name": "7d493333-193e-4c56-8e76-b7bbbcd65e83",
+        "statements": null,
+        "version": "20260722195951"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722195953"
+      },
+      {
+        "name": "593707e2-4151-4f99-9c9e-9e346683d093",
+        "statements": null,
+        "version": "20260722200030"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722200032"
+      },
+      {
+        "name": "0807a971-868e-4de4-8286-a4492fed8656",
+        "statements": null,
+        "version": "20260722200130"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722200138"
+      },
+      {
+        "name": "43a478b2-2cb5-4d58-817b-9c86ff8d80e3",
+        "statements": null,
+        "version": "20260722200247"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260722200250"
+      },
+      {
+        "name": "dp_schema_conventions",
+        "statements": null,
+        "version": "20260723000001"
+      },
+      {
+        "name": "dp_fix_secdef_exposed_documented",
+        "statements": null,
+        "version": "20260723000002"
+      },
+      {
+        "name": "dp_audit_log_v2_production_ready",
+        "statements": null,
+        "version": "20260723000003"
+      },
+      {
+        "name": "dp_audit_log_integrity_constraints",
+        "statements": null,
+        "version": "20260723000004"
+      },
+      {
+        "name": "dp_pii_classification_framework",
+        "statements": null,
+        "version": "20260723000005"
+      },
+      {
+        "name": "dp_pii_encryption_foundation",
+        "statements": null,
+        "version": "20260723000006"
+      },
+      {
+        "name": "dp_pgaudit_configuration",
+        "statements": null,
+        "version": "20260723000007"
+      },
+      {
+        "name": "placeholder_ledger_remoto",
+        "statements": null,
+        "version": "20260723000008"
+      },
+      {
+        "name": "dp_retention_v3",
+        "statements": null,
+        "version": "20260723000009"
+      },
+      {
+        "name": "dp_masked_views",
+        "statements": null,
+        "version": "20260723000010"
+      },
+      {
+        "name": "dp_identity_auth_roles",
+        "statements": null,
+        "version": "20260723000011"
+      },
+      {
+        "name": "dp_log_rotation_doc_monitor",
+        "statements": null,
+        "version": "20260723000012"
+      },
+      {
+        "name": "dp_observability_foundation",
+        "statements": null,
+        "version": "20260723000013"
+      },
+      {
+        "name": "dp_backup_restore_runbook",
+        "statements": null,
+        "version": "20260723000014"
+      },
+      {
+        "name": "dp_mcp_version_baseline",
+        "statements": null,
+        "version": "20260723000015"
+      },
+      {
+        "name": "dp_mcp_role_grants",
+        "statements": null,
+        "version": "20260723000016"
+      },
+      {
+        "name": "dp_secrets_runbook_docker",
+        "statements": null,
+        "version": "20260723000017"
+      },
+      {
+        "name": "dp_pii_key_backup_ref",
+        "statements": null,
+        "version": "20260723000018"
+      },
+      {
+        "name": "dp_type_conventions_v2",
+        "statements": null,
+        "version": "20260723000019"
+      },
+      {
+        "name": "dp_index_strategy_documentation",
+        "statements": null,
+        "version": "20260723000020"
+      },
+      {
+        "name": "dp_cicd_gate_framework",
+        "statements": null,
+        "version": "20260723000021"
+      },
+      {
+        "name": "dp_dr_documentation_complete",
+        "statements": null,
+        "version": "20260723000022"
+      },
+      {
+        "name": "dp_mcp_user_activation",
+        "statements": null,
+        "version": "20260723000023"
+      },
+      {
+        "name": "dp_gap1_docker_secrets_plan",
+        "statements": null,
+        "version": "20260723000024"
+      },
+      {
+        "name": "dp_bearer_auth_ready",
+        "statements": null,
+        "version": "20260723000025"
+      },
+      {
+        "name": "dp_cloudflare_access_plan",
+        "statements": null,
+        "version": "20260723000026"
+      },
+      {
+        "name": "dp_audit_log_immutability_trigger",
+        "statements": null,
+        "version": "20260723000027"
+      },
+      {
+        "name": "dp_track_pii_access_fix",
+        "statements": null,
+        "version": "20260723000028"
+      },
+      {
+        "name": "dp_hash_pii_normalize_punctuation",
+        "statements": null,
+        "version": "20260723000029"
+      },
+      {
+        "name": "dp_function_auth_guards",
+        "statements": null,
+        "version": "20260723000030"
+      },
+      {
+        "name": "4128fdf3-5b37-4921-a5e6-9b7b981028e1",
+        "statements": null,
+        "version": "20260723100640"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723100643"
+      },
+      {
+        "name": "77b7944b-a241-45df-86b6-823ac17eb5cf",
+        "statements": null,
+        "version": "20260723104000"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723104002"
+      },
+      {
+        "name": "e2184a04-0cfe-4ed3-9f3c-88acf0cee609",
+        "statements": null,
+        "version": "20260723104455"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723104458"
+      },
+      {
+        "name": "68130105-b66a-48de-b25a-5c3558e72745",
+        "statements": null,
+        "version": "20260723112647"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723112649"
+      },
+      {
+        "name": "create_ferias_avisos_bucket",
+        "statements": null,
+        "version": "20260723113000"
+      },
+      {
+        "name": "5f0b855d-6703-4cda-836a-d929e4729ee7",
+        "statements": null,
+        "version": "20260723120853"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723120855"
+      },
+      {
+        "name": "fix_notificacoes_add_entidade_columns",
+        "statements": null,
+        "version": "20260723121050"
+      },
+      {
+        "name": "ab96c1dd-5f9e-48e3-8540-f31915b8a419",
+        "statements": null,
+        "version": "20260723121100"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723121103"
+      },
+      {
+        "name": "d3e5d7cb-cc63-4b54-94cf-beb6b09300ad",
+        "statements": null,
+        "version": "20260723121138"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723121141"
+      },
+      {
+        "name": "bc06ea32-c30c-4221-9de0-aaa4ba915e8a",
+        "statements": null,
+        "version": "20260723121506"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723121508"
+      },
+      {
+        "name": "19715230-ef57-4c17-8575-746b28c53aea",
+        "statements": null,
+        "version": "20260723121523"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723121528"
+      },
+      {
+        "name": "870e91de-7a93-402f-bec3-c6ee3f083456",
+        "statements": null,
+        "version": "20260723121707"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723121710"
+      },
+      {
+        "name": "fix_ferias_add_financial_columns",
+        "statements": null,
+        "version": "20260723121720"
+      },
+      {
+        "name": "01703305-7d9d-4116-ad57-1fdfd09bd900",
+        "statements": null,
+        "version": "20260723121733"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723121736"
+      },
+      {
+        "name": "a4ca3997-6386-4cc6-b575-576a9434188d",
+        "statements": null,
+        "version": "20260723122004"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723122006"
+      },
+      {
+        "name": "031174ca-7d85-4113-bd78-3904fa799ba7",
+        "statements": null,
+        "version": "20260723122258"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723122301"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723122436"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723122702"
+      },
+      {
+        "name": "8ddc1fd5-3f13-4300-a3b0-7252e47bd6a7",
+        "statements": null,
+        "version": "20260723123724"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723123727"
+      },
+      {
+        "name": "fix_ferias_prog_coletivas_audit_bucket_priv",
+        "statements": null,
+        "version": "20260723130000"
+      },
+      {
+        "name": "9ce49b12-6741-430d-8799-7b15f8f5bd6a",
+        "statements": null,
+        "version": "20260723131308"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723131317"
+      },
+      {
+        "name": "16a1d8a2-b8a1-4e4b-914a-8b041e619b1a",
+        "statements": null,
+        "version": "20260723131353"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723131355"
+      },
+      {
+        "name": "ae3826cf-5c15-4734-83d7-4cded0187f59",
+        "statements": null,
+        "version": "20260723132038"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723132053"
+      },
+      {
+        "name": "b52999aa-8472-4e61-bd80-79446dadcbae",
+        "statements": null,
+        "version": "20260723132449"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723132453"
+      },
+      {
+        "name": "eb0c4824-22b7-4e0a-990d-9c26e7f7e27a",
+        "statements": null,
+        "version": "20260723132513"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723132524"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723133607"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723134102"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723134424"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723135048"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723135345"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723135643"
+      },
+      {
+        "name": "fix_fprog_unique_nulls_not_distinct",
+        "statements": null,
+        "version": "20260723140000"
+      },
+      {
+        "name": "fb44f2dd-b72b-4eda-887c-50447d75b2b0",
+        "statements": null,
+        "version": "20260723144527"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723144529"
+      },
+      {
+        "name": "c2a61f2e-7f49-48f4-9c44-b2fec580f43f",
+        "statements": null,
+        "version": "20260723145602"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723145605"
+      },
+      {
+        "name": "fc3a2a61-bdf1-4e5f-ad3b-b1da5024d07a",
+        "statements": null,
+        "version": "20260723150213"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723150234"
+      },
+      {
+        "name": "b5f5d45f-981e-4a16-987d-15a9eaf72c51",
+        "statements": null,
+        "version": "20260723150455"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723150500"
+      },
+      {
+        "name": "9960ac3c-74a8-4af5-99b7-327c3563110d",
+        "statements": null,
+        "version": "20260723150715"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723150718"
+      },
+      {
+        "name": "7466dc0b-8fe3-439a-b75f-c397a7a28540",
+        "statements": null,
+        "version": "20260723151659"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723151702"
+      },
+      {
+        "name": "ad490897-6464-4f4c-86d0-e92a52a658f9",
+        "statements": null,
+        "version": "20260723152056"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723152059"
+      },
+      {
+        "name": "9d987366-422e-479d-a42f-505771f937bf",
+        "statements": null,
+        "version": "20260723152225"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723152247"
+      },
+      {
+        "name": "fix_create_ciencia_rate_limits",
+        "statements": null,
+        "version": "20260723152400"
+      },
+      {
+        "name": "a21491db-9371-4ffd-b928-f6ea93569f2e",
+        "statements": null,
+        "version": "20260723152450"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723152452"
+      },
+      {
+        "name": "1aca4f77-6c8d-4406-b589-a247d41458e3",
+        "statements": null,
+        "version": "20260723152556"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723152602"
+      },
+      {
+        "name": "589ecf53-494d-4834-9e63-d6f4fa1c7822",
+        "statements": null,
+        "version": "20260723153630"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260723153633"
+      },
+      {
+        "name": "fix_contratos_clt_trigger_e_revogado_em",
+        "statements": null,
+        "version": "20260723170000"
+      },
+      {
+        "name": "fix_bugs_bot_migs_b1_b2_b3_b7",
+        "statements": null,
+        "version": "20260723180000"
+      },
+      {
+        "name": "fix_clt_trigger_cadeia_prorrogacao",
+        "statements": null,
+        "version": "20260723190000"
+      },
+      {
+        "name": "fix_m8_column_names_assinado",
+        "statements": null,
+        "version": "20260723200000"
+      },
+      {
+        "name": "fix_verif_auth_v2_ip_inet",
+        "statements": null,
+        "version": "20260723210000"
+      },
+      {
+        "name": "fix_ciencia_rate_limits_index_retry",
+        "statements": null,
+        "version": "20260723220000"
+      },
+      {
+        "name": "fix_afastamentos_dias_total_generated",
+        "statements": null,
+        "version": "20260724000300"
+      },
+      {
+        "name": "fix_jornadas_missing_business_columns",
+        "statements": null,
+        "version": "20260724000400"
+      },
+      {
+        "name": "fix_faltas_status_default",
+        "statements": 1,
+        "statements_sha": "4482540769f78876",
+        "version": "20260724000500"
+      },
+      {
+        "name": "fix_audit_logs_rls_empresa_isolation",
+        "statements": null,
+        "version": "20260724000600"
+      },
+      {
+        "name": "fix_turnos_missing_business_columns",
+        "statements": null,
+        "version": "20260724000800"
+      },
+      {
+        "name": "fix_dependentes_missing_para_columns",
+        "statements": null,
+        "version": "20260724001000"
+      },
+      {
+        "name": "fix_escalas_missing_business_columns",
+        "statements": null,
+        "version": "20260724001100"
+      },
+      {
+        "name": "fix_faltas_tipo_default_and_constraint",
+        "statements": 1,
+        "statements_sha": "e11c505963742fbf",
+        "version": "20260724001200"
+      },
+      {
+        "name": "fix_jornadas_horarios_rls",
+        "statements": null,
+        "version": "20260724001400"
+      },
+      {
+        "name": "fix_treinamento_rls_cross_tenant",
+        "statements": null,
+        "version": "20260724001500"
+      },
+      {
+        "name": "fix_turnos_ativo_column",
+        "statements": null,
+        "version": "20260724001600"
+      },
+      {
+        "name": "fix_escalas_trabalho_missing_indexes",
+        "statements": null,
+        "version": "20260724001700"
+      },
+      {
+        "name": "fix_ativo_boolean_payroll_tables",
+        "statements": null,
+        "version": "20260724001800"
+      },
+      {
+        "name": "fix_comissoes_rls_cross_tenant",
+        "statements": null,
+        "version": "20260724001900"
+      },
+      {
+        "name": "fix_rls_remaining_cross_tenant_tables",
+        "statements": null,
+        "version": "20260724002100"
+      },
+      {
+        "name": "fix_treinamentos_missing_columns",
+        "statements": null,
+        "version": "20260724002200"
+      },
+      {
+        "name": "fix_pensoes_missing_business_columns",
+        "statements": null,
+        "version": "20260724002300"
+      },
+      {
+        "name": "fix_emprestimos_consignados_missing_columns",
+        "statements": null,
+        "version": "20260724002400"
+      },
+      {
+        "name": "fix_adiantamentos_salariais_rls_cross_tenant",
+        "statements": null,
+        "version": "20260724002500"
+      },
+      {
+        "name": "fix_asos_missing_business_columns",
+        "statements": null,
+        "version": "20260724002600"
+      },
+      {
+        "name": "fix_epis_missing_business_columns",
+        "statements": null,
+        "version": "20260724002700"
+      },
+      {
+        "name": "fix_guias_fgts_inss_missing_competencia",
+        "statements": null,
+        "version": "20260724002800"
+      },
+      {
+        "name": "p3_054_mv_telemetry_dashboard",
+        "statements": null,
+        "version": "20260724100000"
+      },
+      {
+        "name": "p3_064_query_telemetry_trace_id",
+        "statements": null,
+        "version": "20260724120000"
+      },
+      {
+        "name": "atomic_rate_limit_rpc",
+        "statements": null,
+        "version": "20260724120001"
+      },
+      {
+        "name": "p3_065_lgpd_retencao_purge",
+        "statements": null,
+        "version": "20260724130000"
+      },
+      {
+        "name": "p3_065b_retencao_indices",
+        "statements": null,
+        "version": "20260724130001"
+      },
+      {
+        "name": "codex_p1_function_overload_and_auth_gap",
+        "statements": null,
+        "version": "20260724130004"
+      },
+      {
+        "name": "p4_072_mv_dashboards",
+        "statements": 1,
+        "statements_sha": "5af9511c65b2d4f1",
+        "version": "20260724140000"
+      },
+      {
+        "name": "p3_060_backup_logs",
+        "statements": 1,
+        "statements_sha": "5195f1f10818842e",
+        "version": "20260725100000"
+      },
+      {
+        "name": "p1_025_encryption_pgcrypto",
+        "statements": null,
+        "version": "20260726100000"
+      },
+      {
+        "name": "1df12741-473a-4e8d-92cd-7b0821eb4203",
+        "statements": null,
+        "version": "20260728172359"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728172403"
+      },
+      {
+        "name": "b925f25f-6427-42f4-b36d-21ba5067f2c9",
+        "statements": null,
+        "version": "20260728172430"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728172439"
+      },
+      {
+        "name": "ea6ac4f5-f800-4ada-af20-68ad66c53afa",
+        "statements": null,
+        "version": "20260728172649"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728172652"
+      },
+      {
+        "name": "24c29f77-4e55-46a6-be26-75b319a2aacd",
+        "statements": null,
+        "version": "20260728172754"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728172756"
+      },
+      {
+        "name": "fffdb2d1-ed5f-41a3-8a72-bcd13809d581",
+        "statements": null,
+        "version": "20260728175703"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728175708"
+      },
+      {
+        "name": "7e07b595-24a3-4d07-a361-45daedacd333",
+        "statements": null,
+        "version": "20260728175807"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728175811"
+      },
+      {
+        "name": "cb954a0b-8458-4bf3-ac52-8bb9a44f65ea",
+        "statements": null,
+        "version": "20260728180022"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728180024"
+      },
+      {
+        "name": "8aa2e680-c495-4784-8f95-0dddd27bc56e",
+        "statements": null,
+        "version": "20260728180353"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728180356"
+      },
+      {
+        "name": "95da6131-3024-4af7-a655-448cdb2f6c97",
+        "statements": null,
+        "version": "20260728183134"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728183137"
+      },
+      {
+        "name": "78f86869-fb0b-4d26-8579-0ec6c708f6ad",
+        "statements": null,
+        "version": "20260728192830"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728192836"
+      },
+      {
+        "name": "6b7dbce4-e845-45f4-b1bb-95803c272c0c",
+        "statements": null,
+        "version": "20260728201706"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728201709"
+      },
+      {
+        "name": "9bf08a18-b8de-4fe1-809e-b1800d79d3e9",
+        "statements": null,
+        "version": "20260728201822"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728201824"
+      },
+      {
+        "name": "a60ec8d7-e4af-4169-a0eb-8511e6c2b401",
+        "statements": null,
+        "version": "20260728201936"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728201942"
+      },
+      {
+        "name": "d5734d3c-0cee-4ce6-98f0-469e5f0536ec",
+        "statements": null,
+        "version": "20260728202022"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728202024"
+      },
+      {
+        "name": "c0ad188c-d31a-436b-b954-92321f2a6fb4",
+        "statements": null,
+        "version": "20260728204011"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728204016"
+      },
+      {
+        "name": "b695e197-12a0-4ec5-a1d4-9a1acf705c49",
+        "statements": null,
+        "version": "20260728204043"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728204047"
+      },
+      {
+        "name": "9ec83f4d-ddf8-4c37-9300-1567a812b4b9",
+        "statements": null,
+        "version": "20260728204123"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728204127"
+      },
+      {
+        "name": "28bae2b7-ac7d-409c-bf7a-3541de96469a",
+        "statements": null,
+        "version": "20260728204152"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728204155"
+      },
+      {
+        "name": "b74bae59-fbc3-443c-91eb-1ffb3a54c1b9",
+        "statements": null,
+        "version": "20260728204241"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728204244"
+      },
+      {
+        "name": "15acc7ff-65a2-45bb-9c10-972112bb1f43",
+        "statements": null,
+        "version": "20260728204353"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728204356"
+      },
+      {
+        "name": "46043d7d-ad3b-4149-92c1-fb6938224570",
+        "statements": null,
+        "version": "20260728205201"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728205204"
+      },
+      {
+        "name": "53e17901-0f16-4404-8214-c1ae721d53a5",
+        "statements": null,
+        "version": "20260728205410"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728205413"
+      },
+      {
+        "name": "184878ad-cf8c-4222-b6a5-c39e35e48b30",
+        "statements": null,
+        "version": "20260728205814"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728205817"
+      },
+      {
+        "name": "479fe569-dd0a-43e5-a2e2-b7f5e57ca734",
+        "statements": null,
+        "version": "20260728210422"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728210424"
+      },
+      {
+        "name": "a28ef2b6-9ee7-404a-b10f-4d3e1e6b1c6a",
+        "statements": null,
+        "version": "20260728211205"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728211208"
+      },
+      {
+        "name": "d223051d-9d7d-44a2-b978-a9d7487f9205",
+        "statements": null,
+        "version": "20260728211713"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728211715"
+      },
+      {
+        "name": "06eaac5a-d1ee-433e-aa2b-3d5ff68805b9",
+        "statements": null,
+        "version": "20260728211946"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728211950"
+      },
+      {
+        "name": "f6a40d30-9f48-444d-a6e5-c23f9d3a1e96",
+        "statements": null,
+        "version": "20260728212701"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728212703"
+      },
+      {
+        "name": "45876acb-7588-4c37-be3b-c712de457b5e",
+        "statements": null,
+        "version": "20260728212809"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728212813"
+      },
+      {
+        "name": "3252140f-7caa-4269-a9bd-65887e078381",
+        "statements": null,
+        "version": "20260728212903"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728212908"
+      },
+      {
+        "name": "f94dbe91-75ed-4633-a21d-089630e1859c",
+        "statements": null,
+        "version": "20260728212954"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728212958"
+      },
+      {
+        "name": "f905616b-1022-4163-be07-b8a4a1ee4f95",
+        "statements": null,
+        "version": "20260728213222"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728213225"
+      },
+      {
+        "name": "5f0dc79d-e3e4-448a-8039-cebfbd69a8d2",
+        "statements": null,
+        "version": "20260728213348"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728213354"
+      },
+      {
+        "name": "d6402347-8844-41bd-9155-fa4a7bbbced1",
+        "statements": null,
+        "version": "20260728213516"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728213518"
+      },
+      {
+        "name": "fb2aed2d-d53c-4b2d-ad5d-75ef0a36fb04",
+        "statements": null,
+        "version": "20260728213849"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728213852"
+      },
+      {
+        "name": "f758bff1-d9d2-4272-8672-58d3ea97932e",
+        "statements": null,
+        "version": "20260728214059"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728214101"
+      },
+      {
+        "name": "0b31f4e4-013c-46ec-9a07-206c96a6f3b2",
+        "statements": null,
+        "version": "20260728214419"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728214422"
+      },
+      {
+        "name": "4867964a-0a2a-4647-b927-ca7c67eda537",
+        "statements": null,
+        "version": "20260728214457"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728214459"
+      },
+      {
+        "name": "0451dce1-fd12-4ca8-b1d8-70a4af093a47",
+        "statements": null,
+        "version": "20260728214519"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728214524"
+      },
+      {
+        "name": "6f87ab99-f387-4e38-8da3-ecf0822b2d58",
+        "statements": null,
+        "version": "20260728214736"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728214739"
+      },
+      {
+        "name": "1d4fc6b8-d299-4e89-9c17-1947254e65fd",
+        "statements": null,
+        "version": "20260728215236"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728215239"
+      },
+      {
+        "name": "7c9f791d-4ad4-437b-afaa-52eba25ccdde",
+        "statements": null,
+        "version": "20260728215504"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728215507"
+      },
+      {
+        "name": "6bec8125-b645-452a-a3e9-46c1fc2f2a0b",
+        "statements": null,
+        "version": "20260728215654"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728215656"
+      },
+      {
+        "name": "f687c8e6-2691-473e-ab7e-d2a2fd9aafb9",
+        "statements": null,
+        "version": "20260728220146"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728220149"
+      },
+      {
+        "name": "6849abba-1064-408f-bfdb-0582668632f6",
+        "statements": null,
+        "version": "20260728220443"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728220446"
+      },
+      {
+        "name": "89d8b3cb-618e-43a1-a36e-d921cd228447",
+        "statements": null,
+        "version": "20260728220631"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728220634"
+      },
+      {
+        "name": "cc8fdde4-4aad-47fa-87e9-0940fbf19680",
+        "statements": null,
+        "version": "20260728221052"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728221055"
+      },
+      {
+        "name": "00a9c0c8-a037-402f-a199-b40e9f171826",
+        "statements": null,
+        "version": "20260728221222"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728221224"
+      },
+      {
+        "name": "73e548da-588c-47a2-b70e-27073de8e38b",
+        "statements": null,
+        "version": "20260728221754"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260728221756"
+      },
+      {
+        "name": "50fe31f1-d6f8-48fb-8015-3a90e7c6da74",
+        "statements": null,
+        "version": "20260729151433"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729151436"
+      },
+      {
+        "name": "693b89cb-d0c0-4e91-a002-37ed3c438aee",
+        "statements": null,
+        "version": "20260729151523"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729151525"
+      },
+      {
+        "name": "1317cdae-6b16-4d7d-b0a7-b9ff71d5009a",
+        "statements": null,
+        "version": "20260729151602"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729151604"
+      },
+      {
+        "name": "9cd725f1-8b9d-4af3-8019-8a613c2d9d42",
+        "statements": null,
+        "version": "20260729151828"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729151830"
+      },
+      {
+        "name": "32490ab6-eb1a-4e2f-8158-c9e1b809b496",
+        "statements": null,
+        "version": "20260729152119"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729152121"
+      },
+      {
+        "name": "d696af36-7b5a-4798-8d0b-5f618dcbb9a6",
+        "statements": null,
+        "version": "20260729152319"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729152328"
+      },
+      {
+        "name": "6aa8737b-f56d-4327-b3fe-a5364b28ea97",
+        "statements": null,
+        "version": "20260729152613"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729152615"
+      },
+      {
+        "name": "4c5c1882-e321-4b89-a1ed-67b8908e975a",
+        "statements": null,
+        "version": "20260729154434"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729154437"
+      },
+      {
+        "name": "2f24a9bd-a0c2-4604-979a-e1d222ef8841",
+        "statements": null,
+        "version": "20260729155103"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729155105"
+      },
+      {
+        "name": "bb5c01ba-e73f-45f6-aeca-31a16e80f399",
+        "statements": null,
+        "version": "20260729155527"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729155530"
+      },
+      {
+        "name": "283112e6-21c2-4dba-897b-052018d487b7",
+        "statements": null,
+        "version": "20260729160446"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729160452"
+      },
+      {
+        "name": "3fbc6a71-ef8c-4e9b-b002-c11cd4666dd9",
+        "statements": null,
+        "version": "20260729161016"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729161019"
+      },
+      {
+        "name": "a35b12d5-fa87-4328-830f-2b75d31e90d6",
+        "statements": null,
+        "version": "20260729161251"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729161300"
+      },
+      {
+        "name": "f56939e3-4ec6-4534-a18e-68f33f812b96",
+        "statements": null,
+        "version": "20260729161527"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260729161541"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260730125231"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260730125508"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260730125644"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260730125859"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260730130408"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260730130749"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260730130920"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260730131106"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260730131136"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260730131320"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260731145423"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260731151103"
+      },
+      {
+        "name": null,
+        "statements": null,
+        "version": "20260731151430"
+      },
+      {
+        "name": "p0_002_user_empresa_id_app_metadata",
+        "statements": null,
+        "version": "20260801000000"
+      },
+      {
+        "name": "p0_004_anon_tokens_logs",
+        "statements": null,
+        "version": "20260803000000"
+      },
+      {
+        "name": "p0_010_write_policies_provisoes",
+        "statements": 1,
+        "statements_sha": "6c4e28d9bac38fd6",
+        "version": "20260804000000"
+      },
+      {
+        "name": "p0_005_auditoria_via_rpc",
+        "statements": null,
+        "version": "20260805000000"
+      },
+      {
+        "name": "p0_011_indices_empresa_id",
+        "statements": null,
+        "version": "20260806000000"
+      },
+      {
+        "name": "p0_006_search_path_public",
+        "statements": null,
+        "version": "20260807000000"
+      },
+      {
+        "name": "p0_003_padroniza_empresa_id",
+        "statements": null,
+        "version": "20260808000000"
+      },
+      {
+        "name": "p0_001_rls_batch1_core_rh",
+        "statements": null,
+        "version": "20260809000000"
+      },
+      {
+        "name": "p0_001_rls_batch2_ponto_ferias",
+        "statements": null,
+        "version": "20260810000000"
+      },
+      {
+        "name": "p0_001_rls_batch3_estrutura_treinamentos",
+        "statements": null,
+        "version": "20260811000000"
+      },
+      {
+        "name": "p0_001_rls_batch4_beneficios_workflows_esocial",
+        "statements": null,
+        "version": "20260812000000"
+      },
+      {
+        "name": "p0_001_rls_batch5_final",
+        "statements": null,
+        "version": "20260813000000"
+      },
+      {
+        "name": "p1_026_exception_triggers_folha",
+        "statements": null,
+        "version": "20260814000000"
+      },
+      {
+        "name": "p4_071_indices_compostos_top20",
+        "statements": 1,
+        "statements_sha": "74c94cbd26a8c67f",
+        "version": "20260817000000"
+      },
+      {
+        "name": "p1_025_encryption_dados_bancarios",
+        "statements": null,
+        "version": "20260818000000"
+      },
+      {
+        "name": "p2_037_deprecate_legacy_tables",
+        "statements": null,
+        "version": "20260818000001"
+      },
+      {
+        "name": "plano100_e028_storage_buckets_privados",
+        "statements": 12,
+        "statements_sha": "f8aed1c95b2424f5",
+        "version": "20260830000001"
+      },
+      {
+        "name": "plano100_e036_pii_access_logs",
+        "statements": 29,
+        "statements_sha": "fe2fea1ede17ec65",
+        "version": "20260830000002"
+      },
+      {
+        "name": "plano100_e012_secdef_permissions_helpers",
+        "statements": 9,
+        "statements_sha": "0f7e14fa9dde4435",
+        "version": "20260830000003"
+      },
+      {
+        "name": "p0_views_security_invoker",
+        "statements": null,
+        "version": "20260911180000"
+      },
+      {
+        "name": "p0_hash_trigger_search_path",
+        "statements": 1,
+        "statements_sha": "78b06b60c8cfb232",
+        "version": "20260911190000"
+      },
+      {
+        "name": "p0_auth_lockout_contract",
+        "statements": null,
+        "version": "20260911191000"
+      },
+      {
+        "name": "p0_views_revoke_public",
+        "statements": 1,
+        "statements_sha": "04a0825a11615603",
+        "version": "20260911192000"
+      },
+      {
+        "name": "p0_restore_atomic_rate_limit",
+        "statements": null,
+        "version": "20260911194000"
+      },
+      {
+        "name": "p0_payroll_upsert_contract",
+        "statements": 1,
+        "statements_sha": "1c858cb3fea65360",
+        "version": "20260911195000"
+      },
+      {
+        "name": "p0_bridge_membership_authorization",
+        "statements": null,
+        "version": "20260911200000"
+      },
+      {
+        "name": "p0_hash_trigger_search_path",
+        "statements": 1,
+        "statements_sha": "f2b8192ac8d0c1e1",
+        "version": "20260912142449"
+      },
+      {
+        "name": "p0_auth_lockout_contract",
+        "statements": 1,
+        "statements_sha": "988c3d4158eba507",
+        "version": "20260912142506"
+      },
+      {
+        "name": "p0_payroll_upsert_contract",
+        "statements": 1,
+        "statements_sha": "7281871ef14bbd3c",
+        "version": "20260912142520"
+      },
+      {
+        "name": "p0_views_revoke_public",
+        "statements": 1,
+        "statements_sha": "025040bdc08c89eb",
+        "version": "20260912143019"
+      },
+      {
+        "name": "p0_secdef_search_path",
+        "statements": 1,
+        "statements_sha": "c004214d7dcee601",
+        "version": "20260912143239"
+      },
+      {
+        "name": "p1_function_search_path",
+        "statements": 1,
+        "statements_sha": "4bbd15d69f72ab66",
+        "version": "20260912143344"
+      },
+      {
+        "name": "p0_pgcrypto_routine_search_path",
+        "statements": 1,
+        "statements_sha": "39b9c66a419e7514",
+        "version": "20260912144208"
+      },
+      {
+        "name": "p0_secdef_search_path",
+        "statements": null,
+        "version": "20260912150000"
+      },
+      {
+        "name": "p0_identity_rls_authz",
+        "statements": null,
+        "version": "20260912190000"
+      },
+      {
+        "name": "p0_token_table_acl",
+        "statements": null,
+        "version": "20260912191000"
+      },
+      {
+        "name": "p0_report_schedule_claims",
+        "statements": null,
+        "version": "20260912192000"
+      },
+      {
+        "name": "p1_atomic_provisions_contract",
+        "statements": null,
+        "version": "20260912193000"
+      },
+      {
+        "name": "p1_report_schedule_authorship",
+        "statements": null,
+        "version": "20260912194000"
+      },
+      {
+        "name": "p1_scoped_audit_trail",
+        "statements": null,
+        "version": "20260912195000"
+      },
+      {
+        "name": "p1_backup_storage_bucket",
+        "statements": null,
+        "version": "20260912200000"
+      },
+      {
+        "name": "p1_internal_notification_recipients",
+        "statements": null,
+        "version": "20260912201000"
+      },
+      {
+        "name": "p1_pcs_contract",
+        "statements": null,
+        "version": "20260912202000"
+      },
+      {
+        "name": "p1_security_cron_contract",
+        "statements": null,
+        "version": "20260912203000"
+      },
+      {
+        "name": "p1_admission_esocial_claim",
+        "statements": null,
+        "version": "20260912204000"
+      },
+      {
+        "name": "p1_payroll_audit_read_contract",
+        "statements": null,
+        "version": "20260912205000"
+      },
+      {
+        "name": "p1_audit_action_contract",
+        "statements": null,
+        "version": "20260912206000"
+      },
+      {
+        "name": "p1_idempotency_monitoring_contract",
+        "statements": null,
+        "version": "20260912207000"
+      },
+      {
+        "name": "p1_company_payroll_tax_contract",
+        "statements": null,
+        "version": "20260912208000"
+      },
+      {
+        "name": "p1_tenant_telemetry_contract",
+        "statements": null,
+        "version": "20260912209000"
+      },
+      {
+        "name": "p1_report_dispatch_idempotency",
+        "statements": null,
+        "version": "20260912210000"
+      },
+      {
+        "name": "p0_close_live_rls_gap_pix_cnab_colaboradores",
+        "statements": [],
+        "version": "20260924140000"
+      },
+      {
+        "name": "p0_role_gate_bancarias_folha_ponto_logs",
+        "statements": [],
+        "version": "20260924141500"
+      },
+      {
+        "name": "p1_audit_log_insert_select_authz",
+        "statements": [],
+        "version": "20260924143000"
+      },
+      {
+        "name": "p1_least_privilege_read_dependentes_pix_cnab",
+        "statements": [],
+        "version": "20260924150000"
+      },
+      {
+        "name": "e50_33_pin_quiosque_ponto",
+        "statements": [],
+        "version": "20260924160000"
+      },
+      {
+        "name": "e50_34_unique_bitrix_upsert_keys",
+        "statements": [],
+        "version": "20260924170000"
+      },
+      {
+        "name": "e50_40_colaboradores_cpf_matricula_por_empresa",
+        "statements": [],
+        "version": "20260924180000"
+      },
+      {
+        "name": "p0_fix_search_path_pin_quiosque",
+        "statements": [],
+        "version": "20260924190000"
+      },
+      {
+        "name": "p1_registros_ponto_role_policy",
+        "statements": [],
+        "version": "20260924192541"
+      },
+      {
+        "name": "p0_rls_least_privilege_remediation",
+        "statements": [],
+        "version": "20260924200000"
+      },
+      {
+        "name": "p0_rls_tenant_correlation_remediation",
+        "statements": [],
+        "version": "20260924210000"
+      },
+      {
+        "name": "p0_secdef_authz_remediation",
+        "statements": [],
+        "version": "20260924220000"
+      },
+      {
+        "name": "p0_secdef_revoke_public_grant",
+        "statements": [],
+        "version": "20260924230000"
+      },
+      {
+        "name": "p0_fix_processar_ajuste_search_path",
+        "statements": [],
+        "version": "20260924240000"
+      },
+      {
+        "name": "p0_batidas_ponto_role_gate",
+        "statements": [],
+        "version": "20260924310000"
+      },
+      {
+        "name": "colaborador_lotacoes",
+        "statements": 1,
+        "statements_sha": "050e0f257e0873a8",
+        "version": "20260929120000"
+      },
+      {
+        "name": "p1_rls_status_hardening",
+        "statements": [],
+        "version": "20261001140000"
+      },
+      {
+        "name": "p0_rls_tenant_or_admin_helper",
+        "statements": [],
+        "version": "20261002102900"
+      },
+      {
+        "name": "p0_fix_audit_critical_gaps",
+        "statements": [],
+        "version": "20261002103000"
+      },
+      {
+        "name": "p0_tighten_audit_bancario_insert",
+        "statements": [],
+        "version": "20261003100000"
+      },
+      {
+        "name": "p1_drift_cols_workflows_sla_cnab",
+        "statements": [],
+        "version": "20261003110000"
+      },
+      {
+        "name": "get_empresa_admin_ids_privileged_callers",
+        "statements": [],
+        "version": "20261005120000"
+      },
+      {
+        "name": "admin_list_profiles_rpc",
+        "statements": [],
+        "version": "20261005140000"
+      },
+      {
+        "name": "wave7_audit_fixes",
+        "statements": [],
+        "version": "20261005160000"
+      },
+      {
+        "name": "fix_wave7_contrato_rpcs_regression",
+        "statements": null,
+        "version": "20261006100000"
+      },
+      {
+        "name": "fix_contrato_assinar_search_path",
+        "statements": [],
+        "version": "20261006110000"
+      },
+      {
+        "name": "revoke_admissao_token_row_helper",
+        "statements": [],
+        "version": "20261006120000"
+      },
+      {
+        "name": "cnab_sequencial_atomic",
+        "statements": [],
+        "version": "20261011160000"
+      },
+      {
+        "name": "cnab_remessa_unica",
+        "statements": [],
+        "version": "20261011161000"
+      },
+      {
+        "name": "check_constraints_integridade",
+        "statements": [],
+        "version": "20261011170000"
+      },
+      {
+        "name": "check_constraints_financeiro",
+        "statements": [],
+        "version": "20261011180000"
+      },
+      {
+        "name": "check_constraints_recursos",
+        "statements": [],
+        "version": "20261011190000"
+      },
+      {
+        "name": "check_constraints_operacional",
+        "statements": [],
+        "version": "20261011200000"
+      },
+      {
+        "name": "holerites_espelho_folha_itens",
+        "statements": [],
+        "version": "20261012120000"
+      },
+      {
+        "name": "admissao_etapa_concluida_cancelada",
+        "statements": null,
+        "version": "20261012140000"
+      },
+      {
+        "name": "whatsapp_config_admin_rh",
+        "statements": null,
+        "version": "20261012150000"
+      },
+      {
+        "name": "whatsapp_config_policy_pode_gerir_rh",
+        "statements": null,
+        "version": "20261013120000"
+      },
+      {
+        "name": "fix_broken_cron_jobs",
+        "statements": [],
+        "version": "20261013130000"
+      },
+      {
+        "name": "ferias_status_daily_transitions",
+        "statements": [],
+        "version": "20261013140000"
+      },
+      {
+        "name": "onda4a_security_lockdown",
+        "statements": [],
+        "version": "20261013150000"
+      },
+      {
+        "name": "onda4a_auditoria_fn_revoke",
+        "statements": [],
+        "version": "20261013151000"
+      },
+      {
+        "name": "onda4b_vinculo_documentos_lgpd_crypto",
+        "statements": [],
+        "version": "20261013152000"
+      },
+      {
+        "name": "fix_cron_jobs_onda3b",
+        "statements": [],
+        "version": "20261014120000"
+      },
+      {
+        "name": "onda4c_review_fixes_empresa_id",
+        "statements": [],
+        "version": "20261014160000"
+      },
+      {
+        "name": "ledger_repair",
+        "statements": [],
+        "version": "20261014170000"
+      },
+      {
+        "name": "ninebox_finalizacao_e_potencial",
+        "statements": 1,
+        "statements_sha": "c17cd08b311f5605",
+        "version": "20261015090000"
+      },
+      {
+        "name": "ci_auditor_readonly_role",
+        "statements": 1,
+        "statements_sha": "d5bf3d7aba1a91e1",
+        "version": "20261015160000"
+      },
+      {
+        "name": "ci_auditor_revoke_public_secdef",
+        "statements": 1,
+        "statements_sha": "eb36fffb6924b174",
+        "version": "20261015170000"
+      },
+      {
+        "name": "ninebox_revoga_insert_direto",
+        "statements": 1,
+        "statements_sha": "5d977ca860f2604b",
+        "version": "20261016090000"
+      },
+      {
+        "name": "ninebox_aprovacao_gestor",
+        "statements": 1,
+        "statements_sha": "186bede5eba44208",
+        "version": "20261017090000"
+      },
+      {
+        "name": "ninebox_conclusao_gestor",
+        "statements": 1,
+        "statements_sha": "e076681277df11ca",
+        "version": "20261018090000"
+      },
+      {
+        "name": "onda4d_review243",
+        "statements": 1,
+        "statements_sha": "1387d573e99cfd73",
+        "version": "20261018120000"
+      },
+      {
+        "name": "onda4e_objetos_ausentes",
+        "statements": 1,
+        "statements_sha": "aa4387b915bc45b5",
+        "version": "20261018130000"
+      },
+      {
+        "name": "onda5_ponto_cols",
+        "statements": 1,
+        "statements_sha": "cbf881b5da6d3821",
+        "version": "20261018140000"
+      },
+      {
+        "name": "onda5_rescisao_detalhes_calculo",
+        "statements": 1,
+        "statements_sha": "8af86a222c706d36",
+        "version": "20261018150000"
+      },
+      {
+        "name": "dedup_idempotency_anomalies_job",
+        "statements": 1,
+        "statements_sha": "e41a63a854c57409",
+        "version": "20261018160000"
+      },
+      {
+        "name": "default_privs_revoke_execute_public",
+        "statements": 1,
+        "statements_sha": "5af5773bf7059033",
+        "version": "20261018170000"
+      },
+      {
+        "name": "qa2_pix_lote_idempotente",
+        "statements": 1,
+        "statements_sha": "fdcb1aeb29ba536e",
+        "version": "20261018200000"
+      },
+      {
+        "name": "qa3_db_fixes",
+        "statements": 1,
+        "statements_sha": "72f36d9f2aabf267",
+        "version": "20261019000000"
+      },
+      {
+        "name": "versiona_ddl_orfao_dp",
+        "statements": 1,
+        "statements_sha": "b73c83dce7d5a82e",
+        "version": "20261019235900"
+      },
+      {
+        "name": "colaboradores_metadata",
+        "statements": 1,
+        "statements_sha": "130f0a342c294991",
+        "version": "20261020000000"
+      },
+      {
+        "name": "ninebox_edicao_feedback",
+        "statements": 1,
+        "statements_sha": "f1774ed541490e6f",
+        "version": "20261020090000"
+      },
+      {
+        "name": "ninebox_permissoes_homologacao_versiona_tabela",
+        "statements": 1,
+        "statements_sha": "9fd6f66f95025e99",
+        "version": "20261020120000"
+      },
+      {
+        "name": "ledger_reconcile_secdef_defaults",
+        "statements": 1,
+        "statements_sha": "49de10e0998cb765",
+        "version": "20261021000000"
+      },
+      {
+        "name": "default_privs_for_role",
+        "statements": 1,
+        "statements_sha": "e1eb6145eaba41ef",
+        "version": "20261021010000"
+      },
+      {
+        "name": "ninebox_aprovacao_confirmada",
+        "statements": 1,
+        "statements_sha": "dcb59905bf6ae720",
+        "version": "20261021090000"
+      },
+      {
+        "name": "qa5_db_fixes",
+        "statements": 1,
+        "statements_sha": "4ef3f373ae82e121",
+        "version": "20261022000000"
+      },
+      {
+        "name": "ninebox_conclusao_feedback_autorizada",
+        "statements": 1,
+        "statements_sha": "35ec5e6e289c18e0",
+        "version": "20261022090000"
+      },
+      {
+        "name": "qa_r3_fixes",
+        "statements": 1,
+        "statements_sha": "65a9b4539e2a1a42",
+        "version": "20261023000000"
+      },
+      {
+        "name": "training_images_infrastructure",
+        "statements": 45,
+        "statements_sha": "fb5970ee9141c93d",
+        "version": "20261023120000"
+      },
+      {
+        "name": "training_image_autoqueue",
+        "statements": 42,
+        "statements_sha": "aaf3b65f6e21b16b",
+        "version": "20261023130000"
+      },
+      {
+        "name": "edge_rate_limit_dual",
+        "statements": 5,
+        "statements_sha": "0e069f6e3f191641",
+        "version": "20261023140000"
+      },
+      {
+        "name": "qa_r4_fixes",
+        "statements": 1,
+        "statements_sha": "5eaddbb6d1b9a682",
+        "version": "20261024000000"
+      },
+      {
+        "name": "ninebox_aprovacao_autoria",
+        "statements": 1,
+        "statements_sha": "6aaad3e048f9df68",
+        "version": "20261025090000"
+      },
+      {
+        "name": "revoke_orphan_secdef",
+        "statements": 1,
+        "statements_sha": "d9122aff0e45b417",
+        "version": "20261027000000"
+      },
+      {
+        "name": "ninebox_reconciliacao_incremental",
+        "statements": 1,
+        "statements_sha": "312e1f72089f594d",
+        "version": "20261027090000"
+      },
+      {
+        "name": "qa_r5_fixes",
+        "statements": 1,
+        "statements_sha": "db0167573392e00a",
+        "version": "20261027120000"
+      },
+      {
+        "name": "ninebox_justificativa_historico",
+        "statements": 1,
+        "statements_sha": "10802c7d8bbb019e",
+        "version": "20261028090000"
+      },
+      {
+        "name": "qa_r5_review_fixes",
+        "statements": 1,
+        "statements_sha": "3d280ae24ec9a170",
+        "version": "20261028120000"
+      },
+      {
+        "name": "revoke_orphan_secdef_v2",
+        "statements": 1,
+        "statements_sha": "c199632f11026ec2",
+        "version": "20261028130000"
+      },
+      {
+        "name": "pagar_desligamento_transacional",
+        "statements": 1,
+        "statements_sha": "038e72a8257537ca",
+        "version": "20261028220000"
+      },
+      {
+        "name": "govbr_auth_state_user_id",
+        "statements": 1,
+        "statements_sha": "2e349ef1847d8deb",
+        "version": "20261028230000"
+      },
+      {
+        "name": "gaps_v2_verificacao",
+        "statements": 1,
+        "statements_sha": "2f47ecec9a45ece2",
+        "version": "20261029000000"
+      },
+      {
+        "name": "whatsapp_pending_trigger_retire",
+        "statements": 1,
+        "statements_sha": "38c92a66fa5448e3",
+        "version": "20261029120000"
+      },
+      {
+        "name": "fix_rls_insert_configuracoes_ponto",
+        "statements": 1,
+        "statements_sha": "05640e9ac7286225",
+        "version": "20261107203000"
+      },
+      {
+        "name": "configuracoes_ponto_insert_policy",
+        "statements": 1,
+        "statements_sha": "75f53a5dc84b0813",
+        "version": "20261109000000"
+      },
+      {
+        "name": "ferias_art145_antecipacao_oj123",
+        "statements": 1,
+        "statements_sha": "30a5140ecbbd13dc",
+        "version": "20261111000000"
+      },
+      {
+        "name": "rv02_drop_inert_token_policies",
+        "statements": 1,
+        "statements_sha": "5d97507859aeb7ff",
+        "version": "20261112000000"
+      },
+      {
+        "name": "configuracoes_ponto_corrige_policies_prod",
+        "statements": 1,
+        "statements_sha": "da05a2cb8faa917b",
+        "version": "20261112010000"
+      },
+      {
+        "name": "remediate_rv04_missing_rpcs",
+        "statements": 1,
+        "statements_sha": "c6a15d11a20cb10d",
+        "version": "20261113000000"
+      },
+      {
+        "name": "remediate_ferias_art145_11_20",
+        "statements": 1,
+        "statements_sha": "1aaec568e737284a",
+        "version": "20261114000000"
+      },
+      {
+        "name": "notificar_ferias_d5_ignora_usuarios_apagados",
+        "statements": 1,
+        "statements_sha": "497ca03a5e8f9327",
+        "version": "20261114000100"
+      },
+      {
+        "name": "planos_saude_updated_at",
+        "statements": 1,
+        "statements_sha": "35a77c6930eca5e6",
+        "version": "20261114000200"
+      },
+      {
+        "name": "fn_certificado_treinamento_sem_metadata",
+        "statements": 1,
+        "statements_sha": "901d47697a143fdd",
+        "version": "20261114000300"
+      },
+      {
+        "name": "adiciona_updated_at_faltante",
+        "statements": 1,
+        "statements_sha": "3fd405e7896b0478",
+        "version": "20261114000400"
+      },
+      {
+        "name": "pensoes_empresa_id_drift",
+        "statements": 1,
+        "statements_sha": "0ebca5ee859c9a4b",
+        "version": "20261114000500"
+      },
+      {
+        "name": "rls_escrita_por_papel",
+        "statements": 1,
+        "statements_sha": "dede1aaf79762427",
+        "version": "20261114000600"
+      },
+      {
+        "name": "contas_bancarias_decrypted_security_invoker",
+        "statements": 1,
+        "statements_sha": "261b54585b17fca7",
+        "version": "20261114000800"
+      },
+      {
+        "name": "revoke_dml_audit_log_anon_auth",
+        "statements": 1,
+        "statements_sha": "0e5ecab1f0e7c427",
+        "version": "20261115000000"
+      },
+      {
+        "name": "ninebox_rls_leitura_gestor_avaliador",
+        "statements": 1,
+        "statements_sha": "aba1e29d440661f5",
+        "version": "20261115120000"
+      },
+      {
+        "name": "ninebox_enviar_ao_gestor_do_canonico",
+        "statements": 1,
+        "statements_sha": "e80c3593679dd989",
+        "version": "20261115140000"
+      },
+      {
+        "name": "ninebox_canoniza_funcoes_do_canonico",
+        "statements": 1,
+        "statements_sha": "49944dd921ed27fe",
+        "version": "20261115150000"
+      },
+      {
+        "name": "ninebox_consolidacoes_nota_numeric_4_3",
+        "statements": 1,
+        "statements_sha": "6e26dca7bc5d0e04",
+        "version": "20261115160000"
+      },
+      {
+        "name": "ninebox_repoe_revogacao_versao_consolidada",
+        "statements": 1,
+        "statements_sha": "03c1bb3b9eedc60b",
+        "version": "20261115170000"
+      },
+      {
+        "name": "remediate_rbac_e2e_remove_admin",
+        "statements": 1,
+        "statements_sha": "38e38a1edf4d0062",
+        "version": "20261116000000"
+      },
+      {
+        "name": "provisoes_registra_aliquota_aplicada",
+        "statements": 1,
+        "statements_sha": "b4a65d799c01dce4",
+        "version": "20261116120000"
+      },
+      {
+        "name": "storage_documentos_delete_tenant_scope",
+        "statements": 1,
+        "statements_sha": "4ce44e755400e786",
+        "version": "20261117170000"
+      },
+      {
+        "name": "onboarding_audit_trigger",
+        "statements": 1,
+        "statements_sha": "fd543125fe3a9010",
+        "version": "20261117170100"
+      },
+      {
+        "name": "onboarding_kits_indice_empresa",
+        "statements": 1,
+        "statements_sha": "22af9cf226b508bf",
+        "version": "20261117170200"
+      },
+      {
+        "name": "documentos_colunas_storage",
+        "statements": 1,
+        "statements_sha": "b7998393d6d63c6c",
+        "version": "20261117170300"
+      },
+      {
+        "name": "permissions_matriz_seed",
+        "statements": 1,
+        "statements_sha": "c000ec4470531ee6",
+        "version": "20261117190000"
+      },
+      {
+        "name": "storage_documentos_tenant_scope",
+        "statements": 1,
+        "statements_sha": "5d733dbf93f34651",
+        "version": "20261117193000"
+      },
+      {
+        "name": "drop_policy_inerte_recrutamento",
+        "statements": 1,
+        "statements_sha": "b8d57587434d92fd",
+        "version": "20261118110000"
+      },
+      {
+        "name": "empresa_id_not_null_rh",
+        "statements": 1,
+        "statements_sha": "0632b82f2ff398cb",
+        "version": "20261118160000"
+      },
+      {
+        "name": "whatsapp_config_repoe_policy_admin_rh",
+        "statements": 1,
+        "statements_sha": "37f3b813cb53b7b4",
+        "version": "20261118223000"
+      },
+      {
+        "name": "consignado_margem_consignavel_trigger",
+        "statements": 1,
+        "statements_sha": "5be5e44b030f45d7",
+        "version": "20261118235000"
+      },
+      {
+        "name": "consignado_teto_30_pct_lei_10820",
+        "statements": 1,
+        "statements_sha": "1e5e9b7b81ef2685",
+        "version": "20261119110000"
+      },
+      {
+        "name": "ferias_gestor_update",
+        "statements": 1,
+        "statements_sha": "7dc08be71740cc6c",
+        "version": "20261119130000"
+      },
+      {
+        "name": "ferias_gestor_nao_forja_aprovacao_rh",
+        "statements": 1,
+        "statements_sha": "be2b90c779875b32",
+        "version": "20261119140000"
+      },
+      {
+        "name": "onboarding_auditoria_grava_trilha",
+        "statements": 1,
+        "statements_sha": "407d0fa3e7ca5485",
+        "version": "20261119150000"
+      },
+      {
+        "name": "audit_log_empresa_id_e_leitura_rh",
+        "statements": 1,
+        "statements_sha": "d528a804b8afee9d",
+        "version": "20261119160000"
+      },
+      {
+        "name": "onboarding_converge_modelo_b",
+        "statements": 1,
+        "statements_sha": "6721643ee5535ba1",
+        "version": "20261119170000"
+      },
+      {
+        "name": "ci_auditor_grant_set_role",
+        "statements": 1,
+        "statements_sha": "739e8cffdb4223d4",
+        "version": "20261121200000"
+      },
+      {
+        "name": "ponto_rep_ingestao",
+        "statements": 1,
+        "statements_sha": "1ce161e91dc9926c",
+        "version": "20261121210000"
+      },
+      {
+        "name": "ponto_rep_coletores_admin",
+        "statements": 1,
+        "statements_sha": "7405fe7c89578407",
+        "version": "20261121220000"
+      },
+      {
+        "name": "ponto_rep_vinculos",
+        "statements": 1,
+        "statements_sha": "9675f902a0111ea9",
+        "version": "20261121221000"
+      },
+      {
+        "name": "batidas_relogio_protecao",
+        "statements": 1,
+        "statements_sha": "21dad1efedea093b",
+        "version": "20261121222000"
+      },
+      {
+        "name": "ponto_rep_alerta_coletor_parado",
+        "statements": 1,
+        "statements_sha": "b75c8ea22ea590b8",
+        "version": "20261121223000"
+      },
+      {
+        "name": "ponto_espelhos_papel",
+        "statements": 1,
+        "statements_sha": "f1a0d0d064cfe81f",
+        "version": "20261121224000"
+      },
+      {
+        "name": "guias_fgts_digital_rls_por_empresa",
+        "statements": 1,
+        "statements_sha": "ac3deaef98096ca6",
+        "version": "20261122041500"
+      },
+      {
+        "name": "recibos_ferias_criar_tabela_ausente",
+        "statements": 1,
+        "statements_sha": "7d662e137463596d",
+        "version": "20261122090000"
+      },
+      {
+        "name": "ponto_rep_funcionarios_mascara_cpf",
+        "statements": 1,
+        "statements_sha": "6cfe4b77817f4c1d",
+        "version": "20261122110000"
+      },
+      {
+        "name": "ponto_rep_vinculo_unicidade_reversa",
+        "statements": 1,
+        "statements_sha": "f9d96eff8bca1e2a",
+        "version": "20261122110500"
+      },
+      {
+        "name": "indices_fk_join_ponto_pix",
+        "statements": 1,
+        "statements_sha": "698c54aca3c90ec1",
+        "version": "20261122130000"
+      },
+      {
+        "name": "ponto_rep_converter_batidas",
+        "statements": 1,
+        "statements_sha": "ca76dc2172b2b342",
+        "version": "20261123090000"
+      },
+      {
+        "name": "ponto_rep_feriados_horarios",
+        "statements": 1,
+        "statements_sha": "a1e29bfdaf166892",
+        "version": "20261123150000"
+      },
+      {
+        "name": "dreno_fila_notificacoes_cron",
+        "statements": 1,
+        "statements_sha": "c608dd6ae53474fd",
+        "version": "20261123180000"
+      },
+      {
+        "name": "dreno_search_path_extensao",
+        "statements": 1,
+        "statements_sha": "1976ef9480717f03",
+        "version": "20261124120000"
+      },
+      {
+        "name": "backup_logs_rls_policy",
+        "statements": 1,
+        "statements_sha": "3ec4b2f76aa45cd7",
+        "version": "20261124150000"
+      },
+      {
+        "name": "secdef_refresh_dashboard_views_revoke",
+        "statements": 1,
+        "statements_sha": "e698e4d75ecf7de3",
+        "version": "20261125120000"
+      },
+      {
+        "name": "provisoes_folha_tenant_pertence",
+        "statements": 1,
+        "statements_sha": "07b10732fdba7c47",
+        "version": "20261125130000"
+      },
+      {
+        "name": "backup_logs_revoke_anon_e_tenant_real",
+        "statements": 1,
+        "statements_sha": "cfb7bf0cd60732ec",
+        "version": "20261125140000"
+      },
+      {
+        "name": "fix_prevent_empty_empresa_id_uuid_cast",
+        "statements": 1,
+        "statements_sha": "7401825072a49439",
+        "version": "20261125200000"
+      },
+      {
+        "name": "storage_policies_buckets_app",
+        "statements": 1,
+        "statements_sha": "962e1c4933b27706",
+        "version": "20261126090000"
+      },
+      {
+        "name": "grant_ci_auditor_migration_ledger",
+        "statements": 1,
+        "statements_sha": "0c508ba858562c45",
+        "version": "20261126100000"
+      }
+    ],
     "policies": [
       {
         "cmd": "ALL",
@@ -152953,6 +158888,210 @@
         "table": "objects",
         "using": "((bucket_id = 'documentos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
         "with_check": "((bucket_id = 'documentos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))"
+      },
+      {
+        "cmd": "INSERT",
+        "name": "pol_admissao_docs_insert_tenant_ou_temp",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": null,
+        "with_check": "((bucket_id = 'documentos-admissao'::text) AND (user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)) OR ((split_part(name, '/'::text, 1) = 'temp'::text) AND (owner = auth.uid()))))"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "pol_admissao_docs_select_tenant_ou_temp",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'documentos-admissao'::text) AND (user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)) OR ((split_part(name, '/'::text, 1) = 'temp'::text) AND (owner = auth.uid()))))",
+        "with_check": null
+      },
+      {
+        "cmd": "DELETE",
+        "name": "pol_avatars_delete_owner",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'avatars'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text))",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "pol_avatars_insert_owner",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": null,
+        "with_check": "((bucket_id = 'avatars'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text))"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "pol_avatars_select_owner",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'avatars'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text))",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "pol_avatars_update_owner",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'avatars'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text))",
+        "with_check": "((bucket_id = 'avatars'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text))"
+      },
+      {
+        "cmd": "INSERT",
+        "name": "pol_comunicados_coletivas_insert_tenant",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": null,
+        "with_check": "((bucket_id = 'ferias-coletivas-comunicados'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "pol_comunicados_coletivas_select_tenant",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'ferias-coletivas-comunicados'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "pol_comunicados_coletivas_update_tenant",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'ferias-coletivas-comunicados'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
+        "with_check": "((bucket_id = 'ferias-coletivas-comunicados'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "pol_contratos_trabalho_select_tenant",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'contratos-trabalho'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "pol_ferias_avisos_insert_tenant",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": null,
+        "with_check": "((bucket_id = 'ferias-avisos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "pol_ferias_avisos_select_tenant",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'ferias-avisos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "pol_ferias_avisos_update_tenant",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'ferias-avisos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
+        "with_check": "((bucket_id = 'ferias-avisos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))"
+      },
+      {
+        "cmd": "INSERT",
+        "name": "pol_medidas_contestacoes_insert_tenant",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": null,
+        "with_check": "((bucket_id = 'medidas-contestacoes'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "pol_medidas_contestacoes_select_tenant",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'medidas-contestacoes'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "name": "pol_medidas_disciplinares_select_tenant",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'medidas-disciplinares'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "pol_ponto_biometria_insert_tenant",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": null,
+        "with_check": "((bucket_id = 'ponto-biometria'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))"
       },
       {
         "cmd": "DELETE",
@@ -166189,10 +172328,6 @@
     {
       "error": "cron.job filtrado pelo RLS do pg_cron para este papel (sem BYPASSRLS): lista de jobs não verificável",
       "section": "cron"
-    },
-    {
-      "error": "permission denied for schema supabase_migrations",
-      "section": "migrations"
     },
     {
       "error": "permission denied for schema storage",
