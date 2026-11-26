@@ -234,6 +234,12 @@
    "src/components/ui/button.tsx",
    "src/services/loggerService.ts"
   ],
+  "src/components/admin/BackupHealthSection.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
   "src/components/admin/HealthTrendCard.tsx": [
    "src/components/ui/card.tsx",
    "src/hooks/useSystemHealthHistory.ts"
@@ -6156,6 +6162,7 @@
   ],
   "src/pages/AdminOperacaoPage.tsx": [
    "src/components/PageTitle.tsx",
+   "src/components/admin/BackupHealthSection.tsx",
    "src/components/admin/UnifiedAuditSection.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
@@ -8927,6 +8934,7 @@
    "supabase/functions/auth-login/lockoutContract.ts"
   ],
   "supabase/functions/backup-automatico/index.ts": [
+   "supabase/functions/_shared/authz.ts",
    "supabase/functions/_shared/contract.ts",
    "supabase/functions/_shared/csrf.ts",
    "supabase/functions/_shared/rateLimit.ts",

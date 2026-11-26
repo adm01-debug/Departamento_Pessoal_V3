@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c215d18134538083ca16f605266967a8d924b1b6",
+  "sha": "9af3c578762423117f4f64d615362e97771574b3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-26 14:43 UTC",
-  "files_total": 4262,
-  "code_files": 3666,
-  "code_lines": 544669
+  "generated_at": "2026-11-26 16:38 UTC",
+  "files_total": 4264,
+  "code_files": 3668,
+  "code_lines": 545053
  },
  "version": "1.3.2",
- "facts_hash": "3cb431539ed82c8d",
+ "facts_hash": "89fd78f5829dfcd5",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1351,
-   ".tsx": 1146,
+   ".tsx": 1148,
    ".ts": 1027,
    ".mjs": 111,
    ".js": 15,
@@ -90410,13 +90410,16 @@
     "path": "",
     "file": "src/pages/AdminOperacaoPage.tsx",
     "component": "AdminOperacaoPage",
-    "tables_transitive": [],
+    "tables_transitive": [
+     "backup_logs"
+    ],
     "invokes_transitive": [],
     "rpc_transitive": [
+     "alert_stale_backup",
      "log_frontend_error",
      "search_audit_unified"
     ],
-    "deps_count": 18
+    "deps_count": 19
    },
    {
     "path": "",
@@ -103348,7 +103351,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1161,
+  "components_count": 1163,
   "hooks": [
    {
     "name": "useContacts",
@@ -104645,7 +104648,7 @@
   {
    "module": "e2e",
    "files": 33,
-   "lines": 3109,
+   "lines": 3115,
    "tables": [
     "colaboradores",
     "empresas",
@@ -105023,13 +105026,14 @@
   },
   {
    "module": "src/components",
-   "files": 1161,
-   "lines": 222150,
+   "files": 1163,
+   "lines": 222403,
    "tables": [
     "admissao_tokens",
     "admissoes",
     "afastamentos",
     "audit_log",
+    "backup_logs",
     "batidas_ponto",
     "beneficio_movimentacoes",
     "beneficios",
@@ -105085,6 +105089,7 @@
     "PermissionRoute.tsx: PermissionRouteProps, PermissionRoute",
     "ProtectedRoute.tsx: ProtectedRoute",
     "RouteErrorBoundary.tsx: clearChunkReloadGuard, RouteErrorBoundary",
+    "BackupHealthSection.tsx: BackupRunRow, StaleBackupRow, BACKUP_RUNS_LIMIT, BackupHealthSection",
     "HealthTrendCard.tsx: HealthTrendCard",
     "UnifiedAuditSection.tsx: AuditRow, AUDIT_UNIFIED_LIMIT, UnifiedAuditSection",
     "TelemetryCharts.tsx: TelemetryCharts",
@@ -105117,8 +105122,7 @@
     "onboardingComum.ts: MARCOS_ONBOARDING, PALETA_AVATAR, corAvatar, TOM_PRAZO, TOM_PRAZO_VEU",
     "onboardingDerivacoes.ts: TarefaOnboarding, ColaboradorOnboarding, ProgressoOnboarding, progressoOnboarding, prazoDaTarefa, ordenarTarefas",
     "AfastamentoDocumentManager.tsx: AfastamentoDocumentManager",
-    "AfastamentoForm.tsx: AfastamentoForm",
-    "AfastamentoStats.tsx: AfastamentoStats"
+    "AfastamentoForm.tsx: AfastamentoForm"
    ],
    "docs": [
     "AdminRoute.tsx: Guarda de rota ADMIN — exige o papel `admin` E o MFA. RESPONSABILIDADES, AGORA SEPARADAS: este componente decide QUEM pode entrar (papel `admin`); o portao de MFA mora no `MfaGate`, compartilhado com o `PermissionRoute`. A maquina de estados e as telas do MFA foram movidas NA INTEGRA para la, entao …",
@@ -105730,7 +105734,7 @@
   {
    "module": "src/pages",
    "files": 146,
-   "lines": 51980,
+   "lines": 51985,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -106015,7 +106019,7 @@
   {
    "module": "src/schemas",
    "files": 33,
-   "lines": 8868,
+   "lines": 8883,
    "tables": [],
    "exports": [
     "admissao.ts: admissaoSchema, AdmissaoSchema",
@@ -106758,7 +106762,7 @@
   {
    "module": "supabase/functions",
    "files": 198,
-   "lines": 29351,
+   "lines": 29456,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -107440,6 +107444,11 @@
    "auditoria_logs": {
     "select": [
      "supabase/functions/relatorio/index.ts"
+    ]
+   },
+   "backup_logs": {
+    "select": [
+     "src/components/admin/BackupHealthSection.tsx"
     ]
    },
    "backups": {
@@ -110806,6 +110815,16 @@
     "created_at",
     "empresa_id"
    ],
+   "backup_logs": [
+    "duration_ms",
+    "error_message",
+    "finished_at",
+    "id",
+    "records_count",
+    "started_at",
+    "status",
+    "tables_count"
+   ],
    "banco_horas": [
     "colaborador_id",
     "data",
@@ -113276,6 +113295,9 @@
    "admissao_salvar_dados": [
     "src/pages/ContratacaoPage.tsx"
    ],
+   "alert_stale_backup": [
+    "src/components/admin/BackupHealthSection.tsx"
+   ],
    "aplicar_medida_folha_ponto": [
     "src/services/medidasDisciplinaresService.ts"
    ],
@@ -113593,6 +113615,9 @@
    ],
    "reconciliar_afdt": [
     "src/components/ponto/ImportarAFDTDialog.tsx"
+   ],
+   "record_backup_run": [
+    "supabase/functions/backup-automatico/index.ts"
    ],
    "record_login_attempt": [
     "src/tests/rpc-permissions.test.ts",
@@ -114593,7 +114618,6 @@
    "auth_gov_br_sessions",
    "automacao_logs",
    "avaliacoes",
-   "backup_logs",
    "beneficio_arquivos",
    "beneficio_regras_elegibilidade",
    "beneficio_utilizacao",
@@ -126618,6 +126642,10 @@
    {
     "file": "supabase/functions/backup-automatico/backupSnapshot.ts",
     "text": "na primeira) e deve devolver a página seguinte já ordenada por `id`."
+   },
+   {
+    "file": "supabase/functions/backup-automatico/index.ts",
+    "text": "empresa). Best-effort: uma falha aqui nao pode derrubar um backup concluido."
    },
    {
     "file": "supabase/functions/backup-automatico/index.ts",
@@ -151575,6 +151603,11 @@
     "value": "7640.8"
    },
    {
+    "file": "src/components/admin/BackupHealthSection.tsx",
+    "name": "BACKUP_RUNS_LIMIT",
+    "value": "5"
+   },
+   {
     "file": "src/components/admin/HealthTrendCard.tsx",
     "name": "KEEP",
     "value": "20"
@@ -154369,6 +154402,24 @@
     "file": "src/components/ProtectedRoute.tsx",
     "field": "status",
     "value": "verified",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admin/BackupHealthSection.tsx",
+    "field": "status",
+    "value": "success",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/admin/BackupHealthSection.tsx",
+    "field": "status",
+    "value": "success",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admin/BackupHealthSection.tsx",
+    "field": "status",
+    "value": "error",
     "kind": "compara"
    },
    {
@@ -165194,6 +165245,48 @@
     "field": "role",
     "value": "admin",
     "kind": "filtra"
+   },
+   {
+    "file": "supabase/functions/backup-automatico/index.ts",
+    "field": "status",
+    "value": "success",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/backup-automatico/index.ts",
+    "field": "status",
+    "value": "error",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/backup-automatico/index.ts",
+    "field": "status",
+    "value": "error",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/backup-automatico/index.ts",
+    "field": "status",
+    "value": "error",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/backup-automatico/index.ts",
+    "field": "status",
+    "value": "error",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/backup-automatico/index.ts",
+    "field": "status",
+    "value": "success",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/backup-automatico/index.ts",
+    "field": "status",
+    "value": "error",
+    "kind": "escreve"
    },
    {
     "file": "supabase/functions/calcular-folha/index.ts",
@@ -189842,6 +189935,30 @@
    {
     "file": "src/components/__tests__/trilhaReveal.test.ts",
     "name": "grupo vazio devolve só a posição do cabeçalho"
+   },
+   {
+    "file": "src/components/admin/__tests__/BackupHealthSection.test.tsx",
+    "name": "BackupHealthSection"
+   },
+   {
+    "file": "src/components/admin/__tests__/BackupHealthSection.test.tsx",
+    "name": "lista as execuções com status, volume e duração"
+   },
+   {
+    "file": "src/components/admin/__tests__/BackupHealthSection.test.tsx",
+    "name": "respeita o teto de execuções e ordena da mais recente para a mais antiga"
+   },
+   {
+    "file": "src/components/admin/__tests__/BackupHealthSection.test.tsx",
+    "name": "mostra estado vazio quando não há execução registrada"
+   },
+   {
+    "file": "src/components/admin/__tests__/BackupHealthSection.test.tsx",
+    "name": "alerta quando alguma empresa está sem backup há mais de 24h"
+   },
+   {
+    "file": "src/components/admin/__tests__/BackupHealthSection.test.tsx",
+    "name": "exibe falha de leitura sem quebrar o painel"
    },
    {
     "file": "src/components/admin/__tests__/UnifiedAuditSection.test.tsx",
@@ -243866,6 +243983,23 @@
       "compara:src/components/settings/MFASetup.tsx",
       "compara:src/pages/PerfilPage.tsx"
      ],
+     "success": [
+      "compara:src/components/admin/BackupHealthSection.tsx",
+      "compara:src/components/settings/LogsIntegracoesTab.tsx",
+      "compara:src/pages/ContratacaoPage.tsx",
+      "compara:supabase/functions/metricas/index.ts",
+      "escreve:src/components/admin/BackupHealthSection.tsx",
+      "escreve:src/pages/ContratacaoPage.tsx",
+      "escreve:supabase/functions/backup-automatico/index.ts"
+     ],
+     "error": [
+      "compara:src/components/admin/BackupHealthSection.tsx",
+      "compara:src/components/folha/FolhaESocialSync.tsx",
+      "compara:src/pages/ContratacaoPage.tsx",
+      "compara:supabase/functions/external-db-bridge/index.ts",
+      "escreve:src/pages/ContratacaoPage.tsx",
+      "escreve:supabase/functions/backup-automatico/index.ts"
+     ],
      "offline": [
       "compara:src/components/admin/HealthTrendCard.tsx",
       "compara:src/components/dashboard/SystemStatusCard.tsx",
@@ -244447,12 +244581,6 @@
       "escreve:supabase/functions/_shared/outboundDelivery.ts",
       "escreve:supabase/functions/whatsapp-send/index.ts"
      ],
-     "error": [
-      "compara:src/components/folha/FolhaESocialSync.tsx",
-      "compara:src/pages/ContratacaoPage.tsx",
-      "compara:supabase/functions/external-db-bridge/index.ts",
-      "escreve:src/pages/ContratacaoPage.tsx"
-     ],
      "aprovadasRejeitadas": [
       "escreve:src/components/horas-extras/horasExtrasComum.ts"
      ],
@@ -244551,12 +244679,6 @@
       "escreve:supabase/functions/fechar-folha/index.ts",
       "escreve:supabase/functions/reabrir-folha/index.ts",
       "filtra:supabase/functions/reabrir-folha/index.ts"
-     ],
-     "success": [
-      "compara:src/components/settings/LogsIntegracoesTab.tsx",
-      "compara:src/pages/ContratacaoPage.tsx",
-      "compara:supabase/functions/metricas/index.ts",
-      "escreve:src/pages/ContratacaoPage.tsx"
      ],
      "ok": [
       "compara:src/components/settings/SystemHealthTab.tsx",
@@ -272710,7 +272832,7 @@
   },
   "e2e/authenticated/admin-operacao.spec.ts": {
    "path": "e2e/authenticated/admin-operacao.spec.ts",
-   "lines": 53,
+   "lines": 59,
    "is_test": true,
    "rule_comments": [
     "As RPCs são admin-only; o setup autenticado deve estar logado como admin."
@@ -285994,6 +286116,60 @@
     "grupo vazio devolve só a posição do cabeçalho"
    ]
   },
+  "src/components/admin/BackupHealthSection.tsx": {
+   "path": "src/components/admin/BackupHealthSection.tsx",
+   "lines": 126,
+   "exports": [
+    "interface BackupRunRow",
+    "interface StaleBackupRow",
+    "const BACKUP_RUNS_LIMIT",
+    "function BackupHealthSection"
+   ],
+   "tables": [
+    {
+     "table": "backup_logs",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "backup_logs": [
+     "duration_ms",
+     "error_message",
+     "finished_at",
+     "id",
+     "records_count",
+     "started_at",
+     "status",
+     "tables_count"
+    ]
+   },
+   "rpc": [
+    "alert_stale_backup"
+   ],
+   "params": [
+    {
+     "name": "BACKUP_RUNS_LIMIT",
+     "value": "5"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "success",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "success",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "error",
+     "kind": "compara"
+    }
+   ]
+  },
   "src/components/admin/HealthTrendCard.tsx": {
    "path": "src/components/admin/HealthTrendCard.tsx",
    "lines": 125,
@@ -286062,6 +286238,20 @@
    ],
    "rule_comments": [
     "Limite máximo de eventos por chamada (espelha o teto da RPC search_audit_unified)."
+   ]
+  },
+  "src/components/admin/__tests__/BackupHealthSection.test.tsx": {
+   "path": "src/components/admin/__tests__/BackupHealthSection.test.tsx",
+   "lines": 127,
+   "is_test": true,
+   "doc": "Testes do painel de saúde de backup (P3-060). Cobre: 1. Renderização das execuções retornadas por public.backup_logs. 2. Teto de linhas (BACKUP_RUNS_LIMIT) e ordenação decrescente por started_at. 3. Estado vazio quando não há execução registrada. 4. Alerta de backup atrasado usando a RPC alert_stale …",
+   "tests": [
+    "BackupHealthSection",
+    "lista as execuções com status, volume e duração",
+    "respeita o teto de execuções e ordena da mais recente para a mais antiga",
+    "mostra estado vazio quando não há execução registrada",
+    "alerta quando alguma empresa está sem backup há mais de 24h",
+    "exibe falha de leitura sem quebrar o painel"
    ]
   },
   "src/components/admin/__tests__/UnifiedAuditSection.test.tsx": {
@@ -314695,7 +314885,7 @@
   },
   "src/pages/AdminOperacaoPage.tsx": {
    "path": "src/pages/AdminOperacaoPage.tsx",
-   "lines": 471,
+   "lines": 476,
    "exports": [
     "function AdminOperacaoPage"
    ],
@@ -320968,7 +321158,7 @@
   },
   "src/schemas/tableColumns.ts": {
    "path": "src/schemas/tableColumns.ts",
-   "lines": 4307,
+   "lines": 4322,
    "exports": [
     "const TABLE_COLUMNS"
    ],
@@ -337077,7 +337267,7 @@
   },
   "supabase/functions/backup-automatico/index.ts": {
    "path": "supabase/functions/backup-automatico/index.ts",
-   "lines": 255,
+   "lines": 353,
    "tables": [
     {
      "table": "audit_log",
@@ -337103,6 +337293,7 @@
    "dyn_from": 1,
    "rpc": [
     "is_admin",
+    "record_backup_run",
     "user_belongs_to_empresa"
    ],
    "storage": [
@@ -337122,7 +337313,45 @@
      "chain": []
     }
    ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "success",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "error",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "error",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "error",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "error",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "success",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "error",
+     "kind": "escreve"
+    }
+   ],
    "rule_comments": [
+    "empresa). Best-effort: uma falha aqui nao pode derrubar um backup concluido.",
     "3) Validação",
     "tabela, em vez de um único limit() que fazia tudo acima do cap"
    ],
@@ -339603,7 +339832,7 @@
   },
   "supabase/functions/external-db-bridge/validation.test.ts": {
    "path": "supabase/functions/external-db-bridge/validation.test.ts",
-   "lines": 420,
+   "lines": 423,
    "is_test": true,
    "errors": [
     "FALHOU: ",
@@ -339659,7 +339888,7 @@
   },
   "supabase/functions/external-db-bridge/validation.ts": {
    "path": "supabase/functions/external-db-bridge/validation.ts",
-   "lines": 388,
+   "lines": 392,
    "exports": [
     "const IDENTIFIER_RE",
     "const COLUMNS_RE",
@@ -349762,10 +349991,27 @@
   }
  },
  "git": {
-  "sha": "c215d18134538083ca16f605266967a8d924b1b6",
+  "sha": "9af3c578762423117f4f64d615362e97771574b3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "9af3c57",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: registra execucoes de backup e expoe painel de saude no Admin Operacao (#908)",
+    "files": [
+     "e2e/authenticated/admin-operacao.spec.ts",
+     "src/components/admin/BackupHealthSection.tsx",
+     "src/components/admin/__tests__/BackupHealthSection.test.tsx",
+     "src/integrations/supabase/types.ts",
+     "src/pages/AdminOperacaoPage.tsx",
+     "src/schemas/tableColumns.ts",
+     "supabase/functions/backup-automatico/index.ts",
+     "supabase/functions/external-db-bridge/validation.test.ts",
+     "supabase/functions/external-db-bridge/validation.ts"
+    ]
+   },
    {
     "sha": "c215d18",
     "date": "2026-11-26",
@@ -350208,47 +350454,6 @@
     "files": [
      "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md"
     ]
-   },
-   {
-    "sha": "2a62b11",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "feat: resgata a tela de Turnos do agente Muri (calendario, escalas e dialogos) (#875)",
-    "files": [
-     "scripts/.bundle-budget.json",
-     "src/components/turnos/BarraFiltrosEscalas.tsx",
-     "src/components/turnos/CabecalhoTurnos.tsx",
-     "src/components/turnos/CalendarioMensal.tsx",
-     "src/components/turnos/CalendarioSemanal.tsx",
-     "src/components/turnos/ColunaLateralTurnos.tsx",
-     "src/components/turnos/DialogoConflitos.tsx",
-     "src/components/turnos/DialogoDetalhesEscala.tsx",
-     "src/components/turnos/DialogoDiaEscalas.tsx",
-     "src/components/turnos/DialogoGerenciarTurnos.tsx",
-     "src/components/turnos/DialogoNovaEscala.tsx",
-     "src/components/turnos/DialogoProximasEscalas.tsx",
-     "src/components/turnos/DialogoTurno.tsx",
-     "src/components/turnos/ListaEscalas.tsx",
-     "src/components/turnos/SeletorCor.tsx",
-     "src/components/turnos/TurnosConteudo.tsx",
-     "src/components/turnos/TurnosKpiCards.tsx",
-     "src/components/turnos/__tests__/CalendarioMensal.test.tsx",
-     "src/components/turnos/__tests__/CalendarioSemanal.test.tsx",
-     "src/components/turnos/__tests__/ListaEscalas.test.tsx",
-     "src/components/turnos/__tests__/SeletorCor.test.tsx",
-     "src/components/turnos/__tests__/TurnosConteudo.test.tsx",
-     "src/components/turnos/__tests__/turnosCalendario.test.ts",
-     "src/components/turnos/__tests__/turnosCores.test.ts",
-     "src/components/turnos/__tests__/turnosMetricas.test.ts",
-     "src/components/turnos/turnosAnimacoes.ts",
-     "src/components/turnos/turnosCalendario.ts",
-     "src/components/turnos/turnosCores.ts",
-     "src/components/turnos/turnosMetricas.ts",
-     "src/components/turnos/turnosSuperficies.ts",
-     "src/components/turnos/useTurnosEscalas.ts",
-     "src/pages/TurnosPage.tsx",
-     "src/services/turnoService.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -350258,7 +350463,7 @@
    ],
    [
     "scripts/.bundle-budget.json",
-    9
+    8
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -350275,6 +350480,14 @@
    [
     "src/index.css",
     3
+   ],
+   [
+    "src/integrations/supabase/types.ts",
+    2
+   ],
+   [
+    "src/schemas/tableColumns.ts",
+    2
    ],
    [
     "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql",
@@ -350301,35 +350514,27 @@
     2
    ],
    [
-    "scripts/canonical-invariants.sql",
+    "e2e/authenticated/admin-operacao.spec.ts",
     1
    ],
    [
-    "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+    "src/components/admin/BackupHealthSection.tsx",
     1
    ],
    [
-    "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
+    "src/components/admin/__tests__/BackupHealthSection.test.tsx",
     1
    ],
    [
-    "src/components/admissoes/ArquivosAdmissaoLista.tsx",
+    "src/pages/AdminOperacaoPage.tsx",
     1
    ],
    [
-    "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "supabase/functions/backup-automatico/index.ts",
     1
    ],
    [
-    "src/hooks/__tests__/useDocumentOCR.test.ts",
-    1
-   ],
-   [
-    "src/hooks/useDocumentOCR.ts",
-    1
-   ],
-   [
-    "src/integrations/supabase/types.ts",
+    "supabase/functions/external-db-bridge/validation.test.ts",
     1
    ]
   ]

@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 252,
+   "usado_por": 253,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -391,7 +391,7 @@
     "utils",
     "utils/folha"
    ],
-   "coberto_por_testes": 27,
+   "coberto_por_testes": 28,
    "orfao": false
   },
   {
@@ -500,7 +500,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 25513,
+   "linhas": 25572,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -1698,7 +1698,7 @@
     "TABLE_COLUMNS"
    ],
    "export_default": null,
-   "linhas": 4307,
+   "linhas": 4322,
    "tabelas": [],
    "rpcs": [],
    "edges": [],

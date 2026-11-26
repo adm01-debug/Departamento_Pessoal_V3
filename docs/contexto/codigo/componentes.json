@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 714,
+ "total": 715,
  "orfaos": 24,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -123,6 +123,25 @@
     "useStaggerCards"
    ],
    "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admin/BackupHealthSection.tsx",
+   "exports": [
+    "BACKUP_RUNS_LIMIT",
+    "BackupHealthSection",
+    "BackupRunRow",
+    "StaleBackupRow"
+   ],
+   "export_default": null,
+   "linhas": 126,
+   "dominio": "components/admin",
+   "hooks_locais": [],
+   "tabelas": [
+    "backup_logs"
+   ],
    "edges": [],
    "usado_por": 1,
    "orfao": false
@@ -8475,7 +8494,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 244,
+   "usado_por": 245,
    "orfao": false
   },
   {
@@ -8525,7 +8544,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 295,
+   "usado_por": 296,
    "orfao": false
   },
   {
@@ -9213,7 +9232,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 32,
+   "usado_por": 33,
    "orfao": false
   },
   {
@@ -9760,7 +9779,7 @@
     "AdminOperacaoPage"
    ],
    "export_default": "AdminOperacaoPage",
-   "linhas": 471,
+   "linhas": 476,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [],

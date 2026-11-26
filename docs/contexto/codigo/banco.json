@@ -8165,11 +8165,38 @@
     "empresa_id->empresas"
    ],
    "criada_em": "005_esocial_auditoria.sql",
-   "usada_no_front": 0,
+   "colunas_types": {
+    "acao": "string",
+    "created_by": "string | null",
+    "duration_ms": "number | null",
+    "empresa_id": "string | null",
+    "error_message": "string | null",
+    "finished_at": "string | null",
+    "id": "string",
+    "metadata": "Json | null",
+    "records_count": "number | null",
+    "started_at": "string",
+    "status": "string",
+    "storage_path": "string | null",
+    "tables_count": "number | null"
+   },
+   "drift": {
+    "so_na_migration": [
+     "tipo",
+     "arquivo",
+     "tamanho_bytes",
+     "tabelas_incluidas",
+     "data_inicio",
+     "data_fim",
+     "erro"
+    ],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "banco_horas": {
    "colunas": {
@@ -65080,6 +65107,11 @@
    "usada_em": 1
   },
   {
+   "nome": "alert_stale_backup",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "aplicar_medida_folha_ponto",
    "definida": false,
    "usada_em": 1
@@ -65496,6 +65528,11 @@
   },
   {
    "nome": "reconciliar_afdt",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "record_backup_run",
    "definida": true,
    "usada_em": 1
   },

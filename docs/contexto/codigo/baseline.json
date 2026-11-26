@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c215d18134538083ca16f605266967a8d924b1b6",
+  "commit": "9af3c578762423117f4f64d615362e97771574b3",
   "branch": "main",
-  "data_commit": "2026-11-26T11:35:40-03:00",
+  "data_commit": "2026-11-26T13:37:05-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "9af3c57",
+    "data": "2026-11-26",
+    "assunto": "feat: registra execucoes de backup e expoe painel de saude no Admin Operacao (#908)"
+   },
    {
     "sha": "c215d18",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "adc0f56",
     "data": "2026-11-25",
     "assunto": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)"
-   },
-   {
-    "sha": "3cb33da",
-    "data": "2026-11-25",
-    "assunto": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)"
    }
   ],
-  "arquivos_mudados_7d": 782,
+  "arquivos_mudados_7d": 769,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -214,15 +214,15 @@
     "mudancas": 14
    },
    {
-    "arquivo": "package.json",
-    "mudancas": 12
-   },
-   {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    "mudancas": 11
+   },
+   {
+    "arquivo": "package.json",
     "mudancas": 11
    },
    {
@@ -234,15 +234,15 @@
     "mudancas": 10
    },
    {
-    "arquivo": "package-lock.json",
+    "arquivo": "src/schemas/tableColumns.ts",
     "mudancas": 10
    },
    {
-    "arquivo": "scripts/automation.config.json",
+    "arquivo": "package-lock.json",
     "mudancas": 9
    },
    {
-    "arquivo": "src/schemas/tableColumns.ts",
+    "arquivo": "scripts/automation.config.json",
     "mudancas": 9
    },
    {
@@ -314,21 +314,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4248,
-  "arquivos_codigo": 2317,
-  "linhas_codigo": 469423,
+  "arquivos_total": 4250,
+  "arquivos_codigo": 2319,
+  "linhas_codigo": 469866,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 97,
   "modulos": 86,
-  "componentes": 714,
+  "componentes": 715,
   "hooks": 127,
   "edge_functions": 68,
   "tabelas": 438,
   "migrations": 1277,
   "cron_jobs": 43,
-  "testes": 874,
+  "testes": 875,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 347
@@ -352,7 +352,7 @@
   },
   "e2e/authenticated": {
    "arquivos": 21,
-   "linhas": 2223
+   "linhas": 2229
   },
   "e2e/authenticated-non-admin": {
    "arquivos": 1,
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1161,
-   "linhas": 222150
+   "arquivos": 1163,
+   "linhas": 222403
   },
   "src/constants": {
    "arquivos": 7,
@@ -668,7 +668,7 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 26676
+   "linhas": 26735
   },
   "src/lib": {
    "arquivos": 22,
@@ -684,7 +684,7 @@
   },
   "src/pages": {
    "arquivos": 146,
-   "linhas": 51980
+   "linhas": 51985
   },
   "src/providers": {
    "arquivos": 4,
@@ -692,7 +692,7 @@
   },
   "src/schemas": {
    "arquivos": 33,
-   "linhas": 8868
+   "linhas": 8883
   },
   "src/services": {
    "arquivos": 198,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 198,
-   "linhas": 29351
+   "linhas": 29456
   },
   "supabase/tests": {
    "arquivos": 3,
@@ -758,11 +758,11 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25513
+   "linhas": 25572
   },
   {
    "arquivo": "src/schemas/tableColumns.ts",
-   "linhas": 4307
+   "linhas": 4322
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
@@ -1094,6 +1094,7 @@
    "auditoria_logs",
    "auth_gov_br_sessions",
    "automacao_logs",
+   "backup_logs",
    "beneficios",
    "blocked_ips",
    "cargos",

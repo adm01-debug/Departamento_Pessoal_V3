@@ -515,7 +515,7 @@
    "nome": "backup-automatico",
    "entrada": "supabase/functions/backup-automatico/index.ts",
    "arquivos": 4,
-   "linhas": 395,
+   "linhas": 493,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -525,6 +525,7 @@
    ],
    "rpcs": [
     "is_admin",
+    "record_backup_run",
     "user_belongs_to_empresa"
    ],
    "env": [
@@ -538,6 +539,7 @@
    "chama_edges": [],
    "hosts_externos": [],
    "usa_shared": [
+    "authz.ts",
     "contract.ts",
     "csrf.ts",
     "rateLimit.ts",
@@ -1251,7 +1253,7 @@
    "nome": "external-db-bridge",
    "entrada": "supabase/functions/external-db-bridge/index.ts",
    "arquivos": 6,
-   "linhas": 1519,
+   "linhas": 1523,
    "verify_jwt": true,
    "metodos": [
     "POST"

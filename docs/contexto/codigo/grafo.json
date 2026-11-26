@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1445,
- "arestas": 7098,
+ "nos": 1446,
+ "arestas": 7104,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -14,15 +14,15 @@
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 295
+   "importado_por": 296
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 279
+   "importado_por": 281
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 244
+   "importado_por": 245
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -153,16 +153,16 @@
    "importado_por": 34
   },
   {
+   "arquivo": "src/components/ui/skeleton.tsx",
+   "importado_por": 33
+  },
+  {
    "arquivo": "src/lib/motionMode.ts",
    "importado_por": 33
   },
   {
-   "arquivo": "src/components/ui/skeleton.tsx",
-   "importado_por": 32
-  },
-  {
-   "arquivo": "src/services/piiAccessLogService.ts",
-   "importado_por": 32
+   "arquivo": "supabase/functions/_shared/authz.ts",
+   "importado_por": 33
   }
  ],
  "ciclos": {

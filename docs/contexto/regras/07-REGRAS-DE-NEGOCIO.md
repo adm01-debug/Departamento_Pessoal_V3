@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c215d18134` · branch `main` · 2026-11-26 14:43 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9af3c57876` · branch `main` · 2026-11-26 16:38 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4647,6 +4647,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `SALARIO_FAMILIA_VALOR` | `67.54` | `src/calculators/tabelas.ts` |
 | `VA_VR_MAX_DESCONTO_PAT` | `0.2` | `src/calculators/tabelas.ts` |
 | `LIMITE_ISENCAO_PLR` | `7640.8` | `src/calculators/tabelas.ts` |
+| `BACKUP_RUNS_LIMIT` | `5` | `src/components/admin/BackupHealthSection.tsx` |
 | `KEEP` | `20` | `src/components/admin/HealthTrendCard.tsx` |
 | `AUDIT_UNIFIED_LIMIT` | `100` | `src/components/admin/UnifiedAuditSection.tsx` |
 | `DIA_MS` | `24` | `src/components/admissoes/AdmissoesDashboard.tsx` |
@@ -4930,8 +4931,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `BLOCOS_CASCATA` | `3` | `src/components/turnos/DialogoConflitos.tsx` |
 | `BLOCOS_CASCATA` | `4` | `src/components/turnos/DialogoDetalhesEscala.tsx` |
 | `BLOCOS_CASCATA` | `3` | `src/components/turnos/DialogoDiaEscalas.tsx` |
-| `BLOCOS_CASCATA` | `4` | `src/components/turnos/DialogoGerenciarTurnos.tsx` |
-| … +244 linhas — lista completa em `context.json` | | |
+| … +245 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5665,7 +5665,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (10510 testes em 829 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10516 testes em 830 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5969,7 +5969,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/auditoriaDerivacoes.test.ts` | 11 | auditoriaDerivacoes · conta os status e as fatias do resumo (nunca NaN) · conta os eventos dos últimos 30 dias · detecta filtros ativos (inclusive os do painel avançado) … |
 | `src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx` | 11 | CandidatoDetalhesDialog · mostra identificação, cargo, departamento e etapa atual · destaca SOMENTE a etapa efetiva do candidato no indicador · não inventa contato ausente (nem  … |
 | `src/components/recrutamento/__tests__/VagaCard.test.tsx` | 11 | VagaCard — identidade, funil e ações reais · mostra título, departamento, modalidade, competências e o funil completo · abre o Pipeline pelo botão Gerenciar Vaga · mantém apenas ações reais e não duplica Gerenciar no menu … |
-| … +529 linhas — lista completa em `context.json` | | |
+| … +530 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6336,4 +6336,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * HABILITAÇÃO (regra ÚNICA, a MESMA do servidor — `pode_aprovar_colaborador` | `src/components/avaliacao/feedbackCanonico.ts` |
 | ENCAMINHAMENTO (RH/admin) — visível apenas para quem pode encaminhar E na | `src/components/avaliacao/feedbackCanonico.ts` |
 | VALIDAÇÃO DO POTENCIAL (RH) — controle LEGADO. O fluxo atual termina na | `src/components/avaliacao/feedbackCanonico.ts` |
-| … +1095 linhas — lista completa em `context.json` | |
+| … +1096 linhas — lista completa em `context.json` | |

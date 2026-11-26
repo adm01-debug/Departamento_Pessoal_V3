@@ -364,8 +364,11 @@
     "useState"
    ],
    "hooks_locais": [],
-   "tabelas": [],
+   "tabelas": [
+    "backup_logs"
+   ],
    "rpcs": [
+    "alert_stale_backup",
     "folha_conflict_stats",
     "get_cron_jobs_health",
     "get_dlq_stats",
@@ -380,7 +383,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 20
+   "arquivos_puxados": 21
   },
   {
    "protegida": true,

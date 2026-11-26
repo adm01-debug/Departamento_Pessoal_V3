@@ -228,22 +228,24 @@
   },
   {
    "modulo": "components/admin",
-   "arquivos": 7,
-   "testes": 1,
-   "linhas": 869,
+   "arquivos": 8,
+   "testes": 2,
+   "linhas": 995,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 7,
+   "componentes": 8,
    "hooks_locais": [
     "useSystemHealthHistory"
    ],
    "hooks_definidos": [],
    "edges": [],
    "tabelas": [
+    "backup_logs",
     "versao_banco"
    ],
    "rpcs": [
+    "alert_stale_backup",
     "log_frontend_error",
     "search_audit_unified"
    ],
@@ -259,8 +261,11 @@
    "papeis": [],
    "diretos": {
     "edges": [],
-    "tabelas": [],
+    "tabelas": [
+     "backup_logs"
+    ],
     "rpcs": [
+     "alert_stale_backup",
      "search_audit_unified"
     ]
    },
@@ -8777,7 +8782,7 @@
    "modulo": "integrations/supabase",
    "arquivos": 6,
    "testes": 4,
-   "linhas": 26149,
+   "linhas": 26208,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -9032,7 +9037,7 @@
    "modulo": "pages",
    "arquivos": 115,
    "testes": 0,
-   "linhas": 46987,
+   "linhas": 46992,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -9544,6 +9549,7 @@
     "ajustes_ponto",
     "anotacoes_colaborador",
     "asos",
+    "backup_logs",
     "banco_horas",
     "banco_horas_config",
     "batidas_ponto",
@@ -9823,6 +9829,7 @@
     "admissao_assinar_contrato",
     "admissao_marcar_documentos",
     "admissao_salvar_dados",
+    "alert_stale_backup",
     "aplicar_medida_folha_ponto",
     "aprovar_despesa",
     "assinar_aviso_ferias",
@@ -10267,7 +10274,7 @@
    "modulo": "schemas",
    "arquivos": 19,
    "testes": 0,
-   "linhas": 5241,
+   "linhas": 5256,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
