@@ -5,7 +5,7 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { getClientIp } from '../_shared/clientIp.ts';
-import { isOcrDocType, runDocumentOcr, type OcrDocType } from '../_shared/ocr.ts';
+import { isOcrDocType, OCR_FALLBACK_ERROR, runDocumentOcr, type OcrDocType } from '../_shared/ocr.ts';
 
 /**
  * admissao-publica — upload de documentos do portal público /contratacao.
@@ -134,20 +134,31 @@ serve(async (req: Request): Promise<Response> => {
 
     // OCR é best-effort: o documento já está salvo e registrado, então uma
     // falha de OCR (provedor fora do ar, arquivo ilegível) não pode derrubar o
-    // envio — o RH confere manualmente.
+    // envio — o RH confere manualmente. Por isso o try/catch local: sem ele uma
+    // exceção de rede do provedor (safeFetchWithRetry relança ao esgotar as
+    // tentativas) cairia no catch geral e devolveria 500 para um documento já
+    // gravado, fazendo o candidato reenviar e duplicar o registro.
+    // PDF não é imagem: o provedor recebe a URL como `image_url`, então só
+    // imagem é enviada ao OCR. O envio do PDF continua valendo.
     let ocr: unknown = null;
-    if (ocrDocType) {
-      const { data: signed, error: signErr } = await supabase.storage
-        .from(BUCKET)
-        .createSignedUrl(storagePath, 300);
-      if (signErr || !signed?.signedUrl) {
-        await captureException(signErr ?? new Error('signed url indisponível'), {
-          fn: 'admissao-publica',
-          step: 'createSignedUrl',
-        });
-      } else {
-        const run = await runDocumentOcr(signed.signedUrl, ocrDocType);
-        ocr = run.ok ? run.result : { valid: false, confidence: 0, error: run.error };
+    if (ocrDocType && file.type.startsWith('image/')) {
+      try {
+        const { data: signed, error: signErr } = await supabase.storage
+          .from(BUCKET)
+          .createSignedUrl(storagePath, 300);
+        if (signErr || !signed?.signedUrl) {
+          await captureException(signErr ?? new Error('signed url indisponível'), {
+            fn: 'admissao-publica',
+            step: 'createSignedUrl',
+          });
+          ocr = { valid: false, confidence: 0, error: OCR_FALLBACK_ERROR };
+        } else {
+          const run = await runDocumentOcr(signed.signedUrl, ocrDocType);
+          ocr = run.ok ? run.result : { valid: false, confidence: 0, error: run.error };
+        }
+      } catch (ocrErr) {
+        await captureException(ocrErr, { fn: 'admissao-publica', step: 'ocr' });
+        ocr = { valid: false, confidence: 0, error: OCR_FALLBACK_ERROR };
       }
     }
 

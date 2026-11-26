@@ -12,8 +12,13 @@ vi.mock('@/integrations/supabase/client', () => ({
   },
 }));
 
-function makeFile(name = 'doc.pdf') {
-  return new File(['content'], name, { type: 'application/pdf' });
+function makeFile(name = 'doc.pdf', type = 'application/pdf') {
+  return new File(['content'], name, { type });
+}
+
+/** Arquivo de imagem: único formato que passa pelo OCR. */
+function makeImage(name = 'doc.png') {
+  return makeFile(name, 'image/png');
 }
 
 /** Corpo enviado à edge function na última chamada. */
@@ -70,7 +75,7 @@ describe('useDocumentOCR', () => {
     const { result } = renderHook(() => useDocumentOCR());
 
     await act(async () => {
-      await result.current.processDocument(makeFile('rg.png'), 'rg', 'tok-12345678901234');
+      await result.current.processDocument(makeImage('rg.png'), 'rg', 'tok-12345678901234');
     });
 
     expect(mockInvoke).toHaveBeenCalledWith('admissao-publica', expect.objectContaining({ body: expect.any(FormData) }));
@@ -78,14 +83,28 @@ describe('useDocumentOCR', () => {
     expect(form.get('token')).toBe('tok-12345678901234');
     expect(form.get('tipo')).toBe('rg');
     expect(form.get('ocr')).toBe('true');
-    expect(form.get('doc_type')).toBe('rg');
+    // Campo único "RG ou CNH": o OCR recebe `identidade`, que aceita os dois.
+    expect(form.get('doc_type')).toBe('identidade');
+  });
+
+  it('não pede OCR de documento PDF (o provedor só lê imagem)', async () => {
+    mockInvoke.mockResolvedValueOnce({ data: { ok: true, path: 'admissao_1/rg_1.pdf', ocr: null }, error: null });
+    const { result } = renderHook(() => useDocumentOCR());
+    let ocr: Record<string, unknown> = {};
+
+    await act(async () => {
+      ocr = await result.current.processDocument(makeFile('rg.pdf'), 'rg', 'tok-12345678901234');
+    });
+
+    expect(lastFormData().get('ocr')).toBeNull();
+    expect(ocr).toEqual({ uploaded: true, valid: true, confidence: 0 });
   });
 
   it('traduz o tipo da UI para o tipo aceito pelo OCR', async () => {
     const { result } = renderHook(() => useDocumentOCR());
 
     await act(async () => {
-      await result.current.processDocument(makeFile(), 'residencia', 'tok-12345678901234');
+      await result.current.processDocument(makeImage(), 'residencia', 'tok-12345678901234');
     });
 
     expect(lastFormData().get('doc_type')).toBe('comprovante_residencia');
@@ -109,7 +128,7 @@ describe('useDocumentOCR', () => {
     let ocr: Record<string, unknown> = {};
 
     await act(async () => {
-      ocr = await result.current.processDocument(makeFile(), 'rg', 'tok-12345678901234');
+      ocr = await result.current.processDocument(makeImage(), 'rg', 'tok-12345678901234');
     });
 
     expect(ocr.uploaded).toBe(true);
@@ -127,7 +146,7 @@ describe('useDocumentOCR', () => {
     let ocr: Record<string, unknown> = {};
 
     await act(async () => {
-      ocr = await result.current.processDocument(makeFile(), 'rg', 'tok-12345678901234');
+      ocr = await result.current.processDocument(makeImage(), 'rg', 'tok-12345678901234');
     });
 
     expect(ocr.uploaded).toBe(true);

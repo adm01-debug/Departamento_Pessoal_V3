@@ -31,12 +31,21 @@ export type OCRResult = {
  * documento de texto) e são apenas enviados.
  */
 const OCR_DOC_TYPE_MAP: Record<string, string> = {
-  rg: 'rg',
+  // O campo da UI é "RG ou CNH" — um tipo de OCR só para `rg` reprovava CNH.
+  rg: 'identidade',
   cpf: 'cpf',
   cnh: 'cnh',
   residencia: 'comprovante_residencia',
   comprovante_residencia: 'comprovante_residencia',
 };
+
+/**
+ * O provedor recebe a URL do arquivo como `image_url`, então PDF não tem OCR:
+ * o arquivo é enviado normalmente e o RH confere na mão.
+ */
+function hasOcrSupport(file: File, docType: string): boolean {
+  return Boolean(OCR_DOC_TYPE_MAP[docType]) && file.type.startsWith('image/');
+}
 
 export function useDocumentOCR() {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -51,7 +60,7 @@ export function useDocumentOCR() {
   const processDocument = async (file: File, docType: string, token: string): Promise<OCRResult> => {
     setIsProcessing(true);
     try {
-      const ocrDocType = OCR_DOC_TYPE_MAP[docType];
+      const ocrDocType = hasOcrSupport(file, docType) ? OCR_DOC_TYPE_MAP[docType] : undefined;
 
       const form = new FormData();
       form.append('token', token);

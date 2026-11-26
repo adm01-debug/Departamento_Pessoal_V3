@@ -11,8 +11,20 @@
 import { safeFetchWithRetry } from './safe-fetch.ts';
 import { AI_CHAT_URL, AI_NO_THINKING, aiApiKey, aiModel } from './aiProvider.ts';
 
-export const OCR_DOC_TYPES = ['cpf', 'rg', 'cnh', 'comprovante_residencia', 'generic'] as const;
+// `identidade` aceita RG **ou** CNH: o campo da UI é único ("RG ou CNH") e o
+// candidato não informa qual dos dois anexou. Mandar `rg` fazia o provedor
+// reprovar uma CNH legível por "tipo errado".
+export const OCR_DOC_TYPES = ['cpf', 'rg', 'cnh', 'identidade', 'comprovante_residencia', 'generic'] as const;
 export type OcrDocType = (typeof OCR_DOC_TYPES)[number];
+
+const OCR_DOC_TYPE_LABEL: Record<OcrDocType, string> = {
+  rg: 'RG (cédula de identidade)',
+  cnh: 'CNH (carteira nacional de habilitação)',
+  identidade: 'documento de identidade brasileiro — aceite RG ou CNH',
+  cpf: 'CPF',
+  comprovante_residencia: 'comprovante de residência',
+  generic: 'documento',
+};
 
 export const OCR_FALLBACK_ERROR = 'Nao foi possivel processar o documento automaticamente.';
 
@@ -66,6 +78,9 @@ export async function runDocumentOcr(fileUrl: string, docType: OcrDocType): Prom
   const systemPrompt = `Voce e um especialista em OCR de documentos brasileiros (RG, CPF, CNH, Comprovante de Residencia).
     Sua tarefa e extrair os dados do documento fornecido e retornar APENAS um objeto JSON estruturado.
     Nao inclua explicacoes ou texto fora do JSON.
+    O tipo declarado pelo usuario e o que se espera do arquivo; se o arquivo for
+    um documento de identidade valido de outro formato aceito (RG ou CNH), trate
+    como valido e informe o que encontrou.
 
     Campos esperados no JSON:
     - valid: boolean (indica se o documento e legivel e do tipo correto)
@@ -83,7 +98,7 @@ export async function runDocumentOcr(fileUrl: string, docType: OcrDocType): Prom
       }
     - error?: string (se valid for false)`;
 
-  const userPrompt = `Analise este documento do tipo: ${docType}.`;
+  const userPrompt = `Analise este documento do tipo: ${OCR_DOC_TYPE_LABEL[docType]}.`;
 
   const aiResponse = await safeFetchWithRetry(
     AI_CHAT_URL,

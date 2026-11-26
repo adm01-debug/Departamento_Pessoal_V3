@@ -532,7 +532,14 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
                                     </span>
                                   )}
                                   {status?.status === 'success' && (
-                                    <span className="text-[10px] text-success font-bold uppercase">Validado</span>
+                                    <span
+                                      className={cn(
+                                        'text-[10px] font-bold uppercase',
+                                        status.result?.valid ? 'text-success' : 'text-amber-600'
+                                      )}
+                                    >
+                                      {status.result?.valid ? 'Validado' : 'Enviado'}
+                                    </span>
                                   )}
                                 </div>
                               </div>
