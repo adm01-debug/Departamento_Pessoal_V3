@@ -6,7 +6,7 @@
 // PR de migration. Em push na main, continua reprovando.
 //
 // Roda o script de verdade, com `psql` falso no PATH devolvendo um ledger vazio.
-import { mkdtempSync, mkdirSync, copyFileSync, writeFileSync, chmodSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, copyFileSync, writeFileSync, chmodSync, readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import assert from 'node:assert/strict';
@@ -64,4 +64,29 @@ test('--since invalido continua reprovando mesmo com --warn-only', () => {
   const r = rodar(dir, ['--since=2026-10-01', '--warn-only']);
   assert.equal(r.status, 1, r.stdout);
   assert.match(r.stdout, /--since inválido/);
+});
+
+// O teste acima prova o script. Este prova o encanamento: quem decide se o
+// gate bloqueia é o ci.yml, e a flag não pode vazar para o push na main.
+test('ci.yml so ativa --warn-only em pull_request', () => {
+  const ci = readFileSync(path.join(RAIZ, '.github', 'workflows', 'ci.yml'), 'utf8');
+  const linha = ci
+    .split('\n')
+    .find((l) => l.includes('run: node scripts/audit-schema-drift.mjs --since='));
+  assert.ok(linha, 'passo do gate de drift ausente no ci.yml');
+
+  const [fixo, condicional] = linha.split('${{');
+  assert.doesNotMatch(
+    fixo,
+    /--warn-only/,
+    'o comando fixo nao pode ativar --warn-only: push na main precisa reprovar'
+  );
+  assert.match(condicional ?? '', /github\.event_name == 'pull_request' && '--warn-only' \|\| ''/);
+
+  const pkg = JSON.parse(readFileSync(path.join(RAIZ, 'package.json'), 'utf8'));
+  assert.equal(
+    pkg.scripts['test:drift-gate'],
+    'node --test scripts/tests/audit-schema-drift-warn-only.test.mjs'
+  );
+  assert.match(pkg.scripts['ci:verify'] ?? '', /test:drift-gate/);
 });
