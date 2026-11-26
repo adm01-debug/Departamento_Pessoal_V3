@@ -14,12 +14,15 @@ SELECT jsonb_build_object(
     -- mode=verify, que conferem o ledger por versao ("ledger OK versao X") e
     -- por leitura direta do catalogo — mas ESTA assercao nao provou nada deles.
     -- Atualizada aqui; ver docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md §18.6.
-    -- 26/11/2026 (lote 3): aponta para a ULTIMA versao do lote atual
+    -- 26/11/2026 (lote 3): passou a apontar para a ULTIMA versao do lote
     -- (20261126140000). A assercao do workflow e `ledger_count === 1`, entao a
     -- versao aqui precisa ser a do lote corrente — apontar para
     -- 20261123090000 aprovava contando um registro antigo ja aplicado.
+    -- 26/11/2026 (lote 4): aponta para a ULTIMA versao do lote atual
+    -- (20261126150000, retencao de logs). O lote 3 (20261126140000) saiu daqui
+    -- porque foi aplicado: validate run 45865027297 e apply run 45865323191.
     WHERE version IN (
-      '20261126140000'
+      '20261126150000'
     )
   ),
   'notificacoes_chk_wide', EXISTS (
@@ -36,6 +39,19 @@ SELECT jsonb_build_object(
     SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'enforce_log_retention'
       AND p.prosrc LIKE '%attempted_at%'
+  ),
+  -- 20261126150000: a funcao gravava a metrica em colunas que nao existem em
+  -- metricas_processamento (tipo/valor/metadata) e o 42703 abortava a purga
+  -- inteira. Exige o contrato real da tabela e o isolamento da metrica.
+  'elr_metric_insert_ok', NOT EXISTS (
+    SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public' AND p.proname = 'enforce_log_retention'
+      AND p.prosrc LIKE '%metricas_processamento (tipo, valor, metadata%'
+  ) AND EXISTS (
+    SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public' AND p.proname = 'enforce_log_retention'
+      AND p.prosrc LIKE '%metricas_processamento (funcao_nome, status, tempo_execucao_ms, timestamp)%'
+      AND p.prosrc LIKE '%EXCEPTION WHEN OTHERS%'
   ),
   'd5_fn_uses_contexto', EXISTS (
     SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
