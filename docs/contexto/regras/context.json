@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4d80e95f7442ab0264b2d48bebc4b65d7c341225",
+  "sha": "1c255962838174f577c3f14743dc89ef5de54de2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-26 11:13 UTC",
-  "files_total": 4247,
-  "code_files": 3651,
-  "code_lines": 543041
+  "generated_at": "2026-11-26 11:16 UTC",
+  "files_total": 4249,
+  "code_files": 3653,
+  "code_lines": 543344
  },
  "version": "1.3.2",
- "facts_hash": "b5f1fea6ebe55a8d",
+ "facts_hash": "528ee413b47c33b2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 1341,
+   ".sql": 1343,
    ".tsx": 1144,
    ".ts": 1025,
    ".mjs": 110,
@@ -47060,36 +47060,6 @@
     "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
    },
    {
-    "name": "admissao_docs_insert_public",
-    "table": "storage.objects",
-    "cmd": "INSERT",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "",
-    "check": "bucket_id = 'documentos-admissao'",
-    "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
-   },
-   {
-    "name": "admissao_docs_select_authenticated",
-    "table": "storage.objects",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos-admissao'",
-    "check": "",
-    "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
-   },
-   {
-    "name": "admissao_docs_delete_rh_admin",
-    "table": "storage.objects",
-    "cmd": "DELETE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos-admissao' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh') )",
-    "check": "",
-    "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
-   },
-   {
     "name": "comprovantes_despesas_delete",
     "table": "storage.objects",
     "cmd": "DELETE",
@@ -51528,6 +51498,176 @@
     "using": "public.pode_gerir_rh(empresa_id)",
     "check": "",
     "src": "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql"
+   },
+   {
+    "name": "pol_avatars_select_owner",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_avatars_insert_owner",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_avatars_update_owner",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_avatars_delete_owner",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_admissao_docs_insert_tenant_ou_temp",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid()::text ) )",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_admissao_docs_select_tenant_ou_temp",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid()::text ) )",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_ferias_avisos_select_tenant",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'ferias-avisos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_ferias_avisos_insert_tenant",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'ferias-avisos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_ferias_avisos_update_tenant",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'ferias-avisos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "bucket_id = 'ferias-avisos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_comunicados_coletivas_select_tenant",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_comunicados_coletivas_insert_tenant",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_comunicados_coletivas_update_tenant",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_medidas_contestacoes_select_tenant",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'medidas-contestacoes' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_medidas_contestacoes_insert_tenant",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'medidas-contestacoes' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_medidas_disciplinares_select_tenant",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'medidas-disciplinares' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_ponto_biometria_insert_tenant",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'ponto-biometria' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_contratos_trabalho_select_tenant",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'contratos-trabalho' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
    },
    {
     "name": "Acesso aos itens via folha",
@@ -74054,6 +74194,8 @@
    "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.verify.sql",
    "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql",
    "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.verify.sql",
+   "supabase/migrations/20261126090000_storage_policies_buckets_app.sql",
+   "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -106726,8 +106868,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 1267,
-   "lines": 87718,
+   "files": 1269,
+   "lines": 88021,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -218003,36 +218145,6 @@
     "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
    },
    {
-    "name": "admissao_docs_insert_public",
-    "table": "storage.objects",
-    "cmd": "INSERT",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "",
-    "check": "bucket_id = 'documentos-admissao'",
-    "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
-   },
-   {
-    "name": "admissao_docs_select_authenticated",
-    "table": "storage.objects",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos-admissao'",
-    "check": "",
-    "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
-   },
-   {
-    "name": "admissao_docs_delete_rh_admin",
-    "table": "storage.objects",
-    "cmd": "DELETE",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos-admissao' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh') )",
-    "check": "",
-    "src": "supabase/migrations/20260719150000_storage_bucket_security_hardening.sql"
-   },
-   {
     "name": "comprovantes_despesas_delete",
     "table": "storage.objects",
     "cmd": "DELETE",
@@ -222471,6 +222583,176 @@
     "using": "public.pode_gerir_rh(empresa_id)",
     "check": "",
     "src": "supabase/migrations/20261122041500_guias_fgts_digital_rls_por_empresa.sql"
+   },
+   {
+    "name": "pol_avatars_select_owner",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_avatars_insert_owner",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_avatars_update_owner",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_avatars_delete_owner",
+    "table": "storage.objects",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_admissao_docs_insert_tenant_ou_temp",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid()::text ) )",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_admissao_docs_select_tenant_ou_temp",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid()::text ) )",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_ferias_avisos_select_tenant",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'ferias-avisos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_ferias_avisos_insert_tenant",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'ferias-avisos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_ferias_avisos_update_tenant",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'ferias-avisos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "bucket_id = 'ferias-avisos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_comunicados_coletivas_select_tenant",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_comunicados_coletivas_insert_tenant",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_comunicados_coletivas_update_tenant",
+    "table": "storage.objects",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_medidas_contestacoes_select_tenant",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'medidas-contestacoes' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_medidas_contestacoes_insert_tenant",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'medidas-contestacoes' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_medidas_disciplinares_select_tenant",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'medidas-disciplinares' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_ponto_biometria_insert_tenant",
+    "table": "storage.objects",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "bucket_id = 'ponto-biometria' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
+   },
+   {
+    "name": "pol_contratos_trabalho_select_tenant",
+    "table": "storage.objects",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "bucket_id = 'contratos-trabalho' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+    "check": "",
+    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
    },
    {
     "name": "Acesso aos itens via folha",
@@ -250956,7 +251238,6 @@
      "authenticated: bucket_id = 'comprovantes-despesas' AND (storage.foldername(name))[1]::uuid IN (SELECT get_user_empresas(auth.uid()))",
      "authenticated: bucket_id = 'contabilidade-anexos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "authenticated: bucket_id = 'sst-programas' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin','rh','gestor') )",
-     "authenticated: bucket_id = 'documentos-admissao'",
      "authenticated: bucket_id = 'ferias-avisos' AND EXISTS ( SELECT 1 FROM public.user_empresas ue WHERE ue.user_id = auth.uid() AND ue.empresa_i",
      "authenticated: bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uu",
      "authenticated: bucket_id = 'medidas-disciplinares' AND (storage.foldername(name))[1]::uuid IN (SELECT get_user_empresas(auth.uid()))",
@@ -250967,7 +251248,14 @@
      "authenticated: bucket_id = 'training-images' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "authenticated: bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
-     "authenticated: bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))"
+     "authenticated: bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
+     "authenticated: bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR (",
+     "authenticated: bucket_id = 'ferias-avisos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name",
+     "authenticated: bucket_id = 'medidas-contestacoes' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'medidas-disciplinares' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'contratos-trabalho' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))"
     ],
     "INSERT": [
      "authenticated: ((\"bucket_id\" = 'comprovantes-despesas'::\"text\") AND (\"owner\" = \"auth\".\"uid\"()) AND \"public\".\"user_belongs_to_empresa\"(\"auth\"",
@@ -250986,7 +251274,6 @@
      "authenticated: bucket_id = 'comprovantes-despesas' AND (storage.foldername(name))[1]::uuid IN (SELECT get_user_empresas(auth.uid()))",
      "authenticated: bucket_id = 'contabilidade-anexos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "authenticated: bucket_id = 'sst-programas' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin','rh') )",
-     "public: bucket_id = 'documentos-admissao'",
      "authenticated: bucket_id = 'ferias-avisos' AND (public.has_role(auth.uid(),'admin') OR public.has_role(auth.uid(),'rh')) AND EXISTS ( SELECT",
      "authenticated: bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uu",
      "authenticated: bucket_id = 'medidas-disciplinares' AND (storage.foldername(name))[1]::uuid IN (SELECT get_user_empresas(auth.uid()))",
@@ -250998,6 +251285,12 @@
      "authenticated: bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
+     "authenticated: bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR (",
+     "authenticated: bucket_id = 'ferias-avisos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name",
+     "authenticated: bucket_id = 'medidas-contestacoes' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'ponto-biometria' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'avatars' AND owner = auth.uid() AND (storage.foldername(name))[1] = auth.uid()::text"
     ],
     "UPDATE": [
@@ -251015,6 +251308,9 @@
      "authenticated: bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.folder",
      "authenticated: bucket_id = 'documentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
+     "authenticated: bucket_id = 'ferias-avisos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name",
      "authenticated: bucket_id = 'avatars' AND owner = auth.uid() AND (storage.foldername(name))[1] = auth.uid()::text"
     ],
     "DELETE": [
@@ -251028,7 +251324,6 @@
      "authenticated: bucket_id = 'comprovantes-despesas' AND (storage.foldername(name))[1]::uuid IN (SELECT get_user_empresas(auth.uid()))",
      "authenticated: bucket_id = 'contabilidade-anexos' AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)",
      "authenticated: bucket_id = 'afastamentos' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh') )",
-     "authenticated: bucket_id = 'documentos-admissao' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh') )",
      "authenticated: bucket_id = 'comprovantes-despesas' AND auth.uid() IN ( SELECT user_id FROM public.user_roles WHERE role IN ('admin', 'rh', '",
      "authenticated: bucket_id = 'ferias-coletivas-comunicados' AND public.has_role(auth.uid(),'admin'::app_role)",
      "authenticated: bucket_id = 'medidas-disciplinares' AND (storage.foldername(name))[1]::uuid IN (SELECT get_user_empresas(auth.uid()))",
@@ -251037,6 +251332,7 @@
      "authenticated: bucket_id = 'training-images' AND public.is_admin(auth.uid()) AND public.user_belongs_to_empresa(auth.uid(), ((storage.folder",
      "authenticated: bucket_id = 'documentos' AND public.pode_gerir_rh(public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'documentos-colaboradores' AND public.pode_gerir_rh(public.storage_path_empresa_id(name))",
+     "authenticated: bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
      "authenticated: bucket_id = 'avatars' AND owner = auth.uid() AND (storage.foldername(name))[1] = auth.uid()::text"
     ]
    },
@@ -252409,6 +252705,7 @@
    "supabase/migrations/20261124150000_backup_logs_rls_policy.sql",
    "supabase/migrations/20261125120000_secdef_refresh_dashboard_views_revoke.sql",
    "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql",
+   "supabase/migrations/20261126090000_storage_policies_buckets_app.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -348522,6 +348819,15 @@
    "path": "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.verify.sql",
    "lines": 24
   },
+  "supabase/migrations/20261126090000_storage_policies_buckets_app.sql": {
+   "path": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql",
+   "lines": 267,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql": {
+   "path": "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql",
+   "lines": 36
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -348917,10 +349223,21 @@
   }
  },
  "git": {
-  "sha": "4d80e95f7442ab0264b2d48bebc4b65d7c341225",
+  "sha": "1c255962838174f577c3f14743dc89ef5de54de2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "1c25596",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "infra: cria as policies de Storage que faltam em 8 buckets usados pelo app (#901)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "supabase/migrations/20261126090000_storage_policies_buckets_app.sql",
+     "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql"
+    ]
+   },
    {
     "sha": "4d80e95",
     "date": "2026-11-26",
@@ -349415,29 +349732,20 @@
      "src/components/ui/cascade-dialog.tsx",
      "src/components/ui/cascade-motion.ts"
     ]
-   },
-   {
-    "sha": "a19e496",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "docs(auditoria): registra o resgate do trabalho do agente Muri e a regra que evita regressao (#871)",
-    "files": [
-     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-    10
-   ],
    [
     "scripts/.bundle-budget.json",
     10
    ],
    [
+    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    9
+   ],
+   [
     ".github/workflows/canonical-migrations.yml",
-    5
+    6
    ],
    [
     "src/pages/PontoPage.tsx",
@@ -349466,6 +349774,14 @@
    [
     "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.verify.sql",
     2
+   ],
+   [
+    "supabase/migrations/20261126090000_storage_policies_buckets_app.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql",
+    1
    ],
    [
     ".github/workflows/ci.yml",
@@ -349497,14 +349813,6 @@
    ],
    [
     "src/components/avaliacao/nineBoxMock.ts",
-    1
-   ],
-   [
-    "src/pages/AvaliacaoPage.tsx",
-    1
-   ],
-   [
-    "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql",
     1
    ]
   ]

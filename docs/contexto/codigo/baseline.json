@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4d80e95f7442ab0264b2d48bebc4b65d7c341225",
+  "commit": "1c255962838174f577c3f14743dc89ef5de54de2",
   "branch": "main",
-  "data_commit": "2026-11-26T07:26:19-03:00",
+  "data_commit": "2026-11-26T08:16:11-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1c25596",
+    "data": "2026-11-26",
+    "assunto": "infra: cria as policies de Storage que faltam em 8 buckets usados pelo app (#901)"
+   },
    {
     "sha": "4d80e95",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "4046e24",
     "data": "2026-11-25",
     "assunto": "fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)"
-   },
-   {
-    "sha": "ced7abd",
-    "data": "2026-11-25",
-    "assunto": "fix: p4_071 nao aborta mais o lote aditivo no canônico (#879)"
    }
   ],
-  "arquivos_mudados_7d": 779,
+  "arquivos_mudados_7d": 781,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -181,7 +181,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 38
+    "mudancas": 39
    },
    {
     "pasta": "src/components/dashboard",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 38
+    "mudancas": 39
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4233,
+  "arquivos_total": 4235,
   "arquivos_codigo": 2312,
   "linhas_codigo": 468448,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 127,
   "edge_functions": 68,
   "tabelas": 438,
-  "migrations": 1267,
+  "migrations": 1269,
   "cron_jobs": 43,
   "testes": 871,
   "workflows": 21,

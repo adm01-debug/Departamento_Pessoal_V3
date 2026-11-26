@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 1267,
+ "migrations": 1269,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -58090,24 +58090,6 @@
    "rls": false,
    "policies": [
     {
-     "nome": "admissao_docs_delete_rh_admin",
-     "comando": "delete",
-     "para": "authenticated",
-     "tipo": "permissive"
-    },
-    {
-     "nome": "admissao_docs_insert_public",
-     "comando": "insert",
-     "para": "public",
-     "tipo": "permissive"
-    },
-    {
-     "nome": "admissao_docs_select_authenticated",
-     "comando": "select",
-     "para": "authenticated",
-     "tipo": "permissive"
-    },
-    {
      "nome": "afastamentos_delete_rh_admin",
      "comando": "delete",
      "para": "authenticated",
@@ -58470,6 +58452,108 @@
     {
      "nome": "medidas_disciplinares_storage_update",
      "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_admissao_docs_insert_tenant_ou_temp",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_admissao_docs_select_tenant_ou_temp",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_avatars_delete_owner",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_avatars_insert_owner",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_avatars_select_owner",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_avatars_update_owner",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_comunicados_coletivas_insert_tenant",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_comunicados_coletivas_select_tenant",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_comunicados_coletivas_update_tenant",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_contratos_trabalho_select_tenant",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_ferias_avisos_insert_tenant",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_ferias_avisos_select_tenant",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_ferias_avisos_update_tenant",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_medidas_contestacoes_insert_tenant",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_medidas_contestacoes_select_tenant",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_medidas_disciplinares_select_tenant",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pol_ponto_biometria_insert_tenant",
+     "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
     },

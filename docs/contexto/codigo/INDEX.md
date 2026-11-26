@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4d80e95f7442ab0264b2d48bebc4b65d7c341225` (2026-11-26T07:26:19-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1c255962838174f577c3f14743dc89ef5de54de2` (2026-11-26T08:16:11-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2169), SQL (1341), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2169), SQL (1343), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 4233 |
+| arquivos_total | 4235 |
 | arquivos_codigo | 2312 |
 | linhas_codigo | 468448 |
 | rotas | 116 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 127 |
 | edge_functions | 68 |
 | tabelas | 438 |
-| migrations | 1267 |
+| migrations | 1269 |
 | cron_jobs | 43 |
 | testes | 871 |
 | workflows | 21 |
@@ -404,13 +404,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 29927 nós · 68208 arestas · 2858 comunidades · grafo do commit `4d80e95f`
+- 29929 nós · 68208 arestas · 2860 comunidades · grafo do commit `1c255962`
 - comunidades maiores: useEmpresas (495), 20260831_corrected_public.sql (485), canonical_schema.sql (481), cn (454), lucide-react (436), react (409), @tanstack/react-query (379), vitest (300), App.tsx (266), ref_node_fs (237), rateLimit.ts (184), TurnosConteudo.tsx (174)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), formatDateLocalISO() (src/utils/dateLocal.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (38)
+- .github/workflows/canonical-migrations.yml (39)
 - scripts/canonical-invariants.sql (21)
 - inventario/estado/rotas.json (18)
 - docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
@@ -663,6 +663,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-26 `1c25596` infra: cria as policies de Storage que faltam em 8 buckets usados pelo app (#901)
 - 2026-11-26 `4d80e95` docs: registra a causa raiz do Supabase Preview (drift de ledger de 33 migrations, bloqueado pelo runbook) (#900)
 - 2026-11-26 `256e836` chore: bump das actions por SHA com catalogo action-pins coerente (substitui #863) (#876)
 - 2026-11-25 `b4f3428` docs: fecha a causa raiz do E2E vermelho e a fatia de turnos no ledger do resgate (#898)
@@ -677,7 +678,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `43dd2de` fix(db): fecha record_backup_run para anon e tira backup_logs do claim de JWT (#890)
 - 2026-11-25 `c71a391` fix: policies de escrita de provisoes_folha e historico_calculos_folha usam pertence_a_empresa (#881)
 - 2026-11-25 `ced6c84` feat: resgata a janela Ver todas do desempenho de vagas (port do Muri) (#888)
-- 2026-11-25 `08dd398` feat: formulario de vaga coleta cargo, contrato, faixa e beneficios (#887)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

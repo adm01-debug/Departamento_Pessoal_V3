@@ -1,17 +1,17 @@
 # Graph Report - Departamento_Pessoal_V3  (2026-11-26)
 
 ## Corpus Check
-- 4129 files · ~3,828,234 words
+- 4131 files · ~3,829,632 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 39 file(s) not represented in the graph (top: (none) 17, .toml 5, .conf 4)
 
 ## Summary
-- 29927 nodes · 68208 edges · 2858 communities (1428 shown, 1430 thin omitted)
+- 29929 nodes · 68208 edges · 2860 communities (1428 shown, 1432 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 1722 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `4d80e95f`
+- Built from commit: `1c255962`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -2047,7 +2047,7 @@
 ## Import Cycles
 - 2-file cycle: `src/components/layout/MainLayout.tsx -> src/components/layout/index.ts -> src/components/layout/MainLayout.tsx`
 
-## Communities (2858 total, 1430 thin omitted)
+## Communities (2860 total, 1432 thin omitted)
 
 ### Community 0 - "useEmpresas"
 Cohesion: 0.01
@@ -7805,8 +7805,8 @@ Nodes (3): "public"."sst_regimento_ass_imutavel", "trg_regimento_ass_no_delete",
 
 ## Knowledge Gaps
 - **8296 isolated node(s):** `session-start.sh script`, `PATH`, `capacitorConfig`, `nodeModulesDir`, `AUTH_FILE` (+8291 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 13079 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **1430 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 13081 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **1432 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
