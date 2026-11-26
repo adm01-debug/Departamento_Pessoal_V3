@@ -12,6 +12,7 @@ import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { UnifiedAuditSection } from '@/components/admin/UnifiedAuditSection';
+import { BackupHealthSection } from '@/components/admin/BackupHealthSection';
 
 interface DlqRow {
   tipo_tarefa: string;
@@ -172,6 +173,8 @@ export default function AdminOperacaoPage() {
     idem.refetch();
     cron.refetch();
     alerts.refetch();
+    qc.invalidateQueries({ queryKey: ['admin-op', 'backup-runs'] });
+    qc.invalidateQueries({ queryKey: ['admin-op', 'backup-stale'] });
   };
 
   const totalDlq = dlq.data?.reduce((s, r) => s + Number(r.total_dlq || 0), 0) ?? 0;
@@ -460,6 +463,8 @@ export default function AdminOperacaoPage() {
           </div>
         )}
       </SectionCard>
+
+      <BackupHealthSection />
 
       <UnifiedAuditSection />
     </div>

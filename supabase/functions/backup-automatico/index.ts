@@ -5,6 +5,7 @@ import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJ
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { BACKUP_AUDIT_READ_ACTIONS } from './backupAudit.ts';
+import type { AdminClient } from '../_shared/authz.ts';
 import {
   BACKUP_PAGE_SIZE,
   BackupSnapshotError,
@@ -25,10 +26,45 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
 
+// P3-060: registra a execucao em public.backup_logs (log dedicado, RLS por
+// empresa). Best-effort: uma falha aqui nao pode derrubar um backup concluido.
+const recordRun = async (
+  admin: AdminClient,
+  params: {
+    empresaId: string;
+    startedAtMs: number;
+    status: 'success' | 'error';
+    records?: number;
+    tables?: number;
+    error?: string | null;
+    createdBy?: string | null;
+    metadata?: Record<string, unknown>;
+  },
+): Promise<void> => {
+  try {
+    const { error } = await admin.rpc('record_backup_run', {
+      p_empresa_id: params.empresaId,
+      p_status: params.status,
+      p_duration_ms: Date.now() - params.startedAtMs,
+      p_records: params.records ?? 0,
+      p_tables: params.tables ?? 0,
+      p_error: params.error ?? null,
+      p_created_by: params.createdBy ?? null,
+      p_metadata: params.metadata ?? {},
+    });
+    if (error) await captureException(error, { function: 'backup-automatico:record_backup_run' });
+  } catch (recordError) {
+    await captureException(recordError, { function: 'backup-automatico:record_backup_run' });
+  }
+};
+
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
+
+  // Contexto da execucao para registrar falhas inesperadas em backup_logs.
+  let runContext: { empresaId: string; startedAtMs: number } | null = null;
 
   try {
     // 1) CSRF fail-closed em state-changing
@@ -130,6 +166,9 @@ serve(async (req: Request): Promise<Response> => {
       return createErrorResponse('empresaId é obrigatório para executar backup', 422, 'VALIDATION_ERROR', undefined, req);
     }
 
+    const startedAtMs = Date.now();
+    runContext = { empresaId, startedAtMs };
+
     const snapshot: Record<string, unknown> = {};
     const counts: Record<string, number> = {};
     for (const table of targetTables) {
@@ -156,6 +195,14 @@ serve(async (req: Request): Promise<Response> => {
             function: 'backup-automatico',
             table,
             code: error.code,
+          });
+          await recordRun(admin, {
+            empresaId,
+            startedAtMs,
+            status: 'error',
+            tables: targetTables.length,
+            createdBy: user.id,
+            error: error.publicMessage,
           });
           return createErrorResponse(error.publicMessage, error.httpStatus, error.code, undefined, req);
         }
@@ -192,6 +239,14 @@ serve(async (req: Request): Promise<Response> => {
         });
       if (upErr && !/already exists/i.test(upErr.message)) {
         await captureException(upErr, { function: 'backup-automatico', empresaId });
+        await recordRun(admin, {
+          empresaId,
+          startedAtMs,
+          status: 'error',
+          tables: targetTables.length,
+          createdBy: user.id,
+          error: 'STORAGE_ERROR',
+        });
         return createErrorResponse('Falha ao gravar backup', 500, 'STORAGE_ERROR', undefined, req);
       }
 
@@ -206,10 +261,26 @@ serve(async (req: Request): Promise<Response> => {
         integrityVerified = verifyHash === payloadHash;
         if (!integrityVerified) {
           await captureException(new Error('Backup integrity mismatch'), { path, expected: payloadHash, got: verifyHash });
+          await recordRun(admin, {
+            empresaId,
+            startedAtMs,
+            status: 'error',
+            tables: targetTables.length,
+            createdBy: user.id,
+            error: 'INTEGRITY_ERROR',
+          });
           return createErrorResponse('Falha de integridade no backup', 500, 'INTEGRITY_ERROR', undefined, req);
         }
       } catch (verifyErr) {
         await captureException(verifyErr, { function: 'backup-automatico:verify', path });
+        await recordRun(admin, {
+          empresaId,
+          startedAtMs,
+          status: 'error',
+          tables: targetTables.length,
+          createdBy: user.id,
+          error: 'INTEGRITY_ERROR',
+        });
         return createErrorResponse('Falha ao verificar integridade do backup', 500, 'INTEGRITY_ERROR', undefined, req);
       }
 
@@ -233,6 +304,22 @@ serve(async (req: Request): Promise<Response> => {
     });
     if (auditErr) throw auditErr;
 
+    await recordRun(admin, {
+      empresaId,
+      startedAtMs,
+      status: 'success',
+      records: Object.values(counts).reduce((total, value) => total + Number(value ?? 0), 0),
+      tables: targetTables.length,
+      createdBy: user.id,
+      metadata: {
+        path: destino === 'storage' ? path : null,
+        destino,
+        sha256: payloadHash,
+        bytes: bytesSize,
+        integrity_verified: integrityVerified,
+      },
+    });
+
     return new Response(JSON.stringify({
       ok: true,
       empresa_id: empresaId,
@@ -249,6 +336,17 @@ serve(async (req: Request): Promise<Response> => {
     });
   } catch (err) {
     await captureException(err, { function: 'backup-automatico' });
+    if (runContext) {
+      const failureAdmin = createClient(SUPABASE_URL, SERVICE_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      }) as unknown as AdminClient;
+      await recordRun(failureAdmin, {
+        empresaId: runContext.empresaId,
+        startedAtMs: runContext.startedAtMs,
+        status: 'error',
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
     return createErrorResponse('Erro interno no backup', 500, 'INTERNAL_SERVER_ERROR', undefined, req);
   }
 });

@@ -1384,6 +1384,54 @@ export type Database = {
         }
         Relationships: []
       }
+      backup_logs: {
+        Row: {
+          acao: string
+          created_by: string | null
+          duration_ms: number | null
+          empresa_id: string | null
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          metadata: Json | null
+          records_count: number | null
+          started_at: string
+          status: string
+          storage_path: string | null
+          tables_count: number | null
+        }
+        Insert: {
+          acao?: string | null
+          created_by?: string | null
+          duration_ms?: number | null
+          empresa_id?: string | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          metadata?: Json | null
+          records_count?: number | null
+          started_at?: string
+          status: string
+          storage_path?: string | null
+          tables_count?: number | null
+        }
+        Update: {
+          acao?: string | null
+          created_by?: string | null
+          duration_ms?: number | null
+          empresa_id?: string | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          metadata?: Json | null
+          records_count?: number | null
+          started_at?: string
+          status?: string
+          storage_path?: string | null
+          tables_count?: number | null
+        }
+        Relationships: []
+      }
       banco_horas: {
         Row: {
           colaborador_id: string
@@ -23590,6 +23638,17 @@ export type Database = {
           telefone: string | null
           updated_at: string
           user_id: string
+        }[]
+      }
+      alert_stale_backup: {
+        Args: never
+        Returns: {
+          empresa_id: string | null
+          empresa_nome: string | null
+          hours_since: number
+          last_backup_at: string
+          records_backup: number | null
+          tables_backup: number | null
         }[]
       }
       admin_list_security_definer_rpcs: {

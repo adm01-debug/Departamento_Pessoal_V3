@@ -32,6 +32,12 @@ test.describe('Admin — Painel de Operação', () => {
     await expect(page.getByText(/Cron Jobs/i)).toBeVisible();
     await expect(page.getByText(/Alertas de Seguran[çc]a Ativos/i)).toBeVisible();
 
+    // Painel de backups: leitor de `backup_logs` (gravado pela edge
+    // `backup-automatico`). Título e contador são estáveis com ou sem dados —
+    // backup só roda quando um admin dispara em Configurações › Saúde.
+    await expect(page.getByText('Backups', { exact: true })).toBeVisible();
+    await expect(page.getByText(/\d+ execu[çc][õo]es/)).toBeVisible();
+
     // Botão global de refresh
     await expect(page.getByRole('button', { name: /Atualizar/i })).toBeVisible();
 
