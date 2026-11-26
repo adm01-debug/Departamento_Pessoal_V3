@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7f047bcddda44a186947784a90c89e7a6a707869",
+  "sha": "c215d18134538083ca16f605266967a8d924b1b6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-26 13:05 UTC",
-  "files_total": 4252,
-  "code_files": 3656,
-  "code_lines": 543503
+  "generated_at": "2026-11-26 14:43 UTC",
+  "files_total": 4262,
+  "code_files": 3666,
+  "code_lines": 544669
  },
  "version": "1.3.2",
- "facts_hash": "95b505b2c5af7ea0",
+ "facts_hash": "3cb431539ed82c8d",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,9 +388,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 1345,
-   ".tsx": 1144,
-   ".ts": 1025,
+   ".sql": 1351,
+   ".tsx": 1146,
+   ".ts": 1027,
    ".mjs": 111,
    ".js": 15,
    ".cjs": 11,
@@ -14390,6 +14390,13 @@
       "fk": "",
       "generated": "",
       "src": "supabase/rebaseline/20260831_corrected_public.sql"
+     },
+     {
+      "name": "substituido_em",
+      "type": "string | null",
+      "fk": "",
+      "generated": "",
+      "src": "src/integrations/supabase/types.ts"
      },
      {
       "name": "updated_at",
@@ -51541,26 +51548,6 @@
     "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
    },
    {
-    "name": "pol_admissao_docs_insert_tenant_ou_temp",
-    "table": "storage.objects",
-    "cmd": "INSERT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "",
-    "check": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid() ) )",
-    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
-   },
-   {
-    "name": "pol_admissao_docs_select_tenant_ou_temp",
-    "table": "storage.objects",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid() ) )",
-    "check": "",
-    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
-   },
-   {
     "name": "pol_ferias_avisos_select_tenant",
     "table": "storage.objects",
     "cmd": "SELECT",
@@ -55356,6 +55343,15 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql"
+   },
+   {
+    "name": "trg_documentos_admissao_marcar_anteriores",
+    "when": "BEFORE INSERT",
+    "table": "documentos_admissao",
+    "function": "documentos_admissao_marcar_anteriores",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql"
    },
    {
     "name": "ajuste_ponto_status_transition",
@@ -66130,6 +66126,30 @@
      "vault"
     ]
    },
+   "storage_path_admissao_id": {
+    "args": "p_name text",
+    "returns": "uuid",
+    "lang": "sql",
+    "src": "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "SELECT CASE WHEN p_name ~ '^admissao_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/' THEN replace(split_part(p_name, '/', 1), 'admissao_', '')::uuid ELSE NULL END;",
+    "raises": [],
+    "tables": []
+   },
+   "documentos_admissao_marcar_anteriores": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN PERFORM pg_catalog.pg_advisory_xact_lock( pg_catalog.hashtextextended(NEW.admissao_id::text, 0) ); UPDATE public.documentos_admissao SET substituido_em = now() WHERE admissao_id = NEW.admissao_id AND tipo = NEW.tipo AND id <> NEW.id AND substituido_em IS NULL; RETURN NEW; END;",
+    "raises": [],
+    "tables": [
+     "documentos_admissao"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -72416,6 +72436,14 @@
     "unique": false,
     "where": "",
     "src": "supabase/migrations/20261123150000_ponto_rep_feriados_horarios.sql"
+   },
+   {
+    "name": "idx_documentos_admissao_vigentes",
+    "table": "documentos_admissao",
+    "columns": "admissao_id, tipo",
+    "unique": false,
+    "where": "WHERE substituido_em IS NULL",
+    "src": "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql"
    }
   ],
   "cron_jobs": [
@@ -74199,6 +74227,12 @@
    "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql",
    "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.sql",
    "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.verify.sql",
+   "supabase/migrations/20261126120000_storage_documentos_admissao_sem_policy.sql",
+   "supabase/migrations/20261126120000_storage_documentos_admissao_sem_policy.verify.sql",
+   "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql",
+   "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.verify.sql",
+   "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql",
+   "supabase/migrations/20261126140000_documentos_admissao_substituicao.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -86615,6 +86649,30 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "storage_path_admissao_id",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "storage_path_admissao_id",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "documentos_admissao_marcar_anteriores",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -90172,7 +90230,8 @@
    "table:recibos_ferias": "Registro do recibo de férias baixado pelo RH (FeriasActions.tsx). Metadado de emissão — o PDF é gerado no navegador e não é arquivado aqui.",
    "column:ponto_rep_funcionarios.cpf_last4": "Últimos 4 dígitos do CPF, mantidos pelo gatilho fn_ponto_rep_funcionario_cpf_last4 — único CPF que authenticated pode ler.",
    "table:ponto_rep_feriados": "Feriados do AtecSoft (tabela FERIADO) por coletor.",
-   "table:ponto_rep_horarios": "Jornadas do AtecSoft (tabela HORARIO_LINHAS), uma linha por dia da semana."
+   "table:ponto_rep_horarios": "Jornadas do AtecSoft (tabela HORARIO_LINHAS), uma linha por dia da semana.",
+   "column:documentos_admissao.substituido_em": "Quando preenchido, este anexo foi substituido por um envio posterior do mesmo tipo e nao e mais a versao vigente."
   },
   "types_file": "src/integrations/supabase/types.ts"
  },
@@ -90446,14 +90505,18 @@
      "admissao_tokens",
      "admissoes",
      "afastamentos",
+     "ajustes_ponto",
      "anotacoes_colaborador",
      "asos",
      "banco_horas",
      "banco_horas_config",
      "batidas_ponto",
      "beneficiarios_plano",
+     "beneficiarios_seguro",
      "beneficios",
      "beneficios_colaborador",
+     "bitrix24_config",
+     "bitrix24_sync_logs",
      "campos_customizados",
      "canal_etica",
      "catalogo_cursos",
@@ -90464,6 +90527,7 @@
      "cnab_configuracoes",
      "cnab_itens",
      "cnab_remessas",
+     "colaborador_beneficios",
      "colaboradores",
      "competencias_config",
      "comunicados",
@@ -90486,16 +90550,22 @@
      "dependentes_beneficios",
      "despesas",
      "despesas_aprovacoes_log",
+     "documento_templates",
      "documentos",
+     "documentos_admissao",
      "documentos_afastamento",
+     "documentos_assinatura",
+     "documentos_colaborador",
      "documentos_pessoais_arquivos",
      "empresas",
      "epis",
      "epis_entregas",
      "escalas_trabalho",
      "esocial_eventos",
+     "esocial_lotes",
      "esocial_transmissao_logs",
      "etnias",
+     "eventos_variaveis",
      "faltas",
      "feedbacks_360",
      "feedbacks_360_aprovacoes_gestor",
@@ -90521,9 +90591,11 @@
      "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
+     "lancamentos_folha",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
      "linhas_transporte",
+     "log_envio_relatorios",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -90553,6 +90625,10 @@
      "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
+     "relatorios_agendados",
+     "rubricas_folha",
+     "saved_filters",
+     "seguros_colaboradores",
      "solicitacoes_hora_extra",
      "sst_cat",
      "sst_exposicao_riscos",
@@ -90570,7 +90646,23 @@
      "turnos",
      "valores_campos_customizados",
      "versao_banco",
+     "vw_alertas_compensacao",
+     "vw_alertas_rh",
+     "vw_banco_horas_saldo",
+     "vw_batidas_dia",
+     "vw_batidas_resumo",
+     "vw_cadastro_incompleto",
+     "vw_colaboradores_completo",
+     "vw_dashboard_time",
+     "vw_faltas_mensal",
      "vw_feedbacks_360_versao",
+     "vw_ferias_resumo",
+     "vw_folha_ponto_mensal",
+     "vw_kpi_absenteismo",
+     "vw_kpi_beneficios_custo",
+     "vw_kpi_ponto_resumo",
+     "vw_kpi_turnover",
+     "vw_saldo_compensacao_mensal",
      "webhook_logs",
      "webhooks_config",
      "workflows_definicoes",
@@ -90627,7 +90719,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 249
+    "deps_count": 256
    },
    {
     "path": "",
@@ -90682,12 +90774,16 @@
      "admissao_tokens",
      "admissoes",
      "afastamentos",
+     "ajustes_ponto",
      "banco_horas",
      "banco_horas_config",
      "batidas_ponto",
      "beneficiarios_plano",
+     "beneficiarios_seguro",
      "beneficios",
      "beneficios_colaborador",
+     "bitrix24_config",
+     "bitrix24_sync_logs",
      "canal_etica",
      "catalogo_cursos",
      "certificados_digitais",
@@ -90696,6 +90792,7 @@
      "cnab_configuracoes",
      "cnab_itens",
      "cnab_remessas",
+     "colaborador_beneficios",
      "colaboradores",
      "competencias_config",
      "comunicados",
@@ -90713,13 +90810,19 @@
      "dependentes",
      "despesas",
      "despesas_aprovacoes_log",
+     "documento_templates",
+     "documentos_admissao",
      "documentos_afastamento",
+     "documentos_assinatura",
+     "documentos_colaborador",
      "empresas",
      "epis",
      "epis_entregas",
      "escalas_trabalho",
      "esocial_eventos",
+     "esocial_lotes",
      "esocial_transmissao_logs",
+     "eventos_variaveis",
      "faltas",
      "feedbacks_360",
      "feedbacks_360_aprovacoes_gestor",
@@ -90727,15 +90830,21 @@
      "feedbacks_360_validacoes_potencial",
      "ferias",
      "ferias_aprovacoes_log",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "inscricoes_cursos",
      "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
+     "lancamentos_folha",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
+     "log_envio_relatorios",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -90743,6 +90852,10 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_ponto",
@@ -90758,14 +90871,35 @@
      "push_subscriptions",
      "recargas_vale",
      "registros_ponto",
+     "relatorios_agendados",
+     "rubricas_folha",
+     "saved_filters",
+     "seguros_colaboradores",
      "solicitacoes_hora_extra",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
+     "vw_alertas_compensacao",
+     "vw_alertas_rh",
+     "vw_banco_horas_saldo",
+     "vw_batidas_dia",
+     "vw_batidas_resumo",
+     "vw_cadastro_incompleto",
+     "vw_colaboradores_completo",
+     "vw_dashboard_time",
+     "vw_faltas_mensal",
      "vw_feedbacks_360_versao",
+     "vw_ferias_resumo",
+     "vw_folha_ponto_mensal",
+     "vw_kpi_absenteismo",
+     "vw_kpi_beneficios_custo",
+     "vw_kpi_ponto_resumo",
+     "vw_kpi_turnover",
+     "vw_saldo_compensacao_mensal",
      "webhook_logs",
      "workflows_definicoes",
      "workflows_etapas",
@@ -90817,7 +90951,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 123
+    "deps_count": 132
    },
    {
     "path": "",
@@ -92967,10 +93101,10 @@
      "notificacoes_admissao"
     ],
     "invokes_transitive": [
+     "admissao-publica",
      "consultarCEP",
      "enviar-email-admissao",
      "enviar-esocial",
-     "process-document-ocr",
      "upload-certificado"
     ],
     "rpc_transitive": [
@@ -103214,7 +103348,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1159,
+  "components_count": 1161,
   "hooks": [
    {
     "name": "useContacts",
@@ -104578,7 +104712,7 @@
   {
    "module": "scripts",
    "files": 156,
-   "lines": 35433,
+   "lines": 35437,
    "tables": [
     "a",
     "anexos",
@@ -104889,8 +105023,8 @@
   },
   {
    "module": "src/components",
-   "files": 1159,
-   "lines": 221722,
+   "files": 1161,
+   "lines": 222150,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -104962,6 +105096,7 @@
     "SignaturePad.tsx: SignaturePad",
     "AdmissoesDashboard.tsx: AbaAdmissoes, AdmissoesDashboard",
     "AdmissoesKanban.tsx: AdmissoesKanbanProps, AdmissoesKanban",
+    "ArquivosAdmissaoLista.tsx: ArquivosAdmissaoLista",
     "AuditoriaAdmissoesContent.tsx: AuditoriaAdmissoesContent",
     "DetalhesAdmissaoDialog.tsx: DetalhesAdmissaoDialog",
     "GestaoCandidatos.tsx: GestaoVisualizacao, GestaoCandidatosProps, GestaoCandidatos",
@@ -104983,8 +105118,7 @@
     "onboardingDerivacoes.ts: TarefaOnboarding, ColaboradorOnboarding, ProgressoOnboarding, progressoOnboarding, prazoDaTarefa, ordenarTarefas",
     "AfastamentoDocumentManager.tsx: AfastamentoDocumentManager",
     "AfastamentoForm.tsx: AfastamentoForm",
-    "AfastamentoStats.tsx: AfastamentoStats",
-    "AfastamentoTable.tsx: AfastamentoTable"
+    "AfastamentoStats.tsx: AfastamentoStats"
    ],
    "docs": [
     "AdminRoute.tsx: Guarda de rota ADMIN — exige o papel `admin` E o MFA. RESPONSABILIDADES, AGORA SEPARADAS: este componente decide QUEM pode entrar (papel `admin`); o portao de MFA mora no `MfaGate`, compartilhado com o `PermissionRoute`. A maquina de estados e as telas do MFA foram movidas NA INTEGRA para la, entao …",
@@ -105067,6 +105201,7 @@
     "src/components/__tests__/AprovacaoGestor.test.ts",
     "src/components/__tests__/AprovacaoLocal.test.ts",
     "src/components/__tests__/AquisitivosTab.test.tsx",
+    "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
     "src/components/__tests__/AssinarAvisoDialog.test.tsx",
     "src/components/__tests__/AssinarEspelhoDialog.test.tsx",
     "src/components/__tests__/AuditoriaAdmissoesContent.test.tsx",
@@ -105115,8 +105250,7 @@
     "src/components/__tests__/ContratoTokenTimelineDialog.test.tsx",
     "src/components/__tests__/ContratosAssinaturaKPICard.test.tsx",
     "src/components/__tests__/ContratosVencendoPanel.test.tsx",
-    "src/components/__tests__/CriacaoFeedbackIntegracao.test.ts",
-    "src/components/__tests__/CurrencyInput.test.tsx"
+    "src/components/__tests__/CriacaoFeedbackIntegracao.test.ts"
    ]
   },
   {
@@ -105224,7 +105358,7 @@
   {
    "module": "src/hooks",
    "files": 210,
-   "lines": 24607,
+   "lines": 24689,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105596,7 +105730,7 @@
   {
    "module": "src/pages",
    "files": 146,
-   "lines": 51977,
+   "lines": 51980,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -105881,7 +106015,7 @@
   {
    "module": "src/schemas",
    "files": 33,
-   "lines": 8867,
+   "lines": 8868,
    "tables": [],
    "exports": [
     "admissao.ts: admissaoSchema, AdmissaoSchema",
@@ -106623,8 +106757,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 196,
-   "lines": 29009,
+   "files": 198,
+   "lines": 29351,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -106751,6 +106885,7 @@
     "irrf.ts: calcIRRF",
     "logger.ts: LogLevel, log",
     "monitor.ts: withMonitoring",
+    "ocr.ts: OCR_DOC_TYPES, OcrDocType, OCR_FALLBACK_ERROR, OCR_CIRCUIT_ERROR, resetarBreakerOcr, estadoBreakerOcr",
     "outboundDelivery.ts: normalizarTelefone, sanitizarErro, emailEntregavel, emailsEntregaveis, ResendResult, remetenteEmail",
     "rateLimit.ts: RateLimitOptions, RateLimitResult, RateLimitRpcClient, checkRateLimit, rateLimitResponse, RateLimitDuploRpcClient",
     "resendDelivery.ts: resendDeliveryId",
@@ -106774,8 +106909,7 @@
     "storagePath.ts: TRAINING_IMAGES_BUCKET, PASTA_POR_TIPO, segmentoSeguro, montarCaminhoImagem, validarCaminhoDaEmpresa",
     "supabaseDeps.ts: TrainingAdminClient, carregarConteudoTreinamento, criarDepsSupabase",
     "types.ts: TrainingContentType, TRAINING_CONTENT_TYPES, TrainingImageArtDirection, TrainingImageRequest, GeneratedTrainingImage, TrainingImageProvider",
-    "uuid.ts: UUID_RE, isUuid",
-    "deliveryStatus.ts: AlertEmailDeliveryStatus, alertDeliveryHttpStatus, ALERT_EMAIL_UNAVAILABLE_MESSAGE"
+    "uuid.ts: UUID_RE, isUuid"
    ],
    "docs": [
     "index.ts: Remediação de auditoria (achado E3 / CRÍTICO): • JWT obrigatório (antes: sem autenticação alguma, service_role exposto) • Bucket restrito a uma allowlist de documentos (antes: qualquer bucket) • Remove o parâmetro `fileUrl` livre (antes: SSRF — URL arbitrária repassada como image_url para o gateway …",
@@ -106820,6 +106954,8 @@
     "supabase/functions/_shared/irrf.ts",
     "supabase/functions/_shared/logger.ts",
     "supabase/functions/_shared/monitor.ts",
+    "supabase/functions/_shared/ocr.test.ts",
+    "supabase/functions/_shared/ocr.ts",
     "supabase/functions/_shared/originSecurity.test.ts",
     "supabase/functions/_shared/outboundDelivery.test.ts",
     "supabase/functions/_shared/outboundDelivery.ts",
@@ -106872,15 +107008,13 @@
     "supabase/functions/backup-automatico/config.ts",
     "supabase/functions/backup-automatico/index.ts",
     "supabase/functions/cache/index.ts",
-    "supabase/functions/calcular-13-salario/config.ts",
-    "supabase/functions/calcular-13-salario/index.ts",
-    "supabase/functions/calcular-ferias/config.ts"
+    "supabase/functions/calcular-13-salario/config.ts"
    ]
   },
   {
    "module": "supabase/migrations",
-   "files": 1271,
-   "lines": 88064,
+   "files": 1277,
+   "lines": 88370,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -112836,6 +112970,7 @@
     "supabase/functions/_shared/contract.ts",
     "supabase/functions/_shared/csrf.ts",
     "supabase/functions/_shared/monitor.ts",
+    "supabase/functions/_shared/ocr.ts",
     "supabase/functions/adiantamento-salarial/index.ts",
     "supabase/functions/admissao-publica/index.ts",
     "supabase/functions/alertas-dp/index.ts",
@@ -113583,7 +113718,7 @@
   },
   "invokes": {
    "admissao-publica": [
-    "src/pages/ContratacaoPage.tsx"
+    "src/hooks/useDocumentOCR.ts"
    ],
    "auth-gov-br": [
     "src/pages/AuthCallbackPage.tsx",
@@ -113667,9 +113802,6 @@
    "parse-afdt": [
     "src/components/ponto/ImportarAFDTDialog.tsx"
    ],
-   "process-document-ocr": [
-    "src/hooks/useDocumentOCR.ts"
-   ],
    "processar-ponto-offline": [
     "src/services/pontoOfflineService.ts"
    ],
@@ -113731,9 +113863,6 @@
    ],
    "documentos": [
     "supabase/migrations/20261117170000_storage_documentos_delete_tenant_scope.sql"
-   ],
-   "documentos-admissao": [
-    "src/hooks/useDocumentOCR.ts"
    ],
    "ferias-avisos": [
     "src/hooks/useAssinarAvisoFerias.ts"
@@ -113860,7 +113989,7 @@
    },
    {
     "file": "supabase/functions/admissao-publica/index.ts",
-    "count": 1
+    "count": 2
    },
    {
     "file": "supabase/functions/backup/index.ts",
@@ -115755,7 +115884,7 @@
     "file": "supabase/functions/process-document-ocr/index.ts",
     "name": "BodySchema",
     "kind": "object",
-    "body": "{ fileUrl: z.string().url().max(2048).refine(isAllowedFileUrl, { message: 'URL de arquivo não permitida' }), docType: z.enum(['cpf', 'rg', 'cnh', 'comprovante_residencia', 'generic']).optional().default('generic'), }",
+    "body": "{ fileUrl: z.string().url().max(2048).refine(isAllowedFileUrl, { message: 'URL de arquivo não permitida' }), docType: z.enum(OCR_DOC_TYPES).optional().default('generic'), }",
     "refines": [
      "URL de arquivo não permitida"
     ],
@@ -117364,6 +117493,11 @@
     "file": "supabase/functions/_shared/logger.ts",
     "name": "LogLevel",
     "values": "debug | info | warn | error | fatal"
+   },
+   {
+    "file": "supabase/functions/_shared/ocr.ts",
+    "name": "OCR_DOC_TYPES",
+    "values": "'cpf', 'rg', 'cnh', 'identidade', 'comprovante_residencia', 'generic'"
    },
    {
     "file": "supabase/functions/_shared/trainingImages/estadoCapa.ts",
@@ -119183,7 +119317,7 @@
    },
    {
     "file": "src/pages/ContratacaoPage.tsx",
-    "msg": "Atenção: ${result.error || "
+    "msg": "Documento enviado, mas não foi validado automaticamente: ${result.error ?? "
    },
    {
     "file": "src/pages/ContratosGeradosPage.tsx",
@@ -124822,6 +124956,10 @@
     "text": "dentro de `filters`) e dentro de `filters` apenas quando definido (o"
    },
    {
+    "file": "src/hooks/useDocumentOCR.ts",
+    "text": "documento de texto) e são apenas enviados."
+   },
+   {
     "file": "src/hooks/useDocumentos.ts",
     "text": "').order('created_at', { ascending: false }).limit(500);"
    },
@@ -125228,6 +125366,10 @@
    {
     "file": "src/pages/CienciaMedidaPage.tsx",
     "text": "Erro de negócio: o servidor responde 200 com success=false."
+   },
+   {
+    "file": "src/pages/ContratacaoPage.tsx",
+    "text": "O documento foi recebido; só a validação automática é que falhou."
    },
    {
     "file": "src/pages/DepartamentosPage.tsx",
@@ -126226,6 +126368,10 @@
     "text": "Cada chamada é síncrona e lock-free; performance overhead é mínimo."
    },
    {
+    "file": "supabase/functions/_shared/ocr.ts",
+    "text": "alimentam o breaker: um candidato com foto ruim nao pode derrubar a"
+   },
+   {
     "file": "supabase/functions/_shared/rateLimit.ts",
     "text": "Helper de rate limit atômico para edge functions sensíveis."
    },
@@ -126400,6 +126546,10 @@
    {
     "file": "supabase/functions/adiantamento-salarial/index.ts",
     "text": "Percentual máximo (fallback 40%)"
+   },
+   {
+    "file": "supabase/functions/admissao-publica/index.ts",
+    "text": "falha de OCR (provedor fora do ar, arquivo ilegível) não pode derrubar o"
    },
    {
     "file": "supabase/functions/alertas-dp/deliveryStatus.ts",
@@ -151460,6 +151610,11 @@
     "value": "'text-[10px] leading-tight @max-[240px]:text-[9px]'"
    },
    {
+    "file": "src/components/admissoes/ArquivosAdmissaoLista.tsx",
+    "name": "BUCKET",
+    "value": "'documentos'"
+   },
+   {
     "file": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
     "name": "VALOR_TODOS",
     "value": "'__todos__'"
@@ -153530,6 +153685,16 @@
     "value": "189.59"
    },
    {
+    "file": "supabase/functions/_shared/ocr.ts",
+    "name": "OCR_FALLBACK_ERROR",
+    "value": "'Nao foi possivel processar o documento automaticamente.'"
+   },
+   {
+    "file": "supabase/functions/_shared/ocr.ts",
+    "name": "OCR_CIRCUIT_ERROR",
+    "value": "'Conferencia automatica indisponivel no momento.'"
+   },
+   {
     "file": "supabase/functions/_shared/rateLimit.ts",
     "name": "MEM_LIMIT_FRACTION",
     "value": "0.5"
@@ -154366,6 +154531,24 @@
     "file": "src/components/admissoes/AdmissoesDashboard.tsx",
     "field": "etapa",
     "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/ArquivosAdmissaoLista.tsx",
+    "field": "tipo",
+    "value": "Documento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/admissoes/ArquivosAdmissaoLista.tsx",
+    "field": "tipo",
+    "value": "string",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/ArquivosAdmissaoLista.tsx",
+    "field": "tipo",
+    "value": "string",
     "kind": "compara"
    },
    {
@@ -161859,13 +162042,13 @@
    {
     "file": "src/pages/ContratacaoPage.tsx",
     "field": "status",
-    "value": "success",
+    "value": "error",
     "kind": "escreve"
    },
    {
     "file": "src/pages/ContratacaoPage.tsx",
     "field": "status",
-    "value": "error",
+    "value": "success",
     "kind": "escreve"
    },
    {
@@ -164689,6 +164872,36 @@
     "kind": "filtra"
    },
    {
+    "file": "supabase/functions/_shared/ocr.ts",
+    "field": "role",
+    "value": "system",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/_shared/ocr.ts",
+    "field": "role",
+    "value": "user",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/_shared/ocr.ts",
+    "field": "type",
+    "value": "text",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/_shared/ocr.ts",
+    "field": "type",
+    "value": "image_url",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/_shared/ocr.ts",
+    "field": "type",
+    "value": "json_object",
+    "kind": "escreve"
+   },
+   {
     "file": "supabase/functions/_shared/outboundDelivery.ts",
     "field": "status",
     "value": "sent",
@@ -164866,6 +165079,18 @@
     "file": "supabase/functions/admissao-publica/index.ts",
     "field": "step",
     "value": "cleanup_orphan",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/admissao-publica/index.ts",
+    "field": "step",
+    "value": "createSignedUrl",
+    "kind": "escreve"
+   },
+   {
+    "file": "supabase/functions/admissao-publica/index.ts",
+    "field": "step",
+    "value": "ocr",
     "kind": "escreve"
    },
    {
@@ -166091,36 +166316,6 @@
     "field": "tipo",
     "value": "aleatoria",
     "kind": "compara"
-   },
-   {
-    "file": "supabase/functions/process-document-ocr/index.ts",
-    "field": "role",
-    "value": "system",
-    "kind": "escreve"
-   },
-   {
-    "file": "supabase/functions/process-document-ocr/index.ts",
-    "field": "role",
-    "value": "user",
-    "kind": "escreve"
-   },
-   {
-    "file": "supabase/functions/process-document-ocr/index.ts",
-    "field": "type",
-    "value": "text",
-    "kind": "escreve"
-   },
-   {
-    "file": "supabase/functions/process-document-ocr/index.ts",
-    "field": "type",
-    "value": "image_url",
-    "kind": "escreve"
-   },
-   {
-    "file": "supabase/functions/process-document-ocr/index.ts",
-    "field": "type",
-    "value": "json_object",
-    "kind": "escreve"
    },
    {
     "file": "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
@@ -174915,6 +175110,46 @@
    {
     "file": "src/components/__tests__/AquisitivosTab.test.tsx",
     "name": "renders faltas_periodo"
+   },
+   {
+    "file": "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+    "name": "ArquivosAdmissaoLista"
+   },
+   {
+    "file": "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+    "name": "avisa quando o candidato ainda não enviou nada"
+   },
+   {
+    "file": "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+    "name": "lista o anexo com rótulo humano e nome do arquivo"
+   },
+   {
+    "file": "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+    "name": "abre o anexo em aba criada no clique, com URL assinada"
+   },
+   {
+    "file": "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+    "name": "oferece link real quando o navegador bloqueia a nova aba"
+   },
+   {
+    "file": "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+    "name": "renova o link alternativo quando a URL assinada expira"
+   },
+   {
+    "file": "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+    "name": "distingue falha de consulta de lista vazia"
+   },
+   {
+    "file": "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+    "name": "não quebra com tipo herdado do protótipo"
+   },
+   {
+    "file": "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+    "name": "explica a falha quando a URL assinada não vem"
+   },
+   {
+    "file": "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+    "name": "marca a versão antiga como substituída e deixa a vigente na frente"
    },
    {
     "file": "src/components/__tests__/AssinarAvisoDialog.test.tsx",
@@ -194922,11 +195157,19 @@
    },
    {
     "file": "src/hooks/__tests__/useDocumentOCR.test.ts",
-    "name": "uploads file to temp path"
+    "name": "envia o arquivo pela edge function admissao-publica com o token"
    },
    {
     "file": "src/hooks/__tests__/useDocumentOCR.test.ts",
-    "name": "calls OCR edge function with correct doc type"
+    "name": "não pede OCR de documento PDF (o provedor só lê imagem)"
+   },
+   {
+    "file": "src/hooks/__tests__/useDocumentOCR.test.ts",
+    "name": "traduz o tipo da UI para o tipo aceito pelo OCR"
+   },
+   {
+    "file": "src/hooks/__tests__/useDocumentOCR.test.ts",
+    "name": "não pede OCR para tipo sem OCR (foto) e considera o envio como sucesso"
    },
    {
     "file": "src/hooks/__tests__/useDocumentOCR.test.ts",
@@ -194934,11 +195177,11 @@
    },
    {
     "file": "src/hooks/__tests__/useDocumentOCR.test.ts",
-    "name": "returns error result when upload fails"
+    "name": "mantém uploaded=true quando o OCR não valida o documento"
    },
    {
     "file": "src/hooks/__tests__/useDocumentOCR.test.ts",
-    "name": "returns error result when function invocation fails"
+    "name": "marca uploaded=false quando o envio falha"
    },
    {
     "file": "src/hooks/__tests__/useDocumentOCR.test.ts",
@@ -212841,6 +213084,30 @@
     "name": "calcIRRF devolve 0 para entradas inválidas"
    },
    {
+    "file": "supabase/functions/_shared/ocr.test.ts",
+    "name": "ocr: recusa URL fora do proprio projeto antes de chamar o provedor"
+   },
+   {
+    "file": "supabase/functions/_shared/ocr.test.ts",
+    "name": "ocr: a tolerancia RG<->CNH fica restrita ao tipo identidade"
+   },
+   {
+    "file": "supabase/functions/_shared/ocr.test.ts",
+    "name": "ocr: provedor falhando abre o circuito e para de gastar timeout"
+   },
+   {
+    "file": "supabase/functions/_shared/ocr.test.ts",
+    "name": "ocr: erro do arquivo nao abre o circuito dos demais candidatos"
+   },
+   {
+    "file": "supabase/functions/_shared/ocr.test.ts",
+    "name": "ocr: resposta 200 fora do contrato conta como falha do provedor"
+   },
+   {
+    "file": "supabase/functions/_shared/ocr.test.ts",
+    "name": "ocr: sucesso devolve o JSON do provedor e mantem o circuito fechado"
+   },
+   {
     "file": "supabase/functions/_shared/originSecurity.test.ts",
     "name": "origin gate permite somente a origem canônica explícita"
    },
@@ -213678,10 +213945,6 @@
    },
    {
     "file": "src/pages/AuthCallbackPage.tsx",
-    "call": "invoke("
-   },
-   {
-    "file": "src/pages/ContratacaoPage.tsx",
     "call": "invoke("
    },
    {
@@ -222653,26 +222916,6 @@
     "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
    },
    {
-    "name": "pol_admissao_docs_insert_tenant_ou_temp",
-    "table": "storage.objects",
-    "cmd": "INSERT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "",
-    "check": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid() ) )",
-    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
-   },
-   {
-    "name": "pol_admissao_docs_select_tenant_ou_temp",
-    "table": "storage.objects",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR ( split_part(name, '/', 1) = 'temp' AND owner = auth.uid() ) )",
-    "check": "",
-    "src": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql"
-   },
-   {
     "name": "pol_ferias_avisos_select_tenant",
     "table": "storage.objects",
     "cmd": "SELECT",
@@ -226468,6 +226711,15 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261122110000_ponto_rep_funcionarios_mascara_cpf.sql"
+   },
+   {
+    "name": "trg_documentos_admissao_marcar_anteriores",
+    "when": "BEFORE INSERT",
+    "table": "documentos_admissao",
+    "function": "documentos_admissao_marcar_anteriores",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql"
    },
    {
     "name": "ajuste_ponto_status_transition",
@@ -237242,6 +237494,30 @@
      "vault"
     ]
    },
+   "storage_path_admissao_id": {
+    "args": "p_name text",
+    "returns": "uuid",
+    "lang": "sql",
+    "src": "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "SELECT CASE WHEN p_name ~ '^admissao_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/' THEN replace(split_part(p_name, '/', 1), 'admissao_', '')::uuid ELSE NULL END;",
+    "raises": [],
+    "tables": []
+   },
+   "documentos_admissao_marcar_anteriores": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "BEGIN PERFORM pg_catalog.pg_advisory_xact_lock( pg_catalog.hashtextextended(NEW.admissao_id::text, 0) ); UPDATE public.documentos_admissao SET substituido_em = now() WHERE admissao_id = NEW.admissao_id AND tipo = NEW.tipo AND id <> NEW.id AND substituido_em IS NULL; RETURN NEW; END;",
+    "raises": [],
+    "tables": [
+     "documentos_admissao"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -242803,22 +243079,22 @@
      ],
      "text": [
       "escreve:supabase/functions/OCR/index.ts",
-      "escreve:supabase/functions/process-document-ocr/index.ts",
+      "escreve:supabase/functions/_shared/ocr.ts",
       "escreve:supabase/functions/validar-biometria/index.ts"
      ],
      "image_url": [
       "escreve:supabase/functions/OCR/index.ts",
-      "escreve:supabase/functions/process-document-ocr/index.ts",
+      "escreve:supabase/functions/_shared/ocr.ts",
       "escreve:supabase/functions/validar-biometria/index.ts"
      ],
      "disabled": [
       "escreve:supabase/functions/_shared/aiProvider.ts"
      ],
+     "json_object": [
+      "escreve:supabase/functions/_shared/ocr.ts"
+     ],
      "event": [
       "escreve:supabase/functions/_shared/sentry.ts"
-     ],
-     "json_object": [
-      "escreve:supabase/functions/process-document-ocr/index.ts"
      ],
      "literal": [
       "compara:supabase/functions/processar-agendamentos/scheduleContract.ts"
@@ -242837,6 +243113,12 @@
       "escreve:src/calculators/rescisao.ts",
       "escreve:src/components/desligamentos/NovoDesligamentoDialog.tsx",
       "escreve:src/pages/CalculadoraRescisaoPage.tsx"
+     ],
+     "Documento": [
+      "escreve:src/components/admissoes/ArquivosAdmissaoLista.tsx"
+     ],
+     "string": [
+      "compara:src/components/admissoes/ArquivosAdmissaoLista.tsx"
      ],
      "cancelado": [
       "compara:src/components/avaliacao/historicoFeedback.ts"
@@ -244900,9 +245182,9 @@
       "escreve:src/pages/AssistenteIAPage.tsx",
       "escreve:src/services/assistenteIAService.ts",
       "escreve:supabase/functions/OCR/index.ts",
+      "escreve:supabase/functions/_shared/ocr.ts",
       "escreve:supabase/functions/alertas-preditivos/index.ts",
       "escreve:supabase/functions/assistente-ia/index.ts",
-      "escreve:supabase/functions/process-document-ocr/index.ts",
       "escreve:supabase/functions/validar-biometria/index.ts"
      ],
      "assistant": [
@@ -244910,8 +245192,8 @@
       "escreve:src/pages/AssistenteIAPage.tsx"
      ],
      "system": [
-      "escreve:supabase/functions/assistente-ia/index.ts",
-      "escreve:supabase/functions/process-document-ocr/index.ts"
+      "escreve:supabase/functions/_shared/ocr.ts",
+      "escreve:supabase/functions/assistente-ia/index.ts"
      ],
      "service_role": [
       "compara:supabase/functions/external-db-bridge/access.ts"
@@ -244995,6 +245277,12 @@
       "escreve:supabase/functions/admissao-publica/index.ts"
      ],
      "cleanup_orphan": [
+      "escreve:supabase/functions/admissao-publica/index.ts"
+     ],
+     "createSignedUrl": [
+      "escreve:supabase/functions/admissao-publica/index.ts"
+     ],
+     "ocr": [
       "escreve:supabase/functions/admissao-publica/index.ts"
      ],
      "insert": [
@@ -251278,7 +251566,6 @@
      "authenticated: bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
-     "authenticated: bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR (",
      "authenticated: bucket_id = 'ferias-avisos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name",
      "authenticated: bucket_id = 'medidas-contestacoes' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
@@ -251314,7 +251601,6 @@
      "authenticated: bucket_id = 'documentos-colaboradores' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'afastamentos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text",
-     "authenticated: bucket_id = 'documentos-admissao' AND ( public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name)) OR (",
      "authenticated: bucket_id = 'ferias-avisos' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
      "authenticated: bucket_id = 'ferias-coletivas-comunicados' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name",
      "authenticated: bucket_id = 'medidas-contestacoes' AND public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))",
@@ -252436,6 +252722,8 @@
    "scripts/training-images-local/rls.test.sql",
    "src/hooks/__tests__/useBruteForceProtection.test.ts",
    "src/hooks/useBruteForceProtection.ts",
+   "src/hooks/useDocumentOCR.ts",
+   "src/pages/ContratacaoPage.tsx",
    "src/services/__tests__/rescisaoService.test.ts",
    "src/services/esocialService.ts",
    "src/services/rescisaoService.ts",
@@ -252448,6 +252736,7 @@
    "supabase/functions/_shared/aal2.test.ts",
    "supabase/functions/_shared/authz.ts",
    "supabase/functions/_shared/monitor.ts",
+   "supabase/functions/_shared/ocr.ts",
    "supabase/functions/_shared/ssrf-guard.ts",
    "supabase/functions/adiantamento-salarial/index.ts",
    "supabase/functions/admissao-publica/index.ts",
@@ -252734,6 +253023,9 @@
    "supabase/migrations/20261125120000_secdef_refresh_dashboard_views_revoke.sql",
    "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql",
    "supabase/migrations/20261126090000_storage_policies_buckets_app.sql",
+   "supabase/migrations/20261126120000_storage_documentos_admissao_sem_policy.sql",
+   "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql",
+   "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -252826,6 +253118,7 @@
    "detectar_fraude_ponto",
    "documento_listar",
    "documento_registrar",
+   "documentos_admissao_marcar_anteriores",
    "documentos_sync_empresa_id",
    "dp_audit_log_immutable",
    "dp_audit_log_prevent_future",
@@ -265003,6 +265296,30 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "storage_path_admissao_id",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "storage_path_admissao_id",
+    "objkind": "function",
+    "roles": "authenticated, service_role",
+    "src": "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "documentos_admissao_marcar_anteriores",
+    "objkind": "function",
+    "roles": "PUBLIC",
+    "src": "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -270071,6 +270388,20 @@
    },
    {
     "kind": "status",
+    "msg": "valor `createSignedUrl` para `step` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "escreve:supabase/functions/admissao-publica/index.ts"
+    ]
+   },
+   {
+    "kind": "status",
+    "msg": "valor `ocr` para `step` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "escreve:supabase/functions/admissao-publica/index.ts"
+    ]
+   },
+   {
+    "kind": "status",
     "msg": "valor `insert` para `step` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "escreve:supabase/functions/gerar-contrato-pdf/index.ts",
@@ -270357,7 +270688,7 @@
    },
    {
     "kind": "dinâmico",
-    "msg": "1 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
+    "msg": "2 chamada(s) `.from(variável)` — tabela só conhecida em runtime",
     "where": [
      "supabase/functions/admissao-publica/index.ts"
     ]
@@ -273416,7 +273747,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 448,
+   "lines": 452,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -279205,6 +279536,23 @@
     "renders faltas_periodo"
    ]
   },
+  "src/components/__tests__/ArquivosAdmissaoLista.test.tsx": {
+   "path": "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+   "lines": 161,
+   "is_test": true,
+   "tests": [
+    "ArquivosAdmissaoLista",
+    "avisa quando o candidato ainda não enviou nada",
+    "lista o anexo com rótulo humano e nome do arquivo",
+    "abre o anexo em aba criada no clique, com URL assinada",
+    "oferece link real quando o navegador bloqueia a nova aba",
+    "renova o link alternativo quando a URL assinada expira",
+    "distingue falha de consulta de lista vazia",
+    "não quebra com tipo herdado do protótipo",
+    "explica a falha quando a URL assinada não vem",
+    "marca a versão antiga como substituída e deixa a vigente na frente"
+   ]
+  },
   "src/components/__tests__/AssinarAvisoDialog.test.tsx": {
    "path": "src/components/__tests__/AssinarAvisoDialog.test.tsx",
    "lines": 92,
@@ -280467,7 +280815,7 @@
   },
   "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx": {
    "path": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
-   "lines": 222,
+   "lines": 229,
    "is_test": true,
    "tests": [
     "DetalhesAdmissaoDialog",
@@ -285997,6 +286345,36 @@
     "disso deve existir no board antes do primeiro clique."
    ]
   },
+  "src/components/admissoes/ArquivosAdmissaoLista.tsx": {
+   "path": "src/components/admissoes/ArquivosAdmissaoLista.tsx",
+   "lines": 249,
+   "exports": [
+    "function ArquivosAdmissaoLista"
+   ],
+   "params": [
+    {
+     "name": "BUCKET",
+     "value": "'documentos'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "Documento",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "string",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "string",
+     "kind": "compara"
+    }
+   ]
+  },
   "src/components/admissoes/AuditoriaAdmissoesContent.tsx": {
    "path": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
    "lines": 1231,
@@ -286045,7 +286423,7 @@
   },
   "src/components/admissoes/DetalhesAdmissaoDialog.tsx": {
    "path": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-   "lines": 1442,
+   "lines": 1453,
    "exports": [
     "function DetalhesAdmissaoDialog"
    ],
@@ -307114,23 +307492,24 @@
   },
   "src/hooks/useDocumentOCR.ts": {
    "path": "src/hooks/useDocumentOCR.ts",
-   "lines": 70,
+   "lines": 106,
    "exports": [
     "type OCRResult",
     "function useDocumentOCR"
    ],
    "invokes": [
-    "process-document-ocr"
+    "admissao-publica"
    ],
-   "storage": [
-    "documentos-admissao"
+   "rule_comments": [
+    "documento de texto) e são apenas enviados."
    ],
    "hooks": [
     "useDocumentOCR"
    ],
    "side_effects": [
     "invoke("
-   ]
+   ],
+   "uses_service_role": true
   },
   "src/hooks/useDocumentos.ts": {
    "path": "src/hooks/useDocumentos.ts",
@@ -309990,18 +310369,20 @@
   },
   "src/hooks/__tests__/useDocumentOCR.test.ts": {
    "path": "src/hooks/__tests__/useDocumentOCR.test.ts",
-   "lines": 147,
+   "lines": 193,
    "is_test": true,
    "tests": [
     "useDocumentOCR",
     "starts with isProcessing false",
     "returns processDocument function",
     "sets isProcessing true during processing",
-    "uploads file to temp path",
-    "calls OCR edge function with correct doc type",
+    "envia o arquivo pela edge function admissao-publica com o token",
+    "não pede OCR de documento PDF (o provedor só lê imagem)",
+    "traduz o tipo da UI para o tipo aceito pelo OCR",
+    "não pede OCR para tipo sem OCR (foto) e considera o envio como sucesso",
     "returns OCR data on success",
-    "returns error result when upload fails",
-    "returns error result when function invocation fails",
+    "mantém uploaded=true quando o OCR não valida o documento",
+    "marca uploaded=false quando o envio falha",
     "resets isProcessing to false even on error"
    ]
   },
@@ -315451,7 +315832,7 @@
   },
   "src/pages/ContratacaoPage.tsx": {
    "path": "src/pages/ContratacaoPage.tsx",
-   "lines": 736,
+   "lines": 739,
    "exports": [
     "function ContratacaoPage"
    ],
@@ -315461,11 +315842,8 @@
     "admissao_salvar_dados",
     "get_admissao_por_token"
    ],
-   "invokes": [
-    "admissao-publica"
-   ],
    "errors": [
-    "Atenção: ${result.error || "
+    "Documento enviado, mas não foi validado automaticamente: ${result.error ?? "
    ],
    "status_values": [
     {
@@ -315480,12 +315858,12 @@
     },
     {
      "field": "status",
-     "value": "success",
+     "value": "error",
      "kind": "escreve"
     },
     {
      "field": "status",
-     "value": "error",
+     "value": "success",
      "kind": "escreve"
     },
     {
@@ -315579,9 +315957,10 @@
      "kind": "compara"
     }
    ],
-   "side_effects": [
-    "invoke("
-   ]
+   "rule_comments": [
+    "O documento foi recebido; só a validação automática é que falhou."
+   ],
+   "uses_service_role": true
   },
   "src/pages/ContratoTemplatesPage.tsx": {
    "path": "src/pages/ContratoTemplatesPage.tsx",
@@ -320589,7 +320968,7 @@
   },
   "src/schemas/tableColumns.ts": {
    "path": "src/schemas/tableColumns.ts",
-   "lines": 4306,
+   "lines": 4307,
    "exports": [
     "const TABLE_COLUMNS"
    ],
@@ -334630,6 +335009,90 @@
    ],
    "uses_service_role": true
   },
+  "supabase/functions/_shared/ocr.test.ts": {
+   "path": "supabase/functions/_shared/ocr.test.ts",
+   "lines": 158,
+   "is_test": true,
+   "errors": [
+    "imagem invalida"
+   ],
+   "tests": [
+    "ocr: recusa URL fora do proprio projeto antes de chamar o provedor",
+    "ocr: a tolerancia RG<->CNH fica restrita ao tipo identidade",
+    "ocr: provedor falhando abre o circuito e para de gastar timeout",
+    "ocr: erro do arquivo nao abre o circuito dos demais candidatos",
+    "ocr: resposta 200 fora do contrato conta como falha do provedor",
+    "ocr: sucesso devolve o JSON do provedor e mantem o circuito fechado"
+   ]
+  },
+  "supabase/functions/_shared/ocr.ts": {
+   "path": "supabase/functions/_shared/ocr.ts",
+   "lines": 209,
+   "exports": [
+    "const OCR_DOC_TYPES",
+    "type OcrDocType",
+    "const OCR_FALLBACK_ERROR",
+    "const OCR_CIRCUIT_ERROR",
+    "function resetarBreakerOcr",
+    "function estadoBreakerOcr",
+    "type OcrResult",
+    "function isOcrDocType",
+    "function isAllowedFileUrl",
+    "type OcrRun",
+    "function runDocumentOcr"
+   ],
+   "env": [
+    "SUPABASE_URL"
+   ],
+   "enums": [
+    {
+     "name": "OCR_DOC_TYPES",
+     "values": "'cpf', 'rg', 'cnh', 'identidade', 'comprovante_residencia', 'generic'"
+    }
+   ],
+   "params": [
+    {
+     "name": "OCR_FALLBACK_ERROR",
+     "value": "'Nao foi possivel processar o documento automaticamente.'"
+    },
+    {
+     "name": "OCR_CIRCUIT_ERROR",
+     "value": "'Conferencia automatica indisponivel no momento.'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "role",
+     "value": "system",
+     "kind": "escreve"
+    },
+    {
+     "field": "role",
+     "value": "user",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "text",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "image_url",
+     "kind": "escreve"
+    },
+    {
+     "field": "type",
+     "value": "json_object",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "alimentam o breaker: um candidato com foto ruim nao pode derrubar a"
+   ],
+   "doc": "OCR de documentos do fluxo de admissao. Extraido de `process-document-ocr/index.ts` para ser reusado por `admissao-publica/index.ts`. O portal publico /contratacao e anonimo: o upload direto no Storage pelo cliente e negado por RLS (nenhuma policy concede INSERT a `anon`), entao upload e OCR do cand …",
+   "uses_service_role": true
+  },
   "supabase/functions/_shared/originSecurity.test.ts": {
    "path": "supabase/functions/_shared/originSecurity.test.ts",
    "lines": 64,
@@ -335759,7 +336222,7 @@
   },
   "supabase/functions/admissao-publica/index.ts": {
    "path": "supabase/functions/admissao-publica/index.ts",
-   "lines": 126,
+   "lines": 174,
    "tables": [
     {
      "table": "admissao_tokens",
@@ -335774,7 +336237,7 @@
      "token"
     ]
    },
-   "dyn_from": 1,
+   "dyn_from": 2,
    "rpc": [
     "admissao_registrar_documento"
    ],
@@ -335802,7 +336265,20 @@
      "field": "step",
      "value": "cleanup_orphan",
      "kind": "escreve"
+    },
+    {
+     "field": "step",
+     "value": "createSignedUrl",
+     "kind": "escreve"
+    },
+    {
+     "field": "step",
+     "value": "ocr",
+     "kind": "escreve"
     }
+   ],
+   "rule_comments": [
+    "falha de OCR (provedor fora do ar, arquivo ilegível) não pode derrubar o"
    ],
    "uses_service_role": true
   },
@@ -341595,7 +342071,7 @@
   },
   "supabase/functions/process-document-ocr/index.ts": {
    "path": "supabase/functions/process-document-ocr/index.ts",
-   "lines": 151,
+   "lines": 78,
    "env": [
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
@@ -341605,38 +342081,11 @@
     {
      "name": "BodySchema",
      "kind": "object",
-     "body": "{ fileUrl: z.string().url().max(2048).refine(isAllowedFileUrl, { message: 'URL de arquivo não permitida' }), docType: z.enum(['cpf', 'rg', 'cnh', 'comprovante_residencia', 'generic']).optional().default('generic'), }",
+     "body": "{ fileUrl: z.string().url().max(2048).refine(isAllowedFileUrl, { message: 'URL de arquivo não permitida' }), docType: z.enum(OCR_DOC_TYPES).optional().default('generic'), }",
      "refines": [
       "URL de arquivo não permitida"
      ],
      "chain": []
-    }
-   ],
-   "status_values": [
-    {
-     "field": "role",
-     "value": "system",
-     "kind": "escreve"
-    },
-    {
-     "field": "role",
-     "value": "user",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "text",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "image_url",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "json_object",
-     "kind": "escreve"
     }
    ],
    "uses_service_role": true
@@ -348881,7 +349330,7 @@
   },
   "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql": {
    "path": "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql",
-   "lines": 36
+   "lines": 40
   },
   "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.sql": {
    "path": "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.sql",
@@ -348890,6 +349339,33 @@
   "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.verify.sql": {
    "path": "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.verify.sql",
    "lines": 10
+  },
+  "supabase/migrations/20261126120000_storage_documentos_admissao_sem_policy.sql": {
+   "path": "supabase/migrations/20261126120000_storage_documentos_admissao_sem_policy.sql",
+   "lines": 50,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261126120000_storage_documentos_admissao_sem_policy.verify.sql": {
+   "path": "supabase/migrations/20261126120000_storage_documentos_admissao_sem_policy.verify.sql",
+   "lines": 18
+  },
+  "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql": {
+   "path": "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql",
+   "lines": 72,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.verify.sql": {
+   "path": "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.verify.sql",
+   "lines": 33
+  },
+  "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql": {
+   "path": "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql",
+   "lines": 85,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261126140000_documentos_admissao_substituicao.verify.sql": {
+   "path": "supabase/migrations/20261126140000_documentos_admissao_substituicao.verify.sql",
+   "lines": 44
   },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
@@ -349286,10 +349762,49 @@
   }
  },
  "git": {
-  "sha": "7f047bcddda44a186947784a90c89e7a6a707869",
+  "sha": "c215d18134538083ca16f605266967a8d924b1b6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "c215d18",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: destrava o envio de documentos da contratacao publica e remove policies sem consumidor (#906)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql",
+     "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+     "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
+     "src/components/admissoes/ArquivosAdmissaoLista.tsx",
+     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+     "src/hooks/__tests__/useDocumentOCR.test.ts",
+     "src/hooks/useDocumentOCR.ts",
+     "src/integrations/supabase/types.ts",
+     "src/pages/ContratacaoPage.tsx",
+     "src/schemas/tableColumns.ts",
+     "supabase/functions/_shared/ocr.test.ts",
+     "supabase/functions/_shared/ocr.ts",
+     "supabase/functions/admissao-publica/index.ts",
+     "supabase/functions/process-document-ocr/index.ts",
+     "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql",
+     "supabase/migrations/20261126120000_storage_documentos_admissao_sem_policy.sql",
+     "supabase/migrations/20261126120000_storage_documentos_admissao_sem_policy.verify.sql",
+     "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql",
+     "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.verify.sql",
+     "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql",
+     "supabase/migrations/20261126140000_documentos_admissao_substituicao.verify.sql"
+    ]
+   },
+   {
+    "sha": "55c8036",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "docs: registra a auditoria de Storage e o fechamento do drift de ledger (#905)",
+    "files": [
+     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md"
+    ]
+   },
    {
     "sha": "7f047bc",
     "date": "2026-11-26",
@@ -349734,39 +350249,20 @@
      "src/pages/TurnosPage.tsx",
      "src/services/turnoService.ts"
     ]
-   },
-   {
-    "sha": "4046e24",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "fix: sidecars de seguranca e top-20 aceitam o formato real do canônico (#880)",
-    "files": [
-     "supabase/migrations/20260719170000_security_indexes_constraints.verify.sql",
-     "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.verify.sql"
-    ]
-   },
-   {
-    "sha": "ced7abd",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "fix: p4_071 nao aborta mais o lote aditivo no canônico (#879)",
-    "files": [
-     "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.sql"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    9
+   ],
    [
     "scripts/.bundle-budget.json",
     9
    ],
    [
-    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-    8
-   ],
-   [
     ".github/workflows/canonical-migrations.yml",
-    5
+    6
    ],
    [
     "src/pages/PontoPage.tsx",
@@ -349779,6 +350275,10 @@
    [
     "src/index.css",
     3
+   ],
+   [
+    "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql",
+    2
    ],
    [
     "package.json",
@@ -349801,39 +350301,35 @@
     2
    ],
    [
-    "scripts/automation.config.json",
+    "scripts/canonical-invariants.sql",
     1
    ],
    [
-    "scripts/tests/audit-schema-drift-warn-only.test.mjs",
+    "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
     1
    ],
    [
-    "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.sql",
+    "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
     1
    ],
    [
-    "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.verify.sql",
+    "src/components/admissoes/ArquivosAdmissaoLista.tsx",
     1
    ],
    [
-    "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql",
+    "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     1
    ],
    [
-    ".github/workflows/ossf-scorecard.yml",
+    "src/hooks/__tests__/useDocumentOCR.test.ts",
     1
    ],
    [
-    ".github/workflows/security.yml",
+    "src/hooks/useDocumentOCR.ts",
     1
    ],
    [
-    ".github/workflows/workflow-lint.yml",
-    1
-   ],
-   [
-    "infra/github/action-pins.json",
+    "src/integrations/supabase/types.ts",
     1
    ]
   ]

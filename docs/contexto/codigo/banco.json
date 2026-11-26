@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 1271,
+ "migrations": 1277,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -316,6 +316,7 @@
   "distancia_haversine",
   "documento_listar",
   "documento_registrar",
+  "documentos_admissao_marcar_anteriores",
   "documentos_sync_empresa_id",
   "dp_assert_rls",
   "dp_audit_log_immutable",
@@ -614,6 +615,7 @@
   "sst_regimento_notificar_pendentes",
   "sst_regimento_pendentes_lista",
   "sst_regimento_publicar",
+  "storage_path_admissao_id",
   "storage_path_empresa_id",
   "sugerir_proxima_medida",
   "tg_audit_log_enriquecer_feedback",
@@ -1562,6 +1564,13 @@
    "evento": "update",
    "tabela": "documentos_admissao",
    "funcao": "fn_update_admissao_checklist"
+  },
+  {
+   "nome": "trg_documentos_admissao_marcar_anteriores",
+   "quando": "before",
+   "evento": "insert",
+   "tabela": "documentos_admissao",
+   "funcao": "documentos_admissao_marcar_anteriores"
   },
   {
    "nome": "trg_documentos_afastamento_validacao",
@@ -3200,7 +3209,7 @@
   {
    "nome": "documentos-admissao",
    "criado_em_sql": true,
-   "usado_em": 1
+   "usado_em": 0
   },
   {
    "nome": "documentos-colaboradores",
@@ -22515,6 +22524,13 @@
      "default": null,
      "ref": null
     },
+    "substituido_em": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "tamanho_bytes": {
      "tipo": "integer",
      "nn": false,
@@ -22587,7 +22603,13 @@
      "tipo": "permissive"
     }
    ],
-   "indices": [],
+   "indices": [
+    {
+     "nome": "idx_documentos_admissao_vigentes",
+     "colunas": "admissao_id, tipo",
+     "unico": false
+    }
+   ],
    "fks": [
     "admissao_id->admissoes",
     "validado_por->auth"
@@ -22599,6 +22621,7 @@
     "id": "string",
     "nome_arquivo": "string",
     "observacoes": "string | null",
+    "substituido_em": "string | null",
     "tamanho_bytes": "number | null",
     "tipo": "string",
     "updated_at": "string",
@@ -22619,7 +22642,8 @@
    "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [
-    "tr_update_admissao_checklist"
+    "tr_update_admissao_checklist",
+    "trg_documentos_admissao_marcar_anteriores"
    ],
    "sem_rls": false,
    "nao_usada": false
@@ -58366,6 +58390,12 @@
      "tipo": "permissive"
     },
     {
+     "nome": "documentos_select_admissao_tenant",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "documentos_select_authenticated",
      "comando": "select",
      "para": "authenticated",
@@ -58452,18 +58482,6 @@
     {
      "nome": "medidas_disciplinares_storage_update",
      "comando": "update",
-     "para": "authenticated",
-     "tipo": "permissive"
-    },
-    {
-     "nome": "pol_admissao_docs_insert_tenant_ou_temp",
-     "comando": "insert",
-     "para": "authenticated",
-     "tipo": "permissive"
-    },
-    {
-     "nome": "pol_admissao_docs_select_tenant_ou_temp",
-     "comando": "select",
      "para": "authenticated",
      "tipo": "permissive"
     },

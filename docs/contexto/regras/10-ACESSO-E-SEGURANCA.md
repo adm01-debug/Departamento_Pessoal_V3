@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7f047bcddd` · branch `main` · 2026-11-26 13:05 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c215d18134` · branch `main` · 2026-11-26 14:43 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 342 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 348 arquivo(s)
 
 - `docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql`
 - `docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql`
@@ -355,6 +355,8 @@
 - `scripts/training-images-local/rls.test.sql`
 - `src/hooks/__tests__/useBruteForceProtection.test.ts`
 - `src/hooks/useBruteForceProtection.ts`
+- `src/hooks/useDocumentOCR.ts`
+- `src/pages/ContratacaoPage.tsx`
 - `src/services/__tests__/rescisaoService.test.ts`
 - `src/services/esocialService.ts`
 - `src/services/rescisaoService.ts`
@@ -367,6 +369,7 @@
 - `supabase/functions/_shared/aal2.test.ts`
 - `supabase/functions/_shared/authz.ts`
 - `supabase/functions/_shared/monitor.ts`
+- `supabase/functions/_shared/ocr.ts`
 - `supabase/functions/_shared/ssrf-guard.ts`
 - `supabase/functions/adiantamento-salarial/index.ts`
 - `supabase/functions/admissao-publica/index.ts`
@@ -469,10 +472,7 @@
 - `supabase/migrations/20260712213253_6b730cf1-b93d-4117-8b98-7ff65a2820aa.sql`
 - `supabase/migrations/20260712213407_20d37218-3f4b-4337-a867-a6b356d472c2.sql`
 - `supabase/migrations/20260712213908_2a68d8c6-5402-4526-b55c-9b3f89124bbb.sql`
-- `supabase/migrations/20260712214014_5ded020d-3162-4157-ba2e-724b53d8392b.sql`
-- `supabase/migrations/20260712214929_4971f364-3f69-48cd-9150-a55524b1025d.sql`
-- `supabase/migrations/20260712215539_349ae8a8-7ed9-41a5-b06c-ea4b8f35c7b5.sql`
-- … +192 (lista completa em `context.json`)
+- … +198 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -555,6 +555,7 @@
 - `detectar_fraude_ponto`
 - `documento_listar`
 - `documento_registrar`
+- `documentos_admissao_marcar_anteriores`
 - `documentos_sync_empresa_id`
 - `dp_audit_log_immutable`
 - `dp_audit_log_prevent_future`
@@ -862,7 +863,7 @@ Middleware matcher (Next.js): nenhum
 | grant | authenticated | select, insert, update, delete | `contabilidade_contatos`, `contabilidade_threads`, `contabilidade_mensagens`, `afdt_importacoes`, `afdt_registros_raw`, `afdt_divergencias`, `clinicas_partners`, `clinicas_partners_servicos`, `clinicas_partners_horarios`, `exames_agendamentos`, `sst_ordens_servico`, `sst_ltcat_laudos`, `epis_fichas`, `epis_fichas_itens`, `sst_extintores` … +22 |
 | grant | authenticated | update | `feedbacks_360` |
 | grant | authenticated, anon | execute | `distancia_haversine`, `user_empresa_id`, `get_auth_empresa_id` |
-| grant | authenticated, service_role | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `search_audit_unified`, `purge_audit_log_old`, `resolve_security_alert`, `sst_regimento_notificar_pendentes`, `calcular_dias_direito_ferias`, `validar_split_ferias`, `eh_dia_valido_inicio_ferias`, `contrato_token_evento_registrar`, `pertence_a_empresa`, `sec_audit_policies`, `registrar_auditoria`, `listar_auditoria` … +46 |
+| grant | authenticated, service_role | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `search_audit_unified`, `purge_audit_log_old`, `resolve_security_alert`, `sst_regimento_notificar_pendentes`, `calcular_dias_direito_ferias`, `validar_split_ferias`, `eh_dia_valido_inicio_ferias`, `contrato_token_evento_registrar`, `pertence_a_empresa`, `sec_audit_policies`, `registrar_auditoria`, `listar_auditoria` … +47 |
 | grant | authenticated, service_role | select | `v_audit_trail`, `mv_status_change_daily`, `mv_anomalies_hourly`, `v_ferias_alertas_criticos`, `v_pii_access_suspeitos`, `vw_folha_compliance`, `vw_feedbacks_360_versao` |
 | grant | authenticated, service_role | select, insert, update, delete | `storage.objects` |
 | grant | ci_auditor | execute | `extensions` |
@@ -873,7 +874,7 @@ Middleware matcher (Next.js): nenhum
 | grant | service_role | select | `vw_folha_compliance`, `v_idempotency_metrics`, `feedbacks_360_consolidacoes`, `feedbacks_360_aprovacoes_gestor`, `health_checks`, `mv_folha_summary`, `health_checks` |
 | grant | service_role | select, insert, delete | `pii_access_logs`, `pii_access_alerts` |
 | grant | service_role | select, insert, update, delete, truncate, references, trigger | `ninebox_permissoes_homologacao` |
-| revoke | PUBLIC | all | `_is_admin_bypass`, `_purge_audit_log_internal`, `_scan_status_anomalies_global`, `admin_list_security_definer_rpcs`, `admin_list_user_roles`, `admin_set_user_role`, `anonimizar_dados_pessoais`, `aplicar_medida_folha_ponto`, `aprovar_despesa`, `assinar_aviso_ferias`, `assinar_desligamento`, `assinar_espelho_ponto`, `associar_pis_colaborador_afdt`, `auto_vincular_admins_empresa`, `check_idempotency_anomalies` … +321 |
+| revoke | PUBLIC | all | `_is_admin_bypass`, `_purge_audit_log_internal`, `_scan_status_anomalies_global`, `admin_list_security_definer_rpcs`, `admin_list_user_roles`, `admin_set_user_role`, `anonimizar_dados_pessoais`, `aplicar_medida_folha_ponto`, `aprovar_despesa`, `assinar_aviso_ferias`, `assinar_desligamento`, `assinar_espelho_ponto`, `associar_pis_colaborador_afdt`, `auto_vincular_admins_empresa`, `check_idempotency_anomalies` … +323 |
 | revoke | PUBLIC | execute | `has_role`, `is_admin`, `get_user_roles`, `get_user_default_empresa`, `get_user_empresas`, `user_belongs_to_empresa`, `anonimizar_dados_pessoais`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `get_colaborador_banco_horas`, `check_processamento_timeout`, `fn_alert_severe_disciplinary_measure`, `fn_audit_biometric_failure`, `fn_auto_generate_training_certificate`, `fn_consolidar_batidas` … +38 |
 | revoke | PUBLIC, anon | all | `get_idempotency_health`, `check_idempotency_anomalies`, `v_slow_queries_top50`, `get_query_telemetry`, `get_dlq_stats`, `get_audit_trail_by_user`, `get_audit_trail_by_entity`, `search_audit_unified`, `rate_limit_logs`, `rate_limit_config`, `purge_audit_log_old`, `resolve_security_alert`, `refresh_dashboard_mvs`, `mv_status_change_daily`, `mv_anomalies_hourly` … +117 |
 | revoke | PUBLIC, anon | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `pode_gerir_rh`, `pode_gerir_pessoas`, `sou_o_colaborador`, `empresa_do_colaborador`, `is_admin`, `sou_o_colaborador` |

@@ -37,6 +37,8 @@
   "supabase/functions/_shared/irrf.ts",
   "supabase/functions/_shared/logger.ts",
   "supabase/functions/_shared/monitor.ts",
+  "supabase/functions/_shared/ocr.test.ts",
+  "supabase/functions/_shared/ocr.ts",
   "supabase/functions/_shared/originSecurity.test.ts",
   "supabase/functions/_shared/outboundDelivery.test.ts",
   "supabase/functions/_shared/outboundDelivery.ts",
@@ -148,7 +150,7 @@
    "nome": "admissao-publica",
    "entrada": "supabase/functions/admissao-publica/index.ts",
    "arquivos": 1,
-   "linhas": 126,
+   "linhas": 174,
    "verify_jwt": false,
    "metodos": [
     "POST"
@@ -170,11 +172,12 @@
     "clientIp.ts",
     "contract.ts",
     "csrf.ts",
+    "ocr.ts",
     "rateLimit.ts",
     "sentry.ts"
    ],
    "chamada_pelo_front": [
-    "src/pages/ContratacaoPage.tsx"
+    "src/hooks/useDocumentOCR.ts"
    ],
    "chamada_por_edges": [],
    "chamada_por_sql_ou_cron": false,
@@ -2170,7 +2173,7 @@
    "nome": "process-document-ocr",
    "entrada": "supabase/functions/process-document-ocr/index.ts",
    "arquivos": 1,
-   "linhas": 151,
+   "linhas": 78,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -2187,19 +2190,16 @@
    "chama_edges": [],
    "hosts_externos": [],
    "usa_shared": [
-    "aiProvider.ts",
     "contract.ts",
     "csrf.ts",
+    "ocr.ts",
     "rateLimit.ts",
-    "safe-fetch.ts",
     "sentry.ts"
    ],
-   "chamada_pelo_front": [
-    "src/hooks/useDocumentOCR.ts"
-   ],
+   "chamada_pelo_front": [],
    "chamada_por_edges": [],
    "chamada_por_sql_ou_cron": false,
-   "orfa": false,
+   "orfa": true,
    "testes": 0
   },
   {

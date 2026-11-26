@@ -201,7 +201,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 340,
+   "testes": 341,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -318,13 +318,13 @@
   },
   {
    "modulo": "components/admissoes",
-   "arquivos": 21,
+   "arquivos": 22,
    "testes": 0,
-   "linhas": 11340,
+   "linhas": 11600,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 14,
+   "componentes": 15,
    "hooks_locais": [
     "useASOs",
     "useAdmissaoWorkflow",
@@ -770,6 +770,7 @@
     "integrations/supabase",
     "lib",
     "services",
+    "services/tabelas",
     "types",
     "utils"
    ],
@@ -7541,7 +7542,7 @@
    "modulo": "hooks",
    "arquivos": 100,
    "testes": 0,
-   "linhas": 9981,
+   "linhas": 10017,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -8160,6 +8161,7 @@
    "edges": [
     "OCR",
     "adiantamento-salarial",
+    "admissao-publica",
     "alertas-dp",
     "alertas-preditivos",
     "assinaturaDigital",
@@ -8186,7 +8188,6 @@
     "limpeza",
     "metricas",
     "notificacao",
-    "process-document-ocr",
     "processar-agendamentos",
     "processar-ponto",
     "processar-ponto-offline",
@@ -8418,7 +8419,6 @@
     "afastamentos",
     "comprovantes-despesas",
     "contratos-trabalho",
-    "documentos-admissao",
     "ferias-avisos",
     "medidas-contestacoes",
     "medidas-disciplinares"
@@ -8444,10 +8444,10 @@
    ],
    "diretos": {
     "edges": [
+     "admissao-publica",
      "alertas-preditivos",
      "calcular-13-salario",
-     "metricas",
-     "process-document-ocr"
+     "metricas"
     ],
     "tabelas": [
      "admissao_tokens",
@@ -8777,7 +8777,7 @@
    "modulo": "integrations/supabase",
    "arquivos": 6,
    "testes": 4,
-   "linhas": 26146,
+   "linhas": 26149,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -9032,7 +9032,7 @@
    "modulo": "pages",
    "arquivos": 115,
    "testes": 0,
-   "linhas": 46984,
+   "linhas": 46987,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -9525,7 +9525,6 @@
     "notificacao",
     "pagar-desligamento",
     "parse-afdt",
-    "process-document-ocr",
     "processar-agendamentos",
     "processar-ponto",
     "processar-ponto-offline",
@@ -9924,7 +9923,6 @@
     "avatars",
     "comprovantes-despesas",
     "contratos-trabalho",
-    "documentos-admissao",
     "ferias-avisos",
     "medidas-contestacoes",
     "medidas-disciplinares",
@@ -9995,7 +9993,6 @@
    ],
    "diretos": {
     "edges": [
-     "admissao-publica",
      "auth-gov-br"
     ],
     "tabelas": [
@@ -10270,7 +10267,7 @@
    "modulo": "schemas",
    "arquivos": 19,
    "testes": 0,
-   "linhas": 5240,
+   "linhas": 5241,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -11293,6 +11290,7 @@
     "rpcs": []
    },
    "importado_por_outros_modulos": [
+    "components/admissoes",
     "components/folha",
     "hooks",
     "services"

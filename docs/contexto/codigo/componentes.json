@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 713,
+ "total": 714,
  "orfaos": 24,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -328,6 +328,20 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/admissoes/ArquivosAdmissaoLista.tsx",
+   "exports": [
+    "ArquivosAdmissaoLista"
+   ],
+   "export_default": null,
+   "linhas": 249,
+   "dominio": "components/admissoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/admissoes/AuditoriaAdmissoesContent.tsx",
    "exports": [
     "AuditoriaAdmissoesContent"
@@ -349,7 +363,7 @@
     "DetalhesAdmissaoDialog"
    ],
    "export_default": null,
-   "linhas": 1442,
+   "linhas": 1453,
    "dominio": "components/admissoes",
    "hooks_locais": [
     "useAdmissaoWorkflow",
@@ -8476,7 +8490,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 403,
+   "usado_por": 404,
    "orfao": false
   },
   {
@@ -10263,15 +10277,13 @@
     "ContratacaoPage"
    ],
    "export_default": "ContratacaoPage",
-   "linhas": 736,
+   "linhas": 739,
    "dominio": "pages",
    "hooks_locais": [
     "useDocumentOCR"
    ],
    "tabelas": [],
-   "edges": [
-    "admissao-publica"
-   ],
+   "edges": [],
    "usado_por": 2,
    "orfao": false
   },

@@ -302,6 +302,13 @@
    "src/services/admissaoService.ts",
    "src/utils/safeError.ts"
   ],
+  "src/components/admissoes/ArquivosAdmissaoLista.tsx": [
+   "src/components/ui/button.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/database.types.ts",
+   "src/lib/utils.ts",
+   "src/services/tabelas/index.ts"
+  ],
   "src/components/admissoes/AuditoriaAdmissoesContent.tsx": [
    "src/components/admissoes/admissoesDerivacoes.ts",
    "src/components/admissoes/auditoriaComum.ts",
@@ -325,6 +332,7 @@
   ],
   "src/components/admissoes/DetalhesAdmissaoDialog.tsx": [
    "src/components/admissao/AdmissaoChecklist.tsx",
+   "src/components/admissoes/ArquivosAdmissaoLista.tsx",
    "src/components/admissoes/NovaAdmissaoDialog.tsx",
    "src/components/admissoes/admissoesComum.ts",
    "src/components/admissoes/admissoesDerivacoes.ts",
@@ -8788,6 +8796,11 @@
   "supabase/functions/_shared/monitor.ts": [
    "supabase/functions/_shared/contract.ts"
   ],
+  "supabase/functions/_shared/ocr.ts": [
+   "supabase/functions/_shared/aiProvider.ts",
+   "supabase/functions/_shared/circuitBreaker.ts",
+   "supabase/functions/_shared/safe-fetch.ts"
+  ],
   "supabase/functions/_shared/outboundDelivery.ts": [
    "supabase/functions/_shared/resendDelivery.ts",
    "supabase/functions/_shared/safe-fetch.ts"
@@ -8852,6 +8865,7 @@
    "supabase/functions/_shared/clientIp.ts",
    "supabase/functions/_shared/contract.ts",
    "supabase/functions/_shared/csrf.ts",
+   "supabase/functions/_shared/ocr.ts",
    "supabase/functions/_shared/rateLimit.ts",
    "supabase/functions/_shared/sentry.ts"
   ],
@@ -9266,11 +9280,10 @@
    "supabase/functions/_shared/sentry.ts"
   ],
   "supabase/functions/process-document-ocr/index.ts": [
-   "supabase/functions/_shared/aiProvider.ts",
    "supabase/functions/_shared/contract.ts",
    "supabase/functions/_shared/csrf.ts",
+   "supabase/functions/_shared/ocr.ts",
    "supabase/functions/_shared/rateLimit.ts",
-   "supabase/functions/_shared/safe-fetch.ts",
    "supabase/functions/_shared/sentry.ts"
   ],
   "supabase/functions/processar-agendamentos/filaNotificacoes.ts": [

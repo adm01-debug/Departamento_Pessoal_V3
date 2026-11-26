@@ -3,8 +3,8 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2169)",
-   "SQL (1345)",
+   "TypeScript (2173)",
+   "SQL (1351)",
    "Markdown (347)",
    "JavaScript (137)",
    "JSON (64)",
@@ -1999,10 +1999,6 @@
     "arquivos": 1
    },
    {
-    "host": "cdn.test",
-    "arquivos": 1
-   },
-   {
     "host": "challenges.cloudflare.com",
     "arquivos": 1
    },
@@ -2024,6 +2020,10 @@
    },
    {
     "host": "evo.exemplo.com",
+    "arquivos": 1
+   },
+   {
+    "host": "exemplo.com",
     "arquivos": 1
    },
    {
@@ -2076,6 +2076,10 @@
    },
    {
     "host": "production.supabase.co",
+    "arquivos": 1
+   },
+   {
+    "host": "proj.supabase.co",
     "arquivos": 1
    },
    {

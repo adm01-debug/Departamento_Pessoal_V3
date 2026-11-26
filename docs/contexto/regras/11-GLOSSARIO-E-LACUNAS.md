@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7f047bcddd` · branch `main` · 2026-11-26 13:05 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c215d18134` · branch `main` · 2026-11-26 14:43 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -148,7 +148,7 @@
 | `despesas_aprovacoes_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `documento_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `documentos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
-| `documentos_admissao` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
+| `documentos_admissao` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `documentos_afastamento` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `documentos_assinatura` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
 | `documentos_assinaturas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
@@ -307,7 +307,7 @@
 | `password_reset_requests` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `pcs_avaliacoes_cargo` | Cargo evaluation whose total is always calculated by a trigger. | 10 colunas | migration |
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
-| … +445 linhas — lista completa em `context.json` | | | |
+| … +446 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -419,6 +419,8 @@
 | status | valor `relogio` para `step` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/PontoKioskPage.tsx` |
 | status | valor `registrar_documento` para `step` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/admissao-publica/index.ts` |
 | status | valor `cleanup_orphan` para `step` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/admissao-publica/index.ts` |
+| status | valor `createSignedUrl` para `step` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/admissao-publica/index.ts` |
+| status | valor `ocr` para `step` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/admissao-publica/index.ts` |
 | status | valor `insert` para `step` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/gerar-contrato-pdf/index.ts`<br>`escreve:supabase/functions/upload-certificado/index.ts` |
 | status | valor `encrypt_senha` para `step` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/upload-certificado/index.ts` |
 | status | valor `encrypt_arquivo` para `step` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/upload-certificado/index.ts` |
@@ -464,7 +466,7 @@
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/baseService.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/tabelasReferenciaService.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/trainingImages/storage.ts` |
-| dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/admissao-publica/index.ts` |
+| dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/admissao-publica/index.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/backup/index.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/backup-automatico/index.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `supabase/functions/cache/index.ts` |
@@ -645,9 +647,7 @@
 | segurança | função `trg_audit_status_change` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_contab_msg_bump_thread` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_contrato_token_auditar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `trg_detect_status_anomaly` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `trg_ferias_gerar_rubricas` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +42 linhas — lista completa em `context.json` | | |
+| … +44 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 

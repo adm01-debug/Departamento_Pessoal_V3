@@ -1,16 +1,16 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1443,
- "arestas": 7089,
+ "nos": 1445,
+ "arestas": 7098,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 403
+   "importado_por": 404
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 337
+   "importado_por": 338
   },
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -18,7 +18,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 278
+   "importado_por": 279
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
@@ -70,7 +70,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/database.types.ts",
-   "importado_por": 87
+   "importado_por": 88
   },
   {
    "arquivo": "src/components/layout/index.ts",
@@ -322,6 +322,11 @@
    "importado_por": 13
   },
   {
+   "modulo": "components/admissoes",
+   "depende_de": 11,
+   "importado_por": 3
+  },
+  {
    "modulo": "components/colaborador-detalhes",
    "depende_de": 12,
    "importado_por": 2
@@ -335,11 +340,6 @@
    "modulo": "components/layout",
    "depende_de": 12,
    "importado_por": 2
-  },
-  {
-   "modulo": "components/admissoes",
-   "depende_de": 10,
-   "importado_por": 3
   },
   {
    "modulo": "components/settings",

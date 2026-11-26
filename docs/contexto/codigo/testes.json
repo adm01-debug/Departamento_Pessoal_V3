@@ -5,21 +5,21 @@
   "vitest",
   "playwright"
  ],
- "total": 872,
+ "total": 874,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 827
+  "unit": 829
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 734
+   "arquivos": 735
   },
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 79
+   "arquivos": 80
   },
   {
    "padrao": "e2e/",
@@ -867,6 +867,15 @@
    "casos": 7
   },
   {
+   "arquivo": "src/components/__tests__/ArquivosAdmissaoLista.test.tsx",
+   "tipo": "unit",
+   "linhas": 161,
+   "testa": [
+    "src/components/admissoes/ArquivosAdmissaoLista.tsx"
+   ],
+   "casos": 9
+  },
+  {
    "arquivo": "src/components/__tests__/ASOTab.test.tsx",
    "tipo": "unit",
    "linhas": 102,
@@ -1570,7 +1579,7 @@
   {
    "arquivo": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 222,
+   "linhas": 229,
    "testa": [
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "src/integrations/supabase/types.ts"
@@ -5201,11 +5210,11 @@
   {
    "arquivo": "src/hooks/__tests__/useDocumentOCR.test.ts",
    "tipo": "unit",
-   "linhas": 147,
+   "linhas": 193,
    "testa": [
     "src/hooks/useDocumentOCR.ts"
    ],
-   "casos": 9
+   "casos": 11
   },
   {
    "arquivo": "src/hooks/__tests__/useDocumentos.test.ts",
@@ -7732,6 +7741,15 @@
    "casos": 3
   },
   {
+   "arquivo": "supabase/functions/_shared/ocr.test.ts",
+   "tipo": "unit",
+   "linhas": 158,
+   "testa": [
+    "supabase/functions/_shared/ocr.ts"
+   ],
+   "casos": 6
+  },
+  {
    "arquivo": "supabase/functions/_shared/originSecurity.test.ts",
    "tipo": "unit",
    "linhas": 64,
@@ -8134,6 +8152,7 @@
   "src/components/admissao/SignaturePad.tsx": 1,
   "src/components/admissoes/AdmissoesDashboard.tsx": 1,
   "src/components/admissoes/AdmissoesKanban.tsx": 1,
+  "src/components/admissoes/ArquivosAdmissaoLista.tsx": 1,
   "src/components/admissoes/AuditoriaAdmissoesContent.tsx": 1,
   "src/components/admissoes/DetalhesAdmissaoDialog.tsx": 1,
   "src/components/admissoes/GestaoCandidatos.tsx": 1,
@@ -8870,6 +8889,7 @@
   "supabase/functions/_shared/inss.ts": 1,
   "supabase/functions/_shared/integrityHash.ts": 1,
   "supabase/functions/_shared/irrf.ts": 1,
+  "supabase/functions/_shared/ocr.ts": 1,
   "supabase/functions/_shared/outboundDelivery.ts": 1,
   "supabase/functions/_shared/rateLimit.ts": 1,
   "supabase/functions/_shared/resendDelivery.ts": 1,

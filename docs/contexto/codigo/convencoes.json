@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (595)",
+   "src/components (596)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
@@ -22,8 +22,8 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (734)",
-   "co-localizado (*.test) (79)",
+   "co-localizado (__tests__) (735)",
+   "co-localizado (*.test) (80)",
    "e2e/ (33)"
   ],
   "edge_functions": "supabase/functions",
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (713)"
+  ".tsx (714)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: destrava o envio de documentos da contratacao publica e remove policies sem consumidor (#906)",
+   "docs: registra a auditoria de Storage e o fechamento do drift de ledger (#905)",
    "fix: gate de drift nao reprova PR que adiciona migration (#907)",
    "infra: liga o gate de drift de migrations no CI com corte de data (#904)",
-   "infra: da ao ci_auditor leitura do ledger de migrations (#903)",
-   "fix: compara storage.objects.owner (uuid) com auth.uid() sem cast para text (#902)",
-   "infra: cria as policies de Storage que faltam em 8 buckets usados pelo app (#901)"
+   "infra: da ao ci_auditor leitura do ledger de migrations (#903)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

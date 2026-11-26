@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7f047bcddd` · branch `main` · 2026-11-26 13:05 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `c215d18134` · branch `main` · 2026-11-26 14:43 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -311,7 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `historico_ferias` | tenant_historico_ferias | ALL | authenticated | permissive | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `dependentes_beneficios` | tenant_dependentes_beneficios | ALL | authenticated | permissive | `dependente_id IN (SELECT id FROM public.dependentes WHERE colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))))` | `dependente_id IN (SELECT id FROM public.dependentes WHERE colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))))` |
 | `linhas_transporte` | tenant_linhas_transporte | ALL | authenticated | permissive | `vale_transporte_id IN (SELECT id FROM public.vales_transporte WHERE colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))))` | `vale_transporte_id IN (SELECT id FROM public.vales_transporte WHERE colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))))` |
-| … +883 linhas — lista completa em `context.json` | | | | | | |
+| … +881 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -718,6 +718,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_recibos_ferias_validar | BEFORE INSERT OR UPDATE | `recibos_ferias` | `recibos_ferias_validar` |  |
 | trg_recibos_ferias_updated_at | BEFORE UPDATE | `recibos_ferias` | `update_updated_at_column` |  |
 | trg_ponto_rep_funcionario_cpf_last4 | BEFORE INSERT OR UPDATE OF CPF | `ponto_rep_funcionarios` | `fn_ponto_rep_funcionario_cpf_last4` |  |
+| trg_documentos_admissao_marcar_anteriores | BEFORE INSERT | `documentos_admissao` | `documentos_admissao_marcar_anteriores` |  |
 | ajuste_ponto_status_transition | BEFORE UPDATE OF "STATUS" | `solicitacoes_ajuste_ponto` | `trg_ajuste_ponto_status_transition` |  |
 | audit_admissoes | AFTER INSERT OR DELETE OR UPDATE | `admissoes` | `log_audit_change` |  |
 | audit_afastamentos | AFTER INSERT OR DELETE OR UPDATE | `afastamentos` | `log_audit_change` |  |
@@ -922,8 +923,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_folha_auditoria_no_update | BEFORE UPDATE | `folha_auditoria` | `audit_log_append_only` |  |
 | trg_folha_eventos_auditoria_append_only | BEFORE DELETE OR UPDATE | `folha_eventos_auditoria` | `audit_log_append_only` |  |
 | trg_folha_eventos_auditoria_no_delete | BEFORE DELETE | `folha_eventos_auditoria` | `audit_log_append_only` |  |
-| trg_folha_eventos_auditoria_no_update | BEFORE UPDATE | `folha_eventos_auditoria` | `audit_log_append_only` |  |
-| … +173 linhas — lista completa em `context.json` | | | | |
+| … +174 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -1466,9 +1466,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `foto` | escreve | `src/pages/ContratacaoPage.tsx` |
 | `type` | `gateway_and` | compara, escreve | `src/components/workflows/WorkflowDesigner.tsx` |
 | `type` | `gateway_xor` | compara, escreve | `src/components/workflows/NodeInspector.tsx`<br>`src/components/workflows/WorkflowDesigner.tsx` |
-| `type` | `image_url` | escreve | `supabase/functions/OCR/index.ts`<br>`supabase/functions/process-document-ocr/index.ts`<br>`supabase/functions/validar-biometria/index.ts` |
+| `type` | `image_url` | escreve | `supabase/functions/OCR/index.ts`<br>`supabase/functions/_shared/ocr.ts`<br>`supabase/functions/validar-biometria/index.ts` |
 | `type` | `info` | compara, escreve | `src/components/esocial/ESocialAuditDialog.tsx`<br>`src/components/ferias/FeriasInsights.tsx`<br>`src/components/folha/FolhaValidationAlerts.tsx` |
-| `type` | `json_object` | escreve | `supabase/functions/process-document-ocr/index.ts` |
+| `type` | `json_object` | escreve | `supabase/functions/_shared/ocr.ts` |
 | `type` | `literal` | compara | `supabase/functions/processar-agendamentos/scheduleContract.ts` |
 | `type` | `magiclink` | escreve | `src/pages/AuthCallbackPage.tsx`<br>`supabase/functions/auth-gov-br/index.ts` |
 | `type` | `medida_disciplinar` | escreve | `src/hooks/useHistoricoColaborador.ts`<br>`src/mocks/colaboradoresMock.ts` |
@@ -1491,7 +1491,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `success` | compara, escreve | `src/components/ferias/FeriasInsights.tsx`<br>`src/components/folha/FolhaValidationAlerts.tsx` |
 | `type` | `test` | escreve | `release.config.js` |
 | `type` | `teste` | compara, escreve | `src/components/recrutamento/CandidatoTimeline.tsx` |
-| `type` | `text` | escreve | `supabase/functions/OCR/index.ts`<br>`supabase/functions/process-document-ocr/index.ts`<br>`supabase/functions/validar-biometria/index.ts` |
+| `type` | `text` | escreve | `supabase/functions/OCR/index.ts`<br>`supabase/functions/_shared/ocr.ts`<br>`supabase/functions/validar-biometria/index.ts` |
 | `type` | `transferencia` | escreve | `src/hooks/useHistoricoColaborador.ts` |
 | `type` | `transmission` | escreve | `src/components/esocial/ESocialTimeline.tsx` |
 | `type` | `treinamento` | escreve | `src/hooks/useHistoricoColaborador.ts`<br>`src/mocks/colaboradoresMock.ts` |
@@ -1505,6 +1505,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `Admissão` | escreve | `src/mocks/colaboradoresMock.ts`<br>`src/services/vinculoService.ts` |
 | `tipo` | `Auditiva` | escreve | `src/mocks/colaboradoresMock.ts` |
 | `tipo` | `Contrato` | compara | `src/components/portal/PortalDocumentosTab.tsx` |
+| `tipo` | `Documento` | escreve | `src/components/admissoes/ArquivosAdmissaoLista.tsx` |
 | `tipo` | `Física` | escreve | `src/mocks/colaboradoresMock.ts` |
 | `tipo` | `LTCAT` | compara | `src/components/sst/SSTProgramasTab.tsx` |
 | `tipo` | `Manual` | escreve | `src/services/backupService.ts` |
@@ -1669,6 +1670,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `sem_justa_causa` | compara, escreve | `src/calculators/rescisao.ts`<br>`src/components/desligamentos/NovoDesligamentoDialog.tsx`<br>`src/components/desligamentos/desligamentosDerivacoes.ts`<br>`src/pages/CalculadoraRescisaoPage.tsx`<br>`src/utils/rescisaoCalc.ts`<br>… +1 |
 | `tipo` | `semestral` | escreve | `src/mocks/desempenhoMock.ts` |
 | `tipo` | `short_break` | compara, escreve | `src/components/ponto/PontoInconsistencyPanel.tsx` |
+| `tipo` | `string` | compara | `src/components/admissoes/ArquivosAdmissaoLista.tsx` |
 | `tipo` | `subordinado` | escreve | `src/mocks/desempenhoMock.ts` |
 | `tipo` | `sucesso` | escreve | `src/services/notificacoesService.ts` |
 | `tipo` | `suspensao` | compara, escreve | `src/components/medidas-disciplinares/MedidasGravityScale.tsx`<br>`src/components/medidas-disciplinares/MedidasTable.tsx`<br>`src/pages/MedidasDisciplinaresPage.tsx`<br>`supabase/functions/gerar-medida-disciplinar-pdf/index.ts` |
@@ -1725,9 +1727,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `ativo` | compara, escreve, filtra | `src/components/dashboard/useMorningBriefing.ts`<br>`src/components/descontos/EmprestimosTable.tsx`<br>`src/components/descontos/FinancialSummaryCards.tsx`<br>`src/components/descontos/NewLoanDialog.tsx`<br>`src/components/desligamentos/NovoDesligamentoDialog.tsx`<br>… +59 |
 | `status` | `ativos` | compara | `src/components/admissoes/GestaoKits.tsx` |
 | `status` | `calculada` | compara, escreve | `src/services/folhaPagamentoService.ts`<br>`supabase/functions/calcular-folha/index.ts`<br>`supabase/functions/fechar-folha/index.ts` |
-| `status` | `calculado` | compara, escreve | `src/components/desligamentos/trilhaDerivacoes.ts`<br>`src/components/premiacoes/PagamentosTabela.tsx`<br>`src/components/premiacoes/pagamentosComum.ts`<br>`src/services/rescisaoService.ts` |
-| `status` | `cancelada` | compara, escreve | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/components/ferias/FeriasAuditTimeline.tsx`<br>`src/services/feriasService.ts`<br>`src/utils/regrasSolicitacaoFerias.ts` |
-| … +223 linhas — lista completa em `context.json` | | | |
+| … +227 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1990,6 +1990,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | CircuitState | CLOSED \| OPEN \| HALF_OPEN | `supabase/functions/_shared/circuitBreaker.ts` |
 | IdempotencyReason | NEW \| REPLAY \| KEY_INVALID \| KEY_REUSE \| IN_PROGRESS \| INDETERMINATE \| PREVIOUS_FAILURE \| STORE_ERROR | `supabase/functions/_shared/idempotency.ts` |
 | LogLevel | debug \| info \| warn \| error \| fatal | `supabase/functions/_shared/logger.ts` |
+| OCR_DOC_TYPES | 'cpf', 'rg', 'cnh', 'identidade', 'comprovante_residencia', 'generic' | `supabase/functions/_shared/ocr.ts` |
 | StatusCapa | pending \| processing \| succeeded \| failed \| disabled | `supabase/functions/_shared/trainingImages/estadoCapa.ts` |
 | MimeImagem | image/webp \| image/png \| image/jpeg | `supabase/functions/_shared/trainingImages/imageValidation.ts` |
 | FalhaSimulada | timeout \| rate_limit \| http_permanente \| imagem_invalida \| sem_imagem | `supabase/functions/_shared/trainingImages/simulatedProvider.ts` |
@@ -2528,7 +2529,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **BodySchema** (`supabase/functions/process-document-ocr/index.ts`, z.object):
   ```ts
-  { fileUrl: z.string().url().max(2048).refine(isAllowedFileUrl, { message: 'URL de arquivo não permitida' }), docType: z.enum(['cpf', 'rg', 'cnh', 'comprovante_residencia', 'generic']).optional().default('generic'), }
+  { fileUrl: z.string().url().max(2048).refine(isAllowedFileUrl, { message: 'URL de arquivo não permitida' }), docType: z.enum(OCR_DOC_TYPES).optional().default('generic'), }
   ```
   - Regras cruzadas (refine): “URL de arquivo não permitida”
 - **BodySchema** (`supabase/functions/rateLimit/index.ts`, z.object):
@@ -4653,6 +4654,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `ALTURA_LISTA_WIDGET` | `'h-[136px]'` | `src/components/admissoes/AdmissoesDashboard.tsx` |
 | `HOVER_LINHA_WIDGET` | `'hover:bg-background/70'` | `src/components/admissoes/AdmissoesDashboard.tsx` |
 | `LEGENDA_AREA` | `'text-[10px] leading-tight @max-[240px]:text-[9px]'` | `src/components/admissoes/AdmissoesDashboard.tsx` |
+| `BUCKET` | `'documentos'` | `src/components/admissoes/ArquivosAdmissaoLista.tsx` |
 | `VALOR_TODOS` | `'__todos__'` | `src/components/admissoes/AuditoriaAdmissoesContent.tsx` |
 | `ROTA_LOGS_GLOBAIS` | `'/auditoria'` | `src/components/admissoes/AuditoriaAdmissoesContent.tsx` |
 | `BLOCOS_CASCATA_EVENTO` | `3` | `src/components/admissoes/AuditoriaAdmissoesContent.tsx` |
@@ -4929,8 +4931,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `BLOCOS_CASCATA` | `4` | `src/components/turnos/DialogoDetalhesEscala.tsx` |
 | `BLOCOS_CASCATA` | `3` | `src/components/turnos/DialogoDiaEscalas.tsx` |
 | `BLOCOS_CASCATA` | `4` | `src/components/turnos/DialogoGerenciarTurnos.tsx` |
-| `BLOCOS_CASCATA` | `5` | `src/components/turnos/DialogoNovaEscala.tsx` |
-| … +241 linhas — lista completa em `context.json` | | |
+| … +244 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -5664,7 +5665,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (10492 testes em 827 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10510 testes em 829 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5934,6 +5935,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/colaborador-detalhes/__tests__/CamposCustomizadosTab.test.tsx` | 12 | CamposCustomizadosTab · mostra carregando enquanto as consultas não respondem · mostra falha de consulta sem inventar ausência de dados · mostra estado vazio honesto quando a empresa não definiu campos … |
 | `src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx` | 12 | MaisTurmasCard · renderiza ícone de grupo, título e descrição da referência · usa borda tracejada, raio de 12px e altura da referência (sem largura fixa) · não apresenta botão quando não existe fluxo real de criação … |
 | `src/hooks/__tests__/useCalcular13Salario.test.tsx` | 12 | useCalcular13Salario · initial state: loading=false, resultado=null · exposes calcular function · sets loading=true while calculating … |
+| `src/hooks/__tests__/useDocumentOCR.test.ts` | 12 | useDocumentOCR · starts with isProcessing false · returns processDocument function · sets isProcessing true during processing … |
 | `src/hooks/__tests__/useGenericCrud.test.ts` | 12 | useGenericCrud · passes queryKey and queryFn to useQuery · exposes items from query data · exposes total from query data … |
 | `src/hooks/__tests__/useLocalStorage.test.ts` | 12 | useLocalStorage · returns initial value when key does not exist · returns stored value when key exists · stores value and updates state … |
 | `src/hooks/__tests__/useMediaQuery.test.ts` | 12 | useMediaQuery · returns initial match state · returns false when query does not match · updates when media query changes … |
@@ -5967,8 +5969,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/auditoriaDerivacoes.test.ts` | 11 | auditoriaDerivacoes · conta os status e as fatias do resumo (nunca NaN) · conta os eventos dos últimos 30 dias · detecta filtros ativos (inclusive os do painel avançado) … |
 | `src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx` | 11 | CandidatoDetalhesDialog · mostra identificação, cargo, departamento e etapa atual · destaca SOMENTE a etapa efetiva do candidato no indicador · não inventa contato ausente (nem  … |
 | `src/components/recrutamento/__tests__/VagaCard.test.tsx` | 11 | VagaCard — identidade, funil e ações reais · mostra título, departamento, modalidade, competências e o funil completo · abre o Pipeline pelo botão Gerenciar Vaga · mantém apenas ações reais e não duplica Gerenciar no menu … |
-| `src/components/recrutamento/__tests__/pipelineEtapas.test.ts` | 11 | pipelineEtapas — configuração e leitura do board · define as cinco etapas na ordem do processo com tokens distintos · normaliza o vocabulário REAL do banco e isola o desconhecido em  · resolve a etapa visual pelos aliases do banco … |
-| … +527 linhas — lista completa em `context.json` | | |
+| … +529 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6006,7 +6007,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `invoke(` | `src/lib/retry.ts` |
 | `invoke(` | `src/pages/AdminDiagnosticoMigracaoPage.tsx` |
 | `invoke(` | `src/pages/AuthCallbackPage.tsx` |
-| `invoke(` | `src/pages/ContratacaoPage.tsx` |
 | `invoke(` | `src/pages/LoginPage.tsx` |
 | `notify_admins` | `src/schemas/tableColumns.ts` |
 | `notify_user_on_approval` | `src/schemas/tableColumns.ts` |
@@ -6336,4 +6336,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * HABILITAÇÃO (regra ÚNICA, a MESMA do servidor — `pode_aprovar_colaborador` | `src/components/avaliacao/feedbackCanonico.ts` |
 | ENCAMINHAMENTO (RH/admin) — visível apenas para quem pode encaminhar E na | `src/components/avaliacao/feedbackCanonico.ts` |
 | VALIDAÇÃO DO POTENCIAL (RH) — controle LEGADO. O fluxo atual termina na | `src/components/avaliacao/feedbackCanonico.ts` |
-| … +1091 linhas — lista completa em `context.json` | |
+| … +1095 linhas — lista completa em `context.json` | |
