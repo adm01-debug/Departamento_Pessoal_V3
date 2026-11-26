@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8324c3db7e8ab6873a86c95def80770fb75bf31a` (2026-11-25T20:06:09-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b4f3428d1e9ac0a71ba356fbabf1534b1a6d0a13` (2026-11-25T20:14:52-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -404,8 +404,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 29912 nós · 68192 arestas · 2848 comunidades · grafo do commit `8324c3db`
-- comunidades maiores: lucide-react (573), button.tsx (505), client.ts (492), 20260831_corrected_public.sql (485), canonical_schema.sql (481), useEmpresas (398), cn (252), App.tsx (218), vitest (212), react (208), @testing-library/react (200), contract.ts (191)
+- 29920 nós · 68201 arestas · 2779 comunidades · grafo do commit `b4f3428d`
+- comunidades maiores: lucide-react (542), useEmpresas (524), 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (414), @tanstack/react-query (400), vitest (393), cn (352), services/index.ts (229), react (218), contract.ts (203), hooks/index.ts (203)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), formatDateLocalISO() (src/utils/dateLocal.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -419,7 +419,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
 - package-lock.json (10)
-- docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md (8)
+- docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md (9)
 - scripts/automation.config.json (8)
 - src/index.css (8)
 - src/schemas/tableColumns.ts (8)
@@ -663,6 +663,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-25 `b4f3428` docs: fecha a causa raiz do E2E vermelho e a fatia de turnos no ledger do resgate (#898)
 - 2026-11-25 `8324c3d` fix: remove seletor duplicado de ciclo do Nine-Box (#899)
 - 2026-11-25 `8697240` fix: prevent_empty_empresa_id compara uuid com text e para de derrubar toda escrita (#897)
 - 2026-11-25 `3c8c484` chore: resgata testes do port que ainda valem na main e fecha a re-auditoria do resgate (#896)
@@ -677,7 +678,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `08dd398` feat: formulario de vaga coleta cargo, contrato, faixa e beneficios (#887)
 - 2026-11-25 `58dd46c` feat: resgata os cards de resumo do ponto (indicadores, equipe, pendencias e fechamento) (#886)
 - 2026-11-25 `adc0f56` docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)
-- 2026-11-25 `3cb33da` docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

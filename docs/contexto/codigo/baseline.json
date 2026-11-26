@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8324c3db7e8ab6873a86c95def80770fb75bf31a",
+  "commit": "b4f3428d1e9ac0a71ba356fbabf1534b1a6d0a13",
   "branch": "main",
-  "data_commit": "2026-11-25T20:06:09-03:00",
+  "data_commit": "2026-11-25T20:14:52-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "b4f3428",
+    "data": "2026-11-25",
+    "assunto": "docs: fecha a causa raiz do E2E vermelho e a fatia de turnos no ledger do resgate (#898)"
+   },
    {
     "sha": "8324c3d",
     "data": "2026-11-25",
@@ -126,14 +131,9 @@
     "sha": "d30e8fb",
     "data": "2026-11-25",
     "assunto": "infra: leva 7 migrations aditivas de observabilidade ao canônico + sidecars .verify (#869)"
-   },
-   {
-    "sha": "ce83bb0",
-    "data": "2026-11-24",
-    "assunto": "feat: banco de horas com extrato filtravel, KPIs e exportacao CSV (#873)"
    }
   ],
-  "arquivos_mudados_7d": 795,
+  "arquivos_mudados_7d": 786,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -235,7 +235,7 @@
    },
    {
     "arquivo": "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-    "mudancas": 8
+    "mudancas": 9
    },
    {
     "arquivo": "scripts/automation.config.json",

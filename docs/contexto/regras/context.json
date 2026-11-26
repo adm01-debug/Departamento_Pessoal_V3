@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "8324c3db7e8ab6873a86c95def80770fb75bf31a",
+  "sha": "b4f3428d1e9ac0a71ba356fbabf1534b1a6d0a13",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-25 23:10 UTC",
+  "generated_at": "2026-11-26 00:34 UTC",
   "files_total": 4247,
   "code_files": 3651,
   "code_lines": 543041
@@ -348917,10 +348917,19 @@
   }
  },
  "git": {
-  "sha": "8324c3db7e8ab6873a86c95def80770fb75bf31a",
+  "sha": "b4f3428d1e9ac0a71ba356fbabf1534b1a6d0a13",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "b4f3428",
+    "date": "2026-11-25",
+    "author": "adm01-debug",
+    "subject": "docs: fecha a causa raiz do E2E vermelho e a fatia de turnos no ledger do resgate (#898)",
+    "files": [
+     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md"
+    ]
+   },
    {
     "sha": "8324c3d",
     "date": "2026-11-25",
@@ -349726,17 +349735,6 @@
     "files": [
      "supabase/migrations/20260816000000_p1_024_policies_orfas.sql"
     ]
-   },
-   {
-    "sha": "90a640d",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "fix: fixa o schema da extensao no search_path do dreno (#866)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "supabase/migrations/20261124120000_dreno_search_path_extensao.sql",
-     "supabase/migrations/20261124120000_dreno_search_path_extensao.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -349746,11 +349744,11 @@
    ],
    [
     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-    8
+    9
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    6
+    5
    ],
    [
     "src/pages/PontoPage.tsx",
