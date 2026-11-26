@@ -140,7 +140,7 @@ CREATE POLICY "pol_admissao_docs_insert_tenant_ou_temp"
       public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))
       OR (
         split_part(name, '/', 1) = 'temp'
-        AND owner = auth.uid()::text
+        AND owner = auth.uid()
       )
     )
   );
@@ -154,7 +154,7 @@ CREATE POLICY "pol_admissao_docs_select_tenant_ou_temp"
       public.user_belongs_to_empresa(auth.uid(), public.storage_path_empresa_id(name))
       OR (
         split_part(name, '/', 1) = 'temp'
-        AND owner = auth.uid()::text
+        AND owner = auth.uid()
       )
     )
   );
