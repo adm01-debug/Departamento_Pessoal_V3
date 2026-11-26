@@ -752,3 +752,50 @@ permanente, ou (se alguém "consertasse" ignorando o erro) falso verde.
 `mv_anomalies_hourly`, que não existem no schema vivo. O erro acontece dentro
 de um job de cron, sem ninguém olhando: falha silenciosa diária. Fora do escopo
 deste bloco — fica registrado para não se perder.
+
+### 16.5 Correção de escopo do gate: `--warn-only` em pull_request
+
+O gate passou a reprovar **toda PR que adiciona migration** — falso negativo
+estrutural, não achado real. O `canonical-migrations.yml` exige
+`refs/heads/main` para `apply` (linhas 53-58), então uma migration em PR não
+pode estar no ledger antes do merge. Confirmado no run 45818640337 (job
+`Integridade do banco canônico (live)`): `1 migration(ões) no repositório sem
+registro no ledger` → exit 1.
+
+Corrigido na #907: o passo do `ci.yml` passa `--warn-only` quando
+`github.event_name == 'pull_request'`; em `push` na `main` e em
+`workflow_dispatch` continua reprovando. Com pendências, o script emite
+`[schema-drift] AVISO — N migration(ões) sem registro no ledger` em vez de
+afirmar "todas com registro no ledger". Contrato coberto por
+`scripts/tests/audit-schema-drift-warn-only.test.mjs` (roda o script de verdade
+com `psql` falso e ledger vazio), ligado ao job `db-integrity-live` via
+`npm run test:drift-gate` — sem isso o `--warn-only` poderia virar "ignora o
+gate" sem ninguém perceber.
+
+## 17. Contratação pública: nenhum documento era enviado
+
+Achado ao auditar o consumidor do OCR (o único ponto do código que tocava
+`documentos-admissao`). Três defeitos encadeados no fluxo público
+`/contratacao`:
+
+1. `src/hooks/useDocumentOCR.ts` fazia upload direto no bucket
+   `documentos-admissao` com o client anônimo. A policy é `TO authenticated` e
+   não alcança `anon` — o Storage negava, o hook lançava e devolvia
+   `valid: false`.
+2. `src/pages/ContratacaoPage.tsx` só chamava o envio real (edge
+   `admissao-publica`) **dentro do `if (result.valid)`**. Com (1), `valid` era
+   sempre falso: o envio real nunca acontecia. Nenhum documento de admissão
+   chegava pelo portal público.
+3. O envio real grava no bucket `documentos`, não em `documentos-admissao` — e
+   `getPublicUrl` num bucket privado não serve URL que o provedor de IA consiga
+   baixar. `documentos-admissao` não tem consumidor.
+
+Corrigido na #906: OCR extraído para `supabase/functions/_shared/ocr.ts`
+(reusado por `process-document-ocr` e por `admissao-publica`, com
+`isAllowedFileUrl` contra SSRF e signed URL de 300s); `useDocumentOCR` passa a
+ter contrato com `uploaded` separado de `valid` e todo envio passa pela edge;
+`ContratacaoPage` usa `result.uploaded` como gate, então documento enviado e não
+validado vira aviso em vez de silêncio. E `20261126120000` remove as duas
+policies que a auditoria de 26/11 tinha criado em `documentos-admissao` por
+leitura errada do consumidor — voltando ao estado que a `20261117193000` fixou
+de propósito (bucket sem policy, deny-by-default).
