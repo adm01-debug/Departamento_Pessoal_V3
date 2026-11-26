@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { AlertCircle, ExternalLink, FileText, Loader2 } from 'lucide-react';
+import { AlertCircle, ExternalLink, FileText, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/database.types';
@@ -69,32 +69,64 @@ export function ArquivosAdmissaoLista({ admissaoId }: ArquivosAdmissaoListaProps
     // abertos: sem isso o cache de 5 minutos esconderia o envio novo.
     staleTime: 0,
     refetchOnMount: 'always',
+    // O `queryClient` global desliga o refetch ao voltar para a aba; aqui ele é
+    // justamente o gatilho mais barato para o RH ver o envio novo — mais um
+    // intervalo curto enquanto os detalhes estão abertos.
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    refetchInterval: 30_000,
   });
 
-  const abrir = useCallback(async (arquivo: Tables<'documentos_admissao'>) => {
-    setErro(null);
-    setLinkBloqueado(null);
-    setAbrindoId(arquivo.id);
-    // A aba precisa nascer no gesto do clique: depois do await o navegador não
-    // considera mais ação do usuário e o pop-up é bloqueado sem erro visível.
-    const janela = window.open('about:blank', '_blank');
-    if (janela) janela.opener = null;
-    try {
-      const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(arquivo.url, 300);
-      if (error || !data?.signedUrl) throw error ?? new Error('URL assinada indisponível');
-      if (janela) {
-        janela.location.replace(data.signedUrl);
-      } else {
-        setLinkBloqueado({ id: arquivo.id, url: data.signedUrl });
-        setErro('O navegador bloqueou a nova aba. Use o link "Abrir arquivo".');
-      }
-    } catch {
-      janela?.close();
-      setErro('Não foi possível abrir o arquivo. Tente novamente.');
-    } finally {
-      setAbrindoId(null);
-    }
+  const assinar = useCallback(async (arquivo: Tables<'documentos_admissao'>) => {
+    const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(arquivo.url, 300);
+    if (error || !data?.signedUrl) throw error ?? new Error('URL assinada indisponível');
+    return data.signedUrl;
   }, []);
+
+  const abrir = useCallback(
+    async (arquivo: Tables<'documentos_admissao'>) => {
+      setErro(null);
+      setLinkBloqueado(null);
+      setAbrindoId(arquivo.id);
+      // A aba precisa nascer no gesto do clique: depois do await o navegador não
+      // considera mais ação do usuário e o pop-up é bloqueado sem erro visível.
+      const janela = window.open('about:blank', '_blank');
+      if (janela) janela.opener = null;
+      try {
+        const signedUrl = await assinar(arquivo);
+        if (janela) {
+          janela.location.replace(signedUrl);
+        } else {
+          setLinkBloqueado({ id: arquivo.id, url: signedUrl });
+          setErro('O navegador bloqueou a nova aba. Use o link "Abrir arquivo".');
+        }
+      } catch {
+        janela?.close();
+        setErro('Não foi possível abrir o arquivo. Tente novamente.');
+      } finally {
+        setAbrindoId(null);
+      }
+    },
+    [assinar]
+  );
+
+  // A URL assinada vale 5 minutos: reabrir o link antigo dá erro do Storage. O
+  // "Novo link" assina outra na mesma linha, sem depender de pop-up liberado.
+  const renovarLink = useCallback(
+    async (arquivo: Tables<'documentos_admissao'>) => {
+      setErro(null);
+      setAbrindoId(arquivo.id);
+      try {
+        const signedUrl = await assinar(arquivo);
+        setLinkBloqueado({ id: arquivo.id, url: signedUrl });
+      } catch {
+        setErro('Não foi possível gerar um novo link. Tente novamente.');
+      } finally {
+        setAbrindoId(null);
+      }
+    },
+    [assinar]
+  );
 
   // Envio novo do mesmo tipo não apaga o anterior: a migration
   // 20261126140000 fecha a versão antiga em `substituido_em` (trigger BEFORE
@@ -162,14 +194,30 @@ export function ArquivosAdmissaoLista({ admissaoId }: ArquivosAdmissaoListaProps
                 </p>
               </div>
               {linkBloqueado?.id === arquivo.id ? (
-                <a
-                  href={linkBloqueado.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="h-7 shrink-0 rounded-lg px-2 text-[11px] font-medium text-primary underline"
-                >
-                  Abrir arquivo
-                </a>
+                <div className="flex shrink-0 items-center gap-1">
+                  <a
+                    href={linkBloqueado.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="h-7 rounded-lg px-2 text-[11px] font-medium leading-7 text-primary underline"
+                  >
+                    Abrir arquivo
+                  </a>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 shrink-0 gap-1 rounded-lg px-2 text-[11px]"
+                    disabled={abrindoId === arquivo.id}
+                    onClick={() => void renovarLink(arquivo)}
+                  >
+                    {abrindoId === arquivo.id ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-3 w-3" />
+                    )}
+                    Novo link
+                  </Button>
+                </div>
               ) : (
                 <Button
                   variant="ghost"

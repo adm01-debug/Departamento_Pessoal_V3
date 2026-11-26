@@ -96,6 +96,25 @@ describe('ArquivosAdmissaoLista', () => {
     open.mockRestore();
   });
 
+  it('renova o link alternativo quando a URL assinada expira', async () => {
+    listar.mockResolvedValue([arquivo]);
+    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
+    createSignedUrl
+      .mockResolvedValueOnce({ data: { signedUrl: 'https://exemplo/antigo' }, error: null })
+      .mockResolvedValueOnce({ data: { signedUrl: 'https://exemplo/novo' }, error: null });
+    render(<ArquivosAdmissaoLista admissaoId="adm-1" />);
+
+    await userEvent.click(await screen.findByRole('button', { name: /Abrir/i }));
+    const link = await screen.findByRole('link', { name: /Abrir arquivo/i });
+    expect(link.getAttribute('href')).toBe('https://exemplo/antigo');
+
+    await userEvent.click(screen.getByRole('button', { name: /Novo link/i }));
+
+    await waitFor(() => expect(link.getAttribute('href')).toBe('https://exemplo/novo'));
+    expect(createSignedUrl).toHaveBeenCalledTimes(2);
+    open.mockRestore();
+  });
+
   it('distingue falha de consulta de lista vazia', async () => {
     listar.mockRejectedValue(new Error('sem permissão'));
     render(<ArquivosAdmissaoLista admissaoId="adm-1" />);

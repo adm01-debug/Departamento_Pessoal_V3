@@ -31,6 +31,14 @@ export const OCR_FALLBACK_ERROR = 'Nao foi possivel processar o documento automa
 export const OCR_CIRCUIT_ERROR = 'Conferencia automatica indisponivel no momento.';
 
 /**
+ * Status do provedor que apontam para o ARQUIVO enviado (imagem corrompida,
+ * grande demais, formato nao suportado) e nao para a saude do servico. Nao
+ * alimentam o breaker: um candidato com foto ruim nao pode derrubar a
+ * conferencia automatica dos demais.
+ */
+const ERRO_DO_ARQUIVO = new Set([400, 413, 415, 422]);
+
+/**
  * Provedor de IA fora do ar: `safeFetchWithRetry` ja limita cada chamada
  * (30 s x 3 tentativas), mas sem breaker CADA candidato pagava esse tempo
  * inteiro enquanto o provedor seguia degradado — o envio fica bloqueado
@@ -173,17 +181,29 @@ export async function runDocumentOcr(fileUrl: string, docType: OcrDocType): Prom
   }
 
   if (!aiResponse.ok) {
-    ocrBreaker.registrarFalha(geracao);
+    // 4xx de requisicao invalida (imagem corrompida, grande demais, formato nao
+    // suportado) e problema DO ARQUIVO, nao do provedor: contar como falha faria
+    // um unico documento ruim abrir o circuito para todos os candidatos.
+    if (!ERRO_DO_ARQUIVO.has(aiResponse.status)) {
+      ocrBreaker.registrarFalha(geracao);
+    }
     return { ok: false, status: 502, error: 'Erro no servico de OCR' };
   }
 
   const aiData = await aiResponse.json();
   const content = aiData.choices?.[0]?.message?.content || '{}';
-  ocrBreaker.registrarSucesso(geracao);
 
+  let resultado: unknown;
   try {
-    return { ok: true, result: JSON.parse(content) };
+    resultado = JSON.parse(content);
   } catch {
+    // HTTP 200 com corpo fora do contrato e falha da conferencia automatica, nao
+    // saude do provedor: sem registrar falha o circuito ficaria fechado enquanto
+    // todo documento voltasse "invalido".
+    ocrBreaker.registrarFalha(geracao);
     return { ok: true, result: { valid: false, confidence: 0, error: 'Resposta invalida do OCR' } };
   }
+
+  ocrBreaker.registrarSucesso(geracao);
+  return { ok: true, result: resultado };
 }

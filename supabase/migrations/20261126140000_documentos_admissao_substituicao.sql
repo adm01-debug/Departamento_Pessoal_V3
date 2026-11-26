@@ -16,6 +16,12 @@
 -- acontece (sem janela em que dois anexos estao vigentes nem em que nenhum
 -- esta). O historico continua no banco, distingivel do vigente.
 --
+-- Concorrencia: em READ COMMITTED o UPDATE de duas transacoes simultaneas nao
+-- enxerga a linha que a outra inseriu, entao as duas versoes novas ficariam
+-- vigentes. Por isso o trigger toma um advisory lock transacional por
+-- admissao ANTES do UPDATE: o segundo envio espera o commit do primeiro e ai
+-- fecha a versao recem-inserida.
+--
 -- Por que trigger e nao mudar a RPC: existem dois caminhos de escrita — a RPC
 -- token-scoped (candidato) e o service_role da edge. Trigger cobre os dois,
 -- inclusive correcao manual pelo painel, sem duplicar a regra.
@@ -45,6 +51,15 @@ SECURITY DEFINER
 SET search_path = public, pg_catalog
 AS $$
 BEGIN
+  -- Envios SIMULTANEOS da mesma admissao (duas abas, duplo clique) nao podem
+  -- terminar com duas versoes vigentes: o UPDATE de um nao enxerga a linha que o
+  -- outro acabou de inserir. O lock transacional por admissao serializa os dois
+  -- INSERTs — o segundo espera o commit do primeiro e entao fecha a versao que
+  -- ele inseriu. O lock e liberado no fim da transacao, sem estado global.
+  PERFORM pg_catalog.pg_advisory_xact_lock(
+    pg_catalog.hashtextextended(NEW.admissao_id::text, 0)
+  );
+
   UPDATE public.documentos_admissao
      SET substituido_em = now()
    WHERE admissao_id = NEW.admissao_id

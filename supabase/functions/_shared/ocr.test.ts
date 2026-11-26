@@ -71,7 +71,7 @@ Deno.test('ocr: a tolerancia RG<->CNH fica restrita ao tipo identidade', async (
 });
 
 Deno.test('ocr: provedor falhando abre o circuito e para de gastar timeout', async () => {
-  const stub = stubarFetch(() => new Response('erro', { status: 400 }));
+  const stub = stubarFetch(() => new Response('erro', { status: 500 }));
   try {
     resetarBreakerOcr();
     for (let i = 0; i < 3; i++) {
@@ -88,6 +88,53 @@ Deno.test('ocr: provedor falhando abre o circuito e para de gastar timeout', asy
       assertEquals(bloqueada.error, OCR_CIRCUIT_ERROR);
     }
     assertEquals(stub.chamadas(), chamadasAntes);
+  } finally {
+    stub.restaurar();
+    resetarBreakerOcr();
+  }
+});
+
+Deno.test('ocr: erro do arquivo nao abre o circuito dos demais candidatos', async () => {
+  const stub = stubarFetch(() => new Response('imagem invalida', { status: 400 }));
+  try {
+    resetarBreakerOcr();
+    for (let i = 0; i < 4; i++) {
+      const run = await runDocumentOcr(ARQUIVO, 'cpf');
+      assertEquals(run.ok, false);
+      if (!run.ok) assertEquals(run.status, 502);
+    }
+    assertEquals(estadoBreakerOcr(), 'CLOSED');
+
+    const chamadasAntes = stub.chamadas();
+    const seguinte = await runDocumentOcr(ARQUIVO, 'cpf');
+    assertEquals(seguinte.ok, false);
+    assert(stub.chamadas() > chamadasAntes, 'o provedor deve ser tentado de novo');
+  } finally {
+    stub.restaurar();
+    resetarBreakerOcr();
+  }
+});
+
+Deno.test('ocr: resposta 200 fora do contrato conta como falha do provedor', async () => {
+  const stub = stubarFetch(
+    () =>
+      new Response(
+        JSON.stringify({ choices: [{ message: { content: 'nao e json' } }] }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      ),
+  );
+  try {
+    resetarBreakerOcr();
+    for (let i = 0; i < 3; i++) {
+      const run = await runDocumentOcr(ARQUIVO, 'cpf');
+      assert(run.ok);
+      if (run.ok) assertEquals((run.result as { error?: string }).error, 'Resposta invalida do OCR');
+    }
+    assertEquals(estadoBreakerOcr(), 'OPEN');
+
+    const bloqueada = await runDocumentOcr(ARQUIVO, 'cpf');
+    assertEquals(bloqueada.ok, false);
+    if (!bloqueada.ok) assertEquals(bloqueada.error, OCR_CIRCUIT_ERROR);
   } finally {
     stub.restaurar();
     resetarBreakerOcr();
