@@ -380,7 +380,7 @@ apagar é irreversível e o ganho seria zero.
 ## 13. Causa raiz do E2E autenticado vermelho na `main` — gatilho comparando uuid com texto (#897)
 
 O `E2E Tests (Playwright)` estava vermelho na `main` desde 23/11/2026, sempre no passo
-*"Garantir fixtures do E2E autenticado"*, e a falha vinha sendo tratada como infraestrutura. Não era.
+_"Garantir fixtures do E2E autenticado"_, e a falha vinha sendo tratada como infraestrutura. Não era.
 
 ### 13.1 Sintoma
 
@@ -432,11 +432,11 @@ desapareceu.
 
 Lote canônico (`.github/workflows/canonical-migrations.yml`, lista fechada), na `main`:
 
-| Etapa  | Run         | Resultado                                                          |
-| ------ | ----------- | ------------------------------------------------------------------ |
-| PR     | #897        | mergeada (`8697240d1`)                                             |
-| validate | 45711887210 | `CANONICAL_MIGRATION_DRY_RUN_OK`, 1 asserção de sidecar, todas ok  |
-| apply  | 45712098258 | `CANONICAL_SIDECARS_OK` + `CANONICAL_SCHEMA_INVARIANTS_OK`         |
+| Etapa    | Run         | Resultado                                                         |
+| -------- | ----------- | ----------------------------------------------------------------- |
+| PR       | #897        | mergeada (`8697240d1`)                                            |
+| validate | 45711887210 | `CANONICAL_MIGRATION_DRY_RUN_OK`, 1 asserção de sidecar, todas ok |
+| apply    | 45712098258 | `CANONICAL_SIDECARS_OK` + `CANONICAL_SCHEMA_INVARIANTS_OK`        |
 
 As outras 20 migrações da lista foram puladas pelo ledger (todas já registradas), então só a correção rodou.
 
@@ -492,3 +492,94 @@ porque o cascade tenta apagar linhas de `audit_log` — proteção deliberada, m
 criada em `folhas_pagamento` pela prova foi apagada (`DELETE` → 200) e o `PATCH` de prova tocou apenas
 `updated_at` de um colaborador real.
 
+## 14. `Supabase Preview` vermelho â€” causa raiz e por que NÃƒO se corrige com patch (26/11/2026)
+
+### 14.1 O que o check reporta
+
+Lido direto do check-run do app `supabase` (`gh api repos/â€¦/commits/<sha>/check-runs`):
+
+```
+ERROR: cannot change name of view column "empresa_id" to "total_ativos" (SQLSTATE 42P16)
+At statement: 0 â€” supabase/migrations/20260317001935_1663bc94-c134-4084-9b08-4b4257a48256.sql
+```
+
+O erro Ã© idÃªntico nos 21 commits consecutivos da `main` (verificado de `2a62b1124` a `256e836b9`): nÃ£o Ã©
+regressÃ£o de nenhuma PR recente, nem da #876.
+
+### 14.2 Causa raiz
+
+O Preview cria um branch a partir do banco canÃ´nico (schema **e** ledger) e aplica apenas as migrations
+**ausentes do ledger**. A primeira delas Ã© `20260317001935_1663bc94-â€¦`, que faz
+`CREATE OR REPLACE VIEW public.vw_dashboard_time` **sem `DROP`** com as colunas
+`total_ativos/em_ferias/afastados/desligados/total_geral`, enquanto o banco jÃ¡ tem a forma entregue por
+`20260515183113_fe3fb304-â€¦` â€” `(empresa_id, total_colaboradores, ativos, afastados)`, confirmada em
+`supabase/baseline/20260831_canonical/canonical_schema.sql:17869`. O Postgres nÃ£o permite renomear coluna
+existente em `CREATE OR REPLACE VIEW` â†’ `42P16`. O check aborta na primeira dessas migrations e por isso
+nÃ£o chega a listar as demais.
+
+### 14.3 O drift Ã© real, medido, e jÃ¡ estava documentado no repositÃ³rio
+
+Medido em 26/11 pelo `canonical-sql-diag.yml` com `allow_pii=true`
+(`SELECT array_to_string(array_agg(version ORDER BY version), ' ') FROM supabase_migrations.schema_migrations`,
+leitura total â€” o caminho sem `allow_pii` roda sob `ci_auditor` e nÃ£o enxerga `supabase_migrations`):
+
+| medida                                                   | valor  |
+| -------------------------------------------------------- | ------ |
+| versÃµes no ledger canÃ´nico                             | 1139   |
+| arquivos `supabase/migrations/*.sql` (sem `.verify.sql`) | 1172   |
+| **migrations sem entrada no ledger**                     | **33** |
+
+O repositÃ³rio jÃ¡ tinha o inventÃ¡rio e o procedimento para isso, e o diagnÃ³stico bate com o registrado:
+
+- `scripts/audit-schema-drift.mjs` â€” o gate que compara repositÃ³rio Ã— ledger existe, mas estÃ¡ **fora do CI
+  desde 24/09/2026** com justificativa no prÃ³prio arquivo: a convenÃ§Ã£o de gravar no ledger nunca foi seguida
+  ("reprova ~40% das migrations existentes â€” inutilizÃ¡vel como gate").
+- `scripts/db/derive-pending-migrations.mjs` â€” deriva exatamente a mesma lista (falha fechado acima de 20
+  pendentes, `DEFAULT_MAX_PENDING`, porque acima disso Ã© reconciliaÃ§Ã£o histÃ³rica, nÃ£o lote novo).
+- `infra/runbooks/RECONCILIACAO_DRIFT_MIGRATIONS.md` â€” "CondiÃ§Ã£o atual": em 31/08/2026 os Gates B, C e E
+  reprovaram e o projeto de staging hospedado nunca foi fornecido; `migration repair` e a ativaÃ§Ã£o do squash
+  seguem **bloqueados** por decisÃ£o registrada.
+- O mesmo fenÃ´meno Ã© a origem do incidente A-036 (lote de RLS de 19â€“31/07/2026 presente no repo e nunca
+  aplicado ao banco vivo).
+
+### 14.4 Por que nÃ£o abrir PR reescrevendo as 33 migrations
+
+Fazer as 33 arquivarem `DROP VIEW IF EXISTS` antes dos `CREATE OR REPLACE` deixaria o Preview verde, mas Ã©
+exatamente o que o runbook proÃ­be:
+
+- regra 3 â€” nada de `db push`/replay enquanto existir diff fÃ­sico nÃ£o explicado (Gate C reprovado);
+- regra 4 â€” nada de `migration repair` para deixar a lista visualmente verde;
+- Gate B â€” "NÃ£o 'corrigir para continuar' na mesma execuÃ§Ã£o: isso destruiria a prova do histÃ³rico real".
+
+O Preview lÃª o ledger do branch, e o ledger canÃ´nico tem 1139 versÃµes. NÃ£o hÃ¡ migration nova pendente por
+trabalho desta sessÃ£o: as 33 sÃ£o histÃ³rico de 03 â†’ 10/2026. ReescrevÃª-las apaga a evidÃªncia que a
+reconciliaÃ§Ã£o usa e continua sem provar qual DDL realmente estÃ¡ materializado no banco.
+
+### 14.5 NÃ£o hÃ¡ exposiÃ§Ã£o de seguranÃ§a â€” verificado no banco vivo
+
+No commit atual da `main` (`256e836b9`), os dois checks que leem o banco de produÃ§Ã£o passaram:
+
+```
+success    Integridade do banco canÃ´nico (live)
+success    RLS live (pÃ³s-merge, nÃ£o bloqueante)
+```
+
+O job `Integridade do banco canÃ´nico (live)` (`.github/workflows/ci.yml:485`) executa os cinco audits contra
+o banco vivo â€” `audit-db-search-path.mjs`, `audit-rls-pii.mjs`, `audit-rls-least-privilege.mjs`,
+`audit-rls-tenant-open.mjs`, `audit-secdef-authz.mjs` (`ci.yml:548-587`). Como os audits passam lendo o
+schema real, os efeitos de seguranÃ§a das 33 migrations ausentes do ledger estÃ£o materializados em produÃ§Ã£o:
+o drift Ã© de **escrituraÃ§Ã£o**, nÃ£o de comportamento. Nenhuma correÃ§Ã£o de RLS/search_path estÃ¡ faltando em
+produÃ§Ã£o por causa dele.
+
+Dos 33 pendentes, os que mais importam por tema (RLS, Storage, `search_path`) sÃ£o
+`20260719150000_storage_bucket_security_hardening`, `20260719191000_empresa_id_not_null_constraints`,
+`20260724000700_fix_rls_recrutamento_onboarding`,
+`20260724000900_fix_rls_atrasos_adicionais_gratificacoes`, `20260724140001_t007_backup_logs_rls`,
+`20260724150000_t008_storage_tenant_path_scope`, `20260816000000_p1_024_policies_orfas` e
+`20260912151000_p1_function_search_path` / `20260912152000_p0_pgcrypto_routine_search_path`.
+
+### 14.6 ConsequÃªncia
+
+`Supabase Preview` continua vermelho **por decisÃ£o de processo, nÃ£o por bug**: sÃ³ fecha com a reconciliaÃ§Ã£o
+completa (Gates Aâ€“E) e um projeto de staging hospedado. NÃ£o Ã© check bloqueante de merge â€” nenhuma PR fica
+presa por ele. O que nÃ£o se deve fazer Ã© tratÃ¡-lo como "uma migration quebrada" e reescrever histÃ³rico.
