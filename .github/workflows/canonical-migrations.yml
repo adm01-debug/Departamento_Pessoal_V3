@@ -291,7 +291,8 @@ jobs:
           for migration in \
             20261126090000_storage_policies_buckets_app.sql \
             20261126100000_grant_ci_auditor_migration_ledger.sql \
-            20261126120000_storage_documentos_admissao_sem_policy.sql
+            20261126120000_storage_documentos_admissao_sem_policy.sql \
+            20261126130000_storage_documentos_admissao_rh_read.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
