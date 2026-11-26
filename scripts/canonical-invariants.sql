@@ -18,11 +18,12 @@ SELECT jsonb_build_object(
     -- (20261126140000). A assercao do workflow e `ledger_count === 1`, entao a
     -- versao aqui precisa ser a do lote corrente — apontar para
     -- 20261123090000 aprovava contando um registro antigo ja aplicado.
-    -- 26/11/2026 (lote 4): aponta para a ULTIMA versao do lote atual
-    -- (20261126150000, retencao de logs). O lote 3 (20261126140000) saiu daqui
-    -- porque foi aplicado: validate run 45865027297 e apply run 45865323191.
+    -- 26/11/2026 (lote 5): aponta para a versao do lote atual
+        -- (20261126163000, indicadores de pessoal). O lote 4 (20261126150000,
+        -- retencao de logs) saiu daqui porque foi aplicado e esta no ledger
+        -- (PR #909 mergeada).
     WHERE version IN (
-      '20261126150000'
+          '20261126163000'
     )
   ),
   'notificacoes_chk_wide', EXISTS (
@@ -467,5 +468,17 @@ jsonb_build_object(
     SELECT 1 FROM supabase_migrations.schema_migrations
     WHERE version = '20261029120000'
       AND statements IS NOT NULL AND cardinality(statements) > 0
+    ),
+    -- 20261126163000: os indicadores de pessoal so podem chegar ao app pelo RPC
+    -- com guarda de tenant (SECURITY DEFINER + search_path fixo). As 4 MVs de
+    -- dashboard nao tem grant para authenticated: sem isso o RPC nao seria a
+    -- unica porta de leitura.
+    'indicadores_rpc_ok', EXISTS (
+      SELECT 1 FROM pg_catalog.pg_proc p
+      JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+      WHERE n.nspname = 'public'
+        AND p.proname = 'get_indicadores_pessoal'
+        AND p.prosecdef
+        AND EXISTS (SELECT 1 FROM unnest(p.proconfig) AS c WHERE c LIKE 'search_path=%')
   )
 );

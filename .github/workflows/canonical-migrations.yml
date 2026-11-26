@@ -288,20 +288,19 @@ jobs:
           # `admissao-publica` no bucket `documentos`. Volta ao estado que a
           # 20261117193000 fixou de proposito: bucket sem policy,
           # deny-by-default.
-          # LOTE ATUAL (26/11/2026, lote 4): retencao de logs. O lote 3 saiu daqui
-          # porque foi APLICADO e esta no ledger: validate run 45865027297 e apply
-          # run 45865323191, ambos success (ledger_count === 1 em 20261126140000).
-          #  - 20261126150000: public.enforce_log_retention() (job cron 35
-          #    `lovable-log-retention`) inseria em metricas_processamento com as
-          #    colunas tipo/valor/metadata, que nunca existiram — a tabela tem
-          #    funcao_nome/status/tempo_execucao_ms. O 42703 abortava a funcao
-          #    inteira e desfazia TAMBEM os DELETEs de retencao que vem antes:
-          #    a retencao de logs nunca foi aplicada e o job falhava todo dia 03:00
-          #    (cron.job_run_details jobid=35, falhas em 23, 24, 25 e 26/11).
-          #    Idempotente (CREATE OR REPLACE); isola a metrica em bloco EXCEPTION
-          #    para que observabilidade nunca mais derrube a purga.
+          # LOTE 5 (26/11/2026): indicadores de pessoal. O lote 4 saiu daqui
+                    # porque foi APLICADO e esta no ledger (PR #909 mergeada).
+                    #  - 20261126163000: public.get_indicadores_pessoal(empresa, dias,
+                    #    meses) expoe as 4 MVs de dashboard (mv_headcount_daily,
+                    #    mv_turnover_rate, mv_ferias_balance, mv_afastamento_summary) que
+                    #    o cron 71 ja refrescava mas nenhum caminho do app lia: as ACLs
+                    #    eram {postgres, service_role, dp_mcp_role}, sem grant para
+                    #    anon/authenticated. MV nao aceita RLS, entao GRANT direto em
+                    #    authenticated vazaria dados entre empresas; a unica porta passa a
+                    #    ser o RPC SECURITY DEFINER com search_path fixo e guarda
+                    #    user_belongs_to_empresa. Idempotente (CREATE OR REPLACE).
           for migration in \
-            20261126150000_fix_enforce_log_retention_metricas_processamento.sql
+                      20261126163000_indicadores_pessoal_rpc.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -573,7 +572,8 @@ jobs:
               r.wa_trigger_gone === true &&
               r.wa_fn_gone === true &&
               r.wa_backlog_drained === true &&
-              r.wa_retire_stmts_recorded === true;
+              r.wa_retire_stmts_recorded === true &&
+                            r.indicadores_rpc_ok === true;
             if (!ok) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCHEMA_INVARIANTS_OK'
