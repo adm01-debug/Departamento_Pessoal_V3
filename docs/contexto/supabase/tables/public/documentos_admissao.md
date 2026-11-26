@@ -28,6 +28,7 @@
 | 10 | `observacoes` | `text` | sim |  |  |  |
 | 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 13 | `substituido_em` | `timestamp with time zone` | sim |  |  | Quando preenchido, este anexo foi substituido por um envio posterior do mesmo tipo e nao e mais a versao vigente. |
 
 
 ## Constraints
@@ -44,6 +45,7 @@
 |---|---|---|---|---|---|---|
 | documentos_admissao_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX documentos_admissao_pkey ON public.documentos_admissao USING btree (id)` |
 | idx_documentos_admissao_admissao_id | btree | admissao_id | não | sim |  | `CREATE INDEX idx_documentos_admissao_admissao_id ON public.documentos_admissao USING btree (admissao_id)` |
+| idx_documentos_admissao_vigentes | btree | admissao_id, tipo | não | sim | `(substituido_em IS NULL)` | `CREATE INDEX idx_documentos_admissao_vigentes ON public.documentos_admissao USING btree (admissao_id, tipo) WHERE (substituido_em IS NULL)` |
 
 
 ## Policies (RLS)
@@ -74,6 +76,7 @@
 | nome | timing | eventos | nível | status | função |
 |---|---|---|---|---|---|
 | tr_update_admissao_checklist | AFTER | UPDATE | ROW | enabled | public.fn_update_admissao_checklist |
+| trg_documentos_admissao_marcar_anteriores | BEFORE | INSERT | ROW | enabled | public.documentos_admissao_marcar_anteriores |
 | update_documentos_admissao_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
 
 

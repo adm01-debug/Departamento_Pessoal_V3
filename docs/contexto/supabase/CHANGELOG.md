@@ -2,6 +2,19 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-26 15:14 UTC
+
+- **colunas** adicionado (1): `public.documentos_admissao.substituido_em`
+- **functions** adicionado (2): `public.documentos_admissao_marcar_anteriores()`, `public.storage_path_admissao_id(p_name text)`
+- **functions** alterado (2): `public.storage_path_empresa_id(p_name text)`, `public.user_belongs_to_empresa(_user_id uuid, _empresa_id uuid)`
+- **indexes** adicionado (1): `public.idx_documentos_admissao_vigentes`
+- **lints** adicionado (1): `policy_auth_fn_not_wrapped:storage.objects.documentos_select_admissao_tenant`
+- **lints** removido (2): `policy_auth_fn_not_wrapped:storage.objects.pol_admissao_docs_insert_tenant_ou_temp`, `policy_auth_fn_not_wrapped:storage.objects.pol_admissao_docs_select_tenant_ou_temp`
+- **migrations** adicionado (3): `20261126120000_storage_documentos_admissao_sem_policy`, `20261126130000_storage_documentos_admissao_rh_read`, `20261126140000_documentos_admissao_substituicao`
+- **policies (RLS)** adicionado (1): `storage.objects.documentos_select_admissao_tenant`
+- **policies (RLS)** removido (2): `storage.objects.pol_admissao_docs_insert_tenant_ou_temp`, `storage.objects.pol_admissao_docs_select_tenant_ou_temp`
+- **triggers** adicionado (1): `public.documentos_admissao.trg_documentos_admissao_marcar_anteriores`
+
 ## 2026-11-26 12:20 UTC
 
 - **functions** alterado (2): `public.storage_path_empresa_id(p_name text)`, `public.user_belongs_to_empresa(_user_id uuid, _empresa_id uuid)`

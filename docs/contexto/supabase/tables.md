@@ -109,7 +109,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.despesas_aprovacoes_log](tables/public/despesas_aprovacoes_log.md) | table | sim | 2 | 9 | não |  |
 | [public.documento_templates](tables/public/documento_templates.md) | table | sim | 2 | 11 | não |  |
 | [public.documentos](tables/public/documentos.md) | table | sim | 2 | 16 | não |  |
-| [public.documentos_admissao](tables/public/documentos_admissao.md) | table | sim | 2 | 12 | não |  |
+| [public.documentos_admissao](tables/public/documentos_admissao.md) | table | sim | 2 | 13 | não |  |
 | [public.documentos_afastamento](tables/public/documentos_afastamento.md) | table | sim | 2 | 7 | não |  |
 | [public.documentos_assinatura](tables/public/documentos_assinatura.md) | table | sim | 3 | 16 | não |  |
 | [public.documentos_colaborador](tables/public/documentos_colaborador.md) | table | sim | 2 | 12 | não |  |

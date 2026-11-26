@@ -18804,6 +18804,19 @@
         "type": "timestamp with time zone"
       },
       {
+        "comment": "Quando preenchido, este anexo foi substituido por um envio posterior do mesmo tipo e nao e mais a versao vigente.",
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "substituido_em",
+        "nullable": true,
+        "position": 13,
+        "schema": "public",
+        "table": "documentos_admissao",
+        "type": "timestamp with time zone"
+      },
+      {
         "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
@@ -95379,6 +95392,47 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261126140000_documentos_admissao_substituicao.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.documentos_admissao.trg_documentos_admissao_marcar_anteriores"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public, pg_catalog"
+        ],
+        "definition": null,
+        "definition_sha": "2b7e66b0d270142e",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "documentos_admissao_marcar_anteriores",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
               "file": "supabase/migrations/20261013152000_onda4b_vinculo_documentos_lgpd_crypto.sql",
               "hits": 1
             }
@@ -108272,6 +108326,45 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.verify.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "Extrai o admissao_id de um caminho de storage no formato admissao_<uuid>/... e devolve NULL (negando, sem erro) em qualquer outro formato.",
+        "config": [
+          "search_path=public, pg_catalog"
+        ],
+        "definition": null,
+        "definition_sha": "b8298bbee06f59d4",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "sql",
+        "leakproof": false,
+        "name": "storage_path_admissao_id",
+        "owner": "postgres",
+        "returns": "uuid",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "immutable"
+      },
+      {
+        "args": "p_name text",
+        "callers": {
+          "code": [
+            {
               "file": "supabase/migrations/20260830000001_plano100_e028_storage_buckets_privados.sql",
               "hits": 8
             },
@@ -108290,9 +108383,13 @@
             {
               "file": "supabase/migrations/20261126090000_storage_policies_buckets_app.sql",
               "hits": 16
+            },
+            {
+              "file": "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 5,
+          "code_total_files": 6,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -110052,7 +110149,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 35,
+          "code_total_files": 36,
           "cron": [],
           "db": [
             "public.contrato_gerar_token_assinatura",
@@ -127847,6 +127944,21 @@
       },
       {
         "columns": [
+          "admissao_id",
+          "tipo"
+        ],
+        "definition": "CREATE INDEX idx_documentos_admissao_vigentes ON public.documentos_admissao USING btree (admissao_id, tipo) WHERE (substituido_em IS NULL)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_documentos_admissao_vigentes",
+        "predicate": "(substituido_em IS NULL)",
+        "schema": "public",
+        "table": "documentos_admissao"
+      },
+      {
+        "columns": [
           "id"
         ],
         "definition": "CREATE UNIQUE INDEX documentos_afastamento_pkey ON public.documentos_afastamento USING btree (id)",
@@ -144810,6 +144922,12 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "storage.objects.documentos_select_admissao_tenant",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "storage.objects.documentos_select_authenticated",
         "severity": "BAIXA"
       },
@@ -144817,18 +144935,6 @@
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "storage.objects.documentos_update_authenticated",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "storage.objects.pol_admissao_docs_insert_tenant_ou_temp",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "storage.objects.pol_admissao_docs_select_tenant_ou_temp",
         "severity": "BAIXA"
       },
       {
@@ -150942,6 +151048,24 @@
         "statements": 1,
         "statements_sha": "0c508ba858562c45",
         "version": "20261126100000"
+      },
+      {
+        "name": "storage_documentos_admissao_sem_policy",
+        "statements": 1,
+        "statements_sha": "ff7dff19d7413739",
+        "version": "20261126120000"
+      },
+      {
+        "name": "storage_documentos_admissao_rh_read",
+        "statements": 1,
+        "statements_sha": "1d706188fe0fb8af",
+        "version": "20261126130000"
+      },
+      {
+        "name": "documentos_admissao_substituicao",
+        "statements": 1,
+        "statements_sha": "fd4f23a73b85cd4a",
+        "version": "20261126140000"
       }
     ],
     "policies": [
@@ -158867,6 +158991,18 @@
       },
       {
         "cmd": "SELECT",
+        "name": "documentos_select_admissao_tenant",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "storage",
+        "table": "objects",
+        "using": "((bucket_id = 'documentos'::text) AND (EXISTS ( SELECT 1\n   FROM admissoes a\n  WHERE ((a.id = storage_path_admissao_id(objects.name)) AND user_belongs_to_empresa(auth.uid(), a.empresa_id)))))",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
         "name": "documentos_select_authenticated",
         "permissive": "PERMISSIVE",
         "roles": [
@@ -158888,30 +159024,6 @@
         "table": "objects",
         "using": "((bucket_id = 'documentos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))",
         "with_check": "((bucket_id = 'documentos'::text) AND user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)))"
-      },
-      {
-        "cmd": "INSERT",
-        "name": "pol_admissao_docs_insert_tenant_ou_temp",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "authenticated"
-        ],
-        "schema": "storage",
-        "table": "objects",
-        "using": null,
-        "with_check": "((bucket_id = 'documentos-admissao'::text) AND (user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)) OR ((split_part(name, '/'::text, 1) = 'temp'::text) AND (owner = auth.uid()))))"
-      },
-      {
-        "cmd": "SELECT",
-        "name": "pol_admissao_docs_select_tenant_ou_temp",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "authenticated"
-        ],
-        "schema": "storage",
-        "table": "objects",
-        "using": "((bucket_id = 'documentos-admissao'::text) AND (user_belongs_to_empresa(auth.uid(), storage_path_empresa_id(name)) OR ((split_part(name, '/'::text, 1) = 'temp'::text) AND (owner = auth.uid()))))",
-        "with_check": null
       },
       {
         "cmd": "DELETE",
@@ -167652,6 +167764,17 @@
         "status": "enabled",
         "table": "documentos_admissao",
         "timing": "AFTER"
+      },
+      {
+        "definition": "CREATE TRIGGER trg_documentos_admissao_marcar_anteriores BEFORE INSERT ON documentos_admissao FOR EACH ROW EXECUTE FUNCTION documentos_admissao_marcar_anteriores()",
+        "events": "INSERT",
+        "function": "public.documentos_admissao_marcar_anteriores",
+        "level": "ROW",
+        "name": "trg_documentos_admissao_marcar_anteriores",
+        "schema": "public",
+        "status": "enabled",
+        "table": "documentos_admissao",
+        "timing": "BEFORE"
       },
       {
         "definition": "CREATE TRIGGER update_documentos_admissao_updated_at BEFORE UPDATE ON documentos_admissao FOR EACH ROW EXECUTE FUNCTION update_updated_at_column()",

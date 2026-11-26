@@ -1145,3 +1145,6 @@ SQL em `migrations/<versao>_<nome>.sql`. Mudanças feitas pelo Dashboard/SQL Edi
 | 20261125200000 | [fix_prevent_empty_empresa_id_uuid_cast](migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql) | 1 |
 | 20261126090000 | [storage_policies_buckets_app](migrations/20261126090000_storage_policies_buckets_app.sql) | 1 |
 | 20261126100000 | [grant_ci_auditor_migration_ledger](migrations/20261126100000_grant_ci_auditor_migration_ledger.sql) | 1 |
+| 20261126120000 | [storage_documentos_admissao_sem_policy](migrations/20261126120000_storage_documentos_admissao_sem_policy.sql) | 1 |
+| 20261126130000 | [storage_documentos_admissao_rh_read](migrations/20261126130000_storage_documentos_admissao_rh_read.sql) | 1 |
+| 20261126140000 | [documentos_admissao_substituicao](migrations/20261126140000_documentos_admissao_substituicao.sql) | 1 |

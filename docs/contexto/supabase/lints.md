@@ -524,10 +524,9 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | BAIXA | policy_auth_fn_not_wrapped | storage.objects.docs_colab_insert_authenticated | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | storage.objects.docs_colab_select_authenticated | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | storage.objects.documentos_insert_authenticated | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
+| BAIXA | policy_auth_fn_not_wrapped | storage.objects.documentos_select_admissao_tenant | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | storage.objects.documentos_select_authenticated | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | storage.objects.documentos_update_authenticated | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | storage.objects.pol_admissao_docs_insert_tenant_ou_temp | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | storage.objects.pol_admissao_docs_select_tenant_ou_temp | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | storage.objects.pol_avatars_delete_owner | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | storage.objects.pol_avatars_insert_owner | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | storage.objects.pol_avatars_select_owner | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |

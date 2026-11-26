@@ -415,6 +415,7 @@ Uso e tamanho em `stats.md`.
 | public.documentos | idx_documentos_colaborador_id | btree | colaborador_id | não | sim |  |
 | public.documentos_admissao | documentos_admissao_pkey | btree | id | sim | sim |  |
 | public.documentos_admissao | idx_documentos_admissao_admissao_id | btree | admissao_id | não | sim |  |
+| public.documentos_admissao | idx_documentos_admissao_vigentes | btree | admissao_id, tipo | não | sim | `(substituido_em IS NULL)` |
 | public.documentos_afastamento | documentos_afastamento_pkey | btree | id | sim | sim |  |
 | public.documentos_afastamento | idx_documentos_afastamento_afastamento_id | btree | afastamento_id | não | sim |  |
 | public.documentos_assinatura | documentos_assinatura_pkey | btree | id | sim | sim |  |
