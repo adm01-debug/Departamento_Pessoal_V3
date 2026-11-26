@@ -213,14 +213,16 @@
   {
    "arquivo": "scripts/audit-schema-drift.mjs",
    "descricao": "* Gate de regressão: migration presente no repositório sem registro no ledger",
-   "linhas": 159,
+   "linhas": 169,
    "env": [
     "DATABASE_URL",
     "PGHOST",
     "SUPABASE_DB_URL"
    ],
    "npm_scripts": [],
-   "workflows": [],
+   "workflows": [
+    "ci.yml"
+   ],
    "orfao": false
   },
   {

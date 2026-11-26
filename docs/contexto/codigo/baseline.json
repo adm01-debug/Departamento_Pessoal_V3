@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5519e665981a71082496fb2819183d9bb040177b",
+  "commit": "c2e89e1abc24aaf8a2dd90b8f9f910a4a014ebc3",
   "branch": "main",
-  "data_commit": "2026-11-26T08:33:55-03:00",
+  "data_commit": "2026-11-26T08:57:12-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c2e89e1",
+    "data": "2026-11-26",
+    "assunto": "infra: liga o gate de drift de migrations no CI com corte de data (#904)"
+   },
    {
     "sha": "5519e66",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "645def6",
     "data": "2026-11-25",
     "assunto": "feat: resgata o painel de geofencing do ponto com mapa real (#883)"
-   },
-   {
-    "sha": "5f2fa81",
-    "data": "2026-11-25",
-    "assunto": "docs: registra o resgate da tela de Turnos e o lote canonico aplicado (#882)"
    }
   ],
-  "arquivos_mudados_7d": 779,
+  "arquivos_mudados_7d": 776,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -181,7 +181,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 40
+    "mudancas": 39
    },
    {
     "pasta": "src/components/dashboard",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 40
+    "mudancas": 39
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 21
+    "mudancas": 20
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -286,15 +286,15 @@
     "mudancas": 6
    },
    {
+    "arquivo": ".github/workflows/ci.yml",
+    "mudancas": 5
+   },
+   {
     "arquivo": "analise-prs/funcionalidades.csv",
     "mudancas": 5
    },
    {
     "arquivo": "docs/auditoria/RESGATE_MURI_PENDENTE_2026-11-19.md",
-    "mudancas": 5
-   },
-   {
-    "arquivo": "docs/pendencias/_ordem.md",
     "mudancas": 5
    }
   ],
@@ -316,7 +316,7 @@
  "contagens": {
   "arquivos_total": 4237,
   "arquivos_codigo": 2312,
-  "linhas_codigo": 468448,
+  "linhas_codigo": 468458,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -448,7 +448,7 @@
   },
   "scripts/audit-schema-drift.mjs": {
    "arquivos": 1,
-   "linhas": 159
+   "linhas": 169
   },
   "scripts/audit-secdef-authz.mjs": {
    "arquivos": 1,

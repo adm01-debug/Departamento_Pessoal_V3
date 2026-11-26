@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `5519e665981a71082496fb2819183d9bb040177b` (2026-11-26T08:33:55-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c2e89e1abc24aaf8a2dd90b8f9f910a4a014ebc3` (2026-11-26T08:57:12-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 4237 |
 | arquivos_codigo | 2312 |
-| linhas_codigo | 468448 |
+| linhas_codigo | 468458 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -404,14 +404,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 29931 nós · 68208 arestas · 2862 comunidades · grafo do commit `5519e665`
+- 29931 nós · 68208 arestas · 2862 comunidades · grafo do commit `c2e89e1a`
 - comunidades maiores: useEmpresas (495), 20260831_corrected_public.sql (485), canonical_schema.sql (481), cn (454), lucide-react (436), react (409), @tanstack/react-query (379), vitest (300), App.tsx (266), ref_node_fs (237), rateLimit.ts (184), TurnosConteudo.tsx (174)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), formatDateLocalISO() (src/utils/dateLocal.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (40)
-- scripts/canonical-invariants.sql (21)
+- .github/workflows/canonical-migrations.yml (39)
+- scripts/canonical-invariants.sql (20)
 - inventario/estado/rotas.json (17)
 - docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
 - package.json (11)
@@ -663,6 +663,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-26 `c2e89e1` infra: liga o gate de drift de migrations no CI com corte de data (#904)
 - 2026-11-26 `5519e66` infra: da ao ci_auditor leitura do ledger de migrations (#903)
 - 2026-11-26 `cd4ba1a` fix: compara storage.objects.owner (uuid) com auth.uid() sem cast para text (#902)
 - 2026-11-26 `1c25596` infra: cria as policies de Storage que faltam em 8 buckets usados pelo app (#901)
@@ -677,7 +678,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `c87122f` docs(auditoria): fecha o mapa do port do Muri com a escala do dia (#892) e a fila ja resgatada (#893)
 - 2026-11-25 `58eab8d` feat: edita a escala do dia direto do card Hoje (port do Muri) (#892)
 - 2026-11-25 `c697595` feat: resgata recorte de período/vaga e exportação CSV da Analytics (port do Muri) (#891)
-- 2026-11-25 `43dd2de` fix(db): fecha record_backup_run para anon e tira backup_logs do claim de JWT (#890)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

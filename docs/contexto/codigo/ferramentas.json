@@ -413,6 +413,7 @@
     "scripts/audit-rls-least-privilege.mjs",
     "scripts/audit-rls-pii.mjs",
     "scripts/audit-rls-tenant-open.mjs",
+    "scripts/audit-schema-drift.mjs",
     "scripts/audit-secdef-authz.mjs",
     "scripts/audit-security-config.mjs",
     "scripts/ci/check-claude-md-integrity.mjs",
