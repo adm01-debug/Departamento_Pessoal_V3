@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c2e89e1abc24aaf8a2dd90b8f9f910a4a014ebc3",
+  "commit": "7f047bcddda44a186947784a90c89e7a6a707869",
   "branch": "main",
-  "data_commit": "2026-11-26T08:57:12-03:00",
+  "data_commit": "2026-11-26T09:59:23-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "7f047bc",
+    "data": "2026-11-26",
+    "assunto": "fix: gate de drift nao reprova PR que adiciona migration (#907)"
+   },
    {
     "sha": "c2e89e1",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "61145b4",
     "data": "2026-11-25",
     "assunto": "feat: resgata a tela de solicitacoes de horas extras do port do Muri (#884)"
-   },
-   {
-    "sha": "645def6",
-    "data": "2026-11-25",
-    "assunto": "feat: resgata o painel de geofencing do ponto com mapa real (#883)"
    }
   ],
-  "arquivos_mudados_7d": 776,
+  "arquivos_mudados_7d": 771,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 11
+    "mudancas": 12
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -239,7 +239,7 @@
    },
    {
     "arquivo": "scripts/automation.config.json",
-    "mudancas": 8
+    "mudancas": 9
    },
    {
     "arquivo": "src/index.css",
@@ -266,6 +266,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": ".github/workflows/ci.yml",
+    "mudancas": 6
+   },
+   {
     "arquivo": "docs/agentes/banco.md",
     "mudancas": 6
    },
@@ -284,10 +288,6 @@
    {
     "arquivo": "supabase/functions/ingest-ponto-rep/index.ts",
     "mudancas": 6
-   },
-   {
-    "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 5
    },
    {
     "arquivo": "analise-prs/funcionalidades.csv",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4237,
-  "arquivos_codigo": 2312,
-  "linhas_codigo": 468458,
+  "arquivos_total": 4238,
+  "arquivos_codigo": 2313,
+  "linhas_codigo": 468564,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,7 +328,7 @@
   "tabelas": 438,
   "migrations": 1271,
   "cron_jobs": 43,
-  "testes": 871,
+  "testes": 872,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 347
@@ -448,7 +448,7 @@
   },
   "scripts/audit-schema-drift.mjs": {
    "arquivos": 1,
-   "linhas": 169
+   "linhas": 183
   },
   "scripts/audit-secdef-authz.mjs": {
    "arquivos": 1,
@@ -599,8 +599,8 @@
    "linhas": 2867
   },
   "scripts/tests": {
-   "arquivos": 22,
-   "linhas": 2405
+   "arquivos": 23,
+   "linhas": 2497
   },
   "scripts/training-images-homolog": {
    "arquivos": 1,

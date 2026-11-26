@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c2e89e1abc24aaf8a2dd90b8f9f910a4a014ebc3` (2026-11-26T08:57:12-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7f047bcddda44a186947784a90c89e7a6a707869` (2026-11-26T09:59:23-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2169), SQL (1345), Markdown (347), JavaScript (136), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2169), SQL (1345), Markdown (347), JavaScript (137), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 4237 |
-| arquivos_codigo | 2312 |
-| linhas_codigo | 468458 |
+| arquivos_total | 4238 |
+| arquivos_codigo | 2313 |
+| linhas_codigo | 468564 |
 | rotas | 116 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 438 |
 | migrations | 1271 |
 | cron_jobs | 43 |
-| testes | 871 |
+| testes | 872 |
 | workflows | 21 |
 | scripts | 138 |
 | docs_md | 347 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (595), src/pages (110), src/contexts (3)
 - hooks: src/hooks (105), src/components (12), src/contexts (4)
 - servicos_logica: src/services (100), src/utils (39), src/schemas (25)
-- testes: co-localizado (__tests__) (734), co-localizado (*.test) (78), e2e/ (33)
+- testes: co-localizado (__tests__) (734), co-localizado (*.test) (79), e2e/ (33)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
@@ -404,8 +404,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 29931 nós · 68208 arestas · 2862 comunidades · grafo do commit `c2e89e1a`
-- comunidades maiores: useEmpresas (495), 20260831_corrected_public.sql (485), canonical_schema.sql (481), cn (454), lucide-react (436), react (409), @tanstack/react-query (379), vitest (300), App.tsx (266), ref_node_fs (237), rateLimit.ts (184), TurnosConteudo.tsx (174)
+- 29937 nós · 68219 arestas · 2853 comunidades · grafo do commit `7f047bcd`
+- comunidades maiores: cn (607), 20260831_corrected_public.sql (485), button.tsx (484), canonical_schema.sql (481), vitest (439), lucide-react (433), @tanstack/react-query (355), useEmpresas (306), validate.ts (276), deepChain (259), client.ts (218), validateTablePayload (195)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), formatDateLocalISO() (src/utils/dateLocal.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -414,13 +414,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - scripts/canonical-invariants.sql (20)
 - inventario/estado/rotas.json (17)
 - docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
-- package.json (11)
+- package.json (12)
 - src/integrations/supabase/types.ts (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
 - docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md (10)
 - package-lock.json (10)
-- scripts/automation.config.json (8)
+- scripts/automation.config.json (9)
 - src/index.css (8)
 - src/schemas/tableColumns.ts (8)
 - docs/auditoria/sql-preservado/README.md (7)
@@ -490,7 +490,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `typecheck:e2e`: `tsc --noEmit -p tsconfig.e2e.json`
 - `audit:edge-syntax`: `node scripts/audit-edge-syntax.mjs`
 - `typecheck:edge`: `bash scripts/typecheck-edge.sh`
-- `ci:verify`: `npm run audit:plan50 && npm run audit:canonical-project && npm run audit:bridge-contract && npm run audit:edge-audit-log && npm run audit:edge-syntax && npm run typecheck:edge && npm run test:rebaseline && npm run typecheck && npm run typecheck:tests && npm run typecheck:e2e && npm run lint:ci && npm run audit:ratchet-any && npm run audit:types-drift && npm run format:check:changed`
+- `ci:verify`: `npm run audit:plan50 && npm run audit:canonical-project && npm run audit:bridge-contract && npm run audit:edge-audit-log && npm run audit:edge-syntax && npm run typecheck:edge && npm run test:rebaseline && npm run test:drift-gate && npm run typecheck && npm run typecheck:tests && npm run typecheck:e2e && npm run lint:ci && npm run audit:ratchet-any && npm run audit:types-drift && npm run format:check:changed`
 - `test`: `vitest`
 - `graph:update`: `graphify update .`
 - `graph:rebuild`: `graphify update . --force`
@@ -506,6 +506,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `test:migrations:p0`: `bash scripts/tests/migrations-p0-hash-search-path.sh`
 - `test:migrations:p0:auth`: `bash scripts/tests/migrations-p0-auth-lockout.sh`
 - `test:rebaseline`: `node scripts/tests/rebaseline-artifact.test.mjs`
+- `test:drift-gate`: `node --test scripts/tests/audit-schema-drift-warn-only.test.mjs`
 - `test:db-audit-contract`: `bash scripts/tests/db-audit-fail-closed.sh`
 - `test:canonical-db-url`: `node scripts/tests/validate-canonical-db-url.test.mjs`
 - `test:migrations:pcs`: `bash scripts/tests/migrations-p1-pcs-contract.sh`
@@ -663,6 +664,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-26 `7f047bc` fix: gate de drift nao reprova PR que adiciona migration (#907)
 - 2026-11-26 `c2e89e1` infra: liga o gate de drift de migrations no CI com corte de data (#904)
 - 2026-11-26 `5519e66` infra: da ao ci_auditor leitura do ledger de migrations (#903)
 - 2026-11-26 `cd4ba1a` fix: compara storage.objects.owner (uuid) com auth.uid() sem cast para text (#902)
@@ -677,7 +679,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-25 `7a0aee8` feat: resgata a ordem aprovada da coluna de Feedbacks e os ajustes de login do port do Muri (#894)
 - 2026-11-25 `c87122f` docs(auditoria): fecha o mapa do port do Muri com a escala do dia (#892) e a fila ja resgatada (#893)
 - 2026-11-25 `58eab8d` feat: edita a escala do dia direto do card Hoje (port do Muri) (#892)
-- 2026-11-25 `c697595` feat: resgata recorte de período/vaga e exportação CSV da Analytics (port do Muri) (#891)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

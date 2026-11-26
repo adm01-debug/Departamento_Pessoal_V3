@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 871,
+ "total": 872,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 826
+  "unit": 827
  },
  "onde_ficam": [
   {
@@ -19,7 +19,7 @@
   },
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 78
+   "arquivos": 79
   },
   {
    "padrao": "e2e/",
@@ -436,6 +436,13 @@
    "linhas": 47,
    "testa": [],
    "casos": 0
+  },
+  {
+   "arquivo": "scripts/tests/audit-schema-drift-warn-only.test.mjs",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [],
+   "casos": 4
   },
   {
    "arquivo": "scripts/tests/contexto-ai-context.test.mjs",
