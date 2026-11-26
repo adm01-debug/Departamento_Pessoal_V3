@@ -86,7 +86,7 @@ export function useDocumentOCR() {
         valid: ocr?.valid ?? false,
         confidence: ocr?.confidence ?? 0,
         extractedData: ocr?.extractedData,
-        error: ocr?.valid ? undefined : ocr?.error ?? 'Não foi possível validar o documento automaticamente.',
+        error: ocr?.valid ? undefined : (ocr?.error ?? 'Não foi possível validar o documento automaticamente.'),
       };
     } catch (err: unknown) {
       loggerService.error('OCR Error', { docType }, err instanceof Error ? err : undefined);

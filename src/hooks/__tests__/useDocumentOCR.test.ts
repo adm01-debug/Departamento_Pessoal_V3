@@ -31,7 +31,11 @@ describe('useDocumentOCR', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockInvoke.mockResolvedValue({
-      data: { ok: true, path: 'admissao_1/rg_1.pdf', ocr: { valid: true, confidence: 0.95, extractedData: { nome: 'Alice' } } },
+      data: {
+        ok: true,
+        path: 'admissao_1/rg_1.pdf',
+        ocr: { valid: true, confidence: 0.95, extractedData: { nome: 'Alice' } },
+      },
       error: null,
     });
   });
@@ -78,7 +82,10 @@ describe('useDocumentOCR', () => {
       await result.current.processDocument(makeImage('rg.png'), 'rg', 'tok-12345678901234');
     });
 
-    expect(mockInvoke).toHaveBeenCalledWith('admissao-publica', expect.objectContaining({ body: expect.any(FormData) }));
+    expect(mockInvoke).toHaveBeenCalledWith(
+      'admissao-publica',
+      expect.objectContaining({ body: expect.any(FormData) })
+    );
     const form = lastFormData();
     expect(form.get('token')).toBe('tok-12345678901234');
     expect(form.get('tipo')).toBe('rg');
@@ -139,7 +146,11 @@ describe('useDocumentOCR', () => {
 
   it('mantém uploaded=true quando o OCR não valida o documento', async () => {
     mockInvoke.mockResolvedValueOnce({
-      data: { ok: true, path: 'admissao_1/rg_1.pdf', ocr: { valid: false, confidence: 0, error: 'Documento ilegível' } },
+      data: {
+        ok: true,
+        path: 'admissao_1/rg_1.pdf',
+        ocr: { valid: false, confidence: 0, error: 'Documento ilegível' },
+      },
       error: null,
     });
     const { result } = renderHook(() => useDocumentOCR());

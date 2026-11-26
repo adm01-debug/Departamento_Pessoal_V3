@@ -135,9 +135,7 @@ describe('ArquivosAdmissaoLista', () => {
     render(<ArquivosAdmissaoLista admissaoId="adm-1" />);
 
     await screen.findByText('substituído');
-    const nomes = screen
-      .getAllByText(/cpf-(antigo|novo)\.pdf/)
-      .map((n) => n.textContent?.split(' · ')[0]);
+    const nomes = screen.getAllByText(/cpf-(antigo|novo)\.pdf/).map((n) => n.textContent?.split(' · ')[0]);
     expect(nomes).toEqual(['cpf-novo.pdf', 'cpf-antigo.pdf']);
   });
 });

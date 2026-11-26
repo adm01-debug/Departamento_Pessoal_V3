@@ -56,7 +56,12 @@ export function ArquivosAdmissaoLista({ admissaoId }: ArquivosAdmissaoListaProps
   const [erro, setErro] = useState<string | null>(null);
   const [linkBloqueado, setLinkBloqueado] = useState<{ id: string; url: string } | null>(null);
 
-  const { data: arquivos = [], isLoading, isError, refetch } = useQuery({
+  const {
+    data: arquivos = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ['documentos-admissao', admissaoId],
     queryFn: () => documentosAdmissaoService.listar(admissaoId),
     enabled: Boolean(admissaoId),
@@ -129,9 +134,7 @@ export function ArquivosAdmissaoLista({ admissaoId }: ArquivosAdmissaoListaProps
 
   if (arquivos.length === 0) {
     return (
-      <p className="px-2 py-1 text-xs italic text-muted-foreground">
-        Nenhum arquivo enviado pelo candidato ainda.
-      </p>
+      <p className="px-2 py-1 text-xs italic text-muted-foreground">Nenhum arquivo enviado pelo candidato ainda.</p>
     );
   }
 
@@ -142,10 +145,7 @@ export function ArquivosAdmissaoLista({ admissaoId }: ArquivosAdmissaoListaProps
           const tamanho = formatarTamanho(arquivo.tamanho_bytes);
           const substituido = Boolean(arquivo.substituido_em);
           return (
-            <li
-              key={arquivo.id}
-              className={cn('flex items-center gap-2 px-2 py-1', substituido && 'opacity-60')}
-            >
+            <li key={arquivo.id} className={cn('flex items-center gap-2 px-2 py-1', substituido && 'opacity-60')}>
               <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-xs text-foreground">

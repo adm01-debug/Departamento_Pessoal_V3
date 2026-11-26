@@ -211,9 +211,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
         toast.success(`${docType.toUpperCase()} enviado com sucesso!`);
       } else {
         // O documento foi recebido; só a validação automática é que falhou.
-        toast.warning(
-          `Documento enviado, mas não foi validado automaticamente: ${result.error ?? ''}`.trim()
-        );
+        toast.warning(`Documento enviado, mas não foi validado automaticamente: ${result.error ?? ''}`.trim());
       }
 
       if (result.extractedData) {
