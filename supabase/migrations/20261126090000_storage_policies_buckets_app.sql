@@ -47,6 +47,43 @@
 -- Nenhuma policy de outro bucket e tocada.
 -- =============================================================================
 
+-- ─── Guarda fail-closed ─────────────────────────────────────────────────────
+-- Os 20 DROP POLICY IF EXISTS abaixo sao silenciosos por natureza: se o bucket
+-- ou o contrato de storage.objects mudar, eles passam sem reclamar e as
+-- policies novas nascem apontando para um alvo que nao existe. A guarda
+-- confere alvo e contrato ANTES de tocar em qualquer coisa.
+DO $$
+DECLARE buckets_ausentes text; colunas_faltando text;
+BEGIN
+  SELECT string_agg(b.id, ', ') INTO buckets_ausentes
+  FROM (VALUES ('avatars'), ('documentos-admissao'), ('ferias-avisos'),
+               ('ferias-coletivas-comunicados'), ('medidas-contestacoes'),
+               ('medidas-disciplinares'), ('ponto-biometria'),
+               ('contratos-trabalho')) AS b(id)
+  WHERE NOT EXISTS (SELECT 1 FROM storage.buckets bk WHERE bk.id = b.id);
+  IF buckets_ausentes IS NOT NULL THEN
+    RAISE EXCEPTION 'buckets ausentes no canonico: %', buckets_ausentes;
+  END IF;
+
+  SELECT string_agg(c.nome, ', ') INTO colunas_faltando
+  FROM (VALUES ('bucket_id'), ('name'), ('owner')) AS c(nome)
+  WHERE NOT EXISTS (
+    SELECT 1 FROM information_schema.columns col
+    WHERE col.table_schema = 'storage' AND col.table_name = 'objects'
+      AND col.column_name = c.nome
+  );
+  IF colunas_faltando IS NOT NULL THEN
+    RAISE EXCEPTION 'storage.objects sem as colunas usadas nas policies: %', colunas_faltando;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_policies p
+    WHERE p.schemaname = 'storage' AND p.tablename = 'objects'
+  ) THEN
+    RAISE EXCEPTION 'storage.objects ilegivel em pg_policies — contrato de RLS mudou';
+  END IF;
+END $$;
+
 -- A 20260719150000 (nunca aplicada no canonico) declara um INSERT to public em
 -- documentos-admissao, ou seja, upload sem sessao. Se ela entrar num replay
 -- futuro depois desta, o furo voltaria — os drops abaixo garantem que nao.
