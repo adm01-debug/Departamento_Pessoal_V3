@@ -288,12 +288,20 @@ jobs:
           # `admissao-publica` no bucket `documentos`. Volta ao estado que a
           # 20261117193000 fixou de proposito: bucket sem policy,
           # deny-by-default.
+          # LOTE ATUAL (26/11/2026, lote 4): retencao de logs. O lote 3 saiu daqui
+          # porque foi APLICADO e esta no ledger: validate run 45865027297 e apply
+          # run 45865323191, ambos success (ledger_count === 1 em 20261126140000).
+          #  - 20261126150000: public.enforce_log_retention() (job cron 35
+          #    `lovable-log-retention`) inseria em metricas_processamento com as
+          #    colunas tipo/valor/metadata, que nunca existiram — a tabela tem
+          #    funcao_nome/status/tempo_execucao_ms. O 42703 abortava a funcao
+          #    inteira e desfazia TAMBEM os DELETEs de retencao que vem antes:
+          #    a retencao de logs nunca foi aplicada e o job falhava todo dia 03:00
+          #    (cron.job_run_details jobid=35, falhas em 23, 24, 25 e 26/11).
+          #    Idempotente (CREATE OR REPLACE); isola a metrica em bloco EXCEPTION
+          #    para que observabilidade nunca mais derrube a purga.
           for migration in \
-            20261126090000_storage_policies_buckets_app.sql \
-            20261126100000_grant_ci_auditor_migration_ledger.sql \
-            20261126120000_storage_documentos_admissao_sem_policy.sql \
-            20261126130000_storage_documentos_admissao_rh_read.sql \
-            20261126140000_documentos_admissao_substituicao.sql
+            20261126150000_fix_enforce_log_retention_metricas_processamento.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -483,6 +491,7 @@ jobs:
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
+              r.elr_metric_insert_ok === true &&
               r.d5_fn_uses_contexto === true &&
               r.auto_purge_allowed === true &&
               Number(r.onda3b_jobs_ok) === 15 &&
