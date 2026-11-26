@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 127,
+ "total": 128,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -1803,7 +1803,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 131,
+   "usado_por": 132,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
@@ -2263,6 +2263,28 @@
     "src/pages/ImportacaoPage.tsx"
    ],
    "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useIndicadoresPessoal.ts",
+   "hooks_exportados": [
+    "useIndicadoresPessoal"
+   ],
+   "linhas": 105,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [
+    "get_indicadores_pessoal"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/IndicadoresPessoalPage.tsx"
+   ],
+   "coberto_por_testes": 0
   },
   {
    "arquivo": "src/hooks/useJornadaOnboarding.ts",

@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 253,
+   "usado_por": 254,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -500,7 +500,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 25572,
+   "linhas": 25576,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -957,7 +957,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 337,
+   "usado_por": 338,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",

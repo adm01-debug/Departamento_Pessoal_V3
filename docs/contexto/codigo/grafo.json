@@ -1,28 +1,28 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1446,
- "arestas": 7104,
+ "nos": 1448,
+ "arestas": 7117,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 404
+   "importado_por": 405
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 338
+   "importado_por": 339
   },
   {
    "arquivo": "src/components/ui/card.tsx",
-   "importado_por": 296
+   "importado_por": 297
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 281
+   "importado_por": 282
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 245
+   "importado_por": 246
   },
   {
    "arquivo": "src/components/ui/input.tsx",
@@ -38,7 +38,7 @@
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 146
+   "importado_por": 147
   },
   {
    "arquivo": "src/utils/safeError.ts",
@@ -46,7 +46,7 @@
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
-   "importado_por": 137
+   "importado_por": 138
   },
   {
    "arquivo": "src/components/ui/table.tsx",
@@ -66,7 +66,7 @@
   },
   {
    "arquivo": "src/components/PageTitle.tsx",
-   "importado_por": 89
+   "importado_por": 90
   },
   {
    "arquivo": "src/integrations/supabase/database.types.ts",
@@ -74,7 +74,7 @@
   },
   {
    "arquivo": "src/components/layout/index.ts",
-   "importado_por": 85
+   "importado_por": 86
   },
   {
    "arquivo": "src/utils/dateLocal.ts",

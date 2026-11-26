@@ -3,8 +3,8 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (2175)",
-   "SQL (1353)",
+   "TypeScript (2178)",
+   "SQL (1355)",
    "Markdown (347)",
    "JavaScript (137)",
    "JSON (64)",
@@ -2394,7 +2394,7 @@
    "src/components/ProtectedRoute.tsx",
    "src/components/RouteErrorBoundary.tsx"
   ],
-  "rotas_protegidas": 110,
+  "rotas_protegidas": 111,
   "rotas_publicas": [
    "/assinar-contrato/:token",
    "/ciencia-medida/:token",

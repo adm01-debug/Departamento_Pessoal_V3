@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 1279,
+ "migrations": 1281,
  "seeds": [
   "scripts/training-images-local/seed.sql"
  ],
@@ -431,6 +431,7 @@
   "get_dlq_stats",
   "get_empresa_admin_ids",
   "get_idempotency_health",
+  "get_indicadores_pessoal",
   "get_my_permissions",
   "get_my_user_empresas",
   "get_personnel_cost_projection",
@@ -65350,6 +65351,11 @@
    "nome": "get_idempotency_health",
    "definida": true,
    "usada_em": 2
+  },
+  {
+   "nome": "get_indicadores_pessoal",
+   "definida": true,
+   "usada_em": 1
   },
   {
    "nome": "get_my_user_empresas",

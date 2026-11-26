@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 715,
+ "total": 716,
  "orfaos": 24,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -114,7 +114,7 @@
     "App"
    ],
    "export_default": "App",
-   "linhas": 528,
+   "linhas": 530,
    "dominio": null,
    "hooks_locais": [
     "useSecureVisibility",
@@ -4687,7 +4687,7 @@
     "AppSidebar"
    ],
    "export_default": null,
-   "linhas": 832,
+   "linhas": 833,
    "dominio": "components/layout",
    "hooks_locais": [
     "useAuth",
@@ -5497,7 +5497,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 88,
+   "usado_por": 89,
    "orfao": false
   },
   {
@@ -8494,7 +8494,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 245,
+   "usado_por": 246,
    "orfao": false
   },
   {
@@ -8509,7 +8509,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 404,
+   "usado_por": 405,
    "orfao": false
   },
   {
@@ -8544,7 +8544,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 296,
+   "usado_por": 297,
    "orfao": false
   },
   {
@@ -8820,7 +8820,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 21,
+   "usado_por": 22,
    "orfao": false
   },
   {
@@ -8971,7 +8971,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 17,
+   "usado_por": 18,
    "orfao": false
   },
   {
@@ -9128,7 +9128,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 145,
+   "usado_por": 146,
    "orfao": false
   },
   {
@@ -10847,6 +10847,23 @@
    "hooks_locais": [
     "useImportacaoColaboradores",
     "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/IndicadoresPessoalPage.tsx",
+   "exports": [
+    "IndicadoresPessoalPage"
+   ],
+   "export_default": "IndicadoresPessoalPage",
+   "linhas": 435,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "useIndicadoresPessoal"
    ],
    "tabelas": [],
    "edges": [],

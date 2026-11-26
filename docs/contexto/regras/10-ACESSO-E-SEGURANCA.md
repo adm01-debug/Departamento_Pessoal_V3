@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `76140dc9ae` · branch `main` · 2026-11-26 18:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6fdcd20d65` · branch `main` · 2026-11-26 23:31 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 350 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 351 arquivo(s)
 
 - `docs/auditoria/sql-preservado/20260820000000_p0_fix_auditoria_rpc.sql`
 - `docs/auditoria/sql-preservado/FIX_APLICAR_REGISTRAR_AUDITORIA.sql`
@@ -472,7 +472,7 @@
 - `supabase/migrations/20260712213253_6b730cf1-b93d-4117-8b98-7ff65a2820aa.sql`
 - `supabase/migrations/20260712213407_20d37218-3f4b-4337-a867-a6b356d472c2.sql`
 - `supabase/migrations/20260712213908_2a68d8c6-5402-4526-b55c-9b3f89124bbb.sql`
-- … +200 (lista completa em `context.json`)
+- … +201 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 
@@ -642,6 +642,7 @@
 - `get_dlq_stats`
 - `get_empresa_admin_ids`
 - `get_idempotency_health`
+- `get_indicadores_pessoal`
 - `get_my_permissions`
 - `get_my_user_empresas`
 - `get_query_telemetry`
@@ -855,7 +856,7 @@ Middleware matcher (Next.js): nenhum
 | grant | anon, authenticated, service_role | execute | `check_login_lock`, `record_failed_login`, `contrato_assinar_por_token`, `medida_consultar_por_token`, `medida_registrar_ciencia_publica`, `contrato_assinar_por_token`, `contrato_assinar_por_token`, `admissao_assinar_contrato`, `admissao_marcar_documentos`, `admissao_registrar_documento`, `admissao_salvar_dados`, `check_brute_force`, `check_rate_limit`, `contrato_consultar_por_token`, `contrato_preview_url_por_token` … +9 |
 | grant | anon, authenticated, service_role | select | `storage.buckets` |
 | grant | authenticated | delete | `feedbacks_360` |
-| grant | authenticated | execute | `has_role`, `is_admin`, `get_user_roles`, `get_user_default_empresa`, `get_user_empresas`, `user_belongs_to_empresa`, `anonimizar_dados_pessoais`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `get_colaborador_banco_horas`, `get_user_empresas`, `get_auth_empresa_id`, `user_belongs_to_empresa`, `get_user_default_empresa`, `has_role` … +159 |
+| grant | authenticated | execute | `has_role`, `is_admin`, `get_user_roles`, `get_user_default_empresa`, `get_user_empresas`, `user_belongs_to_empresa`, `anonimizar_dados_pessoais`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `get_colaborador_banco_horas`, `get_user_empresas`, `get_auth_empresa_id`, `user_belongs_to_empresa`, `get_user_default_empresa`, `has_role` … +160 |
 | grant | authenticated | insert | `feedbacks_360` |
 | grant | authenticated | select | `vw_folha_compliance`, `v_idempotency_metrics`, `v_slow_queries_top50`, `audit_log_unified`, `audit_log_unified_archive`, `holerite_distribuicoes`, `v_audit_legacy`, `v_system_health`, `v_ferias_alerta_pagamento_d2`, `v_ferias_adiant13_elegibilidade`, `v_ferias_folha_reconciliacao`, `ferias_reconciliacao_logs`, `v_contratos_vencendo`, `v_contratos_assinatura_kpi`, `v_contratos_tokens_pendentes` … +28 |
 | grant | authenticated | select, insert | `logs_sistema`, `folha_lock_conflicts`, `despesas_aprovacoes_log`, `aej_geracoes`, `ponto_espelhos_revogacoes`, `epis_fichas_assinaturas`, `sst_regimento_assinaturas`, `medidas_disciplinares_workflow_log`, `audit_log`, `folha_auditoria`, `afd_geracoes` |
@@ -879,7 +880,7 @@ Middleware matcher (Next.js): nenhum
 | revoke | PUBLIC, anon | all | `get_idempotency_health`, `check_idempotency_anomalies`, `v_slow_queries_top50`, `get_query_telemetry`, `get_dlq_stats`, `get_audit_trail_by_user`, `get_audit_trail_by_entity`, `search_audit_unified`, `rate_limit_logs`, `rate_limit_config`, `purge_audit_log_old`, `resolve_security_alert`, `refresh_dashboard_mvs`, `mv_status_change_daily`, `mv_anomalies_hourly` … +117 |
 | revoke | PUBLIC, anon | execute | `get_cron_jobs_health`, `get_security_alerts_summary`, `resolve_security_alert`, `pode_gerir_rh`, `pode_gerir_pessoas`, `sou_o_colaborador`, `empresa_do_colaborador`, `is_admin`, `sou_o_colaborador` |
 | revoke | PUBLIC, anon | select | `v_system_health` |
-| revoke | PUBLIC, anon, authenticated | all | `enforce_batida_ponto_hash`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash`, `enforce_desligamento_hash`, `enforce_ferias_hash`, `enforce_medida_disciplinar_hash`, `enforce_aso_hash`, `enforce_cat_hash`, `enforce_epi_entrega_hash`, `enforce_documento_assinatura_hash`, `enforce_afastamento_hash`, `purge_old_lock_conflicts` … +94 |
+| revoke | PUBLIC, anon, authenticated | all | `enforce_batida_ponto_hash`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash`, `enforce_desligamento_hash`, `enforce_ferias_hash`, `enforce_medida_disciplinar_hash`, `enforce_aso_hash`, `enforce_cat_hash`, `enforce_epi_entrega_hash`, `enforce_documento_assinatura_hash`, `enforce_afastamento_hash`, `purge_old_lock_conflicts` … +99 |
 | revoke | PUBLIC, anon, authenticated | execute | `check_processamento_timeout`, `fn_alert_severe_disciplinary_measure`, `fn_audit_biometric_failure`, `fn_auto_generate_training_certificate`, `fn_consolidar_batidas`, `fn_create_default_onboarding_tasks`, `fn_enqueue_notification`, `fn_trigger_whatsapp_on_event`, `fn_update_admissao_checklist`, `fn_update_candidatura_history`, `fn_workflow_admissao_auto`, `handle_new_user`, `handle_new_user_role`, `log_audit_change`, `log_esocial_transmission` … +42 |
 | revoke | PUBLIC, anon, authenticated | select | `v_audit_trail`, `mv_folha_summary`, `health_checks` |
 | revoke | anon | all | `detectar_fraude_ponto`, `contrato_estender_expiracao`, `pcs_pode_gerir_plano`, `pcs_pode_ver_plano`, `pcs_gerar_grades`, `pcs_enquadramento`, `pcs_simular_impacto`, `medidas_ciencia_tokens`, `audit_log`, `folha_auditoria`, `sst_regimento_interno`, `feedbacks_360_operacoes`, `feedbacks_360_validacoes_potencial`, `provisoes_competencia_tributaria` |

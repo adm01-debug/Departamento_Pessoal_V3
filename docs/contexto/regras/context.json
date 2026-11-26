@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "76140dc9aed27ec1ae60947ffb5b4f10fbecf2b6",
+  "sha": "6fdcd20d65902c649eae66d7426d4f01d8f4c6c6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-26 18:16 UTC",
-  "files_total": 4266,
-  "code_files": 3670,
-  "code_lines": 545236
+  "generated_at": "2026-11-26 23:31 UTC",
+  "files_total": 4271,
+  "code_files": 3675,
+  "code_lines": 546246
  },
  "version": "1.3.2",
- "facts_hash": "10c5827d49505276",
+ "facts_hash": "17207c4725de26cd",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,9 +388,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 1353,
-   ".tsx": 1148,
-   ".ts": 1027,
+   ".sql": 1355,
+   ".tsx": 1150,
+   ".ts": 1028,
    ".mjs": 111,
    ".js": 15,
    ".cjs": 11,
@@ -66150,6 +66150,26 @@
      "documentos_admissao"
     ]
    },
+   "get_indicadores_pessoal": {
+    "args": "p_empresa_id uuid, p_dias integer DEFAULT 90, p_meses integer DEFAULT 12",
+    "returns": "jsonb",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_dias integer := LEAST(GREATEST(COALESCE(p_dias, 90), 7), 1095); v_meses integer := LEAST(GREATEST(COALESCE(p_meses, 12), 1), 36); v_corte date := CURRENT_DATE - (v_dias - 1); v_primeiro_mes date := (date_trunc('month', CURRENT_DATE) - make_interval(months => v_meses - 1))::date; v_result jsonb; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Indicadores de pessoal exigem usuário autenticado' USING ERRCODE = '42501'; END IF; IF p_empresa_id IS NULL OR NOT public.user_belongs_to_empresa(auth.uid(), p_empresa_id) THEN RAISE EXCEPTION 'Sem acesso aos indicadores da empresa %', p_empresa_id USING ERRCODE = '42501'; END IF; v_result := jsonb_build_object( 'periodo', jsonb_build_object( …",
+    "raises": [
+     "Indicadores de pessoal exigem usuário autenticado",
+     "Sem acesso aos indicadores da empresa %"
+    ],
+    "tables": [
+     "cron",
+     "mv_afastamento_summary",
+     "mv_ferias_balance",
+     "mv_headcount_daily",
+     "mv_turnover_rate"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -74235,6 +74255,8 @@
    "supabase/migrations/20261126140000_documentos_admissao_substituicao.verify.sql",
    "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql",
    "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.verify.sql",
+   "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql",
+   "supabase/migrations/20261126163000_indicadores_pessoal_rpc.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -86691,6 +86713,54 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "get_indicadores_pessoal",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "get_indicadores_pessoal",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "mv_headcount_daily",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "mv_turnover_rate",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "mv_ferias_balance",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "mv_afastamento_summary",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -88322,6 +88392,16 @@
     "function": "prevent_empty_empresa_id",
     "msg": "empresa_id cannot be an empty string",
     "src": "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql"
+   },
+   {
+    "function": "get_indicadores_pessoal",
+    "msg": "Indicadores de pessoal exigem usuário autenticado",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "function": "get_indicadores_pessoal",
+    "msg": "Sem acesso aos indicadores da empresa %",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -95701,6 +95781,34 @@
    },
    {
     "path": "",
+    "file": "src/pages/IndicadoresPessoalPage.tsx",
+    "component": "IndicadoresPessoalPage",
+    "tables_transitive": [
+     "colaboradores",
+     "empresas",
+     "ferias",
+     "notificacoes",
+     "periodos_aquisitivos",
+     "push_subscriptions",
+     "versao_banco"
+    ],
+    "invokes_transitive": [
+     "calcular-folha",
+     "metricas"
+    ],
+    "rpc_transitive": [
+     "admin_associar_usuario_empresa",
+     "get_indicadores_pessoal",
+     "get_my_user_empresas",
+     "get_security_alerts_summary",
+     "get_user_roles",
+     "log_frontend_error",
+     "set_own_default_empresa"
+    ],
+    "deps_count": 72
+   },
+   {
+    "path": "",
     "file": "src/pages/IntegracoesPage.tsx",
     "component": "IntegracoesPage",
     "tables_transitive": [
@@ -102999,6 +103107,13 @@
     "file": "src/App.tsx"
    },
    {
+    "path": "indicadores-pessoal",
+    "component": "LazyPage",
+    "guard": "",
+    "roles": [],
+    "file": "src/App.tsx"
+   },
+   {
     "path": "integracoes",
     "component": "LazyPage",
     "guard": "",
@@ -103896,6 +104011,10 @@
     "file": "src/hooks/useImportacaoColaboradores.ts"
    },
    {
+    "name": "useIndicadoresPessoal",
+    "file": "src/hooks/useIndicadoresPessoal.ts"
+   },
+   {
     "name": "useJornadas",
     "file": "src/hooks/useJornadaOnboarding.ts"
    },
@@ -104733,7 +104852,7 @@
   {
    "module": "scripts",
    "files": 156,
-   "lines": 35457,
+   "lines": 35470,
    "tables": [
     "a",
     "anexos",
@@ -104945,7 +105064,7 @@
   {
    "module": "src",
    "files": 4,
-   "lines": 827,
+   "lines": 829,
    "tables": [],
    "exports": [
     "App.tsx: App"
@@ -105045,7 +105164,7 @@
   {
    "module": "src/components",
    "files": 1163,
-   "lines": 222403,
+   "lines": 222404,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105379,8 +105498,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 210,
-   "lines": 24689,
+   "files": 211,
+   "lines": 24794,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105556,6 +105675,7 @@
     "src/hooks/useHorasExtras.ts",
     "src/hooks/useIdempotencyKey.ts",
     "src/hooks/useImportacaoColaboradores.ts",
+    "src/hooks/useIndicadoresPessoal.ts",
     "src/hooks/useJornadaOnboarding.ts",
     "src/hooks/useLocaisTrabalho.ts",
     "src/hooks/useLocalStorage.ts",
@@ -105578,8 +105698,7 @@
     "src/hooks/usePontoDashboard.ts",
     "src/hooks/usePontoGeofencing.ts",
     "src/hooks/usePontoMelhorado.ts",
-    "src/hooks/usePontoOffline.ts",
-    "src/hooks/usePontosAbertos.ts"
+    "src/hooks/usePontoOffline.ts"
    ]
   },
   {
@@ -105751,8 +105870,8 @@
   },
   {
    "module": "src/pages",
-   "files": 146,
-   "lines": 51985,
+   "files": 148,
+   "lines": 52606,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -105899,6 +106018,7 @@
     "node:fs",
     "qrcode.react",
     "react",
+    "react-helmet-async",
     "react-hook-form",
     "react-router-dom",
     "recharts",
@@ -105990,6 +106110,7 @@
     "src/pages/HoleritesPage.tsx",
     "src/pages/HorasExtrasPage.tsx",
     "src/pages/ImportacaoPage.tsx",
+    "src/pages/IndicadoresPessoalPage.tsx",
     "src/pages/IntegracoesPage.tsx",
     "src/pages/JornadasPage.tsx",
     "src/pages/LGPDPage.tsx",
@@ -105999,8 +106120,7 @@
     "src/pages/MedidasDisciplinaresPage.tsx",
     "src/pages/MovimentacoesPage.tsx",
     "src/pages/NineBoxPreviewPage.tsx",
-    "src/pages/NotFoundPage.tsx",
-    "src/pages/NotificacoesPage.tsx"
+    "src/pages/NotFoundPage.tsx"
    ]
   },
   {
@@ -106780,7 +106900,7 @@
   {
    "module": "supabase/functions",
    "files": 198,
-   "lines": 29456,
+   "lines": 29461,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -107035,8 +107155,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 1279,
-   "lines": 88533,
+   "files": 1281,
+   "lines": 88796,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -113488,6 +113608,9 @@
    "get_idempotency_health": [
     "src/pages/AdminIdempotenciaPage.tsx",
     "src/pages/AdminOperacaoPage.tsx"
+   ],
+   "get_indicadores_pessoal": [
+    "src/hooks/useIndicadoresPessoal.ts"
    ],
    "get_my_user_empresas": [
     "src/hooks/useEmpresas.ts"
@@ -169567,6 +169690,10 @@
     "line": "staleTime: 5 * 60 * 1000,"
    },
    {
+    "file": "src/hooks/useIndicadoresPessoal.ts",
+    "line": "staleTime: 5 * 60 * 1000,"
+   },
+   {
     "file": "src/hooks/useNotificacoes.ts",
     "line": "const dataFimConcessivo = addDays(parseISO(periodo.data_fim), 365);"
    },
@@ -171475,6 +171602,10 @@
    {
     "file": "src/pages/HoleritesPage.tsx",
     "line": "transition={{ delay: i * 0.1 }}"
+   },
+   {
+    "file": "src/pages/IndicadoresPessoalPage.tsx",
+    "line": "transition={{ delay: i * 0.05 }}"
    },
    {
     "file": "src/pages/IntegracoesPage.tsx",
@@ -199635,6 +199766,34 @@
     "name": "dispara download do modelo ao clicar em "
    },
    {
+    "file": "src/pages/__tests__/IndicadoresPessoalPage.test.tsx",
+    "name": "IndicadoresPessoalPage"
+   },
+   {
+    "file": "src/pages/__tests__/IndicadoresPessoalPage.test.tsx",
+    "name": "consulta o RPC com a empresa atual e a janela padrão"
+   },
+   {
+    "file": "src/pages/__tests__/IndicadoresPessoalPage.test.tsx",
+    "name": "renderiza os indicadores vindos do banco"
+   },
+   {
+    "file": "src/pages/__tests__/IndicadoresPessoalPage.test.tsx",
+    "name": "exibe a última execução do refresh diário"
+   },
+   {
+    "file": "src/pages/__tests__/IndicadoresPessoalPage.test.tsx",
+    "name": "mostra estado vazio quando não há dados no período"
+   },
+   {
+    "file": "src/pages/__tests__/IndicadoresPessoalPage.test.tsx",
+    "name": "mostra erro e permite tentar novamente"
+   },
+   {
+    "file": "src/pages/__tests__/IndicadoresPessoalPage.test.tsx",
+    "name": "recarrega ao clicar em atualizar"
+   },
+   {
     "file": "src/pages/__tests__/LoginPage.google.test.tsx",
     "name": "LoginPage — botão Google condicionado a VITE_AUTH_GOOGLE_ENABLED"
    },
@@ -214172,6 +214331,10 @@
    },
    {
     "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql",
+    "call": "notify"
+   },
+   {
+    "file": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql",
     "call": "notify"
    },
    {
@@ -237653,6 +237816,26 @@
      "documentos_admissao"
     ]
    },
+   "get_indicadores_pessoal": {
+    "args": "p_empresa_id uuid, p_dias integer DEFAULT 90, p_meses integer DEFAULT 12",
+    "returns": "jsonb",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql",
+    "security_definer": true,
+    "search_path": true,
+    "body": "DECLARE v_dias integer := LEAST(GREATEST(COALESCE(p_dias, 90), 7), 1095); v_meses integer := LEAST(GREATEST(COALESCE(p_meses, 12), 1), 36); v_corte date := CURRENT_DATE - (v_dias - 1); v_primeiro_mes date := (date_trunc('month', CURRENT_DATE) - make_interval(months => v_meses - 1))::date; v_result jsonb; BEGIN IF auth.uid() IS NULL THEN RAISE EXCEPTION 'Indicadores de pessoal exigem usuário autenticado' USING ERRCODE = '42501'; END IF; IF p_empresa_id IS NULL OR NOT public.user_belongs_to_empresa(auth.uid(), p_empresa_id) THEN RAISE EXCEPTION 'Sem acesso aos indicadores da empresa %', p_empresa_id USING ERRCODE = '42501'; END IF; v_result := jsonb_build_object( 'periodo', jsonb_build_object( …",
+    "raises": [
+     "Indicadores de pessoal exigem usuário autenticado",
+     "Sem acesso aos indicadores da empresa %"
+    ],
+    "tables": [
+     "cron",
+     "mv_afastamento_summary",
+     "mv_ferias_balance",
+     "mv_headcount_daily",
+     "mv_turnover_rate"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -238908,6 +239091,16 @@
     "function": "prevent_empty_empresa_id",
     "msg": "empresa_id cannot be an empty string",
     "src": "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql"
+   },
+   {
+    "function": "get_indicadores_pessoal",
+    "msg": "Indicadores de pessoal exigem usuário autenticado",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "function": "get_indicadores_pessoal",
+    "msg": "Sem acesso aos indicadores da empresa %",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -253168,6 +253361,7 @@
    "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql",
    "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql",
    "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.verify.sql",
+   "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -253347,6 +253541,7 @@
    "get_dlq_stats",
    "get_empresa_admin_ids",
    "get_idempotency_health",
+   "get_indicadores_pessoal",
    "get_my_permissions",
    "get_my_user_empresas",
    "get_query_telemetry",
@@ -265478,6 +265673,54 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "get_indicadores_pessoal",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "get_indicadores_pessoal",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "mv_headcount_daily",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "mv_turnover_rate",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "mv_ferias_balance",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "mv_afastamento_summary",
+    "objkind": "table",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -273905,7 +274148,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 472,
+   "lines": 485,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -277437,7 +277680,7 @@
   },
   "src/App.tsx": {
    "path": "src/App.tsx",
-   "lines": 528,
+   "lines": 530,
    "exports": [
     "function App"
    ],
@@ -277501,6 +277744,12 @@
     },
     {
      "path": "dashboard-executivo",
+     "component": "LazyPage",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "indicadores-pessoal",
      "component": "LazyPage",
      "guard": "",
      "roles": []
@@ -296524,7 +296773,7 @@
   },
   "src/components/layout/AppSidebar.tsx": {
    "path": "src/components/layout/AppSidebar.tsx",
-   "lines": 832,
+   "lines": 833,
    "exports": [
     "const menuGroups",
     "function AppSidebar"
@@ -308433,6 +308682,31 @@
     "useImportacaoColaboradores"
    ]
   },
+  "src/hooks/useIndicadoresPessoal.ts": {
+   "path": "src/hooks/useIndicadoresPessoal.ts",
+   "lines": 105,
+   "exports": [
+    "interface IndicadoresPeriodo",
+    "interface TurnoverMes",
+    "interface CadastroDia",
+    "interface CadastroDepartamento",
+    "interface AbsenteismoMes",
+    "interface FeriasSaldoColaborador",
+    "interface FeriasResumo",
+    "interface IndicadoresAtualizacao",
+    "interface IndicadoresPessoal",
+    "function useIndicadoresPessoal"
+   ],
+   "rpc": [
+    "get_indicadores_pessoal"
+   ],
+   "hooks": [
+    "useIndicadoresPessoal"
+   ],
+   "temporal": [
+    "staleTime: 5 * 60 * 1000,"
+   ]
+  },
   "src/hooks/useJornadaOnboarding.ts": {
    "path": "src/hooks/useJornadaOnboarding.ts",
    "lines": 75,
@@ -317464,6 +317738,16 @@
     }
    ]
   },
+  "src/pages/IndicadoresPessoalPage.tsx": {
+   "path": "src/pages/IndicadoresPessoalPage.tsx",
+   "lines": 435,
+   "exports": [
+    "function IndicadoresPessoalPage"
+   ],
+   "percents": [
+    "transition={{ delay: i * 0.05 }}"
+   ]
+  },
   "src/pages/IntegracoesPage.tsx": {
    "path": "src/pages/IntegracoesPage.tsx",
    "lines": 297,
@@ -320247,6 +320531,20 @@
     "mostra erro amigável quando o arquivo é inválido (sem coluna Nome)",
     "reseta o fluxo ao clicar em Cancelar",
     "dispara download do modelo ao clicar em "
+   ]
+  },
+  "src/pages/__tests__/IndicadoresPessoalPage.test.tsx": {
+   "path": "src/pages/__tests__/IndicadoresPessoalPage.test.tsx",
+   "lines": 186,
+   "is_test": true,
+   "tests": [
+    "IndicadoresPessoalPage",
+    "consulta o RPC com a empresa atual e a janela padrão",
+    "renderiza os indicadores vindos do banco",
+    "exibe a última execução do refresh diário",
+    "mostra estado vazio quando não há dados no período",
+    "mostra erro e permite tentar novamente",
+    "recarrega ao clicar em atualizar"
    ]
   },
   "src/pages/__tests__/LoginPage.google.test.tsx": {
@@ -339924,7 +340222,7 @@
   },
   "supabase/functions/external-db-bridge/validation.ts": {
    "path": "supabase/functions/external-db-bridge/validation.ts",
-   "lines": 392,
+   "lines": 397,
    "exports": [
     "const IDENTIFIER_RE",
     "const COLUMNS_RE",
@@ -349642,6 +349940,18 @@
    "lines": 51,
    "uses_service_role": true
   },
+  "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql": {
+   "path": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql",
+   "lines": 218,
+   "side_effects": [
+    "notify"
+   ],
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261126163000_indicadores_pessoal_rpc.verify.sql": {
+   "path": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.verify.sql",
+   "lines": 45
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -350037,10 +350347,30 @@
   }
  },
  "git": {
-  "sha": "76140dc9aed27ec1ae60947ffb5b4f10fbecf2b6",
+  "sha": "6fdcd20d65902c649eae66d7426d4f01d8f4c6c6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "6fdcd20",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: expõe indicadores de pessoal das MVs de dashboard (RPC com guarda de tenant + tela) (#911)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "inventario/estado/rotas.json",
+     "scripts/canonical-invariants.sql",
+     "src/App.tsx",
+     "src/components/layout/AppSidebar.tsx",
+     "src/hooks/useIndicadoresPessoal.ts",
+     "src/integrations/supabase/types.ts",
+     "src/pages/IndicadoresPessoalPage.tsx",
+     "src/pages/__tests__/IndicadoresPessoalPage.test.tsx",
+     "supabase/functions/external-db-bridge/validation.ts",
+     "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql",
+     "supabase/migrations/20261126163000_indicadores_pessoal_rpc.verify.sql"
+    ]
+   },
    {
     "sha": "76140dc",
     "date": "2026-11-26",
@@ -350454,50 +350784,27 @@
      "src/mocks/pesquisasClimaMock.ts",
      "src/pages/PesquisasClimaPage.tsx"
     ]
-   },
-   {
-    "sha": "61145b4",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "feat: resgata a tela de solicitacoes de horas extras do port do Muri (#884)",
-    "files": [
-     "scripts/.bundle-budget.json",
-     "src/components/horas-extras/AcoesDaLinha.tsx",
-     "src/components/horas-extras/AprovacoesPendentes.tsx",
-     "src/components/horas-extras/CabecalhoSolicitacoes.tsx",
-     "src/components/horas-extras/HistoricoSolicitacoes.tsx",
-     "src/components/horas-extras/HorasExtrasKpis.tsx",
-     "src/components/horas-extras/NovaSolicitacaoDialog.tsx",
-     "src/components/horas-extras/SolicitacaoDetalhesDialog.tsx",
-     "src/components/horas-extras/__tests__/AnimacaoDetalhesSolicitacao.test.tsx",
-     "src/components/horas-extras/__tests__/AnimacaoNovaSolicitacao.test.tsx",
-     "src/components/horas-extras/__tests__/AprovacoesPendentes.test.tsx",
-     "src/components/horas-extras/__tests__/CascataHistorico.test.tsx",
-     "src/components/horas-extras/__tests__/DialogosSolicitacao.test.tsx",
-     "src/components/horas-extras/__tests__/EntradaHorasExtras.test.tsx",
-     "src/components/horas-extras/__tests__/HistoricoSolicitacoes.test.tsx",
-     "src/components/horas-extras/__tests__/HorasExtrasKpis.test.tsx",
-     "src/components/horas-extras/__tests__/PadroesVisuaisSolicitacoes.test.tsx",
-     "src/components/horas-extras/__tests__/horasExtrasComum.test.ts",
-     "src/pages/HorasExtrasPage.tsx"
-    ]
    }
   ],
   "hot_files": [
+   [
+    ".github/workflows/canonical-migrations.yml",
+    8
+   ],
    [
     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
     8
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
-    7
-   ],
-   [
     "scripts/.bundle-budget.json",
-    7
+    6
    ],
    [
     "scripts/canonical-invariants.sql",
+    4
+   ],
+   [
+    "src/integrations/supabase/types.ts",
     3
    ],
    [
@@ -350509,7 +350816,7 @@
     3
    ],
    [
-    "src/integrations/supabase/types.ts",
+    "supabase/functions/external-db-bridge/validation.ts",
     2
    ],
    [
@@ -350541,27 +350848,23 @@
     2
    ],
    [
-    "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql",
+    "inventario/estado/rotas.json",
     1
    ],
    [
-    "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.verify.sql",
+    "src/App.tsx",
     1
    ],
    [
-    "e2e/authenticated/admin-operacao.spec.ts",
+    "src/components/layout/AppSidebar.tsx",
     1
    ],
    [
-    "src/components/admin/BackupHealthSection.tsx",
+    "src/hooks/useIndicadoresPessoal.ts",
     1
    ],
    [
-    "src/components/admin/__tests__/BackupHealthSection.test.tsx",
-    1
-   ],
-   [
-    "src/pages/AdminOperacaoPage.tsx",
+    "src/pages/IndicadoresPessoalPage.tsx",
     1
    ]
   ]

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "76140dc9aed27ec1ae60947ffb5b4f10fbecf2b6",
+  "commit": "6fdcd20d65902c649eae66d7426d4f01d8f4c6c6",
   "branch": "main",
-  "data_commit": "2026-11-26T14:47:41-03:00",
+  "data_commit": "2026-11-26T20:14:04-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "6fdcd20",
+    "data": "2026-11-26",
+    "assunto": "feat: expõe indicadores de pessoal das MVs de dashboard (RPC com guarda de tenant + tela) (#911)"
+   },
    {
     "sha": "76140dc",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "ced6c84",
     "data": "2026-11-25",
     "assunto": "feat: resgata a janela Ver todas do desempenho de vagas (port do Muri) (#888)"
-   },
-   {
-    "sha": "08dd398",
-    "data": "2026-11-25",
-    "assunto": "feat: formulario de vaga coleta cargo, contrato, faixa e beneficios (#887)"
    }
   ],
-  "arquivos_mudados_7d": 768,
+  "arquivos_mudados_7d": 764,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -177,11 +177,11 @@
    },
    {
     "pasta": "src/components/layout",
-    "mudancas": 43
+    "mudancas": 44
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 40
+    "mudancas": 41
    },
    {
     "pasta": "src/components/dashboard",
@@ -189,7 +189,7 @@
    },
    {
     "pasta": "src/pages/__tests__",
-    "mudancas": 36
+    "mudancas": 37
    },
    {
     "pasta": "src/utils/__tests__",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 40
+    "mudancas": 41
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 23
+    "mudancas": 24
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 17
+    "mudancas": 18
    },
    {
     "arquivo": "docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
@@ -301,34 +301,34 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 290
-   },
-   {
-    "autor": "dependabot[bot]",
-    "commits": 5
+    "commits": 291
    },
    {
     "autor": "github-actions[bot]",
     "commits": 5
+   },
+   {
+    "autor": "dependabot[bot]",
+    "commits": 4
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 4252,
-  "arquivos_codigo": 2319,
-  "linhas_codigo": 469866,
-  "rotas": 116,
+  "arquivos_total": 4257,
+  "arquivos_codigo": 2322,
+  "linhas_codigo": 470604,
+  "rotas": 117,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
-  "itens_menu": 97,
+  "itens_menu": 98,
   "modulos": 86,
-  "componentes": 715,
-  "hooks": 127,
+  "componentes": 716,
+  "hooks": 128,
   "edge_functions": 68,
   "tabelas": 438,
-  "migrations": 1279,
+  "migrations": 1281,
   "cron_jobs": 43,
-  "testes": 875,
+  "testes": 876,
   "workflows": 21,
   "scripts": 138,
   "docs_md": 347
@@ -632,7 +632,7 @@
   },
   "src/App.tsx": {
    "arquivos": 1,
-   "linhas": 528
+   "linhas": 530
   },
   "src/assets": {
    "arquivos": 1,
@@ -644,7 +644,7 @@
   },
   "src/components": {
    "arquivos": 1163,
-   "linhas": 222403
+   "linhas": 222404
   },
   "src/constants": {
    "arquivos": 7,
@@ -659,8 +659,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 210,
-   "linhas": 24689
+   "arquivos": 211,
+   "linhas": 24794
   },
   "src/i18n": {
    "arquivos": 2,
@@ -668,7 +668,7 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 26735
+   "linhas": 26739
   },
   "src/lib": {
    "arquivos": 22,
@@ -683,8 +683,8 @@
    "linhas": 4291
   },
   "src/pages": {
-   "arquivos": 146,
-   "linhas": 51985
+   "arquivos": 148,
+   "linhas": 52606
   },
   "src/providers": {
    "arquivos": 4,
@@ -724,7 +724,7 @@
   },
   "supabase/functions": {
    "arquivos": 198,
-   "linhas": 29456
+   "linhas": 29461
   },
   "supabase/tests": {
    "arquivos": 3,
@@ -758,7 +758,7 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 25572
+   "linhas": 25576
   },
   {
    "arquivo": "src/schemas/tableColumns.ts",

@@ -135,6 +135,7 @@
    "src/pages/HoleritesPage.tsx",
    "src/pages/HorasExtrasPage.tsx",
    "src/pages/ImportacaoPage.tsx",
+   "src/pages/IndicadoresPessoalPage.tsx",
    "src/pages/IntegracoesPage.tsx",
    "src/pages/JornadasPage.tsx",
    "src/pages/LGPDPage.tsx",
@@ -5797,6 +5798,9 @@
    "src/utils/importacao/validators.ts",
    "src/utils/safeError.ts"
   ],
+  "src/hooks/useIndicadoresPessoal.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
   "src/hooks/useJornadaOnboarding.ts": [
    "src/components/admissoes/onboardingDerivacoes.ts",
    "src/services/onboardingJornadaService.ts"
@@ -7210,6 +7214,19 @@
    "src/services/loggerService.ts",
    "src/utils/importacao/template.ts",
    "src/utils/safeError.ts"
+  ],
+  "src/pages/IndicadoresPessoalPage.tsx": [
+   "src/components/PageTitle.tsx",
+   "src/components/layout/index.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/empty-state.tsx",
+   "src/components/ui/module-skeleton.tsx",
+   "src/components/ui/select.tsx",
+   "src/hooks/useEmpresas.ts",
+   "src/hooks/useIndicadoresPessoal.ts",
+   "src/lib/utils.ts"
   ],
   "src/pages/IntegracoesPage.tsx": [
    "src/components/PageTitle.tsx",

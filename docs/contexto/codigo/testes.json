@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 875,
+ "total": 876,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 830
+  "unit": 831
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 736
+   "arquivos": 737
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -6123,6 +6123,15 @@
    "casos": 7
   },
   {
+   "arquivo": "src/pages/__tests__/IndicadoresPessoalPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 186,
+   "testa": [
+    "src/pages/IndicadoresPessoalPage.tsx"
+   ],
+   "casos": 6
+  },
+  {
    "arquivo": "src/pages/__tests__/LoginPage.google.test.tsx",
    "tipo": "unit",
    "linhas": 71,
@@ -8735,6 +8744,7 @@
   "src/pages/DepartamentosPage.tsx": 1,
   "src/pages/FolhaPage.tsx": 1,
   "src/pages/ImportacaoPage.tsx": 1,
+  "src/pages/IndicadoresPessoalPage.tsx": 1,
   "src/pages/LoginPage.tsx": 2,
   "src/pages/NineBoxPreviewPage.tsx": 1,
   "src/pages/NotFoundPage.tsx": 1,
@@ -9041,6 +9051,7 @@
    "src/components/ui/use-toast.ts",
    "src/hooks/useColetoresPonto.ts",
    "src/hooks/useEntradaCardConcluida.ts",
+   "src/hooks/useIndicadoresPessoal.ts",
    "src/hooks/useJornadaOnboarding.ts",
    "src/hooks/usePontoDashboard.ts",
    "src/hooks/usePontoGeofencing.ts",

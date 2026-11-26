@@ -3,16 +3,16 @@
  "format_version": 2,
  "onde_ficam": {
   "telas": [
-   "src/pages (110)",
+   "src/pages (111)",
    "src/components (1)"
   ],
   "componentes": [
    "src/components (597)",
-   "src/pages (110)",
+   "src/pages (111)",
    "src/contexts (3)"
   ],
   "hooks": [
-   "src/hooks (105)",
+   "src/hooks (106)",
    "src/components (12)",
    "src/contexts (4)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (736)",
+   "co-localizado (__tests__) (737)",
    "co-localizado (*.test) (80)",
    "e2e/ (33)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (715)"
+  ".tsx (716)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: expõe indicadores de pessoal das MVs de dashboard (RPC com guarda de tenant + tela) (#911)",
    "fix: invariantes do canônico voltam a rodar (limite de 100 args) (#910)",
    "fix: retencao de logs volta a purgar no canonico (job 35 falhava todo dia) (#909)",
    "feat: registra execucoes de backup e expoe painel de saude no Admin Operacao (#908)",
-   "fix: destrava o envio de documentos da contratacao publica e remove policies sem consumidor (#906)",
-   "docs: registra a auditoria de Storage e o fechamento do drift de ledger (#905)"
+   "fix: destrava o envio de documentos da contratacao publica e remove policies sem consumidor (#906)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

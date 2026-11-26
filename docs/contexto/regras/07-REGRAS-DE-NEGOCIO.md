@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `76140dc9ae` · branch `main` · 2026-11-26 18:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6fdcd20d65` · branch `main` · 2026-11-26 23:31 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1102,6 +1102,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `reprocessar_ponto_relogio` | Sem permissao para reprocessar o ponto desta empresa | `supabase/migrations/20261123090000_ponto_rep_converter_batidas.sql` |
 | `agendar_dreno_fila_notificacoes` | pg_net sem http_post(text,jsonb,jsonb,jsonb,integer): sem pg_net nao ha como o cron chamar a funcao. | `supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql` |
 | `prevent_empty_empresa_id` | empresa_id cannot be an empty string | `supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.sql` |
+| `get_indicadores_pessoal` | Indicadores de pessoal exigem usuário autenticado | `supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql` |
+| `get_indicadores_pessoal` | Sem acesso aos indicadores da empresa % | `supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql` |
 | `_purge_audit_log_internal` | Retenção mínima de 30 dias | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_security_definer_rpcs` | access denied | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_user_roles` | Apenas administradores podem listar papéis de usuário | `supabase/rebaseline/20260831_corrected_public.sql` |
@@ -1227,9 +1229,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `medida_contestar` | medida_nao_esta_aplicada | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_contestar` | prazo_contestacao_expirado | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_enviar_aprovacao` | não autenticado | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_enviar_aprovacao` | medida não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_enviar_aprovacao` | acesso negado | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +192 linhas — lista completa em `context.json` | | |
+| … +194 linhas — lista completa em `context.json` | | |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -4623,7 +4623,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: index * 0.01 }}` | `src/pages/AuditoriaPage.tsx` |
 | `* Só um payload 100% UUID vai à RPC real — mesmo com mocks exibidos na tela.` | `src/pages/AvaliacaoPage.tsx` |
 | `transition={{ delay: i * 0.08 }}` | `src/pages/BackupPage.tsx` |
-| … +120 linhas — lista completa em `context.json` | |
+| … +121 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -5005,6 +5005,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/useExecutiveDashboard.ts` |
 | `gcTime: 30 * 60 * 1000,` | `src/hooks/useGrupo.ts` |
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/useGrupo.ts` |
+| `staleTime: 5 * 60 * 1000,` | `src/hooks/useIndicadoresPessoal.ts` |
 | `const dataFimConcessivo = addDays(parseISO(periodo.data_fim), 365);` | `src/hooks/useNotificacoes.ts` |
 | `gcTime: 10 * 60 * 1000,` | `src/hooks/useNotificacoes.ts` |
 | `staleTime: 2 * 60 * 1000,` | `src/hooks/useNotificacoes.ts` |
@@ -5665,7 +5666,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (10516 testes em 830 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10523 testes em 831 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5969,7 +5970,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/auditoriaDerivacoes.test.ts` | 11 | auditoriaDerivacoes · conta os status e as fatias do resumo (nunca NaN) · conta os eventos dos últimos 30 dias · detecta filtros ativos (inclusive os do painel avançado) … |
 | `src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx` | 11 | CandidatoDetalhesDialog · mostra identificação, cargo, departamento e etapa atual · destaca SOMENTE a etapa efetiva do candidato no indicador · não inventa contato ausente (nem  … |
 | `src/components/recrutamento/__tests__/VagaCard.test.tsx` | 11 | VagaCard — identidade, funil e ações reais · mostra título, departamento, modalidade, competências e o funil completo · abre o Pipeline pelo botão Gerenciar Vaga · mantém apenas ações reais e não duplica Gerenciar no menu … |
-| … +530 linhas — lista completa em `context.json` | | |
+| … +531 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -6030,6 +6031,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `notify_user_on_approval` | `supabase/migrations/20251231131249_a44794d3-9ff9-45af-bdf9-68bc1af6d101.sql` |
 | `notify_user_on_rejection` | `supabase/migrations/20251231131249_a44794d3-9ff9-45af-bdf9-68bc1af6d101.sql` |
 | `notify` | `supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql` |
+| `notify` | `supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql` |
 | `notify` | `supabase/rollback/20261027090000_ninebox_reconciliacao_incremental_rollback.sql` |
 
 ## N. Regras citadas em comentários do código
