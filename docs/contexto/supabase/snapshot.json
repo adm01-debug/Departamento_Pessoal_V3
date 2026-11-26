@@ -92448,11 +92448,15 @@
         "callers": {
           "code": [
             {
+              "file": "src/components/admin/BackupHealthSection.tsx",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20260725100000_p3_060_backup_logs.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -106020,11 +106024,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/functions/backup-automatico/index.ts",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20261125140000_backup_logs_revoke_anon_e_tenant_real.sql",
               "hits": 2
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],

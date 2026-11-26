@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-26 17:12 UTC
+
+- **functions** alterado (2): `public.alert_stale_backup()`, `public.record_backup_run(p_empresa_id uuid, p_status text, p_duration_ms integer, p_records integer, p_tables integer, p_error text, p_created_by uuid, p_metadata jsonb)`
+
 ## 2026-11-26 15:14 UTC
 
 - **colunas** adicionado (1): `public.documentos_admissao.substituido_em`
