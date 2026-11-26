@@ -218,7 +218,7 @@ export default function App() {
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="dashboard-executivo" element={<LazyPage Component={DashboardExecutivoPage} />} />
-            <Route path="indicadores-pessoal" element={<LazyPage Component={IndicadoresPessoalPage} />} />
+        <Route path="indicadores-pessoal" element={<LazyPage Component={IndicadoresPessoalPage} />} />
 
         {/* Colaboradores */}
         <Route path="colaboradores" element={<LazyPage Component={ColaboradoresPage} />} />

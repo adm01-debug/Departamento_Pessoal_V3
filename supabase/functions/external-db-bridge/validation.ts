@@ -205,6 +205,11 @@ export const RPC_ALLOWLIST = new Set<string>([
   "pode_finalizar_feedback", "situacao_aprovacao", "listar_historico_feedback",
   "pode_editar_feedback", "pode_editar_colaborador", "versao_consolidada_avaliacao",
   "sincronizar_consolidacao_avaliacao",
+  // indicadores de pessoal — leitura das 4 materialized views de dashboard
+  // (turnover, headcount, férias, absenteísmo). As MVs não aceitam RLS, então
+  // não são legíveis direto pelo cliente: a RPC é SECURITY DEFINER com guarda
+  // user_belongs_to_empresa. Ver 20261126163000_indicadores_pessoal_rpc.sql.
+  "get_indicadores_pessoal",
 ]);
 
 // -------------------- Allowlist de operadores --------------------
