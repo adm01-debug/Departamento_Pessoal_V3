@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `cd4ba1a976` · branch `main` · 2026-11-26 11:34 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `5519e66598` · branch `main` · 2026-11-26 11:38 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -866,7 +866,7 @@ Middleware matcher (Next.js): nenhum
 | grant | authenticated, service_role | select | `v_audit_trail`, `mv_status_change_daily`, `mv_anomalies_hourly`, `v_ferias_alertas_criticos`, `v_pii_access_suspeitos`, `vw_folha_compliance`, `vw_feedbacks_360_versao` |
 | grant | authenticated, service_role | select, insert, update, delete | `storage.objects` |
 | grant | ci_auditor | execute | `extensions` |
-| grant | ci_auditor | select | `cron.job` |
+| grant | ci_auditor | select | `cron.job`, `supabase_migrations.schema_migrations` |
 | grant | dp_mcp_role | select | `ninebox_permissoes_homologacao` |
 | grant | service_role | all | `logs_sistema`, `login_lockouts`, `idempotency_keys`, `folha_lock_conflicts`, `audit_log_unified`, `audit_log_unified_archive`, `rate_limits`, `rate_limit_logs`, `rate_limit_config`, `despesas_aprovacoes_log`, `contabilidade_contatos`, `contabilidade_threads`, `contabilidade_mensagens`, `holerite_distribuicoes`, `afdt_importacoes` … +58 |
 | grant | service_role | execute | `detectar_fraude_ponto`, `check_brute_force`, `check_rate_limit`, `is_ip_blocked`, `is_ip_whitelisted`, `is_country_allowed`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `purge_expired_idempotency_keys`, `check_idempotency_anomalies`, `enforce_folha_pagamento_hash`, `proibir_delete_folha_fechada`, `enforce_holerite_signed_hash`, `enforce_esocial_evento_hash`, `enforce_cnab_remessa_hash` … +117 |

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "cd4ba1a9765b1ab8d28f71e7b1afa92a39a11d2c",
+  "sha": "5519e665981a71082496fb2819183d9bb040177b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-26 11:34 UTC",
-  "files_total": 4249,
-  "code_files": 3653,
-  "code_lines": 543344
+  "generated_at": "2026-11-26 11:38 UTC",
+  "files_total": 4251,
+  "code_files": 3655,
+  "code_lines": 543387
  },
  "version": "1.3.2",
- "facts_hash": "571249602564e10e",
+ "facts_hash": "60f48dc9f7864e69",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -387,7 +387,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 1343,
+   ".sql": 1345,
    ".tsx": 1144,
    ".ts": 1025,
    ".mjs": 110,
@@ -74196,6 +74196,8 @@
    "supabase/migrations/20261125200000_fix_prevent_empty_empresa_id_uuid_cast.verify.sql",
    "supabase/migrations/20261126090000_storage_policies_buckets_app.sql",
    "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql",
+   "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.sql",
+   "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -86600,6 +86602,14 @@
     "objkind": "function",
     "roles": "service_role",
     "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "supabase_migrations.schema_migrations",
+    "objkind": "table",
+    "roles": "ci_auditor",
+    "src": "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.sql"
    },
    {
     "kind": "revoke",
@@ -106868,8 +106878,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 1269,
-   "lines": 88021,
+   "files": 1271,
+   "lines": 88064,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -264965,6 +264975,14 @@
     "src": "supabase/migrations/20261123180000_dreno_fila_notificacoes_cron.sql"
    },
    {
+    "kind": "grant",
+    "privs": "select",
+    "object": "supabase_migrations.schema_migrations",
+    "objkind": "table",
+    "roles": "ci_auditor",
+    "src": "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.sql"
+   },
+   {
     "kind": "revoke",
     "privs": "all",
     "object": "user_belongs_to_empresa",
@@ -348828,6 +348846,14 @@
    "path": "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql",
    "lines": 36
   },
+  "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.sql": {
+   "path": "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.sql",
+   "lines": 33
+  },
+  "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.verify.sql": {
+   "path": "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.verify.sql",
+   "lines": 10
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -349223,10 +349249,21 @@
   }
  },
  "git": {
-  "sha": "cd4ba1a9765b1ab8d28f71e7b1afa92a39a11d2c",
+  "sha": "5519e665981a71082496fb2819183d9bb040177b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "5519e66",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "infra: da ao ci_auditor leitura do ledger de migrations (#903)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.sql",
+     "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.verify.sql"
+    ]
+   },
    {
     "sha": "cd4ba1a",
     "date": "2026-11-26",
@@ -349686,56 +349723,20 @@
      "supabase/migrations/20261124150000_backup_logs_rls_policy.sql",
      "supabase/migrations/20261124150000_backup_logs_rls_policy.verify.sql"
     ]
-   },
-   {
-    "sha": "ce83bb0",
-    "date": "2026-11-24",
-    "author": "adm01-debug",
-    "subject": "feat: banco de horas com extrato filtravel, KPIs e exportacao CSV (#873)",
-    "files": [
-     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/BancoHorasComum.test.ts",
-     "src/components/banco-horas/AlertaSaldoNegativoCard.tsx",
-     "src/components/banco-horas/BancoHorasKpis.tsx",
-     "src/components/banco-horas/CabecalhoBancoHoras.tsx",
-     "src/components/banco-horas/CartaoSecaoBancoHoras.tsx",
-     "src/components/banco-horas/EvolucaoSaldoCard.tsx",
-     "src/components/banco-horas/ExtratoBancoHoras.tsx",
-     "src/components/banco-horas/FiltrosCabecalhoBancoHoras.tsx",
-     "src/components/banco-horas/SituacaoSaldosCard.tsx",
-     "src/components/banco-horas/TotaisHorasCard.tsx",
-     "src/components/banco-horas/bancoHorasComum.ts",
-     "src/components/banco-horas/exportarBancoHoras.ts",
-     "src/components/dashboard/donutMotion.ts",
-     "src/components/dashboard/estruturaAnimacoes.ts",
-     "src/components/horas-extras/FiltroSelectConteudo.tsx",
-     "src/components/horas-extras/horasExtrasComum.ts",
-     "src/components/ui/empty-state.tsx",
-     "src/components/ui/entradaGlobal.ts",
-     "src/components/ui/linha-tabela-hover.ts",
-     "src/components/ui/popover.tsx",
-     "src/components/ui/progressMotion.ts",
-     "src/components/ui/revelacaoGrafico.tsx",
-     "src/components/ui/tooltipGrafico.tsx",
-     "src/hooks/useEntradaCardConcluida.ts",
-     "src/pages/BancoHorasPage.tsx",
-     "src/services/bancoHorasService.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/.bundle-budget.json",
-    10
-   ],
-   [
-    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
     9
    ],
    [
+    "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
+    8
+   ],
+   [
     ".github/workflows/canonical-migrations.yml",
-    6
+    7
    ],
    [
     "src/pages/PontoPage.tsx",
@@ -349764,6 +349765,14 @@
    [
     "supabase/migrations/20260817000000_p4_071_indices_compostos_top20.verify.sql",
     2
+   ],
+   [
+    "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261126100000_grant_ci_auditor_migration_ledger.verify.sql",
+    1
    ],
    [
     "supabase/migrations/20261126090000_storage_policies_buckets_app.verify.sql",
@@ -349795,14 +349804,6 @@
    ],
    [
     "src/components/avaliacao/NineBoxFiltros.tsx",
-    1
-   ],
-   [
-    "src/components/avaliacao/NineBoxTab.tsx",
-    1
-   ],
-   [
-    "src/components/avaliacao/nineBoxMock.ts",
     1
    ]
   ]

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "cd4ba1a9765b1ab8d28f71e7b1afa92a39a11d2c",
+  "commit": "5519e665981a71082496fb2819183d9bb040177b",
   "branch": "main",
-  "data_commit": "2026-11-26T08:33:37-03:00",
+  "data_commit": "2026-11-26T08:33:55-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "5519e66",
+    "data": "2026-11-26",
+    "assunto": "infra: da ao ci_auditor leitura do ledger de migrations (#903)"
+   },
    {
     "sha": "cd4ba1a",
     "data": "2026-11-26",
@@ -126,14 +131,9 @@
     "sha": "5f2fa81",
     "data": "2026-11-25",
     "assunto": "docs: registra o resgate da tela de Turnos e o lote canonico aplicado (#882)"
-   },
-   {
-    "sha": "2a62b11",
-    "data": "2026-11-25",
-    "assunto": "feat: resgata a tela de Turnos do agente Muri (calendario, escalas e dialogos) (#875)"
    }
   ],
-  "arquivos_mudados_7d": 777,
+  "arquivos_mudados_7d": 779,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -181,7 +181,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 39
+    "mudancas": 40
    },
    {
     "pasta": "src/components/dashboard",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 39
+    "mudancas": 40
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 288
+    "commits": 289
    },
    {
     "autor": "dependabot[bot]",
@@ -309,12 +309,12 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 6
+    "commits": 5
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 4235,
+  "arquivos_total": 4237,
   "arquivos_codigo": 2312,
   "linhas_codigo": 468448,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 127,
   "edge_functions": 68,
   "tabelas": 438,
-  "migrations": 1269,
+  "migrations": 1271,
   "cron_jobs": 43,
   "testes": 871,
   "workflows": 21,
