@@ -272,8 +272,18 @@ jobs:
           # (20261123090000 ... 20261125200000) saem do lote e voltam num
           # dispatch proprio: 20 arquivos de uma vez tornariam impossivel
           # atribuir um efeito em producao a um unico lote.
+          # 26/11/2026 (lote 2): 20261126100000 da ao role de leitura do CI
+          # (ci_auditor, secret SUPABASE_DB_URL_READONLY) USAGE em
+          # supabase_migrations + SELECT em schema_migrations. Sem isso o gate
+          # de drift de migrations nao consegue ler o ledger e reprova por
+          # credencial ("permission denied for schema supabase_migrations", o
+          # mesmo erro que impedia diagnosticar o Supabase Preview). So
+          # metadado de escrituracao: nada de public, nada gravavel.
+          # A 20261126090000 segue na lista porque o apply pula versao ja
+          # registrada no ledger.
           for migration in \
-            20261126090000_storage_policies_buckets_app.sql
+            20261126090000_storage_policies_buckets_app.sql \
+            20261126100000_grant_ci_auditor_migration_ledger.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
