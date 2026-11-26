@@ -99,6 +99,7 @@ const EPIsPage = lazy(() => import('@/pages/EPIsPage'));
 const CalculadoraRescisaoPage = lazy(() => import('@/pages/CalculadoraRescisaoPage'));
 const ImportacaoPage = lazy(() => import('@/pages/ImportacaoPage'));
 const DashboardExecutivoPage = lazy(() => import('@/pages/DashboardExecutivoPage'));
+const IndicadoresPessoalPage = lazy(() => import('@/pages/IndicadoresPessoalPage'));
 const AdminTelemetriaPage = lazy(() => import('@/pages/AdminTelemetriaPage'));
 const AdminIdempotenciaPage = lazy(() => import('@/pages/AdminIdempotenciaPage'));
 const AdminOperacaoPage = lazy(() => import('@/pages/AdminOperacaoPage'));
@@ -217,6 +218,7 @@ export default function App() {
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="dashboard-executivo" element={<LazyPage Component={DashboardExecutivoPage} />} />
+        <Route path="indicadores-pessoal" element={<LazyPage Component={IndicadoresPessoalPage} />} />
 
         {/* Colaboradores */}
         <Route path="colaboradores" element={<LazyPage Component={ColaboradoresPage} />} />

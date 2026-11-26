@@ -24130,6 +24130,10 @@ export type Database = {
         Args: { p_empresa_id: string }
         Returns: { user_id: string }[]
       }
+      get_indicadores_pessoal: {
+        Args: { p_empresa_id: string; p_dias?: number; p_meses?: number }
+        Returns: Json
+      }
       get_idempotency_health: {
         Args: never
         Returns: {

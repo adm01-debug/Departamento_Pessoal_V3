@@ -2,12 +2,12 @@
   "format_version": 1,
   "fonte": "scripts/inventario/gerar-rotas.mjs (le src/App.tsx, src/components/layout/AppSidebar.tsx e os imports de cada tela)",
   "resumo": {
-    "urls": 116,
-    "telas": 110,
-    "itens_de_menu": 91,
+    "urls": 117,
+    "telas": 111,
+    "itens_de_menu": 92,
     "urls_admin": 22,
     "urls_publicas": 7,
-    "hooks_distintos": 160,
+    "hooks_distintos": 161,
     "problemas": 0
   },
   "urls": [
@@ -705,6 +705,15 @@
       "redireciona": null
     },
     {
+      "caminho": "/indicadores-pessoal",
+      "componente": "IndicadoresPessoalPage",
+      "arquivo": "src/pages/IndicadoresPessoalPage.tsx",
+      "layout": false,
+      "protegida": true,
+      "admin": false,
+      "redireciona": null
+    },
+    {
       "caminho": "/integracoes",
       "componente": "IntegracoesPage",
       "arquivo": "src/pages/IntegracoesPage.tsx",
@@ -1066,6 +1075,11 @@
       "grupo": "Principal",
       "rotulo": "Dashboard Executivo",
       "caminho": "/dashboard-executivo"
+    },
+    {
+      "grupo": "Principal",
+      "rotulo": "Indicadores de Pessoal",
+      "caminho": "/indicadores-pessoal"
     },
     {
       "grupo": "Principal",
@@ -11547,6 +11561,96 @@
       ],
       "imports_quebrados": []
     },
+  {
+    "arquivo": "src/pages/IndicadoresPessoalPage.tsx",
+    "componente": "IndicadoresPessoalPage",
+    "urls": [
+      "/indicadores-pessoal"
+    ],
+    "menu": [
+      {
+        "grupo": "Principal",
+        "rotulo": "Indicadores de Pessoal"
+      }
+    ],
+    "arquivos_lidos": 24,
+    "hooks": [
+      {
+        "nome": "useAuth",
+        "arquivo": "src/contexts/AuthContext.tsx"
+      },
+      {
+        "nome": "useBackGesture",
+        "arquivo": "src/hooks/useBackGesture.ts"
+      },
+      {
+        "nome": "useEmpresas",
+        "arquivo": "src/hooks/useEmpresas.ts"
+      },
+      {
+        "nome": "useGrupo",
+        "arquivo": "src/hooks/useGrupo.ts"
+      },
+      {
+        "nome": "useIndicadoresPessoal",
+        "arquivo": "src/hooks/useIndicadoresPessoal.ts"
+      },
+      {
+        "nome": "useOnMount",
+        "arquivo": "src/hooks/useMountEffects.ts"
+      },
+      {
+        "nome": "usePWA",
+        "arquivo": "src/hooks/usePWA.ts"
+      },
+      {
+        "nome": "useSystemHealth",
+        "arquivo": "src/hooks/useSystemHealth.ts"
+      }
+    ],
+    "buckets": [],
+    "edges": [
+      "OCR",
+      "adiantamento-salarial",
+      "alertas-dp",
+      "assinaturaDigital",
+      "backup-automatico",
+      "cache",
+      "calcular-ferias",
+      "calcular-folha",
+      "calcular-rescisao",
+      "criptografia",
+      "enviar-relatorio",
+      "exportacao",
+      "external-db-bridge",
+      "fgts-digital",
+      "gerar-guias",
+      "gerar-holerite",
+      "healthcheck",
+      "importacao",
+      "limpeza",
+      "metricas",
+      "notificacao",
+      "processar-agendamentos",
+      "processar-ponto",
+      "rateLimit",
+      "sincronizar-bitrix"
+    ],
+    "rpcs": [
+      "admin_associar_usuario_empresa",
+      "get_indicadores_pessoal",
+      "get_my_user_empresas",
+      "get_security_alerts_summary",
+      "log_frontend_error",
+      "set_own_default_empresa"
+    ],
+    "tabelas": [
+      "colaboradores",
+      "empresas",
+      "versao_banco"
+    ],
+    "imports_quebrados": []
+  },
     {
       "arquivo": "src/pages/IntegracoesPage.tsx",
       "componente": "IntegracoesPage",
