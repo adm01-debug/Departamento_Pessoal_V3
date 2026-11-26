@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "9af3c578762423117f4f64d615362e97771574b3",
+  "sha": "d131539c69575edd3afe95acd896830bdff6feda",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-26 16:38 UTC",
-  "files_total": 4264,
-  "code_files": 3668,
-  "code_lines": 545053
+  "generated_at": "2026-11-26 17:42 UTC",
+  "files_total": 4266,
+  "code_files": 3670,
+  "code_lines": 545232
  },
  "version": "1.3.2",
- "facts_hash": "89fd78f5829dfcd5",
+ "facts_hash": "64f124439975b999",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -388,7 +388,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 1351,
+   ".sql": 1353,
    ".tsx": 1148,
    ".ts": 1027,
    ".mjs": 111,
@@ -74233,6 +74233,8 @@
    "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.verify.sql",
    "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql",
    "supabase/migrations/20261126140000_documentos_admissao_substituicao.verify.sql",
+   "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql",
+   "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -86669,6 +86671,22 @@
     "objkind": "function",
     "roles": "PUBLIC",
     "src": "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "enforce_log_retention",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "enforce_log_retention",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql"
    },
    {
     "kind": "revoke",
@@ -104715,7 +104733,7 @@
   {
    "module": "scripts",
    "files": 156,
-   "lines": 35437,
+   "lines": 35453,
    "tables": [
     "a",
     "anexos",
@@ -107017,8 +107035,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 1277,
-   "lines": 88370,
+   "files": 1279,
+   "lines": 88533,
    "tables": [
     "profiles",
     "recibos_ferias",
@@ -253148,6 +253166,8 @@
    "supabase/migrations/20261126120000_storage_documentos_admissao_sem_policy.sql",
    "supabase/migrations/20261126130000_storage_documentos_admissao_rh_read.sql",
    "supabase/migrations/20261126140000_documentos_admissao_substituicao.sql",
+   "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql",
+   "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.verify.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -265442,6 +265462,22 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "enforce_log_retention",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "enforce_log_retention",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -273869,7 +273905,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 452,
+   "lines": 468,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -349596,6 +349632,16 @@
    "path": "supabase/migrations/20261126140000_documentos_admissao_substituicao.verify.sql",
    "lines": 44
   },
+  "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql": {
+   "path": "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql",
+   "lines": 112,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.verify.sql": {
+   "path": "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.verify.sql",
+   "lines": 51,
+   "uses_service_role": true
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -349991,10 +350037,22 @@
   }
  },
  "git": {
-  "sha": "9af3c578762423117f4f64d615362e97771574b3",
+  "sha": "d131539c69575edd3afe95acd896830bdff6feda",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "d131539",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "fix: retencao de logs volta a purgar no canonico (job 35 falhava todo dia) (#909)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/canonical-invariants.sql",
+     "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql",
+     "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.verify.sql"
+    ]
+   },
    {
     "sha": "9af3c57",
     "date": "2026-11-26",
@@ -350445,21 +350503,12 @@
      "src/utils/__tests__/pontoGeofencing.test.ts",
      "src/utils/pontoGeofencing.ts"
     ]
-   },
-   {
-    "sha": "5f2fa81",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "docs: registra o resgate da tela de Turnos e o lote canonico aplicado (#882)",
-    "files": [
-     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md",
-    9
+    8
    ],
    [
     "scripts/.bundle-budget.json",
@@ -350467,7 +350516,7 @@
    ],
    [
     ".github/workflows/canonical-migrations.yml",
-    6
+    7
    ],
    [
     "src/pages/PontoPage.tsx",
@@ -350480,6 +350529,10 @@
    [
     "src/index.css",
     3
+   ],
+   [
+    "scripts/canonical-invariants.sql",
+    2
    ],
    [
     "src/integrations/supabase/types.ts",
@@ -350514,6 +350567,14 @@
     2
    ],
    [
+    "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261126150000_fix_enforce_log_retention_metricas_processamento.verify.sql",
+    1
+   ],
+   [
     "e2e/authenticated/admin-operacao.spec.ts",
     1
    ],
@@ -350523,18 +350584,6 @@
    ],
    [
     "src/components/admin/__tests__/BackupHealthSection.test.tsx",
-    1
-   ],
-   [
-    "src/pages/AdminOperacaoPage.tsx",
-    1
-   ],
-   [
-    "supabase/functions/backup-automatico/index.ts",
-    1
-   ],
-   [
-    "supabase/functions/external-db-bridge/validation.test.ts",
     1
    ]
   ]

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9af3c578762423117f4f64d615362e97771574b3",
+  "commit": "d131539c69575edd3afe95acd896830bdff6feda",
   "branch": "main",
-  "data_commit": "2026-11-26T13:37:05-03:00",
+  "data_commit": "2026-11-26T14:28:57-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "d131539",
+    "data": "2026-11-26",
+    "assunto": "fix: retencao de logs volta a purgar no canonico (job 35 falhava todo dia) (#909)"
+   },
    {
     "sha": "9af3c57",
     "data": "2026-11-26",
@@ -126,18 +131,13 @@
     "sha": "58dd46c",
     "data": "2026-11-25",
     "assunto": "feat: resgata os cards de resumo do ponto (indicadores, equipe, pendencias e fechamento) (#886)"
-   },
-   {
-    "sha": "adc0f56",
-    "data": "2026-11-25",
-    "assunto": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)"
    }
   ],
-  "arquivos_mudados_7d": 769,
+  "arquivos_mudados_7d": 768,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 394
+    "mudancas": 393
    },
    {
     "pasta": "src/components/ui",
@@ -181,7 +181,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 39
+    "mudancas": 40
    },
    {
     "pasta": "src/components/dashboard",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 39
+    "mudancas": 40
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 21
+    "mudancas": 22
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 289
+    "commits": 290
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 6
+    "commits": 5
    },
    {
     "autor": "github-actions[bot]",
@@ -314,7 +314,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4250,
+  "arquivos_total": 4252,
   "arquivos_codigo": 2319,
   "linhas_codigo": 469866,
   "rotas": 116,
@@ -326,7 +326,7 @@
   "hooks": 127,
   "edge_functions": 68,
   "tabelas": 438,
-  "migrations": 1277,
+  "migrations": 1279,
   "cron_jobs": 43,
   "testes": 875,
   "workflows": 21,
