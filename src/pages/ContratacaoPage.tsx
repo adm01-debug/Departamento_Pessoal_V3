@@ -188,41 +188,39 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
     setUploadedDocs((prev) => ({ ...prev, [docId]: { name: file.name, status: 'uploading' } }));
 
     try {
-      const result = await processDocument(file, docType);
+      // Envio e OCR na mesma chamada: o candidato não tem sessão, então o upload
+      // direto no Storage é negado por RLS. A edge function valida o token e
+      // grava com service_role (ver supabase/functions/admissao-publica).
+      const result = await processDocument(file, docType, token ?? '');
 
-      if (result.valid) {
-        // Upload via edge function admissao-publica — uploads anônimos
-        // diretos no Storage foram revogados; a função valida o token e
-        // registra em documentos_admissao via RPC token-scoped.
-        const uploadForm = new FormData();
-        uploadForm.append('token', token ?? '');
-        uploadForm.append('tipo', docType);
-        uploadForm.append('file', file);
-
-        const { error: uploadErr } = await supabase.functions.invoke('admissao-publica', {
-          body: uploadForm,
-        });
-
-        if (uploadErr) throw uploadErr;
-
-        setUploadedDocs((prev) => ({
-          ...prev,
-          [docId]: { name: file.name, status: 'success', result },
-        }));
-        toast.success(`${docType.toUpperCase()} enviado com sucesso!`);
-
-        if (result.extractedData) {
-          const data = result.extractedData;
-          if (data.nome && !formData.nome_completo) setFormData((p) => ({ ...p, nome_completo: data.nome! }));
-          if (data.cpf && !formData.cpf) setFormData((p) => ({ ...p, cpf: data.cpf! }));
-          if (data.cep && !formData.cep) setFormData((p) => ({ ...p, cep: data.cep! }));
-        }
-      } else {
+      if (!result.uploaded) {
         setUploadedDocs((prev) => ({
           ...prev,
           [docId]: { name: file.name, status: 'error', result },
         }));
-        toast.error(`Atenção: ${result.error || 'Não foi possível validar o documento.'}`);
+        toast.error(result.error || 'Não foi possível enviar o documento.');
+        return;
+      }
+
+      setUploadedDocs((prev) => ({
+        ...prev,
+        [docId]: { name: file.name, status: 'success', result },
+      }));
+
+      if (result.valid) {
+        toast.success(`${docType.toUpperCase()} enviado com sucesso!`);
+      } else {
+        // O documento foi recebido; só a validação automática é que falhou.
+        toast.warning(
+          `Documento enviado, mas não foi validado automaticamente: ${result.error ?? ''}`.trim()
+        );
+      }
+
+      if (result.extractedData) {
+        const data = result.extractedData;
+        if (data.nome && !formData.nome_completo) setFormData((p) => ({ ...p, nome_completo: data.nome! }));
+        if (data.cpf && !formData.cpf) setFormData((p) => ({ ...p, cpf: data.cpf! }));
+        if (data.cep && !formData.cep) setFormData((p) => ({ ...p, cep: data.cep! }));
       }
     } catch (error) {
       loggerService.error(

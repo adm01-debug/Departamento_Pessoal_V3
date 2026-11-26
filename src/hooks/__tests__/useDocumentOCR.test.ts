@@ -2,18 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useDocumentOCR } from '../useDocumentOCR';
 
-const mockUpload = vi.fn();
-const mockGetPublicUrl = vi.fn();
 const mockInvoke = vi.fn();
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    storage: {
-      from: () => ({
-        upload: (path: string, file: File) => mockUpload(path, file),
-        getPublicUrl: (path: string) => mockGetPublicUrl(path),
-      }),
-    },
     functions: {
       invoke: (name: string, opts: unknown) => mockInvoke(name, opts),
     },
@@ -24,13 +16,17 @@ function makeFile(name = 'doc.pdf') {
   return new File(['content'], name, { type: 'application/pdf' });
 }
 
+/** Corpo enviado à edge function na última chamada. */
+function lastFormData(): FormData {
+  const opts = mockInvoke.mock.calls.at(-1)?.[1] as { body: FormData };
+  return opts.body;
+}
+
 describe('useDocumentOCR', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUpload.mockResolvedValue({ error: null });
-    mockGetPublicUrl.mockReturnValue({ data: { publicUrl: 'https://cdn.test/temp/doc.pdf' } });
     mockInvoke.mockResolvedValue({
-      data: { valid: true, confidence: 0.95, extractedData: { nome: 'Alice' } },
+      data: { ok: true, path: 'admissao_1/rg_1.pdf', ocr: { valid: true, confidence: 0.95, extractedData: { nome: 'Alice' } } },
       error: null,
     });
   });
@@ -57,43 +53,55 @@ describe('useDocumentOCR', () => {
     let promise!: Promise<unknown>;
 
     act(() => {
-      promise = result.current.processDocument(makeFile(), 'rg');
+      promise = result.current.processDocument(makeFile(), 'rg', 'tok-12345678901234');
     });
 
     expect(result.current.isProcessing).toBe(true);
 
     await act(async () => {
-      resolveInvoke({ data: { valid: true, confidence: 0.9 }, error: null });
+      resolveInvoke({ data: { ok: true, ocr: { valid: true, confidence: 0.9 } }, error: null });
       await promise;
     });
 
     expect(result.current.isProcessing).toBe(false);
   });
 
-  it('uploads file to temp path', async () => {
+  it('envia o arquivo pela edge function admissao-publica com o token', async () => {
     const { result } = renderHook(() => useDocumentOCR());
-    const file = makeFile('rg.png');
 
     await act(async () => {
-      await result.current.processDocument(file, 'rg');
+      await result.current.processDocument(makeFile('rg.png'), 'rg', 'tok-12345678901234');
     });
 
-    expect(mockUpload).toHaveBeenCalledWith(expect.stringMatching(/^temp\/.*\.png$/), file);
+    expect(mockInvoke).toHaveBeenCalledWith('admissao-publica', expect.objectContaining({ body: expect.any(FormData) }));
+    const form = lastFormData();
+    expect(form.get('token')).toBe('tok-12345678901234');
+    expect(form.get('tipo')).toBe('rg');
+    expect(form.get('ocr')).toBe('true');
+    expect(form.get('doc_type')).toBe('rg');
   });
 
-  it('calls OCR edge function with correct doc type', async () => {
+  it('traduz o tipo da UI para o tipo aceito pelo OCR', async () => {
     const { result } = renderHook(() => useDocumentOCR());
 
     await act(async () => {
-      await result.current.processDocument(makeFile(), 'cnh');
+      await result.current.processDocument(makeFile(), 'residencia', 'tok-12345678901234');
     });
 
-    expect(mockInvoke).toHaveBeenCalledWith(
-      'process-document-ocr',
-      expect.objectContaining({
-        body: expect.objectContaining({ docType: 'cnh' }),
-      })
-    );
+    expect(lastFormData().get('doc_type')).toBe('comprovante_residencia');
+  });
+
+  it('não pede OCR para tipo sem OCR (foto) e considera o envio como sucesso', async () => {
+    mockInvoke.mockResolvedValueOnce({ data: { ok: true, path: 'admissao_1/foto_1.jpg', ocr: null }, error: null });
+    const { result } = renderHook(() => useDocumentOCR());
+    let ocr: Record<string, unknown> = {};
+
+    await act(async () => {
+      ocr = await result.current.processDocument(makeFile('foto.jpg'), 'foto', 'tok-12345678901234');
+    });
+
+    expect(lastFormData().get('ocr')).toBeNull();
+    expect(ocr).toEqual({ uploaded: true, valid: true, confidence: 0 });
   });
 
   it('returns OCR data on success', async () => {
@@ -101,44 +109,52 @@ describe('useDocumentOCR', () => {
     let ocr: Record<string, unknown> = {};
 
     await act(async () => {
-      ocr = await result.current.processDocument(makeFile(), 'rg');
+      ocr = await result.current.processDocument(makeFile(), 'rg', 'tok-12345678901234');
     });
 
-    expect(ocr).toEqual({ valid: true, confidence: 0.95, extractedData: { nome: 'Alice' } });
+    expect(ocr.uploaded).toBe(true);
+    expect(ocr.valid).toBe(true);
+    expect(ocr.confidence).toBe(0.95);
+    expect(ocr.extractedData).toEqual({ nome: 'Alice' });
   });
 
-  it('returns error result when upload fails', async () => {
-    mockUpload.mockResolvedValueOnce({ error: { message: 'storage full' } });
+  it('mantém uploaded=true quando o OCR não valida o documento', async () => {
+    mockInvoke.mockResolvedValueOnce({
+      data: { ok: true, path: 'admissao_1/rg_1.pdf', ocr: { valid: false, confidence: 0, error: 'Documento ilegível' } },
+      error: null,
+    });
     const { result } = renderHook(() => useDocumentOCR());
     let ocr: Record<string, unknown> = {};
 
     await act(async () => {
-      ocr = await result.current.processDocument(makeFile(), 'rg');
+      ocr = await result.current.processDocument(makeFile(), 'rg', 'tok-12345678901234');
     });
 
+    expect(ocr.uploaded).toBe(true);
     expect(ocr.valid).toBe(false);
-    expect(ocr.confidence).toBe(0);
-    expect(ocr.error).toContain('Não foi possível');
+    expect(ocr.error).toBe('Documento ilegível');
   });
 
-  it('returns error result when function invocation fails', async () => {
+  it('marca uploaded=false quando o envio falha', async () => {
     mockInvoke.mockResolvedValueOnce({ data: null, error: { message: 'function error' } });
     const { result } = renderHook(() => useDocumentOCR());
     let ocr: Record<string, unknown> = {};
 
     await act(async () => {
-      ocr = await result.current.processDocument(makeFile(), 'rg');
+      ocr = await result.current.processDocument(makeFile(), 'rg', 'tok-12345678901234');
     });
 
+    expect(ocr.uploaded).toBe(false);
     expect(ocr.valid).toBe(false);
+    expect(ocr.error).toBe('Não foi possível enviar o documento.');
   });
 
   it('resets isProcessing to false even on error', async () => {
-    mockUpload.mockRejectedValueOnce(new Error('network'));
+    mockInvoke.mockRejectedValueOnce(new Error('network'));
     const { result } = renderHook(() => useDocumentOCR());
 
     await act(async () => {
-      await result.current.processDocument(makeFile(), 'rg');
+      await result.current.processDocument(makeFile(), 'rg', 'tok-12345678901234');
     });
 
     expect(result.current.isProcessing).toBe(false);

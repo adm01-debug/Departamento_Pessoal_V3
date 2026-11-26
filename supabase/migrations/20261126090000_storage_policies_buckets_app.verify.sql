@@ -1,7 +1,13 @@
 -- Sidecar de verificacao da 20261126090000.
 -- Roda dentro da transacao do apply/verify: a contagem e o numero de policies
--- que a migration declara (17). Qualquer policy faltante derruba o gate, e o
+-- que a migration declara. Qualquer policy faltante derruba o gate, e o
 -- INSERT publico da 20260719150000 (se algum dia for aplicado) tambem.
+--
+-- Contagem 15 (era 17): as duas policies de `documentos-admissao`
+-- (`pol_admissao_docs_insert_tenant_ou_temp` e `..._select_tenant_ou_temp`)
+-- saem na 20261126120000 -- bucket sem consumidor autenticado, e a versao
+-- anterior contrariava a decisao da 20261117193000. A ausencia delas e
+-- afirmada pelo sidecar daquela migration.
 SELECT CASE
   WHEN (
     SELECT count(*) FROM pg_policies
@@ -11,8 +17,6 @@ SELECT CASE
         'pol_avatars_insert_owner',
         'pol_avatars_update_owner',
         'pol_avatars_delete_owner',
-        'pol_admissao_docs_insert_tenant_ou_temp',
-        'pol_admissao_docs_select_tenant_ou_temp',
         'pol_ferias_avisos_select_tenant',
         'pol_ferias_avisos_insert_tenant',
         'pol_ferias_avisos_update_tenant',
@@ -25,7 +29,7 @@ SELECT CASE
         'pol_ponto_biometria_insert_tenant',
         'pol_contratos_trabalho_select_tenant'
       )
-  ) = 17
+  ) = 15
   AND NOT EXISTS (
     SELECT 1 FROM pg_policies
     WHERE schemaname = 'storage' AND tablename = 'objects'
