@@ -133,7 +133,11 @@ SELECT jsonb_build_object(
     WHERE n.nspname = 'public' AND p.proname = 'contrato_assinar_por_token'
       AND p.pronargs = 5
       AND array_to_string(p.proconfig, ',') LIKE '%extensions%'
-  ),
+  )
+) ||
+-- jsonb_build_object é VARIADIC "any": no máximo 100 argumentos por chamada
+-- (50 invariantes). Ao crescer a lista, abra outra chamada com `||`.
+jsonb_build_object(
   'rls_helper_ok', to_regproc('public.rls_tenant_or_admin') IS NOT NULL,
   'admin_list_ok', to_regproc('public.admin_list_profiles') IS NOT NULL,
   'get_admin_ids_ok', to_regproc('public.get_empresa_admin_ids') IS NOT NULL,
