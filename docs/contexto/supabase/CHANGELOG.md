@@ -2,6 +2,11 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-27 01:16 UTC
+
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_30`
+- **realtime** removido (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_23`
+
 ## 2026-11-27 00:34 UTC
 
 - **functions** adicionado (1): `public.get_indicadores_pessoal(p_empresa_id uuid, p_dias integer, p_meses integer)`
