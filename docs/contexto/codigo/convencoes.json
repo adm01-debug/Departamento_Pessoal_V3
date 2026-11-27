@@ -34,7 +34,7 @@
    "scripts/autofix (10)"
   ],
   "docs": [
-   "docs (97)",
+   "docs (100)",
    "(raiz) (32)",
    ".github (1)"
   ]
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "docs: registra o veredito dos descartes do resgate do agente Muri (#913)",
+   "chore: resgata as 3 docs de design system que o codigo da main cita (#912)",
    "feat: expõe indicadores de pessoal das MVs de dashboard (RPC com guarda de tenant + tela) (#911)",
    "fix: invariantes do canônico voltam a rodar (limite de 100 args) (#910)",
-   "fix: retencao de logs volta a purgar no canonico (job 35 falhava todo dia) (#909)",
-   "feat: registra execucoes de backup e expoe painel de saude no Admin Operacao (#908)",
-   "fix: destrava o envio de documentos da contratacao publica e remove policies sem consumidor (#906)"
+   "fix: retencao de logs volta a purgar no canonico (job 35 falhava todo dia) (#909)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6fdcd20d65902c649eae66d7426d4f01d8f4c6c6",
+  "commit": "61fc8ae30350d5bf36f45a25000d07eea9e19e8e",
   "branch": "main",
-  "data_commit": "2026-11-26T20:14:04-03:00",
+  "data_commit": "2026-11-26T20:51:56-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "61fc8ae",
+    "data": "2026-11-26",
+    "assunto": "docs: registra o veredito dos descartes do resgate do agente Muri (#913)"
+   },
+   {
+    "sha": "6e8a84b",
+    "data": "2026-11-26",
+    "assunto": "chore: resgata as 3 docs de design system que o codigo da main cita (#912)"
+   },
    {
     "sha": "6fdcd20",
     "data": "2026-11-26",
@@ -121,19 +131,9 @@
     "sha": "43dd2de",
     "data": "2026-11-25",
     "assunto": "fix(db): fecha record_backup_run para anon e tira backup_logs do claim de JWT (#890)"
-   },
-   {
-    "sha": "c71a391",
-    "data": "2026-11-25",
-    "assunto": "fix: policies de escrita de provisoes_folha e historico_calculos_folha usam pertence_a_empresa (#881)"
-   },
-   {
-    "sha": "ced6c84",
-    "data": "2026-11-25",
-    "assunto": "feat: resgata a janela Ver todas do desempenho de vagas (port do Muri) (#888)"
    }
   ],
-  "arquivos_mudados_7d": 764,
+  "arquivos_mudados_7d": 768,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -181,7 +181,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 41
+    "mudancas": 40
    },
    {
     "pasta": "src/components/dashboard",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 41
+    "mudancas": 40
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 24
+    "mudancas": 23
    },
    {
     "arquivo": "inventario/estado/rotas.json",
@@ -230,20 +230,16 @@
     "mudancas": 10
    },
    {
-    "arquivo": "package.json",
-    "mudancas": 10
-   },
-   {
     "arquivo": "src/schemas/tableColumns.ts",
     "mudancas": 10
    },
    {
-    "arquivo": "scripts/automation.config.json",
+    "arquivo": "package.json",
     "mudancas": 9
    },
    {
-    "arquivo": "package-lock.json",
-    "mudancas": 8
+    "arquivo": "scripts/automation.config.json",
+    "mudancas": 9
    },
    {
     "arquivo": "src/index.css",
@@ -251,6 +247,10 @@
    },
    {
     "arquivo": "docs/auditoria/sql-preservado/README.md",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "package-lock.json",
     "mudancas": 7
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 291
+    "commits": 292
    },
    {
     "autor": "github-actions[bot]",
@@ -309,12 +309,12 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 4
+    "commits": 3
    }
   ]
  },
  "contagens": {
-  "arquivos_total": 4257,
+  "arquivos_total": 4261,
   "arquivos_codigo": 2322,
   "linhas_codigo": 470604,
   "rotas": 117,
@@ -331,7 +331,7 @@
   "testes": 876,
   "workflows": 21,
   "scripts": 138,
-  "docs_md": 347
+  "docs_md": 351
  },
  "por_pasta": {
   "capacitor.config.ts": {

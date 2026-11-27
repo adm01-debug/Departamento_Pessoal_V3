@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6fdcd20d65902c649eae66d7426d4f01d8f4c6c6` (2026-11-26T20:14:04-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `61fc8ae30350d5bf36f45a25000d07eea9e19e8e` (2026-11-26T20:51:56-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (2178), SQL (1355), Markdown (347), JavaScript (137), JSON (64), Shell (60), YAML (56), Python (8)
+- linguagens: TypeScript (2178), SQL (1355), Markdown (351), JavaScript (137), JSON (64), Shell (60), YAML (56), Python (8)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 4257 |
+| arquivos_total | 4261 |
 | arquivos_codigo | 2322 |
 | linhas_codigo | 470604 |
 | rotas | 117 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 876 |
 | workflows | 21 |
 | scripts | 138 |
-| docs_md | 347 |
+| docs_md | 351 |
 
 ## Onde ficam as coisas
 - telas: src/pages (111), src/components (1)
@@ -62,7 +62,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/training-images-local (13), scripts/autofix (10)
-- docs: docs (97), (raiz) (32), .github (1)
+- docs: docs (100), (raiz) (32), .github (1)
 - nomenclatura: {"componentes":"PascalCase (89%)","hooks":"use + PascalCase","servicos":"camelCase (98%)","edge_functions":"kebab-case (69%)","tabelas":"snake_case (85%)"}
 - instruções para agentes no repo: .claude/CLAUDE.md, AGENTS.md, CLAUDE.md
 
@@ -405,26 +405,26 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 30033 nós · 68429 arestas · 2863 comunidades · grafo do commit `6fdcd20d`
-- comunidades maiores: 20260831_corrected_public.sql (485), canonical_schema.sql (481), button.tsx (477), useEmpresas (459), cn (456), vitest (262), react (243), client.ts (236), supabase/types.ts (232), lucide-react (191), contract.ts (185), @tanstack/react-query (170)
+- 30071 nós · 68515 arestas · 2901 comunidades · grafo do commit `61fc8ae3`
+- comunidades maiores: cn (556), card.tsx (511), @tanstack/react-query (494), 20260831_corrected_public.sql (485), canonical_schema.sql (481), useEmpresas (379), vitest (322), supabase/types.ts (267), App.tsx (205), contract.ts (193), TurnosConteudo.tsx (167), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), entradaCard() (src/components/ui/entrada-cards.tsx), useAuth() (src/contexts/AuthContext.tsx), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), formatDateLocalISO() (src/utils/dateLocal.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (41)
-- scripts/canonical-invariants.sql (24)
+- .github/workflows/canonical-migrations.yml (40)
+- scripts/canonical-invariants.sql (23)
 - inventario/estado/rotas.json (18)
 - docs/PLANO_INTEGRACAO_PONTO_HENRY_ATECSOFT.md (14)
 - src/integrations/supabase/types.ts (14)
 - docs/auditoria/RESGATE_TRABALHO_AGENTE_MURI_2026-11-25.md (11)
 - src/pages/ColaboradorDetalhesPage.tsx (11)
 - docs/auditoria/MIGRATIONS_ORFAS_MURI_2026-11-16.md (10)
-- package.json (10)
 - src/schemas/tableColumns.ts (10)
+- package.json (9)
 - scripts/automation.config.json (9)
-- package-lock.json (8)
 - src/index.css (8)
 - docs/auditoria/sql-preservado/README.md (7)
+- package-lock.json (7)
 - src/pages/CalculadoraRescisaoPage.tsx (7)
 
 ## Workflows
@@ -590,6 +590,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/DEVELOPMENT.md` — Guia de Desenvolvimento (52 linhas)
 - `docs/E2E_TESTING.md` — Testes End-to-End (E2E) — Playwright (119 linhas)
 - `docs/ENVIRONMENT.md` — 🔑 ENVIRONMENT.md (24 linhas)
+- `docs/ESCALA-GLOBAL-DESIGN-SYSTEM.md` — Escala global do Design System (base rem + px→rem) (73 linhas)
 - `docs/ESOCIAL.md` — Integração eSocial (28 linhas)
 - `docs/ESOCIAL_EVENTOS.md` — eSocial - Eventos (34 linhas)
 - `docs/EXECUCAO_PLANO_100_2026-08-30.md` — Execução do PLANO_100 — Relatório de 30/08/2026 (158 linhas)
@@ -646,6 +647,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/V17_INDEX.md` — 📚 V17 - ÍNDICE DE DOCUMENTAÇÃO (48 linhas)
 - `docs/VISAO_FUTURA.md` — Visão futura — E-100 (59 linhas)
 - `docs/WORKFLOWS.md` — 🔄 WORKFLOWS.md - Fluxos de Trabalho (26 linhas)
+- `docs/motion-regua-global.md` — Régua global de motion (durações e curvas) (460 linhas)
 - `docs/ninebox-aprovacao-gestor-implantacao.md` — Aprovação do gestor — implantação para a conta de homologação (432 linhas)
 - `docs/ninebox-aprovacao-gestor-ui.md` — Nine-Box — Aprovação do gestor na interface (subaba "Aguardando gestor") (100 linhas)
 - `docs/ninebox-homologacao-aprovacao-real.md` — Homologação REAL da Aprovação do Gestor — runbook de implantação (207 linhas)
@@ -657,14 +659,17 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/ninebox-proposta-controles-feedback.md` — Nine-Box · Proposta localizada dos controles de feedback (aguardando aprovação) (176 linhas)
 - `docs/ponto-geofencing.md` — Painel de Geofencing (Controle de Ponto → Gestão da Equipe → Geofencing) (180 linhas)
 - `docs/prod-readiness.md` — Prontidão para produção — Departamento Pessoal V3 (853 linhas)
+- `docs/tooltips-graficos.md` — Tooltips dos gráficos (Recharts) — posição direta, entrada só por opacidade (123 linhas)
 - `docs/treinamentos-imagens-fase3a2.md` — Fase 3A.2 — finalização da integração do Hub de imagens (211 linhas)
 - `docs/treinamentos-imagens-fase3b-prep.md` — Fase 3B — preparação final (relatório) (133 linhas)
 - `docs/treinamentos-imagens-homologacao.md` — Homologação isolada — Hub de imagens (alternativa ao Docker) (233 linhas)
 - `docs/treinamentos-imagens.md` — Imagens do Hub de Treinamentos — Fase 2 (auditoria) + preparação da Fase 3 (426 linhas)
-- subpastas de docs/: docs/auditoria (69), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/pendencias (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
+- subpastas de docs/: docs/auditoria (70), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/pendencias (2), docs/contratos (1), docs/protegido (1), docs/seguranca (1)
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-26 `61fc8ae` docs: registra o veredito dos descartes do resgate do agente Muri (#913)
+- 2026-11-26 `6e8a84b` chore: resgata as 3 docs de design system que o codigo da main cita (#912)
 - 2026-11-26 `6fdcd20` feat: expõe indicadores de pessoal das MVs de dashboard (RPC com guarda de tenant + tela) (#911)
 - 2026-11-26 `76140dc` fix: invariantes do canônico voltam a rodar (limite de 100 args) (#910)
 - 2026-11-26 `d131539` fix: retencao de logs volta a purgar no canonico (job 35 falhava todo dia) (#909)
@@ -678,8 +683,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-26 `1c25596` infra: cria as policies de Storage que faltam em 8 buckets usados pelo app (#901)
 - 2026-11-26 `4d80e95` docs: registra a causa raiz do Supabase Preview (drift de ledger de 33 migrations, bloqueado pelo runbook) (#900)
 - 2026-11-26 `256e836` chore: bump das actions por SHA com catalogo action-pins coerente (substitui #863) (#876)
-- 2026-11-25 `b4f3428` docs: fecha a causa raiz do E2E vermelho e a fatia de turnos no ledger do resgate (#898)
-- 2026-11-25 `8324c3d` fix: remove seletor duplicado de ciclo do Nine-Box (#899)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

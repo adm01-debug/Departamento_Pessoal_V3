@@ -2,6 +2,12 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-27 00:34 UTC
+
+- **functions** adicionado (1): `public.get_indicadores_pessoal(p_empresa_id uuid, p_dias integer, p_meses integer)`
+- **functions** alterado (2): `public.refresh_dashboard_views()`, `public.user_belongs_to_empresa(_user_id uuid, _empresa_id uuid)`
+- **migrations** adicionado (1): `20261126163000_indicadores_pessoal_rpc`
+
 ## 2026-11-26 18:16 UTC
 
 - **functions** alterado (1): `public.enforce_log_retention()`

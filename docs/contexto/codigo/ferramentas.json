@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (2178)",
    "SQL (1355)",
-   "Markdown (347)",
+   "Markdown (351)",
    "JavaScript (137)",
    "JSON (64)",
    "Shell (60)",
@@ -1204,6 +1204,11 @@
    "linhas": 24
   },
   {
+   "arquivo": "docs/ESCALA-GLOBAL-DESIGN-SYSTEM.md",
+   "titulo": "Escala global do Design System (base rem + px→rem)",
+   "linhas": 73
+  },
+  {
    "arquivo": "docs/ESOCIAL.md",
    "titulo": "Integração eSocial",
    "linhas": 28
@@ -1484,6 +1489,11 @@
    "linhas": 26
   },
   {
+   "arquivo": "docs/motion-regua-global.md",
+   "titulo": "Régua global de motion (durações e curvas)",
+   "linhas": 460
+  },
+  {
    "arquivo": "docs/ninebox-aprovacao-gestor-implantacao.md",
    "titulo": "Aprovação do gestor — implantação para a conta de homologação",
    "linhas": 432
@@ -1539,6 +1549,11 @@
    "linhas": 853
   },
   {
+   "arquivo": "docs/tooltips-graficos.md",
+   "titulo": "Tooltips dos gráficos (Recharts) — posição direta, entrada só por opacidade",
+   "linhas": 123
+  },
+  {
    "arquivo": "docs/treinamentos-imagens-fase3a2.md",
    "titulo": "Fase 3A.2 — finalização da integração do Hub de imagens",
    "linhas": 211
@@ -1562,7 +1577,7 @@
  "docs_em_subpastas": [
   {
    "pasta": "docs/auditoria",
-   "arquivos_md": 69
+   "arquivos_md": 70
   },
   {
    "pasta": "docs/_archive",

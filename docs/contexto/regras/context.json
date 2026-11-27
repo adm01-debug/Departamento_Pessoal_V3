@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "6fdcd20d65902c649eae66d7426d4f01d8f4c6c6",
+  "sha": "61fc8ae30350d5bf36f45a25000d07eea9e19e8e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-26 23:31 UTC",
-  "files_total": 4271,
+  "generated_at": "2026-11-27 00:38 UTC",
+  "files_total": 4275,
   "code_files": 3675,
   "code_lines": 546246
  },
@@ -350347,10 +350347,30 @@
   }
  },
  "git": {
-  "sha": "6fdcd20d65902c649eae66d7426d4f01d8f4c6c6",
+  "sha": "61fc8ae30350d5bf36f45a25000d07eea9e19e8e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "61fc8ae",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "docs: registra o veredito dos descartes do resgate do agente Muri (#913)",
+    "files": [
+     "docs/auditoria/VEREDITOS_DESCARTES_RESGATE_2026-11-26.md"
+    ]
+   },
+   {
+    "sha": "6e8a84b",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "chore: resgata as 3 docs de design system que o codigo da main cita (#912)",
+    "files": [
+     "docs/ESCALA-GLOBAL-DESIGN-SYSTEM.md",
+     "docs/motion-regua-global.md",
+     "docs/tooltips-graficos.md"
+    ]
+   },
    {
     "sha": "6fdcd20",
     "date": "2026-11-26",
@@ -350750,40 +350770,6 @@
     "author": "github-actions[bot]",
     "subject": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)",
     "files": []
-   },
-   {
-    "sha": "3cb33da",
-    "date": "2026-11-25",
-    "author": "github-actions[bot]",
-    "subject": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)",
-    "files": [
-     "docs/auditoria/estado/WORKFLOWS_STATUS.md"
-    ]
-   },
-   {
-    "sha": "05b201e",
-    "date": "2026-11-25",
-    "author": "adm01-debug",
-    "subject": "feat: resgata a tela de pesquisas de clima do port do Muri (#885)",
-    "files": [
-     "scripts/.bundle-budget.json",
-     "src/components/__tests__/IndicadorPesquisa.test.tsx",
-     "src/components/__tests__/PesquisasClimaGrade.test.ts",
-     "src/components/__tests__/PesquisasClimaJanelasCascata.test.tsx",
-     "src/components/pesquisas/BarraAdesao.tsx",
-     "src/components/pesquisas/CardPesquisa.tsx",
-     "src/components/pesquisas/IndicadorPesquisa.tsx",
-     "src/components/pesquisas/PilulaFiltroPesquisa.tsx",
-     "src/components/pesquisas/__tests__/BarraAdesao.test.tsx",
-     "src/components/pesquisas/__tests__/BarraAdesaoAnim.test.ts",
-     "src/components/pesquisas/__tests__/CardPesquisa.test.tsx",
-     "src/components/pesquisas/__tests__/PilulaFiltroPesquisa.test.tsx",
-     "src/components/pesquisas/__tests__/pesquisasComum.test.ts",
-     "src/components/pesquisas/barraAdesaoAnim.ts",
-     "src/components/pesquisas/pesquisasComum.ts",
-     "src/mocks/pesquisasClimaMock.ts",
-     "src/pages/PesquisasClimaPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -350797,7 +350783,7 @@
    ],
    [
     "scripts/.bundle-budget.json",
-    6
+    5
    ],
    [
     "scripts/canonical-invariants.sql",
@@ -350848,23 +350834,23 @@
     2
    ],
    [
+    "docs/auditoria/VEREDITOS_DESCARTES_RESGATE_2026-11-26.md",
+    1
+   ],
+   [
+    "docs/ESCALA-GLOBAL-DESIGN-SYSTEM.md",
+    1
+   ],
+   [
+    "docs/motion-regua-global.md",
+    1
+   ],
+   [
+    "docs/tooltips-graficos.md",
+    1
+   ],
+   [
     "inventario/estado/rotas.json",
-    1
-   ],
-   [
-    "src/App.tsx",
-    1
-   ],
-   [
-    "src/components/layout/AppSidebar.tsx",
-    1
-   ],
-   [
-    "src/hooks/useIndicadoresPessoal.ts",
-    1
-   ],
-   [
-    "src/pages/IndicadoresPessoalPage.tsx",
     1
    ]
   ]

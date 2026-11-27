@@ -100043,6 +100043,41 @@
         "volatility": "stable"
       },
       {
+        "args": "p_empresa_id uuid, p_dias integer, p_meses integer",
+        "callers": {
+          "code": [
+            {
+              "file": "src/hooks/useIndicadoresPessoal.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": []
+        },
+        "comment": "Indicadores de pessoal (turnover, cadastros, absenteísmo e férias) das MVs de dashboard, com guarda de tenant. Leitura exclusiva via authenticated.",
+        "config": [
+          "search_path=public, pg_catalog"
+        ],
+        "definition": null,
+        "definition_sha": "fc28e9d9bf083360",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "get_indicadores_pessoal",
+        "owner": "postgres",
+        "returns": "jsonb",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "stable"
+      },
+      {
         "args": "",
         "callers": {
           "code": [
@@ -106292,9 +106327,13 @@
             {
               "file": "supabase/migrations/20261125120000_secdef_refresh_dashboard_views_revoke.verify.sql",
               "hits": 5
+            },
+            {
+              "file": "supabase/migrations/20261126163000_indicadores_pessoal_rpc.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 4,
+          "code_total_files": 5,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -110165,13 +110204,14 @@
               "hits": 1
             }
           ],
-          "code_total_files": 36,
+          "code_total_files": 37,
           "cron": [],
           "db": [
             "public.contrato_gerar_token_assinatura",
             "public.contrato_montar_variaveis",
             "public.contrato_resolver_template",
             "public.contrato_revogar_token",
+            "public.get_indicadores_pessoal",
             "public.medida_aprovar",
             "public.medida_arquivar",
             "public.medida_enviar_aprovacao",
@@ -151088,6 +151128,12 @@
         "statements": 1,
         "statements_sha": "ecaaa51947debe18",
         "version": "20261126150000"
+      },
+      {
+        "name": "indicadores_pessoal_rpc",
+        "statements": 1,
+        "statements_sha": "03939e0868c45782",
+        "version": "20261126163000"
       }
     ],
     "policies": [
