@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 876,
+ "total": 878,
  "por_tipo": {
   "contrato": 4,
   "e2e": 36,
   "pytest": 3,
-  "unit": 831
+  "unit": 833
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 737
+   "arquivos": 739
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -1297,6 +1297,15 @@
     "src/components/colaboradores/ColaboradorTable.tsx"
    ],
    "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+   "tipo": "unit",
+   "linhas": 171,
+   "testa": [
+    "src/components/colaboradores/ColaboradorViewSwitcher.tsx"
+   ],
+   "casos": 9
   },
   {
    "arquivo": "src/components/__tests__/ComparacaoCenarios.test.tsx",
@@ -4329,6 +4338,15 @@
     "src/components/recrutamento/analyticsRelatorio.ts"
    ],
    "casos": 5
+  },
+  {
+   "arquivo": "src/components/recrutamento/__tests__/animacaoDetalheVaga.test.ts",
+   "tipo": "unit",
+   "linhas": 107,
+   "testa": [
+    "src/components/recrutamento/animacaoDetalheVaga.ts"
+   ],
+   "casos": 7
   },
   {
    "arquivo": "src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx",
@@ -8290,6 +8308,7 @@
   "src/components/colaboradores/ColaboradorHistory.tsx": 1,
   "src/components/colaboradores/ColaboradorKpiCards.tsx": 1,
   "src/components/colaboradores/ColaboradorTable.tsx": 1,
+  "src/components/colaboradores/ColaboradorViewSwitcher.tsx": 1,
   "src/components/colaboradores/RecontratarColaboradorDialog.tsx": 1,
   "src/components/contratacao/TokenInput.tsx": 1,
   "src/components/contratos/ContratoTokenTimelineDialog.tsx": 1,
@@ -8523,6 +8542,7 @@
   "src/components/recrutamento/analyticsFiltros.ts": 2,
   "src/components/recrutamento/analyticsRelatorio.ts": 1,
   "src/components/recrutamento/analyticsVagasFiltros.ts": 1,
+  "src/components/recrutamento/animacaoDetalheVaga.ts": 1,
   "src/components/recrutamento/candidatosComum.ts": 1,
   "src/components/recrutamento/competenciasComum.ts": 1,
   "src/components/recrutamento/pipelineDragDrop.ts": 1,

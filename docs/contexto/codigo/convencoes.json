@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (737)",
+   "co-localizado (__tests__) (739)",
    "co-localizado (*.test) (80)",
    "e2e/ (33)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: resgata a pilula deslizante do alternador Tabela/Diretorio e o teste da dobra da vaga (#914)",
    "docs: registra o veredito dos descartes do resgate do agente Muri (#913)",
    "chore: resgata as 3 docs de design system que o codigo da main cita (#912)",
    "feat: expõe indicadores de pessoal das MVs de dashboard (RPC com guarda de tenant + tela) (#911)",
-   "fix: invariantes do canônico voltam a rodar (limite de 100 args) (#910)",
-   "fix: retencao de logs volta a purgar no canonico (job 35 falhava todo dia) (#909)"
+   "fix: invariantes do canônico voltam a rodar (limite de 100 args) (#910)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

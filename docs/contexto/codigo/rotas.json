@@ -5932,9 +5932,11 @@
     "useExcelExport",
     "useGrupo",
     "useGuidedTour",
+    "useId",
     "useInView",
     "useLocation",
     "useMemo",
+    "useMovimentoReduzido",
     "useMutation",
     "useNavigate",
     "useNotificacoes",
@@ -5966,6 +5968,7 @@
     "useExcelExport",
     "useGrupo",
     "useGuidedTour",
+    "useMovimentoReduzido",
     "useNotificacoes",
     "useNotification",
     "useOnMount",
@@ -6033,6 +6036,7 @@
     "admin",
     "alert",
     "banner",
+    "group",
     "list",
     "listitem",
     "main",
@@ -6041,7 +6045,7 @@
     "tablist",
     "user"
    ],
-   "arquivos_puxados": 117
+   "arquivos_puxados": 118
   },
   {
    "protegida": true,

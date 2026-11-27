@@ -1905,6 +1905,7 @@
   ],
   "src/components/colaboradores/ColaboradorViewSwitcher.tsx": [
    "src/components/ui/button.tsx",
+   "src/lib/motionMode.ts",
    "src/lib/utils.ts"
   ],
   "src/components/colaboradores/RecontratarColaboradorDialog.tsx": [

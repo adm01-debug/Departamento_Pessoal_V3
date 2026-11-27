@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `61fc8ae303` · branch `main` · 2026-11-27 00:38 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `068b8bcb41` · branch `main` · 2026-11-27 00:56 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1484,7 +1484,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `rg` | escreve | `src/pages/ContratacaoPage.tsx` |
 | `type` | `salario` | escreve | `src/hooks/useHistoricoColaborador.ts`<br>`src/mocks/colaboradoresMock.ts` |
 | `type` | `server` | escreve | `src/hooks/useServerValidation.ts` |
-| `type` | `spring` | escreve | `src/components/animate-ui/primitives/animate/tabs.tsx`<br>`src/components/animate-ui/primitives/effects/highlight.tsx`<br>`src/components/dashboard/WorkforceHealthScore.tsx`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>`src/components/layout/MobileBottomNav.tsx`<br>… +8 |
+| `type` | `spring` | escreve | `src/components/animate-ui/primitives/animate/tabs.tsx`<br>`src/components/animate-ui/primitives/effects/highlight.tsx`<br>`src/components/colaboradores/ColaboradorViewSwitcher.tsx`<br>`src/components/dashboard/WorkforceHealthScore.tsx`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>… +9 |
 | `type` | `start` | compara, escreve | `src/components/workflows/WorkflowDesigner.tsx`<br>`src/components/workflows/ordenarEtapas.ts`<br>`src/pages/WorkflowsPage.tsx` |
 | `type` | `string` | compara | `supabase/functions/tabelas-dominio/index.ts` |
 | `type` | `style` | escreve | `release.config.js` |
@@ -4421,6 +4421,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition: { delay: i * 0.18, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },` | `src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx` |
 | `transition={{ duration: 0.6, delay: 0.15 + index * 0.1, ease: 'easeOut' }}` | `src/components/colaborador-detalhes/desenvolvimento/DesenvolvimentoProfissionalCard.tsx` |
 | `transition={{ delay: index * 0.05 }}` | `src/components/colaboradores/ColaboradorHistory.tsx` |
+| `* damping 30 → ζ ≈ 0,86: passa ~1% do alvo (um "respiro" de 0,4 px,` | `src/components/colaboradores/ColaboradorViewSwitcher.tsx` |
 | `transition={{ delay: 0.5 + i * 0.05 }}` | `src/components/dashboard/BarChartWidget.tsx` |
 | `transition={{ duration: 0.6, delay: i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}` | `src/components/dashboard/BarChartWidget.tsx` |
 | `const strokeOffset = -seg.offset + circumference * 0.25; // start from top` | `src/components/dashboard/DonutChart.tsx` |
@@ -4622,8 +4623,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: 0.2 + i * 0.08 }}` | `src/pages/AssistenteIAPage.tsx` |
 | `transition={{ delay: index * 0.01 }}` | `src/pages/AuditoriaPage.tsx` |
 | `* Só um payload 100% UUID vai à RPC real — mesmo com mocks exibidos na tela.` | `src/pages/AvaliacaoPage.tsx` |
-| `transition={{ delay: i * 0.08 }}` | `src/pages/BackupPage.tsx` |
-| … +121 linhas — lista completa em `context.json` | |
+| … +122 linhas — lista completa em `context.json` | |
 
 ## H. Parâmetros de negócio (constantes, prazos, limites)
 
@@ -5666,7 +5666,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (10523 testes em 831 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (10542 testes em 833 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5954,6 +5954,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `scripts/tests/contexto-publicacao.test.mjs` | 11 | cada upload fornece um ID e cada download usa destino explícito sem ocultar falhas · produtores independentes falham de verdade e o publisher ainda aceita as fontes disponíveis · falha fatal de ${failed} mantém sua versão anterior e publica as duas fontes saudáveis · publisher ${previousBranch ?  … |
 | `src/components/__tests__/AnimatedNumber.test.tsx` | 11 | AnimatedNumber · renders 0 initially when not in view · renders initial 0 even when format prop is provided · applies custom className to span … |
 | `src/components/__tests__/AuditoriaComum.test.ts` | 11 | auditoriaComum — normalização fiel aos dados · resolve valor anterior/posterior, entidade, colaborador e responsável · lida com data/entidade/valor ausentes sem inventar informação · não inventa valor quando não há campo nem citação monetária … |
+| `src/components/__tests__/ColaboradorViewSwitcher.test.tsx` | 11 | ColaboradorViewSwitcher — pílula deslizante · preserva os rótulos e a semântica das duas opções · renderiza UMA pílula animada, só na opção ativa, cobrindo o botão inteiro · a pílula é um elemento dedicado: o botão ativo não carrega mais a borda estática … |
 | `src/components/__tests__/EmprestimosFinanceiros.test.tsx` | 11 | EmprestimosTable · renders table headers · renders colaborador names · renders instituicao or dash for null … |
 | `src/components/__tests__/ExameFormDialog.test.tsx` | 11 | ExameFormDialog · renders trigger button with  · renders dialog content with title · renders all colaborador options in select … |
 | `src/components/__tests__/GerarPgrButton.test.tsx` | 11 | GerarPgrButton · renders trigger button with  · renders dialog title · renders Responsável Técnico label … |
@@ -5969,8 +5970,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/QuickActionsGrid.test.tsx` | 11 | QuickActionsGrid · renders Ações Rápidas heading · renders Novo Colaborador action · renders Lançar Ponto action … |
 | `src/components/__tests__/auditoriaDerivacoes.test.ts` | 11 | auditoriaDerivacoes · conta os status e as fatias do resumo (nunca NaN) · conta os eventos dos últimos 30 dias · detecta filtros ativos (inclusive os do painel avançado) … |
 | `src/components/recrutamento/__tests__/CandidatoDetalhesDialog.test.tsx` | 11 | CandidatoDetalhesDialog · mostra identificação, cargo, departamento e etapa atual · destaca SOMENTE a etapa efetiva do candidato no indicador · não inventa contato ausente (nem  … |
-| `src/components/recrutamento/__tests__/VagaCard.test.tsx` | 11 | VagaCard — identidade, funil e ações reais · mostra título, departamento, modalidade, competências e o funil completo · abre o Pipeline pelo botão Gerenciar Vaga · mantém apenas ações reais e não duplica Gerenciar no menu … |
-| … +531 linhas — lista completa em `context.json` | | |
+| … +533 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

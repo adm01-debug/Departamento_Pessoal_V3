@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 1448,
- "arestas": 7117,
+ "arestas": 7118,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -153,11 +153,11 @@
    "importado_por": 34
   },
   {
-   "arquivo": "src/components/ui/skeleton.tsx",
-   "importado_por": 33
+   "arquivo": "src/lib/motionMode.ts",
+   "importado_por": 34
   },
   {
-   "arquivo": "src/lib/motionMode.ts",
+   "arquivo": "src/components/ui/skeleton.tsx",
    "importado_por": 33
   },
   {

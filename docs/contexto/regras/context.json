@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "61fc8ae30350d5bf36f45a25000d07eea9e19e8e",
+  "sha": "068b8bcb418c0075495afc3de9da598978d340a0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-27 00:38 UTC",
-  "files_total": 4275,
-  "code_files": 3675,
-  "code_lines": 546246
+  "generated_at": "2026-11-27 00:56 UTC",
+  "files_total": 4278,
+  "code_files": 3677,
+  "code_lines": 546666
  },
  "version": "1.3.2",
- "facts_hash": "17207c4725de26cd",
+ "facts_hash": "bd457ffec3fe6da5",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,8 +389,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 1355,
-   ".tsx": 1150,
-   ".ts": 1028,
+   ".tsx": 1151,
+   ".ts": 1029,
    ".mjs": 111,
    ".js": 15,
    ".cjs": 11,
@@ -92675,7 +92675,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 100
+    "deps_count": 101
    },
    {
     "path": "",
@@ -103484,7 +103484,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 1163,
+  "components_count": 1165,
   "hooks": [
    {
     "name": "useContacts",
@@ -105163,8 +105163,8 @@
   },
   {
    "module": "src/components",
-   "files": 1163,
-   "lines": 222404,
+   "files": 1165,
+   "lines": 222824,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -105384,14 +105384,14 @@
     "src/components/__tests__/ColaboradorKpiCards.test.tsx",
     "src/components/__tests__/ColaboradorSeloPassagem.test.tsx",
     "src/components/__tests__/ColaboradorTable.test.tsx",
+    "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
     "src/components/__tests__/ComparacaoCenarios.test.tsx",
     "src/components/__tests__/ConfiguracoesGeraisTab.test.tsx",
     "src/components/__tests__/Container.test.tsx",
     "src/components/__tests__/ContasBancariasTab.test.tsx",
     "src/components/__tests__/ContratoTokenTimelineDialog.test.tsx",
     "src/components/__tests__/ContratosAssinaturaKPICard.test.tsx",
-    "src/components/__tests__/ContratosVencendoPanel.test.tsx",
-    "src/components/__tests__/CriacaoFeedbackIntegracao.test.ts"
+    "src/components/__tests__/ContratosVencendoPanel.test.tsx"
    ]
   },
   {
@@ -155992,6 +155992,12 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
+    "field": "type",
+    "value": "spring",
+    "kind": "escreve"
+   },
+   {
     "file": "src/components/colaboradores/RecontratarColaboradorDialog.tsx",
     "field": "status",
     "value": "desligado",
@@ -170744,6 +170750,10 @@
     "line": "transition={{ delay: index * 0.05 }}"
    },
    {
+    "file": "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
+    "line": "* damping 30 → ζ ≈ 0,86: passa ~1% do alvo (um \"respiro\" de 0,4 px,"
+   },
+   {
     "file": "src/components/dashboard/BarChartWidget.tsx",
     "line": "transition={{ delay: 0.5 + i * 0.05 }}"
    },
@@ -177152,6 +177162,50 @@
    {
     "file": "src/components/__tests__/ColaboradorTable.test.tsx",
     "name": "sem passagensPorId não inventa selo"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+    "name": "ColaboradorViewSwitcher — pílula deslizante"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+    "name": "preserva os rótulos e a semântica das duas opções"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+    "name": "renderiza UMA pílula animada, só na opção ativa, cobrindo o botão inteiro"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+    "name": "a pílula é um elemento dedicado: o botão ativo não carrega mais a borda estática"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+    "name": "mantém a pílula por baixo dos rótulos (camadas por z-index)"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+    "name": "desliza a pílula para a outra opção sem alterar a lógica de alternância"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+    "name": "emite a mudança pelo onChange (único caminho de saída)"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+    "name": "ColaboradorViewSwitcher — mola e movimento reduzido (fonte)"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+    "name": "usa layoutId compartilhado no elemento de fundo, escopado por instância"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+    "name": "usa exatamente a mola aprovada (spring 380 / 30 / 0,8)"
+   },
+   {
+    "file": "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+    "name": "zera o deslizamento quando o usuário pede movimento reduzido"
    },
    {
     "file": "src/components/__tests__/ComparacaoCenarios.test.tsx",
@@ -191860,6 +191914,38 @@
    {
     "file": "src/components/recrutamento/__tests__/analyticsRelatorio.test.ts",
     "name": "dispara o download e devolve o nome do arquivo"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/animacaoDetalheVaga.test.ts",
+    "name": "animação da dobra do detalhe da vaga"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/animacaoDetalheVaga.test.ts",
+    "name": "usa a curva simétrica do sistema e o tempo da faixa de expandir/recolher"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/animacaoDetalheVaga.test.ts",
+    "name": "expande de altura 0 até a altura real e recolhe de volta a 0"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/animacaoDetalheVaga.test.ts",
+    "name": "o conteúdo interno entra em fade depois de a dobra começar a abrir"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/animacaoDetalheVaga.test.ts",
+    "name": "as cinco etapas entram em cascata de 6 px dentro do mesmo compasso"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/animacaoDetalheVaga.test.ts",
+    "name": "no fechamento a cascata das etapas é mais curta que a da abertura"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/animacaoDetalheVaga.test.ts",
+    "name": "com movimento reduzido a altura vai a 0 ↔ auto sem deslocamento nem cascata"
+   },
+   {
+    "file": "src/components/recrutamento/__tests__/animacaoDetalheVaga.test.ts",
+    "name": "as duas variantes da dobra usam os mesmos rótulos que o componente aciona"
    },
    {
     "file": "src/components/recrutamento/__tests__/candidatosComum.test.ts",
@@ -243189,6 +243275,7 @@
      "spring": [
       "escreve:src/components/animate-ui/primitives/animate/tabs.tsx",
       "escreve:src/components/animate-ui/primitives/effects/highlight.tsx",
+      "escreve:src/components/colaboradores/ColaboradorViewSwitcher.tsx",
       "escreve:src/components/dashboard/WorkforceHealthScore.tsx",
       "escreve:src/components/desligamentos/DesligamentoKPIs.tsx",
       "escreve:src/components/layout/MobileBottomNav.tsx",
@@ -280790,6 +280877,24 @@
     "sem passagensPorId não inventa selo"
    ]
   },
+  "src/components/__tests__/ColaboradorViewSwitcher.test.tsx": {
+   "path": "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+   "lines": 171,
+   "is_test": true,
+   "tests": [
+    "ColaboradorViewSwitcher — pílula deslizante",
+    "preserva os rótulos e a semântica das duas opções",
+    "renderiza UMA pílula animada, só na opção ativa, cobrindo o botão inteiro",
+    "a pílula é um elemento dedicado: o botão ativo não carrega mais a borda estática",
+    "mantém a pílula por baixo dos rótulos (camadas por z-index)",
+    "desliza a pílula para a outra opção sem alterar a lógica de alternância",
+    "emite a mudança pelo onChange (único caminho de saída)",
+    "ColaboradorViewSwitcher — mola e movimento reduzido (fonte)",
+    "usa layoutId compartilhado no elemento de fundo, escopado por instância",
+    "usa exatamente a mola aprovada (spring 380 / 30 / 0,8)",
+    "zera o deslizamento quando o usuário pede movimento reduzido"
+   ]
+  },
   "src/components/__tests__/ComparacaoCenarios.test.tsx": {
    "path": "src/components/__tests__/ComparacaoCenarios.test.tsx",
    "lines": 76,
@@ -292658,7 +292763,7 @@
   },
   "src/components/colaboradores/ColaboradorViewSwitcher.tsx": {
    "path": "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
-   "lines": 48,
+   "lines": 190,
    "exports": [
     "type ColaboradorViewMode",
     "function ColaboradorViewSwitcher"
@@ -292668,6 +292773,16 @@
      "name": "ColaboradorViewMode",
      "values": "tabela | diretorio"
     }
+   ],
+   "status_values": [
+    {
+     "field": "type",
+     "value": "spring",
+     "kind": "escreve"
+    }
+   ],
+   "percents": [
+    "* damping 30 → ζ ≈ 0,86: passa ~1% do alvo (um \"respiro\" de 0,4 px,"
    ]
   },
   "src/components/colaboradores/RecontratarColaboradorDialog.tsx": {
@@ -302011,6 +302126,21 @@
     "nomeia o arquivo pela data de referência",
     "analyticsRelatorio — download",
     "dispara o download e devolve o nome do arquivo"
+   ]
+  },
+  "src/components/recrutamento/__tests__/animacaoDetalheVaga.test.ts": {
+   "path": "src/components/recrutamento/__tests__/animacaoDetalheVaga.test.ts",
+   "lines": 107,
+   "is_test": true,
+   "tests": [
+    "animação da dobra do detalhe da vaga",
+    "usa a curva simétrica do sistema e o tempo da faixa de expandir/recolher",
+    "expande de altura 0 até a altura real e recolhe de volta a 0",
+    "o conteúdo interno entra em fade depois de a dobra começar a abrir",
+    "as cinco etapas entram em cascata de 6 px dentro do mesmo compasso",
+    "no fechamento a cascata das etapas é mais curta que a da abertura",
+    "com movimento reduzido a altura vai a 0 ↔ auto sem deslocamento nem cascata",
+    "as duas variantes da dobra usam os mesmos rótulos que o componente aciona"
    ]
   },
   "src/components/recrutamento/__tests__/candidatosComum.test.ts": {
@@ -350347,10 +350477,22 @@
   }
  },
  "git": {
-  "sha": "61fc8ae30350d5bf36f45a25000d07eea9e19e8e",
+  "sha": "068b8bcb418c0075495afc3de9da598978d340a0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "068b8bc",
+    "date": "2026-11-26",
+    "author": "adm01-debug",
+    "subject": "feat: resgata a pilula deslizante do alternador Tabela/Diretorio e o teste da dobra da vaga (#914)",
+    "files": [
+     "docs/auditoria/VEREDITOS_BRANCHES_RESGATE_2026-11-27.md",
+     "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+     "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
+     "src/components/recrutamento/__tests__/animacaoDetalheVaga.test.ts"
+    ]
+   },
    {
     "sha": "61fc8ae",
     "date": "2026-11-26",
@@ -350763,13 +350905,6 @@
      "src/utils/pontoDuracao.ts",
      "src/utils/pontoEquipe.ts"
     ]
-   },
-   {
-    "sha": "adc0f56",
-    "date": "2026-11-25",
-    "author": "github-actions[bot]",
-    "subject": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#874)",
-    "files": []
    }
   ],
   "hot_files": [
@@ -350834,23 +350969,23 @@
     2
    ],
    [
+    "docs/auditoria/VEREDITOS_BRANCHES_RESGATE_2026-11-27.md",
+    1
+   ],
+   [
+    "src/components/__tests__/ColaboradorViewSwitcher.test.tsx",
+    1
+   ],
+   [
+    "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
+    1
+   ],
+   [
+    "src/components/recrutamento/__tests__/animacaoDetalheVaga.test.ts",
+    1
+   ],
+   [
     "docs/auditoria/VEREDITOS_DESCARTES_RESGATE_2026-11-26.md",
-    1
-   ],
-   [
-    "docs/ESCALA-GLOBAL-DESIGN-SYSTEM.md",
-    1
-   ],
-   [
-    "docs/motion-regua-global.md",
-    1
-   ],
-   [
-    "docs/tooltips-graficos.md",
-    1
-   ],
-   [
-    "inventario/estado/rotas.json",
     1
    ]
   ]

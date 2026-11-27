@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "61fc8ae30350d5bf36f45a25000d07eea9e19e8e",
+  "commit": "068b8bcb418c0075495afc3de9da598978d340a0",
   "branch": "main",
-  "data_commit": "2026-11-26T20:51:56-03:00",
+  "data_commit": "2026-11-26T21:52:57-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "068b8bc",
+    "data": "2026-11-26",
+    "assunto": "feat: resgata a pilula deslizante do alternador Tabela/Diretorio e o teste da dobra da vaga (#914)"
+   },
    {
     "sha": "61fc8ae",
     "data": "2026-11-26",
@@ -126,18 +131,13 @@
     "sha": "c697595",
     "data": "2026-11-25",
     "assunto": "feat: resgata recorte de período/vaga e exportação CSV da Analytics (port do Muri) (#891)"
-   },
-   {
-    "sha": "43dd2de",
-    "data": "2026-11-25",
-    "assunto": "fix(db): fecha record_backup_run para anon e tira backup_logs do claim de JWT (#890)"
    }
   ],
-  "arquivos_mudados_7d": 768,
+  "arquivos_mudados_7d": 772,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 393
+    "mudancas": 394
    },
    {
     "pasta": "src/components/ui",
@@ -160,12 +160,12 @@
     "mudancas": 90
    },
    {
-    "pasta": "src/components/treinamentos",
+    "pasta": "src/components/recrutamento",
     "mudancas": 67
    },
    {
-    "pasta": "src/components/recrutamento",
-    "mudancas": 66
+    "pasta": "src/components/treinamentos",
+    "mudancas": 67
    },
    {
     "pasta": "src/components/ponto",
@@ -314,9 +314,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 4261,
-  "arquivos_codigo": 2322,
-  "linhas_codigo": 470604,
+  "arquivos_total": 4264,
+  "arquivos_codigo": 2324,
+  "linhas_codigo": 471024,
   "rotas": 117,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -328,10 +328,10 @@
   "tabelas": 438,
   "migrations": 1281,
   "cron_jobs": 43,
-  "testes": 876,
+  "testes": 878,
   "workflows": 21,
   "scripts": 138,
-  "docs_md": 351
+  "docs_md": 352
  },
  "por_pasta": {
   "capacitor.config.ts": {
@@ -643,8 +643,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 1163,
-   "linhas": 222404
+   "arquivos": 1165,
+   "linhas": 222824
   },
   "src/constants": {
    "arquivos": 7,

@@ -2730,9 +2730,11 @@
     "ColaboradorViewSwitcher"
    ],
    "export_default": null,
-   "linhas": 48,
+   "linhas": 190,
    "dominio": "components/colaboradores",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,

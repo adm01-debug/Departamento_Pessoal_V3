@@ -201,7 +201,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 341,
+   "testes": 342,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -1652,7 +1652,7 @@
    "modulo": "components/colaboradores",
    "arquivos": 9,
    "testes": 1,
-   "linhas": 1161,
+   "linhas": 1303,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1663,6 +1663,7 @@
     "useDepartamentos",
     "useEmpresaStore",
     "useEmpresas",
+    "useMovimentoReduzido",
     "usePiiMask",
     "useRecontratarColaborador",
     "useVinculosColaborador",
@@ -1701,6 +1702,7 @@
    "flags": [],
    "papeis": [
     "admin",
+    "group",
     "rh",
     "user"
    ],
@@ -5745,7 +5747,7 @@
   {
    "modulo": "components/recrutamento",
    "arquivos": 34,
-   "testes": 19,
+   "testes": 20,
    "linhas": 8582,
    "itens_menu": [],
    "telas": [],

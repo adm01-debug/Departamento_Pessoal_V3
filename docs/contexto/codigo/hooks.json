@@ -3468,7 +3468,7 @@
     "useReducedMotion"
    ],
    "canais_realtime": [],
-   "usado_por": 32,
+   "usado_por": 33,
    "usado_por_arquivos": [
     "src/components/avaliacao/AnaliticosDesempenho.tsx",
     "src/components/avaliacao/CicloAtivoPanel.tsx",
@@ -3483,6 +3483,7 @@
     "src/components/banco-horas/ExtratoBancoHoras.tsx",
     "src/components/banco-horas/SituacaoSaldosCard.tsx",
     "src/components/banco-horas/TotaisHorasCard.tsx",
+    "src/components/colaboradores/ColaboradorViewSwitcher.tsx",
     "src/components/dashboard/DonutChart.tsx",
     "src/components/desligamentos/TurnoverChart.tsx",
     "src/components/horas-extras/HistoricoSolicitacoes.tsx",
@@ -3498,8 +3499,7 @@
     "src/components/turnos/CalendarioSemanal.tsx",
     "src/components/turnos/ColunaLateralTurnos.tsx",
     "src/components/ui/command.tsx",
-    "src/pages/PesquisasClimaPage.tsx",
-    "src/pages/PremiacoesPage.tsx"
+    "src/pages/PesquisasClimaPage.tsx"
    ],
    "coberto_por_testes": 1
   },

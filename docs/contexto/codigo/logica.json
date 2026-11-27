@@ -743,10 +743,11 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 32,
+   "usado_por": 33,
    "usado_por_modulos": [
     "components/avaliacao",
     "components/banco-horas",
+    "components/colaboradores",
     "components/dashboard",
     "components/desligamentos",
     "components/horas-extras",
